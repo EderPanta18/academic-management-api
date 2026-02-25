@@ -3,7 +3,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from '@shared/infrastructure/database';
-import { databaseConfig } from './config';
+import { ProfessorsModule } from '@modules/professors';
+import { databaseConfig } from '@config/index';
 import { AppController } from './app.controller';
 
 @Module({
@@ -20,6 +21,7 @@ import { AppController } from './app.controller';
       load: [databaseConfig],
     }),
     PrismaModule,
+    ProfessorsModule,
   ],
   controllers: [AppController],
 })

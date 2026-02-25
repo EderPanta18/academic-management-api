@@ -1,3 +1,3 @@
 // config/index.ts
 
-export { default as databaseConfig } from './database.config';
+export { databaseConfig } from './database.config';

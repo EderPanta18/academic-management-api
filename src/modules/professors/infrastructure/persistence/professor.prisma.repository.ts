@@ -1,0 +1,138 @@
+// modules/professors/infrastructure/persistence/professor.prisma.repository.ts
+
+import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from '@shared/infrastructure/database';
+import { PaginationVO } from '@shared/domain/value-objects';
+import { Professor } from '@professors/domain/entities';
+import type {
+  IProfessorRepository,
+  IProfessorFinder,
+} from '@professors/domain/ports';
+import { ProfessorPersistenceMapper } from '../mappers';
+
+@Injectable()
+export class ProfessorPrismaRepository
+  implements IProfessorRepository, IProfessorFinder
+{
+  constructor(private readonly prisma: PrismaService) {}
+
+  // ── IProfessorRepository ──────────────────────────────────────────────────
+
+  async save(professor: Professor): Promise<Professor> {
+    return professor.id !== undefined
+      ? this.update(professor)
+      : this.create(professor);
+  }
+
+  async findById(id: number): Promise<Professor | null> {
+    const raw = await this.prisma.professor.findFirst({
+      where: {
+        personId: id,
+        deletedAt: null,
+        person: { deletedAt: null },
+      },
+      include: { person: true },
+    });
+
+    return raw ? ProfessorPersistenceMapper.toDomain(raw) : null;
+  }
+
+  async findAll(pagination: PaginationVO): Promise<[Professor[], number]> {
+    const where: Prisma.ProfessorWhereInput = {
+      deletedAt: null,
+      person: { deletedAt: null },
+    };
+
+    const [raws, total] = await Promise.all([
+      this.prisma.professor.findMany({
+        where,
+        include: { person: true },
+        skip: pagination.offset,
+        take: pagination.pageSize,
+        orderBy: { person: { lastName: 'asc' } },
+      }),
+      this.prisma.professor.count({ where }),
+    ]);
+
+    return [raws.map((raw) => ProfessorPersistenceMapper.toDomain(raw)), total];
+  }
+
+  async existsByDni(dni: string): Promise<boolean> {
+    const count = await this.prisma.professor.count({
+      where: {
+        deletedAt: null,
+        person: { dni, deletedAt: null },
+      },
+    });
+    return count > 0;
+  }
+
+  async existsByEmail(email: string): Promise<boolean> {
+    const count = await this.prisma.professor.count({
+      where: {
+        deletedAt: null,
+        person: { email, deletedAt: null },
+      },
+    });
+    return count > 0;
+  }
+
+  async delete(id: number): Promise<void> {
+    await this.prisma.professor.update({
+      where: { personId: id },
+      data: { deletedAt: new Date() },
+    });
+  }
+
+  // ── IProfessorFinder ──────────────────────────────────────────────────────
+
+  async exists(id: number): Promise<boolean> {
+    const count = await this.prisma.professor.count({
+      where: {
+        personId: id,
+        deletedAt: null,
+        person: { deletedAt: null },
+      },
+    });
+    return count > 0;
+  }
+
+  // ── Privados ──────────────────────────────────────────────────────────────
+
+  private async create(professor: Professor): Promise<Professor> {
+    const { person, professor: profData } =
+      ProfessorPersistenceMapper.toPersistence(professor);
+
+    const raw = await this.prisma.$transaction(async (tx) => {
+      const personRecord = await tx.person.create({ data: person });
+
+      return tx.professor.create({
+        data: { ...profData, personId: personRecord.id },
+        include: { person: true },
+      });
+    });
+
+    return ProfessorPersistenceMapper.toDomain(raw);
+  }
+
+  private async update(professor: Professor): Promise<Professor> {
+    const { person, professor: profData } =
+      ProfessorPersistenceMapper.toPersistence(professor);
+
+    const raw = await this.prisma.$transaction(async (tx) => {
+      await tx.person.update({
+        where: { id: professor.id },
+        data: person,
+      });
+
+      return tx.professor.update({
+        where: { personId: professor.id },
+        data: profData,
+        include: { person: true },
+      });
+    });
+
+    return ProfessorPersistenceMapper.toDomain(raw);
+  }
+}

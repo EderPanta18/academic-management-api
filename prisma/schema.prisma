@@ -1,12 +1,14 @@
 generator client {
-  provider = "prisma-client-js"
+  provider     = "prisma-client-js"
+  output       = "../generated/prisma"    
+  moduleFormat = "cjs"                  
 }
 
 datasource db {
   provider = "mysql"
 }
 
-// ─── TABLAS DE SOPORTE (seed) ────────────────────────────────────────
+// ─── SOPORTE (seed) ──────────────────────────────────────────────────
 
 model Career {
   id        Int       @id @default(autoincrement()) @db.UnsignedInt
@@ -47,37 +49,62 @@ model AcademicPeriod {
   @@map("academic_period")
 }
 
+// ─── IDENTIDAD ───────────────────────────────────────────────────────
+
+model Person {
+  id        Int       @id @default(autoincrement()) @db.UnsignedInt
+  dni       String    @unique @db.Char(8)
+  firstName String    @map("first_name") @db.VarChar(100)
+  lastName  String    @map("last_name") @db.VarChar(100)
+  email     String    @unique @db.VarChar(150)
+  phone     String?   @db.VarChar(12)
+  birthDate DateTime? @map("birth_date") @db.Date
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  professor Professor?
+  student   Student?
+
+  @@map("person")
+}
+
 // ─── PROFESORES ──────────────────────────────────────────────────────
 
 model Professor {
-  id           Int       @id @default(autoincrement()) @db.UnsignedInt
-  firstName    String    @map("first_name") @db.VarChar(100)
-  lastName     String    @map("last_name") @db.VarChar(100)
-  email        String    @unique @db.VarChar(150)
-  departmentId Int?      @map("department_id") @db.UnsignedInt
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
-  deletedAt    DateTime? @map("deleted_at")
+  personId     Int             @id @map("person_id") @db.UnsignedInt
+  departmentId Int?            @map("department_id") @db.UnsignedInt
+  specialty    String?         @db.VarChar(100)
+  hireDate     DateTime?       @map("hire_date") @db.Date
+  status       ProfessorStatus @default(ACTIVE)
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+  deletedAt    DateTime?       @map("deleted_at")
 
+  person          Person           @relation(fields: [personId], references: [id])
   department      Department?      @relation(fields: [departmentId], references: [id])
   courseOfferings CourseOffering[]
 
   @@map("professor")
 }
 
+enum ProfessorStatus {
+  ACTIVE
+  INACTIVE
+  ON_LEAVE
+}
+
 // ─── ALUMNOS ─────────────────────────────────────────────────────────
 
 model Student {
-  id             Int       @id @default(autoincrement()) @db.UnsignedInt
-  firstName      String    @map("first_name") @db.VarChar(100)
-  lastName       String    @map("last_name") @db.VarChar(100)
-  code           String    @unique @db.Char(10)
-  email          String    @unique @db.VarChar(150)
-  careerId       Int       @map("career_id") @db.UnsignedInt
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
-  deletedAt      DateTime? @map("deleted_at")
+  personId  Int       @id @map("person_id") @db.UnsignedInt
+  code      String    @unique @db.Char(10)
+  careerId  Int       @map("career_id") @db.UnsignedInt
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
+  person      Person       @relation(fields: [personId], references: [id])
   career      Career       @relation(fields: [careerId], references: [id])
   enrollments Enrollment[]
 
@@ -114,7 +141,7 @@ model CourseOffering {
 
   course         Course         @relation(fields: [courseId], references: [id])
   academicPeriod AcademicPeriod @relation(fields: [academicPeriodId], references: [id])
-  professor      Professor?     @relation(fields: [professorId], references: [id])
+  professor      Professor?     @relation(fields: [professorId], references: [personId])
   enrollments    Enrollment[]
 
   @@map("course_offering")
@@ -139,7 +166,7 @@ model Enrollment {
   updatedAt        DateTime         @updatedAt @map("updated_at")
   deletedAt        DateTime?        @map("deleted_at")
 
-  student        Student        @relation(fields: [studentId], references: [id])
+  student        Student        @relation(fields: [studentId], references: [personId])
   courseOffering CourseOffering @relation(fields: [courseOfferingId], references: [id])
 
   @@unique([studentId, courseOfferingId])
