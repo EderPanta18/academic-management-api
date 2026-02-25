@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ─── TABLAS DE SOPORTE (seed) ────────────────────────────────────────
+
+model Career {
+  id        Int       @id @default(autoincrement()) @db.UnsignedInt
+  name      String    @db.VarChar(100)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  students  Student[]
+  courses   Course[]
+
+  @@map("career")
+}
+
+model Department {
+  id        Int       @id @default(autoincrement()) @db.UnsignedInt
+  name      String    @db.VarChar(100)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  professors Professor[]
+
+  @@map("department")
+}
+
+model AcademicPeriod {
+  id        Int       @id @default(autoincrement()) @db.UnsignedInt
+  name      String    @db.VarChar(50)
+  startDate DateTime  @map("start_date") @db.Date
+  endDate   DateTime  @map("end_date") @db.Date
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  courseOfferings CourseOffering[]
+
+  @@map("academic_period")
+}
+
+// ─── PROFESORES ──────────────────────────────────────────────────────
+
+model Professor {
+  id           Int       @id @default(autoincrement()) @db.UnsignedInt
+  firstName    String    @map("first_name") @db.VarChar(100)
+  lastName     String    @map("last_name") @db.VarChar(100)
+  email        String    @unique @db.VarChar(150)
+  departmentId Int?      @map("department_id") @db.UnsignedInt
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
+  department      Department?      @relation(fields: [departmentId], references: [id])
+  courseOfferings CourseOffering[]
+
+  @@map("professor")
+}
+
+// ─── ALUMNOS ─────────────────────────────────────────────────────────
+
+model Student {
+  id             Int       @id @default(autoincrement()) @db.UnsignedInt
+  firstName      String    @map("first_name") @db.VarChar(100)
+  lastName       String    @map("last_name") @db.VarChar(100)
+  code           String    @unique @db.Char(10)
+  email          String    @unique @db.VarChar(150)
+  careerId       Int       @map("career_id") @db.UnsignedInt
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  career      Career       @relation(fields: [careerId], references: [id])
+  enrollments Enrollment[]
+
+  @@map("student")
+}
+
+// ─── CURSOS ──────────────────────────────────────────────────────────
+
+model Course {
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  name        String    @db.VarChar(150)
+  description String?   @db.Text
+  careerId    Int       @map("career_id") @db.UnsignedInt
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  career          Career           @relation(fields: [careerId], references: [id])
+  courseOfferings CourseOffering[]
+
+  @@map("course")
+}
+
+model CourseOffering {
+  id               Int                  @id @default(autoincrement()) @db.UnsignedInt
+  courseId         Int                  @map("course_id") @db.UnsignedInt
+  academicPeriodId Int                  @map("academic_period_id") @db.UnsignedInt
+  professorId      Int?                 @map("professor_id") @db.UnsignedInt
+  maxStudents      Int                  @default(30) @map("max_students") @db.SmallInt
+  status           CourseOfferingStatus @default(ACTIVE)
+  createdAt        DateTime             @default(now()) @map("created_at")
+  updatedAt        DateTime             @updatedAt @map("updated_at")
+  deletedAt        DateTime?            @map("deleted_at")
+
+  course         Course         @relation(fields: [courseId], references: [id])
+  academicPeriod AcademicPeriod @relation(fields: [academicPeriodId], references: [id])
+  professor      Professor?     @relation(fields: [professorId], references: [id])
+  enrollments    Enrollment[]
+
+  @@map("course_offering")
+}
+
+enum CourseOfferingStatus {
+  ACTIVE
+  INACTIVE
+  CANCELLED
+  COMPLETED
+}
+
+// ─── INSCRIPCIONES ───────────────────────────────────────────────────
+
+model Enrollment {
+  id               Int              @id @default(autoincrement()) @db.UnsignedInt
+  studentId        Int              @map("student_id") @db.UnsignedInt
+  courseOfferingId Int              @map("course_offering_id") @db.UnsignedInt
+  enrollmentDate   DateTime         @default(now()) @map("enrollment_date") @db.DateTime(0)
+  status           EnrollmentStatus @default(ENROLLED)
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+  deletedAt        DateTime?        @map("deleted_at")
+
+  student        Student        @relation(fields: [studentId], references: [id])
+  courseOffering CourseOffering @relation(fields: [courseOfferingId], references: [id])
+
+  @@unique([studentId, courseOfferingId])
+  @@map("enrollment")
+}
+
+enum EnrollmentStatus {
+  ENROLLED
+  WITHDRAWN
+  COMPLETED
+  SUSPENDED
+}

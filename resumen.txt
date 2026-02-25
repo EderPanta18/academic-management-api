@@ -1,0 +1,824 @@
+
+===== app.controller.ts =====
+// app.controller.ts
+
+import { Controller, Get } from '@nestjs/common';
+
+@Controller()
+export class AppController {
+  constructor() {}
+
+  @Get()
+  getHello(): string {
+    return 'Hello World!';
+  }
+}
+
+
+
+
+===== app.module.ts =====
+// app.module.ts
+
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { PrismaModule } from '@shared/infrastructure/database';
+import { databaseConfig } from './config';
+import { AppController } from './app.controller';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      envFilePath: [
+        `.env.${process.env.NODE_ENV}.local`, // .env.development.local o .env.production.local
+        `.env.${process.env.NODE_ENV}`, // .env.development o .env.production
+        '.env.local', // fallback local genérico
+        '.env', // fallback final
+      ],
+      load: [databaseConfig],
+    }),
+    PrismaModule,
+  ],
+  controllers: [AppController],
+})
+export class AppModule {}
+
+
+
+
+===== main.ts =====
+// main.ts
+
+import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
+import {
+  API_PREFIX,
+  AllExceptionsFilter,
+  DomainExceptionFilter,
+  LoggingInterceptor,
+  ResponseWrapperInterceptor,
+  ValidationPipe,
+} from '@shared/presentation';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // ConfigService disponible una vez que el AppModule está inicializado
+  const configService = app.get(ConfigService);
+  const port = configService.getOrThrow<number>('PORT');
+
+  app.setGlobalPrefix(API_PREFIX);
+
+  app.useGlobalFilters(
+    new AllExceptionsFilter(), // red de seguridad, actúa de último
+    new DomainExceptionFilter(), // actúa primero, captura DomainException
+  );
+
+  app.useGlobalInterceptors(
+    new LoggingInterceptor(),
+    new ResponseWrapperInterceptor(),
+  );
+
+  app.useGlobalPipes(new ValidationPipe());
+
+  await app.listen(port);
+}
+bootstrap();
+
+
+
+.
+===== database.config.ts =====
+// config/db.config.ts
+
+import { registerAs } from '@nestjs/config';
+
+export default registerAs('database', () => ({
+  url: process.env.DATABASE_URL ?? 'url-not-set',
+}));
+.
+.
+.
+.
+===== index.ts =====
+// config/index.ts
+
+export { default as databaseConfig } from './database.config';
+.
+.
+.
+.
+===== index.ts =====
+// shared/application/index.ts
+
+export * from './constants';
+export * from './dtos';
+.
+.
+.
+.
+===== bulk-import.constants.ts =====
+// shared/application/constants/bulk-import.constants.ts
+
+export const BULK_IMPORT = {
+  MAX_ROWS: 500,
+  MIN_ROWS: 1,
+  ALLOWED_MIMETYPES: [
+    'text/csv',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  ],
+  ALLOWED_EXTENSIONS: ['.csv', '.xlsx'],
+  MAX_FILE_SIZE_MB: 5,
+} as const;
+.
+.
+.
+.
+===== index.ts =====
+// shared/application/constants/index.ts
+
+export * from './bulk-import.constants';
+.
+.
+.
+.
+===== bulk-result.dto.ts =====
+// shared/application/dtos/bulk-result.dto.ts
+
+export class BulkRowErrorDto {
+  readonly row: number; // número de fila en el archivo
+  readonly field: string; // campo que falló
+  readonly reason: string; // motivo específico del fallo
+
+  private constructor(row: number, field: string, reason: string) {
+    this.row = row;
+    this.field = field;
+    this.reason = reason;
+  }
+
+  static from(row: number, field: string, reason: string): BulkRowErrorDto {
+    return new BulkRowErrorDto(row, field, reason);
+  }
+}
+
+export class BulkResultDto {
+  readonly totalProcessed: number;
+  readonly totalSuccess: number;
+  readonly totalFailed: number;
+  readonly errors: BulkRowErrorDto[];
+
+  private constructor(
+    totalProcessed: number,
+    totalSuccess: number,
+    totalFailed: number,
+    errors: BulkRowErrorDto[],
+  ) {
+    this.totalProcessed = totalProcessed;
+    this.totalSuccess = totalSuccess;
+    this.totalFailed = totalFailed;
+    this.errors = errors;
+  }
+
+  static from(
+    totalProcessed: number,
+    errors: BulkRowErrorDto[],
+  ): BulkResultDto {
+    const totalFailed = errors.length;
+    const totalSuccess = totalProcessed - totalFailed;
+
+    return new BulkResultDto(totalProcessed, totalSuccess, totalFailed, errors);
+  }
+}
+.
+.
+.
+.
+===== index.ts =====
+// shared/application/dtos/index.ts
+
+export { PaginatedResultDto } from './paginated-result.dto';
+export { BulkRowErrorDto, BulkResultDto } from './bulk-result.dto';
+.
+.
+.
+.
+===== paginated-result.dto.ts =====
+// shared/application/dtos/paginated-result.dto.ts
+
+import { PaginationVO } from '@shared/domain/value-objects';
+
+export class PaginatedResultDto<T> {
+  readonly items: T[];
+  readonly total: number;
+  readonly page: number;
+  readonly pageSize: number;
+  readonly hasNextPage: boolean;
+
+  private constructor(items: T[], total: number, pagination: PaginationVO) {
+    this.items = items;
+    this.total = total;
+    this.page = pagination.page;
+    this.pageSize = pagination.pageSize;
+    this.hasNextPage = pagination.offset + pagination.pageSize < total;
+  }
+
+  static from<T>(
+    items: T[],
+    total: number,
+    pagination: PaginationVO,
+  ): PaginatedResultDto<T> {
+    return new PaginatedResultDto(items, total, pagination);
+  }
+}
+.
+.
+.
+.
+===== index.ts =====
+// shared/domain/index.ts
+
+export * from './constants';
+export * from './events';
+export * from './exceptions';
+export * from './value-objects';
+.
+.
+.
+.
+===== index.ts =====
+// shared/domain/constants/index.ts
+
+export * from './pagination.constants';
+.
+.
+.
+.
+===== pagination.constants.ts =====
+// shared/domain/constants/pagination.constants.ts
+
+export const PAGINATION_DEFAULTS = {
+  PAGE: 1,
+  PAGE_SIZE: 20,
+} as const;
+
+export const PAGINATION_LIMITS = {
+  MIN_PAGE: 1,
+  MIN_PAGE_SIZE: 1,
+  MAX_PAGE_SIZE: 100,
+} as const;
+.
+.
+.
+.
+===== base.event.ts =====
+// shared/domain/events/base.event.ts
+
+export abstract class BaseEvent {
+  abstract readonly eventName: string;
+  readonly occurredAt: Date;
+
+  constructor() {
+    this.occurredAt = new Date();
+    Object.freeze(this);
+  }
+}
+.
+.
+.
+.
+===== index.ts =====
+// shared/domain/events/index.ts
+
+export { BaseEvent } from './base.event';
+.
+.
+.
+.
+===== domain.exception.ts =====
+// shared/domain/exceptions/domain.exception.ts
+
+export abstract class DomainException extends Error {
+  abstract readonly statusCode: number; // cada excepción concreta declara el suyo
+  abstract readonly domain: string; // "PROFESSOR" | "STUDENT" | "COURSE" | "ENROLLMENT"
+  abstract readonly errorKey: string;
+  abstract readonly errorCode: string;
+
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+.
+.
+.
+.
+===== index.ts =====
+// shared/domain/exceptions/index.ts
+
+export { DomainException } from './domain.exception';
+.
+.
+.
+.
+===== index.ts =====
+// shared/domain/value-objects/index.ts
+
+export { PaginationVO } from './pagination.vo';
+.
+.
+.
+.
+===== pagination.vo.ts =====
+// src/shared/domain/value-objects/pagination.vo.ts
+
+import { PAGINATION_DEFAULTS, PAGINATION_LIMITS } from '../constants';
+
+export class PaginationVO {
+  readonly page: number;
+  readonly pageSize: number;
+
+  constructor(page?: number, pageSize?: number) {
+    this.page = page ?? PAGINATION_DEFAULTS.PAGE;
+    this.pageSize = pageSize ?? PAGINATION_DEFAULTS.PAGE_SIZE;
+
+    this.validate();
+    Object.freeze(this);
+  }
+
+  private validate(): void {
+    if (this.page < PAGINATION_LIMITS.MIN_PAGE) {
+      throw new Error(
+        `page debe ser mayor o igual a ${PAGINATION_LIMITS.MIN_PAGE}`,
+      );
+    }
+
+    if (this.pageSize < PAGINATION_LIMITS.MIN_PAGE_SIZE) {
+      throw new Error(
+        `pageSize debe ser mayor o igual a ${PAGINATION_LIMITS.MIN_PAGE_SIZE}`,
+      );
+    }
+
+    if (this.pageSize > PAGINATION_LIMITS.MAX_PAGE_SIZE) {
+      throw new Error(
+        `pageSize no puede superar ${PAGINATION_LIMITS.MAX_PAGE_SIZE}`,
+      );
+    }
+  }
+
+  // Calcula el offset para la query de Prisma
+  get offset(): number {
+    return (this.page - 1) * this.pageSize;
+  }
+}
+.
+.
+.
+.
+===== index.ts =====
+// shared/infrastructure/index.ts
+
+export * from './constants';
+export * from './database';
+.
+.
+.
+.
+===== database.constants.ts =====
+// shared/infrastructure/constants/database.constants.ts
+
+export const DB_AUDIT_FIELDS = {
+  CREATED_AT: 'createdAt',
+  UPDATED_AT: 'updatedAt',
+  DELETED_AT: 'deletedAt',
+} as const;
+.
+.
+.
+.
+===== index.ts =====
+// shared/infrastructure/constants/index.ts
+
+export * from './database.constants';
+.
+.
+.
+.
+===== index.ts =====
+// shared/infrastructure/database/index.ts
+
+export { PrismaModule } from './prisma.module';
+export { PrismaService } from './prisma.service';
+.
+.
+.
+.
+===== prisma.module.ts =====
+// shared/infrastructure/database/prisma.module.ts
+
+import { Global, Module } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
+
+@Global()
+@Module({
+  providers: [PrismaService],
+  exports: [PrismaService],
+})
+export class PrismaModule {}
+.
+.
+.
+.
+===== prisma.service.ts =====
+// shared/infrastructure/database/prisma.service.ts
+
+import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+
+@Injectable()
+export class PrismaService
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
+  constructor() {
+    super();
+  }
+
+  async onModuleInit() {
+    await this.$connect();
+  }
+
+  async onModuleDestroy() {
+    await this.$disconnect();
+  }
+}
+.
+.
+.
+.
+===== index.ts =====
+// shared/presentation/index.ts
+
+export * from './constants';
+export * from './filters';
+export * from './interceptors';
+export * from './pipes';
+.
+.
+.
+.
+===== http.constants.ts =====
+// shared/presentation/constants/http.constants.ts
+
+export const API_PREFIX = 'api/v1';
+.
+.
+.
+.
+===== index.ts =====
+// shared/presentation/constants/index.ts
+
+export * from './http.constants';
+.
+.
+.
+.
+===== api-paginated-response.decorator.ts =====
+// shared/presentation/decorators/api-paginated-response.decorator.ts
+
+import { applyDecorators, HttpCode, HttpStatus } from '@nestjs/common';
+import { ApiExtraModels, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
+import { PaginatedResultDto } from '@shared/application/dtos';
+
+export const ApiPaginatedResponse = () =>
+  applyDecorators(
+    ApiExtraModels(PaginatedResultDto),
+    HttpCode(HttpStatus.OK),
+    ApiOkResponse({
+      schema: {
+        allOf: [
+          {
+            properties: {
+              success: {
+                type: 'boolean',
+                example: true,
+              },
+              statusCode: {
+                type: 'number',
+                example: 200,
+              },
+              data: {
+                $ref: getSchemaPath(PaginatedResultDto),
+              },
+              timestamp: {
+                type: 'string',
+                format: 'date-time',
+                example: '2026-02-24T22:00:00.000Z',
+              },
+              path: {
+                type: 'string',
+                example: '/api/v1/professors',
+              },
+            },
+          },
+          {
+            properties: {
+              data: {
+                $ref: getSchemaPath(PaginatedResultDto),
+              },
+            },
+          },
+        ],
+      },
+    }),
+  );
+.
+.
+.
+.
+===== index.ts =====
+// shared/presentation/decorators/index.ts
+
+export { ApiPaginatedResponse } from './api-paginated-response.decorator';
+.
+.
+.
+.
+===== all-exceptions.filter.ts =====
+// shared/presentation/filters/all-exceptions.filter.ts
+
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+  Logger,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
+
+@Catch()
+export class AllExceptionsFilter implements ExceptionFilter {
+  private readonly logger = new Logger(AllExceptionsFilter.name);
+
+  catch(exception: unknown, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const res = ctx.getResponse<Response>();
+    const req = ctx.getRequest<Request>();
+
+    if (exception instanceof HttpException) {
+      const statusCode = exception.getStatus();
+      const body = exception.getResponse(); // ya tiene nuestro contrato
+
+      this.logger.warn(`[${req.method}] ${req.url} → ${statusCode}`);
+
+      res.status(statusCode).json(
+        typeof body === 'object'
+          ? { ...body, timestamp: new Date().toISOString(), path: req.url }
+          : {
+              success: false,
+              statusCode,
+              errorKey: `HTTP_ERROR`,
+              errorCode: `SYS_${statusCode}`,
+              message: String(body),
+              timestamp: new Date().toISOString(),
+              path: req.url,
+            },
+      );
+      return;
+    }
+
+    // Error completamente inesperado
+    this.logger.error(
+      `[${req.method}] ${req.url} → 500`,
+      exception instanceof Error ? exception.stack : String(exception),
+    );
+
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      errorKey: 'INTERNAL_SERVER_ERROR',
+      errorCode: 'SYS_500',
+      message: 'Ha ocurrido un error inesperado. Intente nuevamente.',
+      timestamp: new Date().toISOString(),
+      path: req.url,
+    });
+  }
+}
+.
+.
+.
+.
+===== domain-exception.filter.ts =====
+// PREVIEW — shared/presentation/filters/domain-exception.filter.ts
+
+import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import { Request, Response } from 'express';
+import { DomainException } from '@shared/domain/exceptions';
+
+@Catch(DomainException)
+export class DomainExceptionFilter implements ExceptionFilter {
+  catch(exception: DomainException, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const res = ctx.getResponse<Response>();
+    const req = ctx.getRequest<Request>();
+
+    res.status(exception.statusCode).json({
+      success: false,
+      statusCode: exception.statusCode,
+      domain: exception.domain,
+      errorKey: exception.errorKey,
+      errorCode: exception.errorCode,
+      message: exception.message,
+      timestamp: new Date().toISOString(),
+      path: req.url,
+    });
+  }
+}
+.
+.
+.
+.
+===== index.ts =====
+// shared/presentation/filters/index.ts
+
+export { AllExceptionsFilter } from './all-exceptions.filter';
+export { DomainExceptionFilter } from './domain-exception.filter';
+.
+.
+.
+.
+===== index.ts =====
+// shared/presentation/interceptors/index.ts
+
+export { ResponseWrapperInterceptor } from './response-wrapper.interceptor';
+export { LoggingInterceptor } from './logging.interceptor';
+.
+.
+.
+.
+===== logging.interceptor.ts =====
+// shared/presentation/interceptors/logging.interceptor.ts
+
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  Logger,
+  NestInterceptor,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
+import { Observable, tap } from 'rxjs';
+
+@Injectable()
+export class LoggingInterceptor implements NestInterceptor {
+  private readonly logger = new Logger('HTTP');
+
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    const req = context.switchToHttp().getRequest<Request>();
+    const res = context.switchToHttp().getResponse<Response>();
+    const { method, url } = req;
+    const start = Date.now();
+
+    return next.handle().pipe(
+      tap(() => {
+        const ms = Date.now() - start;
+        this.logger.log(`${method} ${url} → ${res.statusCode} [${ms}ms]`);
+      }),
+    );
+  }
+}
+.
+.
+.
+.
+===== response-wrapper.interceptor.ts =====
+// shared/presentation/interceptors/response-wrapper.interceptor.ts
+
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+export interface WrappedResponse<T> {
+  success: boolean;
+  statusCode: number;
+  data: T;
+  timestamp: string;
+  path: string;
+}
+
+@Injectable()
+export class ResponseWrapperInterceptor<T> implements NestInterceptor<
+  T,
+  WrappedResponse<T>
+> {
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler<T>,
+  ): Observable<WrappedResponse<T>> {
+    const req = context.switchToHttp().getRequest<Request>();
+    const res = context.switchToHttp().getResponse<Response>();
+
+    return next.handle().pipe(
+      map((data) => ({
+        success: true,
+        statusCode: res.statusCode,
+        data,
+        timestamp: new Date().toISOString(),
+        path: req.url,
+      })),
+    );
+  }
+}
+.
+.
+.
+.
+===== index.ts =====
+// shared/presentation/pipes/index.ts
+
+export { ValidationPipe } from './validation.pipe';
+.
+.
+.
+.
+===== validation.pipe.ts =====
+// shared/presentation/pipes/validation.pipe.ts
+
+import {
+  BadRequestException,
+  ValidationPipe as NestValidationPipe,
+  ValidationError,
+} from '@nestjs/common';
+
+export class ValidationPipe extends NestValidationPipe {
+  constructor() {
+    super({
+      // Transforma el body al tipo del DTO declarado en el parámetro
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+
+      // Elimina propiedades no declaradas en el DTO
+      whitelist: true,
+
+      // Lanza error si el cliente envía propiedades no declaradas
+      forbidNonWhitelisted: true,
+
+      // Construye el error con el mismo contrato que DomainExceptionFilter
+      exceptionFactory: (errors: ValidationError[]) => {
+        const fieldErrors = ValidationPipe.flattenErrors(errors);
+
+        return new BadRequestException({
+          success: false,
+          statusCode: 400,
+          errorKey: 'VALIDATION_ERROR',
+          errorCode: 'SYS_400',
+          message: 'Los datos enviados no son válidos',
+          fieldErrors,
+        });
+      },
+    });
+  }
+
+  // Aplana el árbol anidado de ValidationError en un mapa campo → mensajes
+  private static flattenErrors(
+    errors: ValidationError[],
+    parentField = '',
+  ): Record<string, string[]> {
+    return errors.reduce(
+      (acc, error) => {
+        const field = parentField
+          ? `${parentField}.${error.property}`
+          : error.property;
+
+        if (error.constraints) {
+          acc[field] = Object.values(error.constraints);
+        }
+
+        // Errores anidados (objetos dentro de DTOs)
+        if (error.children?.length) {
+          Object.assign(
+            acc,
+            ValidationPipe.flattenErrors(error.children, field),
+          );
+        }
+
+        return acc;
+      },
+      {} as Record<string, string[]>,
+    );
+  }
+}
+.
+.
+.
