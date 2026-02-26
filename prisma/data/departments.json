@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Ciencias Administrativas",
+    "description": "Gestión empresarial, administración general y aplicada para el sector productivo regional."
+  },
+  {
+    "name": "Agronomía",
+    "description": "Ingeniería agronómica, agrícola y sanidad vegetal para cultivos sostenibles en Piura."
+  },
+  {
+    "name": "Ciencias Contables y Financieras",
+    "description": "Contabilidad, auditoría y finanzas con enfoque en empresas agroindustriales."
+  },
+  {
+    "name": "Economía",
+    "description": "Análisis económico regional, políticas públicas y desarrollo sostenible."
+  },
+  {
+    "name": "Ingeniería Industrial",
+    "description": "Ingeniería industrial, informática, agroindustrial, mecatrónica e industrias alimentarias."
+  },
+  {
+    "name": "Ingeniería de Minas",
+    "description": "Ingeniería de minas, petróleo, geológica, química y ambiental con énfasis en seguridad."
+  },
+  {
+    "name": "Ingeniería Pesquera",
+    "description": "Ingeniería pesquera para la explotación sostenible de recursos marinos del Pacífico."
+  },
+  {
+    "name": "Zootecnia",
+    "description": "Ingeniería zootécnica y medicina veterinaria para ganadería tropical."
+  },
+  {
+    "name": "Ciencias de la Salud",
+    "description": "Medicina humana, enfermería, estomatología, obstetricia y psicología clínica."
+  },
+  {
+    "name": "Ciencias y Educación",
+    "description": "Historia, geografía, lengua, educación inicial, primaria y comunicación social."
+  },
+  {
+    "name": "Derecho y Ciencias Políticas",
+    "description": "Derecho civil, penal y constitucional con enfoque en derecho ambiental."
+  },
+  {
+    "name": "Ciencias",
+    "description": "Matemáticas, física, biológicas, electrónica y estadística aplicada."
+  },
+  {
+    "name": "Ingeniería Civil",
+    "description": "Ingeniería civil y sanitaria para infraestructura en zonas costeras."
+  },
+  {
+    "name": "Arquitectura y Urbanismo",
+    "description": "Arquitectura sostenible y urbanismo adaptado al clima desértico de Piura."
+  }
+]

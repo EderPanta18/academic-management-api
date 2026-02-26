@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Estudios Generales",
+    "description": "Asignaturas formativas básicas comunes a diversas facultades, orientadas al desarrollo humanístico, científico y social."
+  },
+  {
+    "name": "Formación Profesional Específica",
+    "description": "Cursos fundamentales de la carrera que proporcionan la base científica y técnica necesaria para el ejercicio profesional."
+  },
+  {
+    "name": "Formación Profesional de Especialidad",
+    "description": "Materias de profundización en áreas concretas del campo laboral, orientadas a la especialización técnica avanzada."
+  },
+  {
+    "name": "Investigación y Tesis",
+    "description": "Cursos destinados al desarrollo de la metodología científica, seminarios de investigación y proyectos de fin de carrera."
+  },
+  {
+    "name": "Prácticas Pre-Profesionales",
+    "description": "Categoría que agrupa las actividades de inserción laboral guiada en entornos reales de trabajo."
+  },
+  {
+    "name": "Actividades Co-curriculares",
+    "description": "Talleres de arte, deportes, proyección social y actividades de extensión universitaria."
+  },
+  {
+    "name": "Idiomas y TICs",
+    "description": "Cursos transversales para el dominio de lenguas extranjeras y herramientas informáticas aplicadas."
+  },
+  {
+    "name": "Electivos de Especialidad",
+    "description": "Asignaturas de libre elección que permiten al estudiante personalizar su perfil profesional según sus intereses."
+  }
+]

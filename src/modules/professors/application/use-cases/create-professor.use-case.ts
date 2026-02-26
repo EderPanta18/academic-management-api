@@ -37,6 +37,7 @@ export class CreateProfessorUseCase {
       lastName: command.lastName,
       email: command.email,
       departmentId: command.departmentId,
+      code: command.code,
       specialty: command.specialty,
       hireDate: command.hireDate,
       phone: command.phone,

@@ -1,0 +1,482 @@
+[
+  {
+    "dni": "43930600",
+    "careerName": "Administración",
+    "code": "0120250001",
+    "institutionalEmail": "0120250001@unp.edu.pe",
+    "enrollmentDate": "2025-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "22639532",
+    "careerName": "Gestión Pública",
+    "code": "0220250002",
+    "institutionalEmail": "0220250002@unp.edu.pe",
+    "enrollmentDate": "2025-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "64147455",
+    "careerName": "Ingeniería Agronómica",
+    "code": "0320250003",
+    "institutionalEmail": "0320250003@unp.edu.pe",
+    "enrollmentDate": "2025-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "55814176",
+    "careerName": "Ingeniería Agrícola",
+    "code": "0420220004",
+    "institutionalEmail": "0420220004@unp.edu.pe",
+    "enrollmentDate": "2022-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "75618647",
+    "careerName": "Contabilidad",
+    "code": "0520180005",
+    "institutionalEmail": "0520180005@unp.edu.pe",
+    "enrollmentDate": "2018-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "27716812",
+    "careerName": "Auditoría y Finanzas",
+    "code": "0620220006",
+    "institutionalEmail": "0620220006@unp.edu.pe",
+    "enrollmentDate": "2022-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "62795486",
+    "careerName": "Economía",
+    "code": "0720230007",
+    "institutionalEmail": "0720230007@unp.edu.pe",
+    "enrollmentDate": "2023-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "42527575",
+    "careerName": "Ingeniería Industrial",
+    "code": "0820200008",
+    "institutionalEmail": "0820200008@unp.edu.pe",
+    "enrollmentDate": "2020-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "33047354",
+    "careerName": "Ingeniería Informática",
+    "code": "0920190009",
+    "institutionalEmail": "0920190009@unp.edu.pe",
+    "enrollmentDate": "2019-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "32799534",
+    "careerName": "Ingeniería Agroindustrial",
+    "code": "1020250010",
+    "institutionalEmail": "1020250010@unp.edu.pe",
+    "enrollmentDate": "2025-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "19712733",
+    "careerName": "Ingeniería de Minas",
+    "code": "0120170011",
+    "institutionalEmail": "0120170011@unp.edu.pe",
+    "enrollmentDate": "2017-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "32019576",
+    "careerName": "Ingeniería de Petróleo",
+    "code": "0220190012",
+    "institutionalEmail": "0220190012@unp.edu.pe",
+    "enrollmentDate": "2019-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "65293799",
+    "careerName": "Ingeniería Geológica",
+    "code": "0320170013",
+    "institutionalEmail": "0320170013@unp.edu.pe",
+    "enrollmentDate": "2017-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "39184306",
+    "careerName": "Ingeniería Pesquera",
+    "code": "0420230014",
+    "institutionalEmail": "0420230014@unp.edu.pe",
+    "enrollmentDate": "2023-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "34292634",
+    "careerName": "Ingeniería Zootécnica",
+    "code": "0520200015",
+    "institutionalEmail": "0520200015@unp.edu.pe",
+    "enrollmentDate": "2020-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "33025006",
+    "careerName": "Medicina Veterinaria y Zootecnia",
+    "code": "0620240016",
+    "institutionalEmail": "0620240016@unp.edu.pe",
+    "enrollmentDate": "2024-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "20327828",
+    "careerName": "Medicina Humana",
+    "code": "0720210017",
+    "institutionalEmail": "0720210017@unp.edu.pe",
+    "enrollmentDate": "2021-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "56156977",
+    "careerName": "Enfermería",
+    "code": "0820230018",
+    "institutionalEmail": "0820230018@unp.edu.pe",
+    "enrollmentDate": "2023-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "33211670",
+    "careerName": "Estomatología",
+    "code": "0920240019",
+    "institutionalEmail": "0920240019@unp.edu.pe",
+    "enrollmentDate": "2024-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "10796890",
+    "careerName": "Obstetricia",
+    "code": "1020230020",
+    "institutionalEmail": "1020230020@unp.edu.pe",
+    "enrollmentDate": "2023-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "73541979",
+    "careerName": "Educación Inicial",
+    "code": "0120200021",
+    "institutionalEmail": "0120200021@unp.edu.pe",
+    "enrollmentDate": "2020-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "18658786",
+    "careerName": "Educación Primaria",
+    "code": "0220190022",
+    "institutionalEmail": "0220190022@unp.edu.pe",
+    "enrollmentDate": "2019-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "10343779",
+    "careerName": "Comunicación Social",
+    "code": "0320210023",
+    "institutionalEmail": "0320210023@unp.edu.pe",
+    "enrollmentDate": "2021-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "58675978",
+    "careerName": "Derecho",
+    "code": "0420230024",
+    "institutionalEmail": "0420230024@unp.edu.pe",
+    "enrollmentDate": "2023-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "26431232",
+    "careerName": "Matemáticas",
+    "code": "0520190025",
+    "institutionalEmail": "0520190025@unp.edu.pe",
+    "enrollmentDate": "2019-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "50138183",
+    "careerName": "Física",
+    "code": "0620170026",
+    "institutionalEmail": "0620170026@unp.edu.pe",
+    "enrollmentDate": "2017-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "38266656",
+    "careerName": "Biología",
+    "code": "0720160027",
+    "institutionalEmail": "0720160027@unp.edu.pe",
+    "enrollmentDate": "2016-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "19977116",
+    "careerName": "Ingeniería Civil",
+    "code": "0820210028",
+    "institutionalEmail": "0820210028@unp.edu.pe",
+    "enrollmentDate": "2021-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "54902770",
+    "careerName": "Arquitectura",
+    "code": "0920240029",
+    "institutionalEmail": "0920240029@unp.edu.pe",
+    "enrollmentDate": "2024-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "62483982",
+    "careerName": "Administración",
+    "code": "1020230030",
+    "institutionalEmail": "1020230030@unp.edu.pe",
+    "enrollmentDate": "2023-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "54905611",
+    "careerName": "Gestión Pública",
+    "code": "0120180031",
+    "institutionalEmail": "0120180031@unp.edu.pe",
+    "enrollmentDate": "2018-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "67701345",
+    "careerName": "Ingeniería Agronómica",
+    "code": "0220220032",
+    "institutionalEmail": "0220220032@unp.edu.pe",
+    "enrollmentDate": "2022-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "30704530",
+    "careerName": "Ingeniería Agrícola",
+    "code": "0320250033",
+    "institutionalEmail": "0320250033@unp.edu.pe",
+    "enrollmentDate": "2025-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "39032615",
+    "careerName": "Contabilidad",
+    "code": "0420220034",
+    "institutionalEmail": "0420220034@unp.edu.pe",
+    "enrollmentDate": "2022-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "12900508",
+    "careerName": "Auditoría y Finanzas",
+    "code": "0520220035",
+    "institutionalEmail": "0520220035@unp.edu.pe",
+    "enrollmentDate": "2022-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "63262135",
+    "careerName": "Economía",
+    "code": "0620160036",
+    "institutionalEmail": "0620160036@unp.edu.pe",
+    "enrollmentDate": "2016-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "13411956",
+    "careerName": "Ingeniería Industrial",
+    "code": "0720180037",
+    "institutionalEmail": "0720180037@unp.edu.pe",
+    "enrollmentDate": "2018-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "58102184",
+    "careerName": "Ingeniería Informática",
+    "code": "0820190038",
+    "institutionalEmail": "0820190038@unp.edu.pe",
+    "enrollmentDate": "2019-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "34585964",
+    "careerName": "Ingeniería Agroindustrial",
+    "code": "0920230039",
+    "institutionalEmail": "0920230039@unp.edu.pe",
+    "enrollmentDate": "2023-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "61676322",
+    "careerName": "Ingeniería de Minas",
+    "code": "1020170040",
+    "institutionalEmail": "1020170040@unp.edu.pe",
+    "enrollmentDate": "2017-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "70808552",
+    "careerName": "Ingeniería de Petróleo",
+    "code": "0120180041",
+    "institutionalEmail": "0120180041@unp.edu.pe",
+    "enrollmentDate": "2018-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "30151348",
+    "careerName": "Ingeniería Geológica",
+    "code": "0220200042",
+    "institutionalEmail": "0220200042@unp.edu.pe",
+    "enrollmentDate": "2020-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "12080632",
+    "careerName": "Ingeniería Pesquera",
+    "code": "0320220043",
+    "institutionalEmail": "0320220043@unp.edu.pe",
+    "enrollmentDate": "2022-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "48383268",
+    "careerName": "Ingeniería Zootécnica",
+    "code": "0420160044",
+    "institutionalEmail": "0420160044@unp.edu.pe",
+    "enrollmentDate": "2016-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "60805882",
+    "careerName": "Medicina Veterinaria y Zootecnia",
+    "code": "0520220045",
+    "institutionalEmail": "0520220045@unp.edu.pe",
+    "enrollmentDate": "2022-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "59038997",
+    "careerName": "Medicina Humana",
+    "code": "0620180046",
+    "institutionalEmail": "0620180046@unp.edu.pe",
+    "enrollmentDate": "2018-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "51669515",
+    "careerName": "Enfermería",
+    "code": "0720190047",
+    "institutionalEmail": "0720190047@unp.edu.pe",
+    "enrollmentDate": "2019-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "31467457",
+    "careerName": "Estomatología",
+    "code": "0820160048",
+    "institutionalEmail": "0820160048@unp.edu.pe",
+    "enrollmentDate": "2016-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "33135614",
+    "careerName": "Obstetricia",
+    "code": "0920200049",
+    "institutionalEmail": "0920200049@unp.edu.pe",
+    "enrollmentDate": "2020-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "50863083",
+    "careerName": "Educación Inicial",
+    "code": "1020180050",
+    "institutionalEmail": "1020180050@unp.edu.pe",
+    "enrollmentDate": "2018-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "65836787",
+    "careerName": "Educación Primaria",
+    "code": "0120160051",
+    "institutionalEmail": "0120160051@unp.edu.pe",
+    "enrollmentDate": "2016-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "53582867",
+    "careerName": "Comunicación Social",
+    "code": "0220170052",
+    "institutionalEmail": "0220170052@unp.edu.pe",
+    "enrollmentDate": "2017-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "14456884",
+    "careerName": "Derecho",
+    "code": "0320190053",
+    "institutionalEmail": "0320190053@unp.edu.pe",
+    "enrollmentDate": "2019-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "26579683",
+    "careerName": "Matemáticas",
+    "code": "0420220054",
+    "institutionalEmail": "0420220054@unp.edu.pe",
+    "enrollmentDate": "2022-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "20453182",
+    "careerName": "Física",
+    "code": "0520250055",
+    "institutionalEmail": "0520250055@unp.edu.pe",
+    "enrollmentDate": "2025-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "50303609",
+    "careerName": "Biología",
+    "code": "0620220056",
+    "institutionalEmail": "0620220056@unp.edu.pe",
+    "enrollmentDate": "2022-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "72584077",
+    "careerName": "Ingeniería Civil",
+    "code": "0720160057",
+    "institutionalEmail": "0720160057@unp.edu.pe",
+    "enrollmentDate": "2016-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "69736410",
+    "careerName": "Arquitectura",
+    "code": "0820170058",
+    "institutionalEmail": "0820170058@unp.edu.pe",
+    "enrollmentDate": "2017-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "55058047",
+    "careerName": "Administración",
+    "code": "0920210059",
+    "institutionalEmail": "0920210059@unp.edu.pe",
+    "enrollmentDate": "2021-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "75560200",
+    "careerName": "Gestión Pública",
+    "code": "1020200060",
+    "institutionalEmail": "1020200060@unp.edu.pe",
+    "enrollmentDate": "2020-03-15",
+    "status": "ACTIVE"
+  }
+]

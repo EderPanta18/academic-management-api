@@ -1,0 +1,146 @@
+[
+  {
+    "courseName": "Introducción a la Administración",
+    "academicPeriodName": "2023-I",
+    "ProfessorCode": "PROF-001",
+    "section": "A",
+    "maxStudents": 40,
+    "enrollmentDeadline": "2023-03-20",
+    "status": "COMPLETED"
+  },
+  {
+    "courseName": "Algoritmos y Estructura de Datos",
+    "academicPeriodName": "2023-II",
+    "ProfessorCode": "PROF-005",
+    "section": "A",
+    "maxStudents": 35,
+    "enrollmentDeadline": "2023-08-15",
+    "status": "COMPLETED"
+  },
+  {
+    "courseName": "Anatomía Humana I",
+    "academicPeriodName": "2024-I",
+    "ProfessorCode": "PROF-009",
+    "section": "A",
+    "maxStudents": 30,
+    "enrollmentDeadline": "2024-03-15",
+    "status": "COMPLETED"
+  },
+  {
+    "courseName": "Derecho Civil: Personas",
+    "academicPeriodName": "2024-II",
+    "ProfessorCode": "PROF-011",
+    "section": "B",
+    "maxStudents": 50,
+    "enrollmentDeadline": "2024-08-20",
+    "status": "COMPLETED"
+  },
+  {
+    "courseName": "Mecánica de Suelos",
+    "academicPeriodName": "2025-I",
+    "ProfessorCode": "PROF-013",
+    "section": "A",
+    "maxStudents": 25,
+    "enrollmentDeadline": "2025-03-10",
+    "status": "COMPLETED"
+  },
+  {
+    "courseName": "Introducción a la Administración",
+    "academicPeriodName": "2025-II",
+    "ProfessorCode": "PROF-001",
+    "section": "B",
+    "maxStudents": 40,
+    "enrollmentDeadline": "2025-08-15",
+    "status": "COMPLETED"
+  },
+  {
+    "courseName": "Introducción a la Administración",
+    "academicPeriodName": "2026-I",
+    "ProfessorCode": "PROF-001",
+    "section": "A",
+    "maxStudents": 45,
+    "enrollmentDeadline": "2026-03-10",
+    "status": "ACTIVE"
+  },
+  {
+    "courseName": "Comportamiento Organizacional",
+    "academicPeriodName": "2026-I",
+    "ProfessorCode": "PROF-015",
+    "section": "A",
+    "maxStudents": 40,
+    "enrollmentDeadline": "2026-03-10",
+    "status": "ACTIVE"
+  },
+  {
+    "courseName": "Algoritmos y Estructura de Datos",
+    "academicPeriodName": "2026-I",
+    "ProfessorCode": "PROF-005",
+    "section": "A",
+    "maxStudents": 40,
+    "enrollmentDeadline": "2026-03-10",
+    "status": "ACTIVE"
+  },
+  {
+    "courseName": "Ingeniería de Software",
+    "academicPeriodName": "2026-I",
+    "ProfessorCode": "PROF-033",
+    "section": "A",
+    "maxStudents": 35,
+    "enrollmentDeadline": "2026-03-10",
+    "status": "ACTIVE"
+  },
+  {
+    "courseName": "Anatomía Humana I",
+    "academicPeriodName": "2026-I",
+    "ProfessorCode": "PROF-009",
+    "section": "A",
+    "maxStudents": 30,
+    "enrollmentDeadline": "2026-03-10",
+    "status": "ACTIVE"
+  },
+  {
+    "courseName": "Fisiología Médica",
+    "academicPeriodName": "2026-I",
+    "ProfessorCode": "PROF-037",
+    "section": "A",
+    "maxStudents": 30,
+    "enrollmentDeadline": "2026-03-10",
+    "status": "ACTIVE"
+  },
+  {
+    "courseName": "Derecho Civil: Personas",
+    "academicPeriodName": "2026-I",
+    "ProfessorCode": "PROF-011",
+    "section": "A",
+    "maxStudents": 50,
+    "enrollmentDeadline": "2026-03-10",
+    "status": "ACTIVE"
+  },
+  {
+    "courseName": "Derecho Penal Parte General",
+    "academicPeriodName": "2026-I",
+    "ProfessorCode": "PROF-025",
+    "section": "A",
+    "maxStudents": 50,
+    "enrollmentDeadline": "2026-03-10",
+    "status": "ACTIVE"
+  },
+  {
+    "courseName": "Mecánica de Suelos",
+    "academicPeriodName": "2026-I",
+    "ProfessorCode": "PROF-013",
+    "section": "A",
+    "maxStudents": 30,
+    "enrollmentDeadline": "2026-03-10",
+    "status": "ACTIVE"
+  },
+  {
+    "courseName": "Diseño de Estructuras",
+    "academicPeriodName": "2026-I",
+    "ProfessorCode": "PROF-027",
+    "section": "A",
+    "maxStudents": 30,
+    "enrollmentDeadline": "2026-03-10",
+    "status": "ACTIVE"
+  }
+]

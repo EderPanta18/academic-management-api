@@ -1,0 +1,58 @@
+[
+  {
+    "name": "2023-I",
+    "year": 2023,
+    "semester": 1,
+    "startDate": "2023-03-01",
+    "endDate": "2023-07-31",
+    "isCurrent": false
+  },
+  {
+    "name": "2023-II",
+    "year": 2023,
+    "semester": 2,
+    "startDate": "2023-08-01",
+    "endDate": "2023-12-31",
+    "isCurrent": false
+  },
+  {
+    "name": "2024-I",
+    "year": 2024,
+    "semester": 1,
+    "startDate": "2024-03-01",
+    "endDate": "2024-07-31",
+    "isCurrent": false
+  },
+  {
+    "name": "2024-II",
+    "year": 2024,
+    "semester": 2,
+    "startDate": "2024-08-01",
+    "endDate": "2024-12-20",
+    "isCurrent": false
+  },
+  {
+    "name": "2025-I",
+    "year": 2025,
+    "semester": 1,
+    "startDate": "2025-03-01",
+    "endDate": "2025-07-31",
+    "isCurrent": false
+  },
+  {
+    "name": "2025-II",
+    "year": 2025,
+    "semester": 2,
+    "startDate": "2025-08-01",
+    "endDate": "2025-12-20",
+    "isCurrent": false
+  },
+  {
+    "name": "2026-I",
+    "year": 2026,
+    "semester": 1,
+    "startDate": "2026-02-23",
+    "endDate": "2026-07-31",
+    "isCurrent": true
+  }
+]

@@ -1,6 +1,6 @@
-// modules/professors/domain/index.ts
+// modules/students/domain/index.ts
 
 export * from './constants';
 export * from './entities';
-export * from './exceptions';
+
 export * from './ports';

@@ -11,7 +11,9 @@ export class CreateProfessorCommand {
   readonly lastName: string;
   readonly email: string;
   readonly departmentId?: number;
+  readonly code: string;
   readonly specialty?: string;
+  readonly institutionalEmail?: string;
   readonly hireDate?: Date;
   readonly phone?: string;
   readonly birthDate?: Date;
@@ -23,7 +25,9 @@ export class CreateProfessorCommand {
     this.lastName = props.lastName;
     this.email = props.email;
     this.departmentId = props.departmentId;
+    this.code = props.code;
     this.specialty = props.specialty;
+    this.institutionalEmail = props.institutionalEmail;
     this.hireDate = props.hireDate;
     this.phone = props.phone;
     this.birthDate = props.birthDate;

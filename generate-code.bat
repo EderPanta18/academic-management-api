@@ -1,5 +1,5 @@
 @echo off
-set REPORT_NAME=code-structure.txt
+set REPORT_NAME=total_code.txt
 
 if exist %REPORT_NAME% del %REPORT_NAME%
 

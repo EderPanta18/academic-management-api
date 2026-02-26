@@ -1,0 +1,147 @@
+[
+  {
+    "departmentName": "Ciencias Administrativas",
+    "name": "Administración",
+    "totalCredits": 210
+  },
+  {
+    "departmentName": "Ciencias Administrativas",
+    "name": "Gestión Pública",
+    "totalCredits": 205
+  },
+  {
+    "departmentName": "Agronomía",
+    "name": "Ingeniería Agronómica",
+    "totalCredits": 225
+  },
+  {
+    "departmentName": "Agronomía",
+    "name": "Ingeniería Agrícola",
+    "totalCredits": 220
+  },
+  {
+    "departmentName": "Ciencias Contables y Financieras",
+    "name": "Contabilidad",
+    "totalCredits": 210
+  },
+  {
+    "departmentName": "Ciencias Contables y Financieras",
+    "name": "Auditoría y Finanzas",
+    "totalCredits": 215
+  },
+  {
+    "departmentName": "Economía",
+    "name": "Economía",
+    "totalCredits": 210
+  },
+  {
+    "departmentName": "Ingeniería Industrial",
+    "name": "Ingeniería Industrial",
+    "totalCredits": 225
+  },
+  {
+    "departmentName": "Ingeniería Industrial",
+    "name": "Ingeniería Informática",
+    "totalCredits": 220
+  },
+  {
+    "departmentName": "Ingeniería Industrial",
+    "name": "Ingeniería Agroindustrial",
+    "totalCredits": 230
+  },
+  {
+    "departmentName": "Ingeniería de Minas",
+    "name": "Ingeniería de Minas",
+    "totalCredits": 235
+  },
+  {
+    "departmentName": "Ingeniería de Minas",
+    "name": "Ingeniería de Petróleo",
+    "totalCredits": 240
+  },
+  {
+    "departmentName": "Ingeniería de Minas",
+    "name": "Ingeniería Geológica",
+    "totalCredits": 220
+  },
+  {
+    "departmentName": "Ingeniería Pesquera",
+    "name": "Ingeniería Pesquera",
+    "totalCredits": 225
+  },
+  {
+    "departmentName": "Zootecnia",
+    "name": "Ingeniería Zootécnica",
+    "totalCredits": 220
+  },
+  {
+    "departmentName": "Zootecnia",
+    "name": "Medicina Veterinaria y Zootecnia",
+    "totalCredits": 240
+  },
+  {
+    "departmentName": "Ciencias de la Salud",
+    "name": "Medicina Humana",
+    "totalCredits": 290
+  },
+  {
+    "departmentName": "Ciencias de la Salud",
+    "name": "Enfermería",
+    "totalCredits": 220
+  },
+  {
+    "departmentName": "Ciencias de la Salud",
+    "name": "Estomatología",
+    "totalCredits": 250
+  },
+  {
+    "departmentName": "Ciencias de la Salud",
+    "name": "Obstetricia",
+    "totalCredits": 215
+  },
+  {
+    "departmentName": "Ciencias y Educación",
+    "name": "Educación Inicial",
+    "totalCredits": 195
+  },
+  {
+    "departmentName": "Ciencias y Educación",
+    "name": "Educación Primaria",
+    "totalCredits": 200
+  },
+  {
+    "departmentName": "Ciencias y Educación",
+    "name": "Comunicación Social",
+    "totalCredits": 205
+  },
+  {
+    "departmentName": "Derecho y Ciencias Políticas",
+    "name": "Derecho",
+    "totalCredits": 220
+  },
+  {
+    "departmentName": "Ciencias",
+    "name": "Matemáticas",
+    "totalCredits": 210
+  },
+  {
+    "departmentName": "Ciencias",
+    "name": "Física",
+    "totalCredits": 210
+  },
+  {
+    "departmentName": "Ciencias",
+    "name": "Biología",
+    "totalCredits": 215
+  },
+  {
+    "departmentName": "Ingeniería Civil",
+    "name": "Ingeniería Civil",
+    "totalCredits": 230
+  },
+  {
+    "departmentName": "Arquitectura y Urbanismo",
+    "name": "Arquitectura",
+    "totalCredits": 240
+  }
+]

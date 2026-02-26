@@ -9,7 +9,7 @@ import { ProfessorException } from './professor.exception';
 export class ProfessorDniAlreadyExistsException extends ProfessorException {
   readonly statusCode = 409;
   readonly errorKey = 'PROFESSOR_DNI_ALREADY_EXISTS';
-  readonly errorCode = 'PROF_001';
+  readonly errorCode = 'PROF_002';
 
   constructor(dni: string) {
     super(`Ya existe un profesor registrado con el DNI ${dni}`);

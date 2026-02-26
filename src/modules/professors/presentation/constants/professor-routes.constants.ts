@@ -8,4 +8,7 @@ export const PROFESSOR_ROUTES = {
 
   /** GET  /professors — listar profesores */
   LIST: '',
+
+  /** GET    /professors/:id   — obtener profesor por id */
+  GET_BY_ID: ':id',
 } as const;

@@ -8,7 +8,9 @@ import { ProfessorStatus } from '../constants';
 export interface ProfessorProps {
   id: number;
   departmentId: number | null;
+  code: string;
   specialty: string | null;
+  institutionalEmail: string | null;
   hireDate: Date | null;
   status: ProfessorStatus;
   dni: string;
@@ -27,8 +29,10 @@ export interface CreateProfessorProps {
   firstName: string;
   lastName: string;
   email: string;
+  code: string;
   departmentId?: number;
   specialty?: string;
+  institutionalEmail?: string;
   hireDate?: Date;
   phone?: string;
   birthDate?: Date;

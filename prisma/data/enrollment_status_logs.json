@@ -1,0 +1,123 @@
+[
+  {
+    "enrollment": {
+      "studentCode": "0520180005",
+      "courseName": "Introducción a la Administración",
+      "academicPeriodName": "2023-I",
+      "section": "A"
+    },
+    "previousStatus": null,
+    "newStatus": "ENROLLED",
+    "reason": "Inscripción inicial aprobada."
+  },
+  {
+    "enrollment": {
+      "studentCode": "0520180005",
+      "courseName": "Introducción a la Administración",
+      "academicPeriodName": "2023-I",
+      "section": "A"
+    },
+    "previousStatus": "ENROLLED",
+    "newStatus": "COMPLETED",
+    "reason": "Cierre de actas por fin de ciclo."
+  },
+  {
+    "enrollment": {
+      "studentCode": "0820190038",
+      "courseName": "Algoritmos y Estructura de Datos",
+      "academicPeriodName": "2023-II",
+      "section": "A"
+    },
+    "previousStatus": null,
+    "newStatus": "ENROLLED",
+    "reason": "Inscripción inicial aprobada."
+  },
+  {
+    "enrollment": {
+      "studentCode": "0820190038",
+      "courseName": "Algoritmos y Estructura de Datos",
+      "academicPeriodName": "2023-II",
+      "section": "A"
+    },
+    "previousStatus": "ENROLLED",
+    "newStatus": "COMPLETED",
+    "reason": "Cierre de actas por fin de ciclo."
+  },
+  {
+    "enrollment": {
+      "studentCode": "0120250001",
+      "courseName": "Introducción a la Administración",
+      "academicPeriodName": "2026-I",
+      "section": "A"
+    },
+    "previousStatus": null,
+    "newStatus": "ENROLLED",
+    "reason": "Matrícula 2026-I procesada."
+  },
+  {
+    "enrollment": {
+      "studentCode": "0820190038",
+      "courseName": "Ingeniería de Software",
+      "academicPeriodName": "2026-I",
+      "section": "A"
+    },
+    "previousStatus": null,
+    "newStatus": "ENROLLED",
+    "reason": "Matrícula 2026-I procesada."
+  },
+  {
+    "enrollment": {
+      "studentCode": "0720210017",
+      "courseName": "Fisiología Médica",
+      "academicPeriodName": "2026-I",
+      "section": "A"
+    },
+    "previousStatus": null,
+    "newStatus": "ENROLLED",
+    "reason": "Matrícula 2026-I procesada."
+  },
+  {
+    "enrollment": {
+      "studentCode": "0320190053",
+      "courseName": "Derecho Penal Parte General",
+      "academicPeriodName": "2026-I",
+      "section": "A"
+    },
+    "previousStatus": null,
+    "newStatus": "ENROLLED",
+    "reason": "Matrícula 2026-I procesada."
+  },
+  {
+    "enrollment": {
+      "studentCode": "0720160057",
+      "courseName": "Diseño de Estructuras",
+      "academicPeriodName": "2026-I",
+      "section": "A"
+    },
+    "previousStatus": null,
+    "newStatus": "ENROLLED",
+    "reason": "Matrícula 2026-I procesada."
+  },
+  {
+    "enrollment": {
+      "studentCode": "0920230039",
+      "courseName": "Ingeniería de Software",
+      "academicPeriodName": "2026-I",
+      "section": "A"
+    },
+    "previousStatus": null,
+    "newStatus": "ENROLLED",
+    "reason": "Matrícula 2026-I procesada."
+  },
+  {
+    "enrollment": {
+      "studentCode": "0220250002",
+      "courseName": "Comportamiento Organizacional",
+      "academicPeriodName": "2026-I",
+      "section": "A"
+    },
+    "previousStatus": null,
+    "newStatus": "ENROLLED",
+    "reason": "Matrícula 2026-I procesada."
+  }
+]

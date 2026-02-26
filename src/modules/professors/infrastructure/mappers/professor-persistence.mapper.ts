@@ -19,7 +19,9 @@ interface ProfessorPersistenceData {
   };
   professor: {
     departmentId: number | null;
+    code: string;
     specialty: string | null;
+    institutionalEmail: string | null;
     hireDate: Date | null;
     status: ProfessorStatus;
   };
@@ -30,7 +32,9 @@ export class ProfessorPersistenceMapper {
     const props: ProfessorProps = {
       id: raw.personId,
       departmentId: raw.departmentId,
+      code: raw.code,
       specialty: raw.specialty,
+      institutionalEmail: raw.institutionalEmail,
       hireDate: raw.hireDate,
       status: raw.status as ProfessorStatus,
       dni: raw.person.dni,
@@ -56,7 +60,9 @@ export class ProfessorPersistenceMapper {
       },
       professor: {
         departmentId: professor.departmentId,
+        code: professor.code,
         specialty: professor.specialty,
+        institutionalEmail: professor.institutionalEmail,
         hireDate: professor.hireDate,
         status: professor.status,
       },

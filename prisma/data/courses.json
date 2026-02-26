@@ -1,0 +1,177 @@
+[
+  {
+    "careerName": "Administración",
+    "categoryName": "Estudios Generales",
+    "name": "Introducción a la Administración",
+    "description": "Conceptos fundamentales y evolución del pensamiento administrativo.",
+    "credits": 4
+  },
+  {
+    "careerName": "Administración",
+    "categoryName": "Formación Profesional Específica",
+    "name": "Comportamiento Organizacional",
+    "description": "Análisis de la dinámica humana en las organizaciones.",
+    "credits": 3
+  },
+  {
+    "careerName": "Administración",
+    "categoryName": "Formación Profesional de Especialidad",
+    "name": "Gestión de Recursos Humanos",
+    "description": "Procesos de reclutamiento, selección y desarrollo de talento.",
+    "credits": 4
+  },
+  {
+    "careerName": "Administración",
+    "categoryName": "Formación Profesional de Especialidad",
+    "name": "Administración de Operaciones",
+    "description": "Optimización de procesos productivos y de servicios.",
+    "credits": 4
+  },
+  {
+    "careerName": "Administración",
+    "categoryName": "Investigación y Tesis",
+    "name": "Seminario de Tesis I",
+    "description": "Desarrollo del proyecto de investigación administrativa.",
+    "credits": 3
+  },
+  {
+    "careerName": "Ingeniería Informática",
+    "categoryName": "Estudios Generales",
+    "name": "Algoritmos y Estructura de Datos",
+    "description": "Fundamentos de lógica de programación y manejo de datos.",
+    "credits": 5
+  },
+  {
+    "careerName": "Ingeniería Informática",
+    "categoryName": "Formación Profesional Específica",
+    "name": "Base de Datos I",
+    "description": "Diseño y modelado de bases de datos relacionales.",
+    "credits": 4
+  },
+  {
+    "careerName": "Ingeniería Informática",
+    "categoryName": "Formación Profesional de Especialidad",
+    "name": "Inteligencia Artificial",
+    "description": "Introducción al aprendizaje automático y redes neuronales.",
+    "credits": 4
+  },
+  {
+    "careerName": "Ingeniería Informática",
+    "categoryName": "Formación Profesional Específica",
+    "name": "Ingeniería de Software",
+    "description": "Ciclo de vida del software y metodologías ágiles.",
+    "credits": 4
+  },
+  {
+    "careerName": "Ingeniería Informática",
+    "categoryName": "Idiomas y TICs",
+    "name": "Inglés Técnico para Computación",
+    "description": "Lectura y comprensión de documentación técnica en inglés.",
+    "credits": 2
+  },
+  {
+    "careerName": "Medicina Humana",
+    "categoryName": "Estudios Generales",
+    "name": "Anatomía Humana I",
+    "description": "Estudio morfológico del cuerpo humano.",
+    "credits": 5
+  },
+  {
+    "careerName": "Medicina Humana",
+    "categoryName": "Formación Profesional Específica",
+    "name": "Fisiología Médica",
+    "description": "Funcionamiento de los sistemas biológicos.",
+    "credits": 5
+  },
+  {
+    "careerName": "Medicina Humana",
+    "categoryName": "Formación Profesional de Especialidad",
+    "name": "Pediatría",
+    "description": "Atención integral de la salud en la infancia y adolescencia.",
+    "credits": 4
+  },
+  {
+    "careerName": "Medicina Humana",
+    "categoryName": "Formación Profesional de Especialidad",
+    "name": "Ginecología y Obstetricia",
+    "description": "Salud reproductiva y cuidado del embarazo.",
+    "credits": 4
+  },
+  {
+    "careerName": "Medicina Humana",
+    "categoryName": "Prácticas Pre-Profesionales",
+    "name": "Internado Médico",
+    "description": "Práctica hospitalaria intensiva rotatoria.",
+    "credits": 5
+  },
+  {
+    "careerName": "Derecho",
+    "categoryName": "Formación Profesional Específica",
+    "name": "Derecho Civil: Personas",
+    "description": "Atributos de la personalidad y capacidad jurídica.",
+    "credits": 4
+  },
+  {
+    "careerName": "Derecho",
+    "categoryName": "Formación Profesional Específica",
+    "name": "Derecho Penal Parte General",
+    "description": "Teoría del delito y de la pena.",
+    "credits": 4
+  },
+  {
+    "careerName": "Derecho",
+    "categoryName": "Formación Profesional de Especialidad",
+    "name": "Derecho Ambiental",
+    "description": "Normativa para la protección de recursos naturales.",
+    "credits": 3
+  },
+  {
+    "careerName": "Derecho",
+    "categoryName": "Formación Profesional Específica",
+    "name": "Derecho Constitucional del Perú",
+    "description": "Análisis de la Constitución y derechos fundamentales.",
+    "credits": 4
+  },
+  {
+    "careerName": "Derecho",
+    "categoryName": "Investigación y Tesis",
+    "name": "Metodología de la Investigación Jurídica",
+    "description": "Técnicas de investigación aplicadas al derecho.",
+    "credits": 3
+  },
+  {
+    "careerName": "Ingeniería Civil",
+    "categoryName": "Formación Profesional Específica",
+    "name": "Mecánica de Suelos",
+    "description": "Estudio de las propiedades físicas y mecánicas del suelo.",
+    "credits": 4
+  },
+  {
+    "careerName": "Ingeniería Civil",
+    "categoryName": "Formación Profesional de Especialidad",
+    "name": "Diseño de Estructuras",
+    "description": "Cálculo y diseño de elementos estructurales de concreto y acero.",
+    "credits": 5
+  },
+  {
+    "careerName": "Ingeniería Civil",
+    "categoryName": "Formación Profesional de Especialidad",
+    "name": "Ingeniería Sanitaria",
+    "description": "Infraestructura para servicios de agua y alcantarillado[cite: 13].",
+    "credits": 4
+  },
+  {
+    "careerName": "Ingeniería Civil",
+    "categoryName": "Formación Profesional Específica",
+    "name": "Hidráulica",
+    "description": "Estudio del comportamiento de fluidos en canales y tuberías.",
+    "credits": 4
+  },
+  {
+    "careerName": "Ingeniería Civil",
+    "categoryName": "Estudios Generales",
+    "name": "Topografía General",
+    "description": "Métodos de levantamiento y representación de terrenos.",
+    "credits": 4
+  }
+]

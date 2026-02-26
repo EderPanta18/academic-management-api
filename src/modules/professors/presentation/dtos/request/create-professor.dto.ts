@@ -18,90 +18,134 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ProfessorStatus } from '@professors/domain/constants';
 
 export class CreateProfessorDto {
+  // ── Obligatorios ──────────────────────────────────────────────────────────
+
   @ApiProperty({
     description: 'DNI del profesor — 8 dígitos numéricos',
     example: '12345678',
+    pattern: '^[0-9]{8}$',
   })
-  @IsString()
+  @IsString({ message: 'El DNI debe ser una cadena de texto' })
   @Length(8, 8, { message: 'El DNI debe tener exactamente 8 dígitos' })
   @Matches(/^\d{8}$/, { message: 'El DNI debe contener solo dígitos' })
   dni: string;
 
-  @ApiProperty({ description: 'Nombre del profesor', example: 'Juan Carlos' })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(100)
+  @ApiProperty({
+    description: 'Nombre del profesor',
+    example: 'Juan Carlos',
+    pattern: '^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$',
+  })
+  @IsString({ message: 'El nombre debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'El nombre no puede estar vacío' })
+  @MaxLength(100, { message: 'El nombre no puede tener más de 100 caracteres' })
   firstName: string;
 
-  @ApiProperty({ description: 'Apellido del profesor', example: 'Pérez López' })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(100)
+  @ApiProperty({
+    description: 'Apellido del profesor',
+    example: 'Pérez López',
+    pattern: '^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$',
+  })
+  @IsString({ message: 'El apellido debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'El apellido no puede estar vacío' })
+  @MaxLength(100, {
+    message: 'El apellido no puede tener más de 100 caracteres',
+  })
   lastName: string;
 
   @ApiProperty({
-    description: 'Email del profesor',
-    example: 'juan.perez@universidad.edu.pe',
+    description: 'Email personal del profesor',
+    example: 'juan.perez@gmail.com',
+    format: 'email',
   })
   @IsEmail({}, { message: 'El email no tiene un formato válido' })
-  @MaxLength(150)
+  @MaxLength(150, { message: 'El email no puede tener más de 150 caracteres' })
   email: string;
+
+  @ApiProperty({
+    description: 'Código único del profesor',
+    example: 'PROF-001',
+    pattern: '^[A-Z]{4}-\\d{3}$',
+  })
+  @IsString({ message: 'El código debe ser una cadena de texto' })
+  @MaxLength(20, { message: 'El código no puede tener más de 20 caracteres' })
+  code: string;
+
+  // ── Opcionales ────────────────────────────────────────────────────────────
 
   @ApiPropertyOptional({
     description: 'ID del departamento del profesor',
     example: 1,
+    format: 'int32',
   })
   @IsOptional()
-  @IsInt()
-  @IsPositive()
+  @IsInt({ message: 'El ID del departamento debe ser un número entero' })
+  @IsPositive({ message: 'El ID del departamento debe ser un número positivo' })
   departmentId?: number;
 
   @ApiPropertyOptional({
     description: 'Especialidad del profesor',
     example: 'Bases de Datos',
+    pattern: '^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$',
   })
   @IsOptional()
-  @IsString()
-  @MaxLength(100)
+  @IsString({ message: 'La especialidad debe ser una cadena de texto' })
+  @MaxLength(100, {
+    message: 'La especialidad no puede tener más de 100 caracteres',
+  })
   specialty?: string;
+
+  @ApiPropertyOptional({
+    description: 'Email institucional del profesor',
+    example: 'juan.perez@universidad.edu.pe',
+    pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+  })
+  @IsOptional()
+  @IsString({ message: 'El email institucional debe ser una cadena de texto' })
+  @MaxLength(150, {
+    message: 'El email institucional no puede tener más de 150 caracteres',
+  })
+  institutionalEmail?: string;
 
   @ApiPropertyOptional({
     description: 'Fecha de contratación del profesor',
     example: '2024-03-01',
-    type: String,
     format: 'date',
+    type: String,
   })
   @IsOptional()
   @Type(() => Date)
-  @IsDate()
+  @IsDate({ message: 'La fecha de contratación debe ser una fecha válida' })
   hireDate?: Date;
+
+  @ApiPropertyOptional({
+    description: 'Estado inicial del profesor',
+    enum: ProfessorStatus,
+    default: ProfessorStatus.ACTIVE,
+  })
+  @IsOptional()
+  @IsEnum(ProfessorStatus, {
+    message: `El estado debe ser: ${Object.values(ProfessorStatus).join(', ')}`,
+  })
+  status?: ProfessorStatus;
 
   @ApiPropertyOptional({
     description: 'Número de teléfono del profesor',
     example: '987654321',
+    pattern: '^[0-9]{7,12}$',
   })
   @IsOptional()
-  @IsString()
-  @MaxLength(12)
+  @IsString({ message: 'El teléfono debe ser una cadena de texto' })
+  @MaxLength(12, { message: 'El teléfono no puede tener más de 12 caracteres' })
   phone?: string;
 
   @ApiPropertyOptional({
     description: 'Fecha de nacimiento del profesor',
     example: '1985-06-15',
-    type: String,
     format: 'date',
+    type: String,
   })
   @IsOptional()
   @Type(() => Date)
-  @IsDate()
+  @IsDate({ message: 'La fecha de nacimiento debe ser una fecha válida' })
   birthDate?: Date;
-
-  @ApiPropertyOptional({
-    description: 'Estado del profesor',
-    enum: ProfessorStatus,
-    default: ProfessorStatus.ACTIVE,
-  })
-  @IsOptional()
-  @IsEnum(ProfessorStatus)
-  status?: ProfessorStatus;
 }

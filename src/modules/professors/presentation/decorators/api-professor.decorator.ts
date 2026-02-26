@@ -9,6 +9,8 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
+  ApiParam,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { CreateProfessorDto, ProfessorResponseDto } from '../dtos';
 
@@ -44,4 +46,20 @@ export const ApiListProfessors = () =>
     }),
 
     ApiOkResponse({ description: 'Listado paginado de profesores' }),
+  );
+
+export const ApiGetProfessorById = () =>
+  applyDecorators(
+    ApiOperation({ summary: 'Obtener un profesor por id' }),
+    ApiParam({
+      name: 'id',
+      type: Number,
+      description: 'Id del profesor',
+      example: 1,
+    }),
+    ApiOkResponse({
+      type: ProfessorResponseDto,
+      description: 'Profesor encontrado',
+    }),
+    ApiNotFoundResponse({ description: 'Profesor no encontrado' }),
   );

@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from '@shared/infrastructure/database';
 import { ProfessorsModule } from '@modules/professors';
+import { StudentsModule } from '@modules/students';
 import { databaseConfig } from '@config/index';
 import { AppController } from './app.controller';
 
@@ -22,6 +23,7 @@ import { AppController } from './app.controller';
     }),
     PrismaModule,
     ProfessorsModule,
+    StudentsModule,
   ],
   controllers: [AppController],
 })

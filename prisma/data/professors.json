@@ -1,0 +1,362 @@
+[
+  {
+    "dni": "65555242",
+    "departmentName": "Ciencias Administrativas",
+    "code": "PROF-001",
+    "specialty": "Gestión Estratégica",
+    "institutionalEmail": "miguel.herrera@unp.edu.pe",
+    "hireDate": "2015-04-12",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "73942796",
+    "departmentName": "Agronomía",
+    "code": "PROF-002",
+    "specialty": "Sanidad Vegetal",
+    "institutionalEmail": "carmen.aguilar@unp.edu.pe",
+    "hireDate": "2010-08-20",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "12409479",
+    "departmentName": "Ciencias Contables y Financieras",
+    "code": "PROF-003",
+    "specialty": "Auditoría Agroindustrial",
+    "institutionalEmail": "fernando.ramirez@unp.edu.pe",
+    "hireDate": "2012-03-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "18756717",
+    "departmentName": "Economía",
+    "code": "PROF-004",
+    "specialty": "Políticas Públicas",
+    "institutionalEmail": "sergio.torres@unp.edu.pe",
+    "hireDate": "2018-06-01",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "59329913",
+    "departmentName": "Ingeniería Industrial",
+    "code": "PROF-005",
+    "specialty": "Sistemas de Producción",
+    "institutionalEmail": "camila.navarro@unp.edu.pe",
+    "hireDate": "2014-11-10",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "68706707",
+    "departmentName": "Ingeniería de Minas",
+    "code": "PROF-006",
+    "specialty": "Seguridad Minera",
+    "institutionalEmail": "rosa.lopez@unp.edu.pe",
+    "hireDate": "2009-05-22",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "69988363",
+    "departmentName": "Ingeniería Pesquera",
+    "code": "PROF-007",
+    "specialty": "Recursos Hidrobiológicos",
+    "institutionalEmail": "katherine.medina@unp.edu.pe",
+    "hireDate": "2020-01-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "12906364",
+    "departmentName": "Zootecnia",
+    "code": "PROF-008",
+    "specialty": "Medicina Veterinaria Tropical",
+    "institutionalEmail": "jose.flores@unp.edu.pe",
+    "hireDate": "2013-09-30",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "36521607",
+    "departmentName": "Ciencias de la Salud",
+    "code": "PROF-009",
+    "specialty": "Medicina Interna",
+    "institutionalEmail": "oscar.nunez@unp.edu.pe",
+    "hireDate": "2011-02-14",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "28127383",
+    "departmentName": "Ciencias y Educación",
+    "code": "PROF-010",
+    "specialty": "Comunicación Social",
+    "institutionalEmail": "patricia.vega@unp.edu.pe",
+    "hireDate": "2016-07-08",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "74728140",
+    "departmentName": "Derecho y Ciencias Políticas",
+    "code": "PROF-011",
+    "specialty": "Derecho Ambiental",
+    "institutionalEmail": "diana.vargas@unp.edu.pe",
+    "hireDate": "2017-10-25",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "32004619",
+    "departmentName": "Ciencias",
+    "code": "PROF-012",
+    "specialty": "Física Aplicada",
+    "institutionalEmail": "hector.leon@unp.edu.pe",
+    "hireDate": "2008-03-12",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "62322126",
+    "departmentName": "Ingeniería Civil",
+    "code": "PROF-013",
+    "specialty": "Infraestructura Costera",
+    "institutionalEmail": "monica.nunez@unp.edu.pe",
+    "hireDate": "2015-12-05",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "18897659",
+    "departmentName": "Arquitectura y Urbanismo",
+    "code": "PROF-014",
+    "specialty": "Arquitectura Sostenible",
+    "institutionalEmail": "milagros.huaman@unp.edu.pe",
+    "hireDate": "2012-08-18",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "77662367",
+    "departmentName": "Ciencias Administrativas",
+    "code": "PROF-015",
+    "specialty": "Marketing Regional",
+    "institutionalEmail": "hector.rojas@unp.edu.pe",
+    "hireDate": "2019-04-02",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "54044896",
+    "departmentName": "Agronomía",
+    "code": "PROF-016",
+    "specialty": "Ingeniería Agrícola",
+    "institutionalEmail": "alonso.ramirez@unp.edu.pe",
+    "hireDate": "2010-11-30",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "33301416",
+    "departmentName": "Ciencias Contables y Financieras",
+    "code": "PROF-017",
+    "specialty": "Finanzas Corporativas",
+    "institutionalEmail": "luis.torres@unp.edu.pe",
+    "hireDate": "2007-06-20",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "23518821",
+    "departmentName": "Economía",
+    "code": "PROF-018",
+    "specialty": "Análisis Económico",
+    "institutionalEmail": "jorge.gutierrez@unp.edu.pe",
+    "hireDate": "2014-02-28",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "34040739",
+    "departmentName": "Ingeniería Industrial",
+    "code": "PROF-019",
+    "specialty": "Mecatrónica",
+    "institutionalEmail": "karla.leon@unp.edu.pe",
+    "hireDate": "2013-05-12",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "27138686",
+    "departmentName": "Ingeniería de Minas",
+    "code": "PROF-020",
+    "specialty": "Ingeniería Geológica",
+    "institutionalEmail": "hector.medina@unp.edu.pe",
+    "hireDate": "2011-09-09",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "69288705",
+    "departmentName": "Ingeniería Pesquera",
+    "code": "PROF-021",
+    "specialty": "Tecnología de Alimentos Marinos",
+    "institutionalEmail": "alonso.navarro@unp.edu.pe",
+    "hireDate": "2018-12-01",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "38720426",
+    "departmentName": "Zootecnia",
+    "code": "PROF-022",
+    "specialty": "Genética Animal",
+    "institutionalEmail": "pedro.fernandez@unp.edu.pe",
+    "hireDate": "2005-03-24",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "31537712",
+    "departmentName": "Ciencias de la Salud",
+    "code": "PROF-023",
+    "specialty": "Psicología Clínica",
+    "institutionalEmail": "luciana.vasquez@unp.edu.pe",
+    "hireDate": "2021-02-01",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "16266648",
+    "departmentName": "Ciencias y Educación",
+    "code": "PROF-024",
+    "specialty": "Educación Inicial",
+    "institutionalEmail": "karla.sanchez@unp.edu.pe",
+    "hireDate": "2008-10-15",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "31856425",
+    "departmentName": "Derecho y Ciencias Políticas",
+    "code": "PROF-025",
+    "specialty": "Derecho Penal",
+    "institutionalEmail": "fernando.navarro@unp.edu.pe",
+    "hireDate": "2016-04-20",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "46773416",
+    "departmentName": "Ciencias",
+    "code": "PROF-026",
+    "specialty": "Biología Molecular",
+    "institutionalEmail": "milagros.rojas@unp.edu.pe",
+    "hireDate": "2006-07-30",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "32180146",
+    "departmentName": "Ingeniería Civil",
+    "code": "PROF-027",
+    "specialty": "Ingeniería Sanitaria",
+    "institutionalEmail": "fiorella.garcia@unp.edu.pe",
+    "hireDate": "2017-01-12",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "50205497",
+    "departmentName": "Arquitectura y Urbanismo",
+    "code": "PROF-028",
+    "specialty": "Urbanismo Desértico",
+    "institutionalEmail": "paola.guerrero@unp.edu.pe",
+    "hireDate": "2009-11-05",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "77531515",
+    "departmentName": "Ciencias Administrativas",
+    "code": "PROF-029",
+    "specialty": "Administración Aplicada",
+    "institutionalEmail": "katherine.fernandez@unp.edu.pe",
+    "hireDate": "2019-08-22",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "46341865",
+    "departmentName": "Agronomía",
+    "code": "PROF-030",
+    "specialty": "Cultivos Sostenibles",
+    "institutionalEmail": "maria.huaman@unp.edu.pe",
+    "hireDate": "2014-06-14",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "26430334",
+    "departmentName": "Ciencias Contables y Financieras",
+    "code": "PROF-031",
+    "specialty": "Contabilidad General",
+    "institutionalEmail": "alonso.morales@unp.edu.pe",
+    "hireDate": "2011-04-10",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "12778082",
+    "departmentName": "Economía",
+    "code": "PROF-032",
+    "specialty": "Desarrollo Sostenible",
+    "institutionalEmail": "alonso.lopez@unp.edu.pe",
+    "hireDate": "2013-02-25",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "66678958",
+    "departmentName": "Ingeniería Industrial",
+    "code": "PROF-033",
+    "specialty": "Informática Industrial",
+    "institutionalEmail": "fiorella.lopez@unp.edu.pe",
+    "hireDate": "2020-05-18",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "19104409",
+    "departmentName": "Ingeniería de Minas",
+    "code": "PROF-034",
+    "specialty": "Ingeniería de Petróleo",
+    "institutionalEmail": "piero.ramirez@unp.edu.pe",
+    "hireDate": "2007-09-12",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "64174165",
+    "departmentName": "Ingeniería Pesquera",
+    "code": "PROF-035",
+    "specialty": "Gestión de Pesquerías",
+    "institutionalEmail": "angel.nunez@unp.edu.pe",
+    "hireDate": "2015-03-08",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "39138417",
+    "departmentName": "Zootecnia",
+    "code": "PROF-036",
+    "specialty": "Ganadería Tropical",
+    "institutionalEmail": "alvaro.guerrero@unp.edu.pe",
+    "hireDate": "2012-11-20",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "77064919",
+    "departmentName": "Ciencias de la Salud",
+    "code": "PROF-037",
+    "specialty": "Estomatología",
+    "institutionalEmail": "alvaro.vega@unp.edu.pe",
+    "hireDate": "2018-02-14",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "29449370",
+    "departmentName": "Ciencias y Educación",
+    "code": "PROF-038",
+    "specialty": "Historia y Geografía",
+    "institutionalEmail": "claudia.rodriguez@unp.edu.pe",
+    "hireDate": "2010-05-03",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "22703912",
+    "departmentName": "Derecho y Ciencias Políticas",
+    "code": "PROF-039",
+    "specialty": "Derecho Civil",
+    "institutionalEmail": "luis.ortiz@unp.edu.pe",
+    "hireDate": "2014-09-27",
+    "status": "ACTIVE"
+  },
+  {
+    "dni": "33274246",
+    "departmentName": "Ciencias",
+    "code": "PROF-040",
+    "specialty": "Matemática Pura",
+    "institutionalEmail": "nicole.gutierrez@unp.edu.pe",
+    "hireDate": "2013-01-10",
+    "status": "ACTIVE"
+  }
+]

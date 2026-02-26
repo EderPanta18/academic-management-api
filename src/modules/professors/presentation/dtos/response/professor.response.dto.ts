@@ -1,14 +1,14 @@
 // modules/professors/presentation/dtos/response/professor.response.dto.ts
 
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { ProfessorStatus } from '@professors/domain/constants';
 
 export class ProfessorResponseDto {
   @ApiProperty({ example: 1 })
   id: number;
 
-  @ApiProperty({ example: 'Juan Carlos Pérez López' })
-  fullName: string;
+  @ApiProperty({ example: '12345678' })
+  dni: string;
 
   @ApiProperty({ example: 'Juan Carlos' })
   firstName: string;
@@ -16,16 +16,16 @@ export class ProfessorResponseDto {
   @ApiProperty({ example: 'Pérez López' })
   lastName: string;
 
-  @ApiProperty({ example: '12345678' })
-  dni: string;
+  @ApiProperty({ example: 'Juan Carlos Pérez López' })
+  fullName: string;
 
-  @ApiProperty({ example: 'juan.perez@universidad.edu.pe' })
+  @ApiProperty({ example: 'juan.perez@gmail.com' })
   email: string;
 
-  @ApiPropertyOptional({ example: '987654321', nullable: true })
+  @ApiProperty({ example: '987654321', nullable: true })
   phone: string | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     example: '1985-06-15',
     nullable: true,
     type: String,
@@ -33,13 +33,19 @@ export class ProfessorResponseDto {
   })
   birthDate: Date | null;
 
-  @ApiPropertyOptional({ example: 1, nullable: true })
+  @ApiProperty({ example: 1, nullable: true })
   departmentId: number | null;
 
-  @ApiPropertyOptional({ example: 'Bases de Datos', nullable: true })
+  @ApiProperty({ example: 'PROF-001' })
+  code: string;
+
+  @ApiProperty({ example: 'juan.perez@universidad.edu.pe', nullable: true })
+  institutionalEmail: string | null;
+
+  @ApiProperty({ example: 'Bases de Datos', nullable: true })
   specialty: string | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     example: '2024-03-01',
     nullable: true,
     type: String,

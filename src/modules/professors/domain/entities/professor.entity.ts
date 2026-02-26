@@ -9,7 +9,9 @@ import type { CreateProfessorProps, ProfessorProps } from './professor.types';
 type InternalProps = {
   id?: number;
   departmentId?: number | null;
+  code: string;
   specialty?: string | null;
+  institutionalEmail?: string | null;
   hireDate?: Date | null;
   status?: ProfessorStatus;
   dni: string;
@@ -28,9 +30,11 @@ type InternalProps = {
  *   Professor.reconstitute() → id === number     (desde DB, ya persistida)
  */
 export class Professor {
-  readonly id?: number; // ? → undefined si aún no persistida
+  readonly id?: number;
   readonly departmentId: number | null;
   readonly specialty: string | null;
+  readonly code: string;
+  readonly institutionalEmail: string | null;
   readonly hireDate: Date | null;
   readonly status: ProfessorStatus;
   readonly dni: string;
@@ -44,6 +48,8 @@ export class Professor {
     this.id = props.id;
     this.departmentId = props.departmentId ?? null;
     this.specialty = props.specialty ?? null;
+    this.code = props.code;
+    this.institutionalEmail = props.institutionalEmail ?? null;
     this.hireDate = props.hireDate ?? null;
     this.status = props.status ?? ProfessorStatus.ACTIVE;
     this.dni = props.dni;

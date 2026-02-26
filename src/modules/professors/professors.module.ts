@@ -8,6 +8,7 @@ import {
 import {
   CreateProfessorUseCase,
   ListProfessorsUseCase,
+  GetProfessorByIdUseCase,
 } from '@professors/application/use-cases';
 import { ProfessorPrismaRepository } from '@professors/infrastructure/persistence';
 import { ProfessorsController } from '@professors/presentation/controllers';
@@ -15,14 +16,11 @@ import { ProfessorsController } from '@professors/presentation/controllers';
 @Module({
   controllers: [ProfessorsController],
   providers: [
-    // ── Casos de uso ────────────────────────────────────────────────────────
     CreateProfessorUseCase,
     ListProfessorsUseCase,
-
-    // ── Implementación concreta (instancia única) ────────────────────────────
+    GetProfessorByIdUseCase,
     ProfessorPrismaRepository,
 
-    // ── Tokens apuntan a la misma instancia via alias ────────────────────────
     {
       provide: PROFESSOR_REPOSITORY_PORT,
       useExisting: ProfessorPrismaRepository,

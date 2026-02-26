@@ -1,52 +1,10 @@
 generator client {
   provider     = "prisma-client-js"
-  output       = "../generated/prisma"    
-  moduleFormat = "cjs"                  
 }
 
 datasource db {
   provider = "mysql"
-}
 
-// ─── SOPORTE (seed) ──────────────────────────────────────────────────
-
-model Career {
-  id        Int       @id @default(autoincrement()) @db.UnsignedInt
-  name      String    @db.VarChar(100)
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  students  Student[]
-  courses   Course[]
-
-  @@map("career")
-}
-
-model Department {
-  id        Int       @id @default(autoincrement()) @db.UnsignedInt
-  name      String    @db.VarChar(100)
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  professors Professor[]
-
-  @@map("department")
-}
-
-model AcademicPeriod {
-  id        Int       @id @default(autoincrement()) @db.UnsignedInt
-  name      String    @db.VarChar(50)
-  startDate DateTime  @map("start_date") @db.Date
-  endDate   DateTime  @map("end_date") @db.Date
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  courseOfferings CourseOffering[]
-
-  @@map("academic_period")
 }
 
 // ─── IDENTIDAD ───────────────────────────────────────────────────────
@@ -69,17 +27,69 @@ model Person {
   @@map("person")
 }
 
-// ─── PROFESORES ──────────────────────────────────────────────────────
+// ─── ESTRUCTURA ORGANIZACIONAL ───────────────────────────────────────
+
+model Department {
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  name        String    @unique @db.VarChar(100)        
+  description String?   @db.Text                        
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  professors Professor[]
+  careers    Career[]
+
+  @@map("department")
+}
+
+model Career {
+  id           Int       @id @default(autoincrement()) @db.UnsignedInt
+  departmentId Int       @map("department_id") @db.UnsignedInt
+  name         String    @unique @db.VarChar(150)
+  totalCredits Int       @map("total_credits") @db.SmallInt
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
+  department Department @relation(fields: [departmentId], references: [id])
+  students   Student[]
+  courses    Course[]
+
+  @@map("career")
+}
+
+model AcademicPeriod {
+  id        Int       @id @default(autoincrement()) @db.UnsignedInt
+  name      String    @unique @db.VarChar(20)
+  year      Int       @db.Year
+  semester  Int       @db.TinyInt
+  startDate DateTime  @map("start_date") @db.Date
+  endDate   DateTime  @map("end_date") @db.Date
+  isCurrent Boolean   @default(false) @map("is_current")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  courseOfferings CourseOffering[]
+ 
+  @@unique([year, semester])
+  @@map("academic_period")
+}
+
+// ─── ACTORES ACADÉMICOS ──────────────────────────────────────────────
 
 model Professor {
-  personId     Int             @id @map("person_id") @db.UnsignedInt
-  departmentId Int?            @map("department_id") @db.UnsignedInt
-  specialty    String?         @db.VarChar(100)
-  hireDate     DateTime?       @map("hire_date") @db.Date
-  status       ProfessorStatus @default(ACTIVE)
-  createdAt    DateTime        @default(now()) @map("created_at")
-  updatedAt    DateTime        @updatedAt @map("updated_at")
-  deletedAt    DateTime?       @map("deleted_at")
+  personId           Int             @id @map("person_id") @db.UnsignedInt
+  departmentId       Int?            @map("department_id") @db.UnsignedInt  
+  code               String          @unique @db.VarChar(20)   
+  specialty          String?         @db.VarChar(100)
+  institutionalEmail String?         @unique @map("institutional_email") @db.VarChar(150)
+  hireDate           DateTime?       @map("hire_date") @db.Date             
+  status             ProfessorStatus @default(ACTIVE)
+  createdAt          DateTime        @default(now()) @map("created_at")
+  updatedAt          DateTime        @updatedAt @map("updated_at")
+  deletedAt          DateTime?       @map("deleted_at")
 
   person          Person           @relation(fields: [personId], references: [id])
   department      Department?      @relation(fields: [departmentId], references: [id])
@@ -94,15 +104,16 @@ enum ProfessorStatus {
   ON_LEAVE
 }
 
-// ─── ALUMNOS ─────────────────────────────────────────────────────────
-
 model Student {
-  personId  Int       @id @map("person_id") @db.UnsignedInt
-  code      String    @unique @db.Char(10)
-  careerId  Int       @map("career_id") @db.UnsignedInt
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  personId           Int           @id @map("person_id") @db.UnsignedInt
+  careerId           Int           @map("career_id") @db.UnsignedInt
+  code               String        @unique @db.Char(10)
+  institutionalEmail String?       @unique @map("institutional_email") @db.VarChar(150)
+  enrollmentDate     DateTime      @map("enrollment_date") @db.Date
+  status             StudentStatus @default(ACTIVE)
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+  deletedAt          DateTime?     @map("deleted_at")
 
   person      Person       @relation(fields: [personId], references: [id])
   career      Career       @relation(fields: [careerId], references: [id])
@@ -111,45 +122,75 @@ model Student {
   @@map("student")
 }
 
-// ─── CURSOS ──────────────────────────────────────────────────────────
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
+  GRADUATED
+  WITHDRAWN
+  SUSPENDED
+}
 
-model Course {
+// ─── CATÁLOGO ACADÉMICO ──────────────────────────────────────────────
+
+model CourseCategory {
   id          Int       @id @default(autoincrement()) @db.UnsignedInt
-  name        String    @db.VarChar(150)
+  name        String    @unique @db.VarChar(100)
   description String?   @db.Text
-  careerId    Int       @map("career_id") @db.UnsignedInt
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
   deletedAt   DateTime? @map("deleted_at")
 
-  career          Career           @relation(fields: [careerId], references: [id])
+  courses Course[]
+
+  @@map("course_category")
+}
+
+// ─── GESTIÓN DE CURSOS ──────────────────────────────────-────────────
+
+model Course {
+  id          Int            @id @default(autoincrement()) @db.UnsignedInt
+  careerId    Int            @map("career_id") @db.UnsignedInt
+  categoryId  Int?           @map("category_id") @db.UnsignedInt
+  name        String         @db.VarChar(150)
+  description String?        @db.Text
+  credits     Int            @db.TinyInt
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  deletedAt   DateTime?      @map("deleted_at")
+
+  career          Career          @relation(fields: [careerId], references: [id])
+  category        CourseCategory? @relation(fields: [categoryId], references: [id])
   courseOfferings CourseOffering[]
 
+  @@unique([careerId, name])
   @@map("course")
 }
 
 model CourseOffering {
-  id               Int                  @id @default(autoincrement()) @db.UnsignedInt
-  courseId         Int                  @map("course_id") @db.UnsignedInt
-  academicPeriodId Int                  @map("academic_period_id") @db.UnsignedInt
-  professorId      Int?                 @map("professor_id") @db.UnsignedInt
-  maxStudents      Int                  @default(30) @map("max_students") @db.SmallInt
-  status           CourseOfferingStatus @default(ACTIVE)
-  createdAt        DateTime             @default(now()) @map("created_at")
-  updatedAt        DateTime             @updatedAt @map("updated_at")
-  deletedAt        DateTime?            @map("deleted_at")
+  id                 Int                  @id @default(autoincrement()) @db.UnsignedInt
+  courseId           Int                  @map("course_id") @db.UnsignedInt
+  academicPeriodId   Int                  @map("academic_period_id") @db.UnsignedInt
+  professorId        Int?                 @map("professor_id") @db.UnsignedInt
+  section            String               @default("A") @db.VarChar(10)  
+  maxStudents        Int                  @default(30) @map("max_students") @db.SmallInt
+  enrollmentDeadline DateTime?            @map("enrollment_deadline") @db.Date
+  status             CourseOfferingStatus @default(INACTIVE)
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @updatedAt @map("updated_at")
+  deletedAt          DateTime?            @map("deleted_at")
 
   course         Course         @relation(fields: [courseId], references: [id])
   academicPeriod AcademicPeriod @relation(fields: [academicPeriodId], references: [id])
   professor      Professor?     @relation(fields: [professorId], references: [personId])
   enrollments    Enrollment[]
 
+  @@unique([courseId, academicPeriodId, section]) 
   @@map("course_offering")
 }
 
 enum CourseOfferingStatus {
-  ACTIVE
   INACTIVE
+  ACTIVE
   CANCELLED
   COMPLETED
 }
@@ -160,14 +201,16 @@ model Enrollment {
   id               Int              @id @default(autoincrement()) @db.UnsignedInt
   studentId        Int              @map("student_id") @db.UnsignedInt
   courseOfferingId Int              @map("course_offering_id") @db.UnsignedInt
-  enrollmentDate   DateTime         @default(now()) @map("enrollment_date") @db.DateTime(0)
   status           EnrollmentStatus @default(ENROLLED)
+  enrollmentDate   DateTime         @map("enrollment_date") @db.Date
   createdAt        DateTime         @default(now()) @map("created_at")
   updatedAt        DateTime         @updatedAt @map("updated_at")
   deletedAt        DateTime?        @map("deleted_at")
+  createdBy        Int?             @map("created_by") @db.UnsignedInt
 
   student        Student        @relation(fields: [studentId], references: [personId])
   courseOffering CourseOffering @relation(fields: [courseOfferingId], references: [id])
+  statusLogs     EnrollmentStatusLog[]
 
   @@unique([studentId, courseOfferingId])
   @@map("enrollment")
@@ -178,4 +221,18 @@ enum EnrollmentStatus {
   WITHDRAWN
   COMPLETED
   SUSPENDED
+}
+
+model EnrollmentStatusLog {
+  id             Int               @id @default(autoincrement()) @db.UnsignedInt
+  enrollmentId   Int               @map("enrollment_id") @db.UnsignedInt
+  previousStatus EnrollmentStatus? @map("previous_status")
+  newStatus      EnrollmentStatus  @map("new_status")
+  reason         String?           @db.Text
+  changedBy      Int?              @map("changed_by") @db.UnsignedInt
+  createdAt      DateTime          @default(now()) @map("created_at")
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id])
+
+  @@map("enrollment_status_log")
 }
