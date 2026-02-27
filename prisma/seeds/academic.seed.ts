@@ -56,7 +56,7 @@ export async function seedAcademicStructure(
     offeringMap,
   };
 
-  console.log('Academic maps:');
+  console.log('Academic maps creados:');
   console.log('- Careers:', careerMap.size);
   console.log('- Professors:', professorMap.size);
   console.log('- Students:', studentMap.size);

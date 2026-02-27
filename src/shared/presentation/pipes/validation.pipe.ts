@@ -18,9 +18,6 @@ export class ValidationPipe extends NestValidationPipe {
       // Elimina propiedades no declaradas en el DTO
       whitelist: true,
 
-      // Lanza error si el cliente envía propiedades no declaradas
-      forbidNonWhitelisted: true,
-
       // Construye el error con el mismo contrato que DomainExceptionFilter
       exceptionFactory: (errors: ValidationError[]) => {
         const fieldErrors = ValidationPipe.flattenErrors(errors);

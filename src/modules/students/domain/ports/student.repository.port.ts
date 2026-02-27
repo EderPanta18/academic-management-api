@@ -28,11 +28,6 @@ export interface IStudentRepository {
   findAll(pagination: PaginationVO): Promise<[Student[], number]>;
 
   /**
-   * Soft-delete del estudiante.
-   */
-  delete(id: number): Promise<void>;
-
-  /**
    * Verifica si ya existe un estudiante con ese DNI.
    */
   existsByDni(dni: string): Promise<boolean>;
@@ -46,4 +41,9 @@ export interface IStudentRepository {
    * Verifica si ya existe un estudiante con ese código académico.
    */
   existsByCode(studentCode: string): Promise<boolean>;
+
+  /**
+   * Soft-delete del estudiante.
+   */
+  delete(id: number): Promise<void>;
 }

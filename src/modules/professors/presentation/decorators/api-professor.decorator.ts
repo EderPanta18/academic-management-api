@@ -44,7 +44,6 @@ export const ApiListProfessors = () =>
       example: 20,
       description: 'Registros por página (máx. 100)',
     }),
-
     ApiOkResponse({ description: 'Listado paginado de profesores' }),
   );
 

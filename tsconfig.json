@@ -21,13 +21,14 @@
       "@shared/*": ["shared/*"],
       "@modules/*": ["modules/*"],
       "@config/*": ["config/*"],
+      "@academic-periods/*": ["modules/academic-periods/*"],
       "@professors/*": ["modules/professors/*"],
       "@students/*": ["modules/students/*"],
       "@courses/*": ["modules/courses/*"],
+      "@course-offerings/*": ["modules/course-offerings/*"],
       "@enrollments/*": ["modules/enrollments/*"]
     },
 
-    "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,

@@ -29,11 +29,6 @@ export interface IProfessorRepository {
   findAll(pagination: PaginationVO): Promise<[Professor[], number]>;
 
   /**
-   * Soft-delete del profesor.
-   */
-  delete(id: number): Promise<void>;
-
-  /**
    * Verifica si ya existe un profesor con ese DNI.
    */
   existsByDni(dni: string): Promise<boolean>;
@@ -42,4 +37,9 @@ export interface IProfessorRepository {
    * Verifica si ya existe un profesor con ese email.
    */
   existsByEmail(email: string): Promise<boolean>;
+
+  /**
+   * Soft-delete del profesor.
+   */
+  delete(id: number): Promise<void>;
 }

@@ -58,6 +58,7 @@ export class CreateProfessorDto {
     format: 'email',
   })
   @IsEmail({}, { message: 'El email no tiene un formato válido' })
+  @IsNotEmpty({ message: 'El email no puede estar vacío' })
   @MaxLength(150, { message: 'El email no puede tener más de 150 caracteres' })
   email: string;
 
@@ -67,6 +68,7 @@ export class CreateProfessorDto {
     pattern: '^[A-Z]{4}-\\d{3}$',
   })
   @IsString({ message: 'El código debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'El código no puede estar vacío' })
   @MaxLength(20, { message: 'El código no puede tener más de 20 caracteres' })
   code: string;
 
@@ -89,6 +91,7 @@ export class CreateProfessorDto {
   })
   @IsOptional()
   @IsString({ message: 'La especialidad debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'La especialidad no puede estar vacía' })
   @MaxLength(100, {
     message: 'La especialidad no puede tener más de 100 caracteres',
   })
@@ -101,6 +104,7 @@ export class CreateProfessorDto {
   })
   @IsOptional()
   @IsString({ message: 'El email institucional debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'El email institucional no puede estar vacío' })
   @MaxLength(150, {
     message: 'El email institucional no puede tener más de 150 caracteres',
   })
@@ -124,18 +128,22 @@ export class CreateProfessorDto {
   })
   @IsOptional()
   @IsEnum(ProfessorStatus, {
-    message: `El estado debe ser: ${Object.values(ProfessorStatus).join(', ')}`,
+    each: true,
+    message: (args) =>
+      `Estado inválido: '${args.value}'. Debe ser uno de: ${Object.values(ProfessorStatus).join(', ')}`,
   })
   status?: ProfessorStatus;
 
   @ApiPropertyOptional({
     description: 'Número de teléfono del profesor',
     example: '987654321',
-    pattern: '^[0-9]{7,12}$',
+    pattern: '^[0-9]{9}$',
   })
   @IsOptional()
   @IsString({ message: 'El teléfono debe ser una cadena de texto' })
-  @MaxLength(12, { message: 'El teléfono no puede tener más de 12 caracteres' })
+  @Matches(/^[0-9]{9}$/, {
+    message: 'El teléfono debe contener exactamente 9 dígitos numéricos',
+  })
   phone?: string;
 
   @ApiPropertyOptional({

@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '@shared/infrastructure/database';
 import { PaginationVO } from '@shared/domain/value-objects';
+import { ProfessorStatus } from '@modules/professors/domain/constants';
 import { Professor } from '@professors/domain/entities';
 import type {
   IProfessorRepository,
@@ -91,6 +92,18 @@ export class ProfessorPrismaRepository
     const count = await this.prisma.professor.count({
       where: {
         personId: id,
+        deletedAt: null,
+        person: { deletedAt: null },
+      },
+    });
+    return count > 0;
+  }
+
+  async isActive(id: number): Promise<boolean> {
+    const count = await this.prisma.professor.count({
+      where: {
+        personId: id,
+        status: ProfessorStatus.ACTIVE,
         deletedAt: null,
         person: { deletedAt: null },
       },

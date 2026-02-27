@@ -12,6 +12,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { PaginationVO } from '@shared/domain/value-objects';
 import { PaginatedResultDto } from '@shared/application/dtos';
+import { PaginationQueryDto } from '@shared/presentation/dtos';
 import { ApiPaginatedResponse } from '@shared/presentation/decorators';
 import {
   CreateProfessorUseCase,
@@ -50,10 +51,9 @@ export class ProfessorsController {
   @ApiListProfessors()
   @ApiPaginatedResponse()
   async list(
-    @Query('page', ParseIntPipe) page?: number,
-    @Query('pageSize', ParseIntPipe) pageSize?: number,
+    @Query() queryDto: PaginationQueryDto,
   ): Promise<PaginatedResultDto<ProfessorResponseDto>> {
-    const pagination = new PaginationVO(page, pageSize);
+    const pagination = new PaginationVO(queryDto.page, queryDto.pageSize);
     const result = await this.listUseCase.execute(pagination);
     return ProfessorHttpMapper.toPaginatedResponse(result, pagination);
   }

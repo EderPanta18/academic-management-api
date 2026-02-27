@@ -58,6 +58,7 @@ export class CreateStudentDto {
     format: 'email',
   })
   @IsEmail({}, { message: 'El email no tiene un formato válido' })
+  @IsNotEmpty({ message: 'El email no puede estar vacío' })
   @MaxLength(150, { message: 'El email no puede tener más de 150 caracteres' })
   email: string;
 
@@ -100,6 +101,7 @@ export class CreateStudentDto {
     format: 'email',
   })
   @IsEmail({}, { message: 'El email no tiene un formato válido' })
+  @IsNotEmpty({ message: 'El email institucional no puede estar vacío' })
   @MaxLength(150, { message: 'El email no puede tener más de 150 caracteres' })
   institutionalEmail?: string;
 
@@ -110,18 +112,22 @@ export class CreateStudentDto {
   })
   @IsOptional()
   @IsEnum(StudentStatus, {
-    message: `El estado debe ser: ${Object.values(StudentStatus).join(', ')}`,
+    each: true,
+    message: (args) =>
+      `Estado inválido: '${args.value}'. Debe ser uno de: ${Object.values(StudentStatus).join(', ')}`,
   })
   status?: StudentStatus;
 
   @ApiPropertyOptional({
     description: 'Número de teléfono del estudiante',
     example: '987654321',
-    pattern: '^[0-9]{7,12}$',
+    pattern: '^[0-9]{9}$',
   })
   @IsOptional()
   @IsString({ message: 'El teléfono debe ser una cadena de texto' })
-  @MaxLength(12, { message: 'El teléfono no puede tener más de 12 caracteres' })
+  @Matches(/^[0-9]{9}$/, {
+    message: 'El teléfono debe contener exactamente 9 dígitos numéricos',
+  })
   phone?: string;
 
   @ApiPropertyOptional({
