@@ -17,11 +17,7 @@ export class GetProfessorByIdUseCase {
 
   async execute(id: number): Promise<Professor> {
     const professor = await this.repository.findById(id);
-
-    if (!professor) {
-      throw new ProfessorNotFoundException(id);
-    }
-
+    if (!professor) throw new ProfessorNotFoundException(id);
     return professor;
   }
 }

@@ -1,8 +1,14 @@
 // modules/course-offerings/domain/ports/course-offering.repository.port.ts
 
-import type { PaginationVO } from '@shared/domain/value-objects';
+import { PaginationVO } from '@shared/domain/value-objects';
 import { CourseOfferingStatus } from '../constants';
-import type { CourseOffering } from '../entities';
+import { CourseOffering } from '../entities';
+
+export interface FindAllCourseOfferingsFilters {
+  courseId?: number;
+  academicPeriodId?: number;
+  statuses?: CourseOfferingStatus[];
+}
 
 /**
  * Contrato que la capa de application usa para persistir y recuperar
@@ -26,7 +32,7 @@ export interface ICourseOfferingRepository {
    */
   findAll(
     pagination: PaginationVO,
-    statuses?: CourseOfferingStatus[],
+    filters?: FindAllCourseOfferingsFilters,
   ): Promise<[CourseOffering[], number]>;
   /**
    * Asigna (o reasigna) un profesor a una oferta existente.

@@ -3,6 +3,10 @@
 import { PaginationVO } from '@shared/domain/value-objects';
 import { Student } from '../entities';
 
+export interface FindAllStudentsFilters {
+  careerId?: number;
+}
+
 /**
  * Contrato que la capa de aplicación usa para persistir y recuperar
  * estudiantes.
@@ -25,7 +29,10 @@ export interface IStudentRepository {
    * Lista estudiantes no eliminados con paginación.
    * El total refleja el conteo sin paginación aplicada.
    */
-  findAll(pagination: PaginationVO): Promise<[Student[], number]>;
+  findAll(
+    pagination: PaginationVO,
+    filters?: FindAllStudentsFilters,
+  ): Promise<[Student[], number]>;
 
   /**
    * Verifica si ya existe un estudiante con ese DNI.

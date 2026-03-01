@@ -16,17 +16,17 @@ import {
   COURSE_OFFERING_REPOSITORY_PORT,
   type ICourseOfferingRepository,
 } from '@course-offerings/domain/ports';
-import { ProfessorNotAvailableException } from '../exceptions';
+import { ProfessorNotActiveForAssignmentException } from '../exceptions';
 import { AssignProfessorToOfferingCommand } from '../commands';
 
 @Injectable()
 export class AssignProfessorToOfferingUseCase {
   constructor(
-    @Inject(COURSE_OFFERING_REPOSITORY_PORT)
-    private readonly repository: ICourseOfferingRepository,
-
     @Inject(PROFESSOR_FINDER_PORT)
     private readonly professorFinder: IProfessorFinder,
+
+    @Inject(COURSE_OFFERING_REPOSITORY_PORT)
+    private readonly repository: ICourseOfferingRepository,
   ) {}
 
   async execute(
@@ -54,11 +54,11 @@ export class AssignProfessorToOfferingUseCase {
       throw new EntityNotFoundException('Professor', command.professorId);
     }
 
-    const professorAvailable = await this.professorFinder.isActive(
+    const isProfessorActive = await this.professorFinder.isActive(
       command.professorId,
     );
-    if (!professorAvailable) {
-      throw new ProfessorNotAvailableException(command.professorId);
+    if (!isProfessorActive) {
+      throw new ProfessorNotActiveForAssignmentException(command.professorId);
     }
 
     return this.repository.assignProfessor(

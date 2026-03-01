@@ -18,7 +18,7 @@ export class StudentHttpMapper {
     dto.birthDate = student.birthDate;
     dto.careerId = student.careerId;
     dto.code = student.code;
-    dto.institutionalEmail = student.institutionalEmail!;
+    dto.institutionalEmail = student.institutionalEmail;
     dto.enrollmentDate = student.enrollmentDate;
     dto.status = student.status;
     return dto;

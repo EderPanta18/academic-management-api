@@ -3,6 +3,10 @@
 import { PaginationVO } from '@shared/domain/value-objects';
 import { Professor } from '../entities';
 
+export interface FindAllProfessorsFilters {
+  departmentId?: number;
+}
+
 /**
  * Contrato que la capa de aplicación usa para persistir y recuperar
  * profesores.
@@ -26,7 +30,10 @@ export interface IProfessorRepository {
    * Lista profesores activos con paginación.
    * El total refleja el conteo sin paginación aplicada.
    */
-  findAll(pagination: PaginationVO): Promise<[Professor[], number]>;
+  findAll(
+    pagination: PaginationVO,
+    filters?: FindAllProfessorsFilters,
+  ): Promise<[Professor[], number]>;
 
   /**
    * Verifica si ya existe un profesor con ese DNI.

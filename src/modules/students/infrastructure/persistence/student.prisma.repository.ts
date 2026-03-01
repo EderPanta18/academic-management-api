@@ -9,6 +9,7 @@ import type {
   IStudentRepository,
   IStudentFinder,
 } from '@students/domain/ports';
+import { type FindAllStudentsFilters } from '@students/domain/ports/student.repository.port';
 import { StudentPersistenceMapper } from '../mappers';
 
 @Injectable()
@@ -38,10 +39,13 @@ export class StudentPrismaRepository
     return raw ? StudentPersistenceMapper.toDomain(raw) : null;
   }
 
-  async findAll(pagination: PaginationVO): Promise<[Student[], number]> {
+  async findAll(
+    pagination: PaginationVO,
+    filters?: FindAllStudentsFilters,
+  ): Promise<[Student[], number]> {
     const where: Prisma.StudentWhereInput = {
       deletedAt: null,
-      person: { deletedAt: null },
+      ...(filters?.careerId ? { careerId: filters.careerId } : {}),
     };
 
     const [raws, total] = await Promise.all([
@@ -55,7 +59,7 @@ export class StudentPrismaRepository
       this.prisma.student.count({ where }),
     ]);
 
-    return [raws.map((raw) => StudentPersistenceMapper.toDomain(raw)), total];
+    return [raws.map(StudentPersistenceMapper.toDomain), total];
   }
 
   async existsByDni(dni: string): Promise<boolean> {
@@ -106,6 +110,25 @@ export class StudentPrismaRepository
       },
     });
     return count > 0;
+  }
+
+  async isActive(id: number): Promise<boolean> {
+    const count = await this.prisma.student.count({
+      where: {
+        personId: id,
+        status: 'ACTIVE',
+        deletedAt: null,
+      },
+    });
+    return count > 0;
+  }
+
+  async getCareerIdByStudentId(studentId: number): Promise<number | null> {
+    const raw = await this.prisma.student.findFirst({
+      where: { personId: studentId, deletedAt: null },
+      select: { careerId: true },
+    });
+    return raw?.careerId ?? null;
   }
 
   // ── Privados ──────────────────────────────────────────────────────────────

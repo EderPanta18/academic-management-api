@@ -17,11 +17,7 @@ export class GetCourseOfferingByIdUseCase {
 
   async execute(id: number): Promise<CourseOffering> {
     const offering = await this.repository.findById(id);
-
-    if (!offering) {
-      throw new CourseOfferingNotFoundException(id);
-    }
-
+    if (!offering) throw new CourseOfferingNotFoundException(id);
     return offering;
   }
 }

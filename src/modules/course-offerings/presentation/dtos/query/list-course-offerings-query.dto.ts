@@ -1,11 +1,29 @@
 // modules/course-offerings/presentation/dtos/query/list-course-offerings-query.dto.ts
 
-import { IsOptional, IsEnum, IsArray } from 'class-validator';
-import { Transform } from 'class-transformer';
+import {
+  IsOptional,
+  IsEnum,
+  IsArray,
+  IsInt,
+  IsPositive,
+} from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 import { PaginationQueryDto } from '@shared/presentation/dtos';
 import { CourseOfferingStatus } from '@course-offerings/domain/constants';
 
 export class ListCourseOfferingsQueryDto extends PaginationQueryDto {
+  @IsOptional()
+  @IsInt({ message: 'El id del curso debe ser un número entero' })
+  @IsPositive({ message: 'El id del curso debe ser positivo' })
+  @Type(() => Number)
+  courseId?: number;
+
+  @IsOptional()
+  @IsInt({ message: 'El id del período debe ser un número entero' })
+  @IsPositive({ message: 'El id del período debe ser positivo' })
+  @Type(() => Number)
+  academicPeriodId?: number;
+
   @IsOptional()
   @IsArray()
   @IsEnum(CourseOfferingStatus, {

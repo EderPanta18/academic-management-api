@@ -39,8 +39,8 @@ export class StudentResponseDto {
   @ApiProperty({ example: '2024000042' })
   code: string;
 
-  @ApiProperty({ example: 'maria.garcia@universidad.edu.pe' })
-  institutionalEmail: string;
+  @ApiProperty({ example: 'maria.garcia@universidad.edu.pe', nullable: true })
+  institutionalEmail: string | null;
 
   @ApiProperty({
     example: '2024-03-01',

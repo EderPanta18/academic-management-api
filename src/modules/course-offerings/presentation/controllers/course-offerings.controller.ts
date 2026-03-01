@@ -13,6 +13,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { PaginationVO } from '@shared/domain/value-objects';
 import { PaginatedResultDto } from '@shared/application/dtos';
+import { SWAGGER_TAGS } from '@shared/presentation/constants';
 import { ApiPaginatedResponse } from '@shared/presentation/decorators';
 import {
   CreateCourseOfferingUseCase,
@@ -42,7 +43,7 @@ import {
 } from '../dtos';
 import { CourseOfferingHttpMapper } from '../mappers';
 
-@ApiTags('course-offerings')
+@ApiTags(SWAGGER_TAGS.COURSE_OFFERINGS)
 @Controller(COURSE_OFFERING_ROUTES.BASE)
 export class CourseOfferingsController {
   constructor(
@@ -71,13 +72,16 @@ export class CourseOfferingsController {
     @Query() queryDto: ListCourseOfferingsQueryDto,
   ): Promise<PaginatedResultDto<CourseOfferingResponseDto>> {
     const pagination = new PaginationVO(queryDto.page, queryDto.pageSize);
-
-    const query = queryDto.status?.length
-      ? new ListCourseOfferingsQuery({ status: queryDto.status })
-      : undefined;
+    const query =
+      queryDto.courseId || queryDto.academicPeriodId || queryDto.status?.length
+        ? new ListCourseOfferingsQuery({
+            courseId: queryDto.courseId,
+            academicPeriodId: queryDto.academicPeriodId,
+            status: queryDto.status,
+          })
+        : undefined;
 
     const result = await this.listUseCase.execute(pagination, query);
-
     return CourseOfferingHttpMapper.toPaginatedResponse(result, pagination);
   }
 

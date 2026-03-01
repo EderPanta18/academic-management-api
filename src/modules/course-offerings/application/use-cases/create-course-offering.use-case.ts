@@ -2,7 +2,6 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { EntityNotFoundException } from '@shared/domain/exceptions';
-import { CourseOffering } from '@course-offerings/domain/entities';
 import {
   ACADEMIC_PERIOD_FINDER_PORT,
   type IAcademicPeriodFinder,
@@ -15,6 +14,7 @@ import {
   PROFESSOR_FINDER_PORT,
   type IProfessorFinder,
 } from '@modules/professors/domain/ports';
+import { CourseOffering } from '@course-offerings/domain/entities';
 import { CourseOfferingDuplicateException } from '@course-offerings/domain/exceptions';
 import {
   COURSE_OFFERING_REPOSITORY_PORT,
@@ -22,16 +22,13 @@ import {
 } from '@course-offerings/domain/ports';
 import {
   AcademicPeriodNotCurrentException,
-  ProfessorNotAvailableException,
+  ProfessorNotActiveForAssignmentException,
 } from '../exceptions';
 import { CreateCourseOfferingCommand } from '../commands';
 
 @Injectable()
 export class CreateCourseOfferingUseCase {
   constructor(
-    @Inject(COURSE_OFFERING_REPOSITORY_PORT)
-    private readonly repository: ICourseOfferingRepository,
-
     @Inject(COURSE_FINDER_PORT)
     private readonly courseFinder: ICourseFinder,
 
@@ -40,6 +37,9 @@ export class CreateCourseOfferingUseCase {
 
     @Inject(PROFESSOR_FINDER_PORT)
     private readonly professorFinder: IProfessorFinder,
+
+    @Inject(COURSE_OFFERING_REPOSITORY_PORT)
+    private readonly repository: ICourseOfferingRepository,
   ) {}
 
   async execute(command: CreateCourseOfferingCommand): Promise<CourseOffering> {
@@ -84,9 +84,11 @@ export class CreateCourseOfferingUseCase {
         throw new EntityNotFoundException('Professor', command.professorId);
       }
 
-      const isActive = await this.professorFinder.isActive(command.professorId);
-      if (!isActive) {
-        throw new ProfessorNotAvailableException(command.professorId);
+      const isProfessorActive = await this.professorFinder.isActive(
+        command.professorId,
+      );
+      if (!isProfessorActive) {
+        throw new ProfessorNotActiveForAssignmentException(command.professorId);
       }
     }
 

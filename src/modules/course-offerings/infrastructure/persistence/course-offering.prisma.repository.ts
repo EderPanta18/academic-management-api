@@ -10,6 +10,7 @@ import type {
   ICourseOfferingRepository,
   ICourseOfferingFinder,
 } from '@course-offerings/domain/ports';
+import { type FindAllCourseOfferingsFilters } from '@modules/course-offerings/domain/ports/course-offering.repository.port';
 import { CourseOfferingPersistenceMapper } from '../mappers';
 
 @Injectable()
@@ -36,11 +37,17 @@ export class CourseOfferingPrismaRepository
 
   async findAll(
     pagination: PaginationVO,
-    statuses?: CourseOfferingStatus[],
+    filters?: FindAllCourseOfferingsFilters,
   ): Promise<[CourseOffering[], number]> {
     const where: Prisma.CourseOfferingWhereInput = {
       deletedAt: null,
-      ...(statuses?.length ? { status: { in: statuses } } : {}),
+      ...(filters?.courseId ? { courseId: filters.courseId } : {}),
+      ...(filters?.academicPeriodId
+        ? { academicPeriodId: filters.academicPeriodId }
+        : {}),
+      ...(filters?.statuses?.length
+        ? { status: { in: filters.statuses } }
+        : {}),
     };
 
     const [raws, total] = await Promise.all([
@@ -53,10 +60,7 @@ export class CourseOfferingPrismaRepository
       this.prisma.courseOffering.count({ where }),
     ]);
 
-    return [
-      raws.map((raw) => CourseOfferingPersistenceMapper.toDomain(raw)),
-      total,
-    ];
+    return [raws.map(CourseOfferingPersistenceMapper.toDomain), total];
   }
 
   async assignProfessor(
@@ -127,6 +131,18 @@ export class CourseOfferingPrismaRepository
     });
 
     return offering.isOpenForEnrollment;
+  }
+
+  async getCourseCareerIdByOfferingId(
+    offeringId: number,
+  ): Promise<number | null> {
+    const raw = await this.prisma.courseOffering.findFirst({
+      where: { id: offeringId, deletedAt: null },
+      select: {
+        course: { select: { careerId: true } },
+      },
+    });
+    return raw?.course.careerId ?? null;
   }
 
   // ── Privados ──────────────────────────────────────────────────────────────

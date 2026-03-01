@@ -8,6 +8,7 @@ import {
   STUDENT_REPOSITORY_PORT,
   type IStudentRepository,
 } from '@students/domain/ports';
+import { ListStudentsQuery } from '../queries';
 
 @Injectable()
 export class ListStudentsUseCase {
@@ -18,9 +19,11 @@ export class ListStudentsUseCase {
 
   async execute(
     pagination: PaginationVO,
+    query?: ListStudentsQuery,
   ): Promise<PaginatedResultDto<Student>> {
-    const [students, total] = await this.repository.findAll(pagination);
-
+    const [students, total] = await this.repository.findAll(pagination, {
+      careerId: query?.careerId,
+    });
     return PaginatedResultDto.from(students, total, pagination);
   }
 }

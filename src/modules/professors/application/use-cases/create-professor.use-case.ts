@@ -1,6 +1,11 @@
 // modules/professors/application/use-cases/create-professor.use-case.ts
 
 import { Inject, Injectable } from '@nestjs/common';
+import { EntityNotFoundException } from '@shared/domain/exceptions';
+import {
+  DEPARTMENT_FINDER_PORT,
+  type IDepartmentFinder,
+} from '@departments/domain/ports';
 import { Professor } from '@professors/domain/entities';
 import {
   ProfessorDniAlreadyExistsException,
@@ -18,16 +23,30 @@ import { CreateProfessorCommand } from '../commands';
 @Injectable()
 export class CreateProfessorUseCase {
   constructor(
+    @Inject(DEPARTMENT_FINDER_PORT)
+    private readonly departmentFinder: IDepartmentFinder,
+
     @Inject(PROFESSOR_REPOSITORY_PORT)
     private readonly repository: IProfessorRepository,
   ) {}
 
   async execute(command: CreateProfessorCommand): Promise<Professor> {
-    if (await this.repository.existsByDni(command.dni)) {
+    if (command.departmentId) {
+      const departmentExists = await this.departmentFinder.exists(
+        command.departmentId,
+      );
+      if (!departmentExists) {
+        throw new EntityNotFoundException('Department', command.departmentId);
+      }
+    }
+
+    const dniExists = await this.repository.existsByDni(command.dni);
+    if (dniExists) {
       throw new ProfessorDniAlreadyExistsException(command.dni);
     }
 
-    if (await this.repository.existsByEmail(command.email)) {
+    const emailExists = await this.repository.existsByEmail(command.email);
+    if (emailExists) {
       throw new ProfessorEmailAlreadyExistsException(command.email);
     }
 

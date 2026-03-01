@@ -1,6 +1,7 @@
 // modules/students/students.module.ts
 
 import { Module } from '@nestjs/common';
+import { CareersModule } from '@modules/careers';
 import {
   STUDENT_REPOSITORY_PORT,
   STUDENT_FINDER_PORT,
@@ -15,6 +16,7 @@ import { StudentsController } from '@students/presentation/controllers';
 
 @Module({
   controllers: [StudentsController],
+  imports: [CareersModule],
   providers: [
     CreateStudentUseCase,
     ListStudentsUseCase,

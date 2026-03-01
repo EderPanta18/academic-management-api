@@ -6,7 +6,6 @@ import { Professor } from '@professors/domain/entities';
 import { ProfessorResponseDto } from '../dtos';
 
 export class ProfessorHttpMapper {
-  /** Entidad de dominio → DTO de respuesta HTTP */
   static toResponse(professor: Professor): ProfessorResponseDto {
     const dto = new ProfessorResponseDto();
     dto.id = professor.id!;

@@ -1,7 +1,5 @@
 // modules/course-offerings/application/commands/create-course-offering.command.ts
 
-import { CourseOfferingStatus } from '@course-offerings/domain/constants';
-
 /**
  * Representa la intención de crear una nueva oferta de curso.
  * courseId y academicPeriodId son obligatorios — definen la oferta.

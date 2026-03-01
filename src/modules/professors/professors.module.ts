@@ -1,6 +1,7 @@
 // modules/professors/professors.module.ts
 
 import { Module } from '@nestjs/common';
+import { DepartmentsModule } from '@modules/departments';
 import {
   PROFESSOR_REPOSITORY_PORT,
   PROFESSOR_FINDER_PORT,
@@ -15,6 +16,7 @@ import { ProfessorsController } from '@professors/presentation/controllers';
 
 @Module({
   controllers: [ProfessorsController],
+  imports: [DepartmentsModule],
   providers: [
     CreateProfessorUseCase,
     ListProfessorsUseCase,

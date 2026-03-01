@@ -12,7 +12,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { PaginationVO } from '@shared/domain/value-objects';
 import { PaginatedResultDto } from '@shared/application/dtos';
-import { PaginationQueryDto } from '@shared/presentation/dtos';
+import { SWAGGER_TAGS } from '@shared/presentation/constants';
 import { ApiPaginatedResponse } from '@shared/presentation/decorators';
 import {
   CreateProfessorUseCase,
@@ -20,16 +20,21 @@ import {
   GetProfessorByIdUseCase,
 } from '@professors/application/use-cases';
 import { CreateProfessorCommand } from '@professors/application/commands';
+import { ListProfessorsQuery } from '@modules/professors/application/queries';
 import { PROFESSOR_ROUTES } from '../constants';
 import {
   ApiCreateProfessor,
   ApiListProfessors,
   ApiGetProfessorById,
 } from '../decorators';
-import { CreateProfessorDto, ProfessorResponseDto } from '../dtos';
+import {
+  CreateProfessorDto,
+  ListProfessorsQueryDto,
+  ProfessorResponseDto,
+} from '../dtos';
 import { ProfessorHttpMapper } from '../mappers';
 
-@ApiTags('professors')
+@ApiTags(SWAGGER_TAGS.PROFESSORS)
 @Controller(PROFESSOR_ROUTES.BASE)
 export class ProfessorsController {
   constructor(
@@ -51,10 +56,14 @@ export class ProfessorsController {
   @ApiListProfessors()
   @ApiPaginatedResponse()
   async list(
-    @Query() queryDto: PaginationQueryDto,
+    @Query() queryDto: ListProfessorsQueryDto,
   ): Promise<PaginatedResultDto<ProfessorResponseDto>> {
     const pagination = new PaginationVO(queryDto.page, queryDto.pageSize);
-    const result = await this.listUseCase.execute(pagination);
+    const query = queryDto.departmentId
+      ? new ListProfessorsQuery({ departmentId: queryDto.departmentId })
+      : undefined;
+
+    const result = await this.listUseCase.execute(pagination, query);
     return ProfessorHttpMapper.toPaginatedResponse(result, pagination);
   }
 

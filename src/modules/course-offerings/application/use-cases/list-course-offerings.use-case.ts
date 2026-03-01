@@ -21,11 +21,11 @@ export class ListCourseOfferingsUseCase {
     pagination: PaginationVO,
     query?: ListCourseOfferingsQuery,
   ): Promise<PaginatedResultDto<CourseOffering>> {
-    const [offerings, total] = await this.repository.findAll(
-      pagination,
-      query?.normalizedStatuses,
-    );
-
+    const [offerings, total] = await this.repository.findAll(pagination, {
+      courseId: query?.courseId,
+      academicPeriodId: query?.academicPeriodId,
+      statuses: query?.normalizedStatuses,
+    });
     return PaginatedResultDto.from(offerings, total, pagination);
   }
 }

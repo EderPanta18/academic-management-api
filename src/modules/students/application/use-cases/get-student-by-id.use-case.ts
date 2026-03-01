@@ -17,11 +17,7 @@ export class GetStudentByIdUseCase {
 
   async execute(id: number): Promise<Student> {
     const student = await this.repository.findById(id);
-
-    if (!student) {
-      throw new StudentNotFoundException(id);
-    }
-
+    if (!student) throw new StudentNotFoundException(id);
     return student;
   }
 }

@@ -8,6 +8,7 @@ import {
   PROFESSOR_REPOSITORY_PORT,
   type IProfessorRepository,
 } from '@professors/domain/ports';
+import { ListProfessorsQuery } from '../queries';
 
 /**
  * Orquesta el listado paginado de profesores activos.
@@ -21,9 +22,11 @@ export class ListProfessorsUseCase {
 
   async execute(
     pagination: PaginationVO,
+    query?: ListProfessorsQuery,
   ): Promise<PaginatedResultDto<Professor>> {
-    const [professors, total] = await this.repository.findAll(pagination);
-
+    const [professors, total] = await this.repository.findAll(pagination, {
+      departmentId: query?.departmentId,
+    });
     return PaginatedResultDto.from(professors, total, pagination);
   }
 }

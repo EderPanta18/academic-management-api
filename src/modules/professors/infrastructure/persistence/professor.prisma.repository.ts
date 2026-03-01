@@ -10,6 +10,7 @@ import type {
   IProfessorRepository,
   IProfessorFinder,
 } from '@professors/domain/ports';
+import { FindAllProfessorsFilters } from '@modules/professors/domain/ports/professor.repository.port';
 import { ProfessorPersistenceMapper } from '../mappers';
 
 @Injectable()
@@ -39,10 +40,13 @@ export class ProfessorPrismaRepository
     return raw ? ProfessorPersistenceMapper.toDomain(raw) : null;
   }
 
-  async findAll(pagination: PaginationVO): Promise<[Professor[], number]> {
+  async findAll(
+    pagination: PaginationVO,
+    filters?: FindAllProfessorsFilters,
+  ): Promise<[Professor[], number]> {
     const where: Prisma.ProfessorWhereInput = {
       deletedAt: null,
-      person: { deletedAt: null },
+      ...(filters?.departmentId ? { departmentId: filters.departmentId } : {}),
     };
 
     const [raws, total] = await Promise.all([
@@ -56,7 +60,7 @@ export class ProfessorPrismaRepository
       this.prisma.professor.count({ where }),
     ]);
 
-    return [raws.map((raw) => ProfessorPersistenceMapper.toDomain(raw)), total];
+    return [raws.map(ProfessorPersistenceMapper.toDomain), total];
   }
 
   async existsByDni(dni: string): Promise<boolean> {

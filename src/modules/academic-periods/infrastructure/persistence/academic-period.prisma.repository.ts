@@ -2,7 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/infrastructure/database';
-import type { IAcademicPeriodFinder } from '@academic-periods/domain/ports';
+import { type IAcademicPeriodFinder } from '@academic-periods/domain/ports';
 
 @Injectable()
 export class AcademicPeriodPrismaRepository implements IAcademicPeriodFinder {

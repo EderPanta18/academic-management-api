@@ -2,8 +2,9 @@
 
 import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { SWAGGER_TAGS } from '@shared/presentation/constants';
 
-@ApiTags('health')
+@ApiTags(SWAGGER_TAGS.HEALTH)
 @Controller()
 export class AppController {
   @Get()
@@ -11,10 +12,7 @@ export class AppController {
   @ApiOkResponse({ description: 'API funcionando correctamente' })
   getHealth() {
     return {
-      success: true,
-      statusCode: 200,
       message: 'Academic Management API v1.0 - funcionando correctamente',
-      timestamp: new Date().toISOString(),
     };
   }
 }

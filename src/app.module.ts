@@ -12,11 +12,15 @@ import {
   ResponseWrapperInterceptor,
 } from '@shared/presentation/interceptors';
 import { PrismaModule } from '@shared/infrastructure/database';
+import { DepartmentsModule } from '@modules/departments';
+import { CareersModule } from '@modules/careers';
 import { AcademicPeriodsModule } from '@modules/academic-periods';
+import { CourseCategoriesModule } from '@modules/course-categories';
 import { CoursesModule } from '@modules/courses';
 import { ProfessorsModule } from '@modules/professors';
 import { StudentsModule } from '@modules/students';
 import { CourseOfferingsModule } from '@modules/course-offerings';
+import { EnrollmentsModule } from '@modules/enrollments';
 import { AppController } from './app.controller';
 import { ValidationPipe } from '@shared/presentation/pipes';
 
@@ -27,11 +31,15 @@ import { ValidationPipe } from '@shared/presentation/pipes';
       cache: true,
     }),
     PrismaModule,
+    DepartmentsModule,
+    CareersModule,
     AcademicPeriodsModule,
+    CourseCategoriesModule,
+    CoursesModule,
     ProfessorsModule,
     StudentsModule,
-    CoursesModule,
     CourseOfferingsModule,
+    EnrollmentsModule,
   ],
   controllers: [AppController],
   providers: [

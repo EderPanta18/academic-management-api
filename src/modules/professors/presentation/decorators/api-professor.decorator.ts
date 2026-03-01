@@ -5,7 +5,6 @@ import {
   ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
-  ApiBadRequestResponse,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
@@ -23,7 +22,9 @@ export const ApiCreateProfessor = () =>
       type: ProfessorResponseDto,
       description: 'Profesor creado correctamente',
     }),
-    ApiBadRequestResponse({ description: 'Datos de entrada inválidos' }),
+    ApiNotFoundResponse({
+      description: 'El departamento especificado no existe',
+    }),
     ApiConflictResponse({ description: 'El DNI o email ya están registrados' }),
   );
 
@@ -43,6 +44,13 @@ export const ApiListProfessors = () =>
       type: Number,
       example: 20,
       description: 'Registros por página (máx. 100)',
+    }),
+    ApiQuery({
+      name: 'departmentId',
+      required: false,
+      type: Number,
+      example: 1,
+      description: 'Filtrar por id de departamento',
     }),
     ApiOkResponse({ description: 'Listado paginado de profesores' }),
   );

@@ -5,7 +5,6 @@ import {
   ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
-  ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -23,7 +22,7 @@ export const ApiCreateStudent = () =>
       type: StudentResponseDto,
       description: 'Estudiante creado correctamente',
     }),
-    ApiBadRequestResponse({ description: 'Datos de entrada inválidos' }),
+    ApiNotFoundResponse({ description: 'Carrera no encontrada' }),
     ApiConflictResponse({
       description: 'El código, DNI o email ya están registrados',
     }),
@@ -45,6 +44,13 @@ export const ApiListStudents = () =>
       type: Number,
       example: 20,
       description: 'Registros por página (máx. 100)',
+    }),
+    ApiQuery({
+      name: 'careerId',
+      required: false,
+      type: Number,
+      example: 1,
+      description: 'Filtrar por id de carrera',
     }),
     ApiOkResponse({ description: 'Listado paginado de estudiantes' }),
   );

@@ -3,7 +3,6 @@
 import { applyDecorators, HttpCode, HttpStatus } from '@nestjs/common';
 import {
   ApiBody,
-  ApiBadRequestResponse,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
@@ -11,6 +10,7 @@ import {
   ApiOperation,
   ApiParam,
   ApiQuery,
+  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { CourseOfferingStatus } from '@modules/course-offerings/domain/constants';
 import {
@@ -28,13 +28,17 @@ export const ApiCreateCourseOffering = () =>
       type: CourseOfferingResponseDto,
       description: 'Oferta creada correctamente',
     }),
-    ApiBadRequestResponse({ description: 'Datos de entrada inválidos' }),
+    ApiNotFoundResponse({
+      description: 'Curso, período académico o profesor no encontrado',
+    }),
+    ApiUnprocessableEntityResponse({
+      description:
+        'El período académico no es el vigente / ' +
+        'El profesor no tiene estado ACTIVE',
+    }),
     ApiConflictResponse({
       description:
         'Ya existe una oferta para esa combinación de curso, período y sección',
-    }),
-    ApiNotFoundResponse({
-      description: 'Curso o período académico no encontrado',
     }),
   );
 
@@ -56,10 +60,25 @@ export const ApiListCourseOfferings = () =>
       description: 'Registros por página (máx. 100)',
     }),
     ApiQuery({
+      name: 'courseId',
+      required: false,
+      type: Number,
+      example: 1,
+      description: 'Filtrar por id de curso',
+    }),
+    ApiQuery({
+      name: 'academicPeriodId',
+      required: false,
+      type: Number,
+      example: 1,
+      description: 'Filtrar por id de período académico',
+    }),
+    ApiQuery({
       name: 'status',
       required: false,
       enum: CourseOfferingStatus,
-      description: 'Filtrar por estado de la oferta',
+      isArray: true,
+      description: 'Filtrar por estado(s) de la oferta',
     }),
     ApiOkResponse({ description: 'Listado paginado de ofertas de curso' }),
   );
@@ -95,6 +114,11 @@ export const ApiAssignProfessorToOffering = () =>
       description: 'Profesor asignado correctamente',
     }),
     ApiNotFoundResponse({ description: 'Oferta o profesor no encontrado' }),
+    ApiUnprocessableEntityResponse({
+      description:
+        'La oferta está en estado CANCELLED o COMPLETED / ' +
+        'El profesor no tiene estado ACTIVE',
+    }),
   );
 
 export const ApiActivateCourseOffering = () =>
@@ -111,4 +135,9 @@ export const ApiActivateCourseOffering = () =>
       description: 'Oferta activada correctamente',
     }),
     ApiNotFoundResponse({ description: 'Oferta no encontrada' }),
+    ApiUnprocessableEntityResponse({
+      description:
+        'La oferta no está en estado INACTIVE / ' +
+        'La oferta no tiene profesor asignado',
+    }),
   );

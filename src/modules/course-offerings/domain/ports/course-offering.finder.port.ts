@@ -4,9 +4,7 @@
  * Contrato reducido de solo-lectura que otros módulos pueden consumir.
  */
 export interface ICourseOfferingFinder {
-  /**
-   * Verifica si existe una oferta activa (no soft-deleted) con ese id.
-   */
+  /** Verifica si existe una oferta activa (no soft-deleted) con ese id. */
   exists(id: number): Promise<boolean>;
 
   /**
@@ -14,4 +12,10 @@ export interface ICourseOfferingFinder {
    * enrollmentDeadline.
    */
   isOpenForEnrollment(id: number): Promise<boolean>;
+
+  /**
+   * Retorna el careerId del curso al que pertenece la oferta.
+   * Null si la oferta no existe o fue soft-deleted.
+   */
+  getCourseCareerIdByOfferingId(offeringId: number): Promise<number | null>;
 }

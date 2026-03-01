@@ -37,6 +37,6 @@ import { CourseOfferingsController } from '@course-offerings/presentation/contro
       useExisting: CourseOfferingPrismaRepository,
     },
   ],
-  exports: [COURSE_OFFERING_REPOSITORY_PORT],
+  exports: [COURSE_OFFERING_FINDER_PORT],
 })
 export class CourseOfferingsModule {}
