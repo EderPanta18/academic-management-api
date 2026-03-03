@@ -38,9 +38,8 @@ export class BulkResultDto {
     totalProcessed: number,
     errors: BulkRowErrorDto[],
   ): BulkResultDto {
-    const totalFailed = errors.length;
-    const totalSuccess = totalProcessed - totalFailed;
-
-    return new BulkResultDto(totalProcessed, totalSuccess, totalFailed, errors);
+    const failedRows = new Set(errors.map((e) => e.row)).size;
+    const totalSuccess = totalProcessed - failedRows;
+    return new BulkResultDto(totalProcessed, totalSuccess, failedRows, errors);
   }
 }

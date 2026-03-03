@@ -15,6 +15,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Trim, TrimOptional } from '@shared/presentation/decorators';
 import { StudentStatus } from '@students/domain/constants';
 
 export class CreateStudentDto {
@@ -25,6 +26,7 @@ export class CreateStudentDto {
     example: '87654321',
     pattern: '^[0-9]{8}$',
   })
+  @Trim()
   @IsString({ message: 'El DNI debe ser una cadena de texto' })
   @Length(8, 8, { message: 'El DNI debe tener exactamente 8 dígitos' })
   @Matches(/^\d{8}$/, { message: 'El DNI debe contener solo dígitos' })
@@ -35,6 +37,7 @@ export class CreateStudentDto {
     example: 'María Elena',
     pattern: '^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$',
   })
+  @Trim()
   @IsString({ message: 'El nombre debe ser una cadena de texto' })
   @IsNotEmpty({ message: 'El nombre no puede estar vacío' })
   @MaxLength(100, { message: 'El nombre no puede tener más de 100 caracteres' })
@@ -45,6 +48,7 @@ export class CreateStudentDto {
     example: 'García Torres',
     pattern: '^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$',
   })
+  @Trim()
   @IsString({ message: 'El apellido debe ser una cadena de texto' })
   @IsNotEmpty({ message: 'El apellido no puede estar vacío' })
   @MaxLength(100, {
@@ -57,6 +61,7 @@ export class CreateStudentDto {
     example: 'maria.garcia@gmail.com',
     format: 'email',
   })
+  @Trim()
   @IsEmail({}, { message: 'El email no tiene un formato válido' })
   @IsNotEmpty({ message: 'El email no puede estar vacío' })
   @MaxLength(150, { message: 'El email no puede tener más de 150 caracteres' })
@@ -76,6 +81,7 @@ export class CreateStudentDto {
     example: '2024000042',
     pattern: '^[A-Z0-9]{10}$',
   })
+  @Trim()
   @IsString({ message: 'El código debe ser una cadena de texto' })
   @Length(10, 10, { message: 'El código debe tener exactamente 10 caracteres' })
   @Matches(/^[A-Z0-9]{10}$/, {
@@ -95,11 +101,13 @@ export class CreateStudentDto {
 
   // ── Opcionales ────────────────────────────────────────────────────────────
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Email institucional del estudiante',
     example: 'maria.garcia@universidad.edu.pe',
     format: 'email',
   })
+  @TrimOptional()
+  @IsOptional()
   @IsEmail({}, { message: 'El email no tiene un formato válido' })
   @IsNotEmpty({ message: 'El email institucional no puede estar vacío' })
   @MaxLength(150, { message: 'El email no puede tener más de 150 caracteres' })
@@ -123,6 +131,7 @@ export class CreateStudentDto {
     example: '987654321',
     pattern: '^[0-9]{9}$',
   })
+  @TrimOptional()
   @IsOptional()
   @IsString({ message: 'El teléfono debe ser una cadena de texto' })
   @Matches(/^[0-9]{9}$/, {

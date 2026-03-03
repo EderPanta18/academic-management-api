@@ -11,6 +11,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
+import { Trim, TrimOptional } from '@shared/presentation/decorators';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateCourseDto {
@@ -29,6 +30,7 @@ export class CreateCourseDto {
     description: 'Nombre del curso dentro de la carrera',
     example: 'Bases de Datos I',
   })
+  @Trim()
   @IsString({ message: 'El nombre debe ser una cadena de texto' })
   @IsNotEmpty({ message: 'El nombre no puede estar vacío' })
   @MaxLength(150, { message: 'El nombre no puede tener más de 150 caracteres' })
@@ -63,6 +65,7 @@ export class CreateCourseDto {
     description: 'Descripción del contenido y objetivos del curso',
     example: 'Fundamentos de modelado relacional y SQL',
   })
+  @TrimOptional()
   @IsOptional()
   @IsString({ message: 'La descripción debe ser una cadena de texto' })
   @IsNotEmpty({ message: 'La descripción no puede estar vacía si se envía' })

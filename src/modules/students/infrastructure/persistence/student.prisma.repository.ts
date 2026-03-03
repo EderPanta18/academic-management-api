@@ -63,21 +63,15 @@ export class StudentPrismaRepository
   }
 
   async existsByDni(dni: string): Promise<boolean> {
-    const count = await this.prisma.student.count({
-      where: {
-        deletedAt: null,
-        person: { dni, deletedAt: null },
-      },
+    const count = await this.prisma.person.count({
+      where: { dni, deletedAt: null },
     });
     return count > 0;
   }
 
   async existsByEmail(email: string): Promise<boolean> {
-    const count = await this.prisma.student.count({
-      where: {
-        deletedAt: null,
-        person: { email, deletedAt: null },
-      },
+    const count = await this.prisma.person.count({
+      where: { email, deletedAt: null },
     });
     return count > 0;
   }

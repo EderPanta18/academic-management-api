@@ -11,4 +11,7 @@ export const STUDENT_ROUTES = {
 
   /** GET   /students/:id  — obtener estudiante por id */
   GET_BY_ID: ':id',
+
+  /** POST  /students/import — importar estudiantes desde archivo */
+  BULK_IMPORT: 'import',
 } as const;

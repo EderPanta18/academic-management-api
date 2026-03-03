@@ -12,6 +12,6 @@ export class ProfessorEmailAlreadyExistsException extends ProfessorException {
   readonly errorCode = 'PROF_003';
 
   constructor(email: string) {
-    super(`Ya existe un profesor registrado con el email ${email}`);
+    super(`Ya existe una persona registrada con el email ${email}`);
   }
 }

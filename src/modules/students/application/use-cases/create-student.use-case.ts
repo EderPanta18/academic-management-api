@@ -5,9 +5,9 @@ import { EntityNotFoundException } from '@shared/domain/exceptions';
 import { CAREER_FINDER_PORT, type ICareerFinder } from '@careers/domain/ports';
 import { Student } from '@students/domain/entities';
 import {
-  StudentDuplicateCodeException,
   StudentDniAlreadyExistsException,
   StudentEmailAlreadyExistsException,
+  StudentCodeAlreadyExistsException,
 } from '@students/domain/exceptions';
 import {
   STUDENT_REPOSITORY_PORT,
@@ -31,11 +31,6 @@ export class CreateStudentUseCase {
       throw new EntityNotFoundException('Career', command.careerId);
     }
 
-    const codeExists = await this.repository.existsByCode(command.code);
-    if (codeExists) {
-      throw new StudentDuplicateCodeException(command.code);
-    }
-
     const dniExists = await this.repository.existsByDni(command.dni);
     if (dniExists) {
       throw new StudentDniAlreadyExistsException(command.dni);
@@ -44,6 +39,11 @@ export class CreateStudentUseCase {
     const emailExists = await this.repository.existsByEmail(command.email);
     if (emailExists) {
       throw new StudentEmailAlreadyExistsException(command.email);
+    }
+
+    const codeExists = await this.repository.existsByCode(command.code);
+    if (codeExists) {
+      throw new StudentCodeAlreadyExistsException(command.code);
     }
 
     const student = Student.create({

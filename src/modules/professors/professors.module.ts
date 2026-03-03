@@ -22,7 +22,6 @@ import { ProfessorsController } from '@professors/presentation/controllers';
     ListProfessorsUseCase,
     GetProfessorByIdUseCase,
     ProfessorPrismaRepository,
-
     {
       provide: PROFESSOR_REPOSITORY_PORT,
       useExisting: ProfessorPrismaRepository,

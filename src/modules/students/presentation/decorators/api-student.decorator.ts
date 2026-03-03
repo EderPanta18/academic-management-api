@@ -4,6 +4,7 @@ import { applyDecorators, HttpCode, HttpStatus } from '@nestjs/common';
 import {
   ApiBody,
   ApiConflictResponse,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -11,7 +12,12 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { CreateStudentDto, StudentResponseDto } from '../dtos';
+import { BULK_IMPORT } from '@shared/application/constants';
+import {
+  BulkImportResultResponseDto,
+  CreateStudentDto,
+  StudentResponseDto,
+} from '../dtos';
 
 export const ApiCreateStudent = () =>
   applyDecorators(
@@ -69,4 +75,32 @@ export const ApiGetStudentById = () =>
       description: 'Estudiante encontrado',
     }),
     ApiNotFoundResponse({ description: 'Estudiante no encontrado' }),
+  );
+
+export const ApiBulkImportStudents = () =>
+  applyDecorators(
+    ApiOperation({
+      summary: 'Importar estudiantes desde archivo .xlsx o .csv',
+      description:
+        '**Columnas requeridas:** `nombres`, `apellidos`, `dni`, `email`, ' +
+        '`codigo`, `careerId`, `fechaMatricula` (YYYY-MM-DD)\n\n' +
+        '**Columnas opcionales:** `emailInstitucional`, `telefono`, `fechaNacimiento`\n\n' +
+        `Máximo **${BULK_IMPORT.MAX_ROWS} filas** · máx. **${BULK_IMPORT.MAX_FILE_SIZE_MB} MB**\n\n`,
+    }),
+    HttpCode(HttpStatus.OK),
+    ApiConsumes('multipart/form-data'),
+    ApiBody({
+      schema: {
+        type: 'object',
+        required: ['file'],
+        properties: {
+          file: {
+            type: 'string',
+            format: 'binary',
+            description: 'Archivo .xlsx o .csv',
+          },
+        },
+      },
+    }),
+    ApiOkResponse({ type: BulkImportResultResponseDto }),
   );

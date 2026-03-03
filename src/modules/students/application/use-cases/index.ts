@@ -3,3 +3,4 @@
 export { CreateStudentUseCase } from './create-student.use-case';
 export { ListStudentsUseCase } from './list-students.use-case';
 export { GetStudentByIdUseCase } from './get-student-by-id.use-case';
+export { BulkImportStudentsUseCase } from './bulk-import-students.use-case';

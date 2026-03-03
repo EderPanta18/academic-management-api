@@ -10,6 +10,7 @@ import { Professor } from '@professors/domain/entities';
 import {
   ProfessorDniAlreadyExistsException,
   ProfessorEmailAlreadyExistsException,
+  ProfessorCodeAlreadyExistsException,
 } from '@professors/domain/exceptions';
 import {
   PROFESSOR_REPOSITORY_PORT,
@@ -48,6 +49,11 @@ export class CreateProfessorUseCase {
     const emailExists = await this.repository.existsByEmail(command.email);
     if (emailExists) {
       throw new ProfessorEmailAlreadyExistsException(command.email);
+    }
+
+    const codeExists = await this.repository.existsByCode(command.code);
+    if (codeExists) {
+      throw new ProfessorCodeAlreadyExistsException(command.code);
     }
 
     const professor = Professor.create({

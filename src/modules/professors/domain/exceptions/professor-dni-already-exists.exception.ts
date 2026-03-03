@@ -12,6 +12,6 @@ export class ProfessorDniAlreadyExistsException extends ProfessorException {
   readonly errorCode = 'PROF_002';
 
   constructor(dni: string) {
-    super(`Ya existe un profesor registrado con el DNI ${dni}`);
+    super(`Ya existe un persona registrada con el DNI ${dni}`);
   }
 }

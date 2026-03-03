@@ -14,6 +14,7 @@ import {
   Min,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { TrimOptional } from '@shared/presentation/decorators';
 
 export class CreateCourseOfferingDto {
   // ── Obligatorios ──────────────────────────────────────────────────────────
@@ -54,6 +55,7 @@ export class CreateCourseOfferingDto {
     default: 'A',
     pattern: '^[A-Z0-9]{1,10}$',
   })
+  @TrimOptional()
   @IsOptional()
   @IsString({ message: 'La sección debe ser una cadena de texto' })
   @IsNotEmpty({ message: 'La sección no puede estar vacía' })

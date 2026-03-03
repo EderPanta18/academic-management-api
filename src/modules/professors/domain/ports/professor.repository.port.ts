@@ -45,6 +45,8 @@ export interface IProfessorRepository {
    */
   existsByEmail(email: string): Promise<boolean>;
 
+  existsByCode(code: string): Promise<boolean>;
+
   /**
    * Soft-delete del profesor.
    */

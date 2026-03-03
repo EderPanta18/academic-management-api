@@ -15,6 +15,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Trim, TrimOptional } from '@shared/presentation/decorators';
 import { ProfessorStatus } from '@professors/domain/constants';
 
 export class CreateProfessorDto {
@@ -25,6 +26,7 @@ export class CreateProfessorDto {
     example: '12345678',
     pattern: '^[0-9]{8}$',
   })
+  @Trim()
   @IsString({ message: 'El DNI debe ser una cadena de texto' })
   @Length(8, 8, { message: 'El DNI debe tener exactamente 8 dígitos' })
   @Matches(/^\d{8}$/, { message: 'El DNI debe contener solo dígitos' })
@@ -35,6 +37,7 @@ export class CreateProfessorDto {
     example: 'Juan Carlos',
     pattern: '^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$',
   })
+  @Trim()
   @IsString({ message: 'El nombre debe ser una cadena de texto' })
   @IsNotEmpty({ message: 'El nombre no puede estar vacío' })
   @MaxLength(100, { message: 'El nombre no puede tener más de 100 caracteres' })
@@ -45,6 +48,7 @@ export class CreateProfessorDto {
     example: 'Pérez López',
     pattern: '^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$',
   })
+  @Trim()
   @IsString({ message: 'El apellido debe ser una cadena de texto' })
   @IsNotEmpty({ message: 'El apellido no puede estar vacío' })
   @MaxLength(100, {
@@ -57,6 +61,7 @@ export class CreateProfessorDto {
     example: 'juan.perez@gmail.com',
     format: 'email',
   })
+  @Trim()
   @IsEmail({}, { message: 'El email no tiene un formato válido' })
   @IsNotEmpty({ message: 'El email no puede estar vacío' })
   @MaxLength(150, { message: 'El email no puede tener más de 150 caracteres' })
@@ -67,6 +72,7 @@ export class CreateProfessorDto {
     example: 'PROF-001',
     pattern: '^[A-Z]{4}-\\d{3}$',
   })
+  @Trim()
   @IsString({ message: 'El código debe ser una cadena de texto' })
   @IsNotEmpty({ message: 'El código no puede estar vacío' })
   @MaxLength(20, { message: 'El código no puede tener más de 20 caracteres' })
@@ -89,6 +95,7 @@ export class CreateProfessorDto {
     example: 'Bases de Datos',
     pattern: '^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$',
   })
+  @TrimOptional()
   @IsOptional()
   @IsString({ message: 'La especialidad debe ser una cadena de texto' })
   @IsNotEmpty({ message: 'La especialidad no puede estar vacía' })
@@ -102,6 +109,7 @@ export class CreateProfessorDto {
     example: 'juan.perez@universidad.edu.pe',
     pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
   })
+  @TrimOptional()
   @IsOptional()
   @IsString({ message: 'El email institucional debe ser una cadena de texto' })
   @IsNotEmpty({ message: 'El email institucional no puede estar vacío' })
@@ -139,6 +147,7 @@ export class CreateProfessorDto {
     example: '987654321',
     pattern: '^[0-9]{9}$',
   })
+  @TrimOptional()
   @IsOptional()
   @IsString({ message: 'El teléfono debe ser una cadena de texto' })
   @Matches(/^[0-9]{9}$/, {
