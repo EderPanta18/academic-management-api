@@ -21,8 +21,8 @@ import { ProfessorsModule } from '@modules/professors';
 import { StudentsModule } from '@modules/students';
 import { CourseOfferingsModule } from '@modules/course-offerings';
 import { EnrollmentsModule } from '@modules/enrollments';
-import { AppController } from './app.controller';
 import { ValidationPipe } from '@shared/presentation/pipes';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
