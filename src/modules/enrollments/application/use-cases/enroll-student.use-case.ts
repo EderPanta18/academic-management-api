@@ -5,11 +5,11 @@ import { EntityNotFoundException } from '@shared/domain/exceptions';
 import {
   STUDENT_FINDER_PORT,
   type IStudentFinder,
-} from '@students/domain/ports';
+} from '@students/domain/ports/in';
 import {
   COURSE_OFFERING_FINDER_PORT,
   type ICourseOfferingFinder,
-} from '@course-offerings/domain/ports';
+} from '@course-offerings/domain/ports/in';
 import { Enrollment } from '@enrollments/domain/entities';
 import {
   EnrollmentDuplicateException,
@@ -18,7 +18,7 @@ import {
 import {
   ENROLLMENT_REPOSITORY_PORT,
   type IEnrollmentRepository,
-} from '@enrollments/domain/ports';
+} from '@enrollments/domain/ports/out';
 import {
   StudentNotActiveForEnrollmentException,
   CourseOfferingNotOpenException,

@@ -11,7 +11,7 @@ import {
 import {
   COURSE_OFFERING_REPOSITORY_PORT,
   type ICourseOfferingRepository,
-} from '@course-offerings/domain/ports';
+} from '@course-offerings/domain/ports/out';
 
 @Injectable()
 export class ActivateCourseOfferingUseCase {

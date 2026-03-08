@@ -29,7 +29,7 @@ import {
   CreateStudentCommand,
   BulkImportStudentsCommand,
 } from '@students/application/commands';
-import { ListStudentsQuery } from '@modules/students/application/queries';
+import { ListStudentsQuery } from '@students/application/queries';
 import { STUDENT_ROUTES } from '../constants';
 import {
   ApiCreateStudent,
@@ -59,10 +59,9 @@ export class StudentsController {
   @Post(STUDENT_ROUTES.CREATE)
   @ApiCreateStudent()
   async create(@Body() dto: CreateStudentDto): Promise<StudentResponseDto> {
-    const student = await this.createUseCase.execute(
-      new CreateStudentCommand(dto),
-    );
-    return StudentHttpMapper.toResponse(student);
+    const command = new CreateStudentCommand(dto);
+    const student = await this.createUseCase.execute(command);
+    return StudentHttpMapper.toResponseFromCreate(student, command);
   }
 
   @Get(STUDENT_ROUTES.LIST)

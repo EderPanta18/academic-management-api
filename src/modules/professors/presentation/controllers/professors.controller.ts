@@ -20,7 +20,7 @@ import {
   GetProfessorByIdUseCase,
 } from '@professors/application/use-cases';
 import { CreateProfessorCommand } from '@professors/application/commands';
-import { ListProfessorsQuery } from '@modules/professors/application/queries';
+import { ListProfessorsQuery } from '@professors/application/queries';
 import { PROFESSOR_ROUTES } from '../constants';
 import {
   ApiCreateProfessor,
@@ -46,10 +46,9 @@ export class ProfessorsController {
   @Post(PROFESSOR_ROUTES.CREATE)
   @ApiCreateProfessor()
   async create(@Body() dto: CreateProfessorDto): Promise<ProfessorResponseDto> {
-    const professor = await this.createUseCase.execute(
-      new CreateProfessorCommand(dto),
-    );
-    return ProfessorHttpMapper.toResponse(professor);
+    const command = new CreateProfessorCommand(dto);
+    const professor = await this.createUseCase.execute(command);
+    return ProfessorHttpMapper.toResponseFromCreate(professor, command);
   }
 
   @Get(PROFESSOR_ROUTES.LIST)

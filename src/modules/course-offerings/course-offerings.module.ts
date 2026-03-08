@@ -7,19 +7,18 @@ import { ProfessorsModule } from '@modules/professors';
 import {
   COURSE_OFFERING_REPOSITORY_PORT,
   COURSE_OFFERING_FINDER_PORT,
-} from '@course-offerings/domain/ports';
+} from './domain/ports';
 import {
   CreateCourseOfferingUseCase,
   ListCourseOfferingsUseCase,
   GetCourseOfferingByIdUseCase,
   AssignProfessorToOfferingUseCase,
   ActivateCourseOfferingUseCase,
-} from '@course-offerings/application/use-cases';
-import { CourseOfferingPrismaRepository } from '@course-offerings/infrastructure/persistence';
-import { CourseOfferingsController } from '@course-offerings/presentation/controllers';
+} from './application/use-cases';
+import { CourseOfferingRepository } from './infrastructure/persistence';
+import { CourseOfferingsController } from './presentation/controllers';
 
 @Module({
-  controllers: [CourseOfferingsController],
   imports: [AcademicPeriodsModule, CoursesModule, ProfessorsModule],
   providers: [
     CreateCourseOfferingUseCase,
@@ -27,16 +26,17 @@ import { CourseOfferingsController } from '@course-offerings/presentation/contro
     GetCourseOfferingByIdUseCase,
     AssignProfessorToOfferingUseCase,
     ActivateCourseOfferingUseCase,
-    CourseOfferingPrismaRepository,
+    CourseOfferingRepository,
     {
       provide: COURSE_OFFERING_REPOSITORY_PORT,
-      useExisting: CourseOfferingPrismaRepository,
+      useExisting: CourseOfferingRepository,
     },
     {
       provide: COURSE_OFFERING_FINDER_PORT,
-      useExisting: CourseOfferingPrismaRepository,
+      useExisting: CourseOfferingRepository,
     },
   ],
+  controllers: [CourseOfferingsController],
   exports: [COURSE_OFFERING_FINDER_PORT],
 })
 export class CourseOfferingsModule {}

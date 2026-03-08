@@ -1,23 +1,22 @@
 // modules/students/application/use-cases/get-student-by-id.use-case.ts
-
 import { Inject, Injectable } from '@nestjs/common';
-import { Student } from '@students/domain/entities';
 import { StudentNotFoundException } from '@students/domain/exceptions';
+import { type StudentView } from '@students/domain/read-models';
 import {
-  STUDENT_REPOSITORY_PORT,
-  type IStudentRepository,
-} from '@students/domain/ports';
+  STUDENT_QUERY_PORT,
+  type IStudentQuery,
+} from '@students/domain/ports/out';
 
 @Injectable()
 export class GetStudentByIdUseCase {
   constructor(
-    @Inject(STUDENT_REPOSITORY_PORT)
-    private readonly repository: IStudentRepository,
+    @Inject(STUDENT_QUERY_PORT)
+    private readonly query: IStudentQuery,
   ) {}
 
-  async execute(id: number): Promise<Student> {
-    const student = await this.repository.findById(id);
-    if (!student) throw new StudentNotFoundException(id);
-    return student;
+  async execute(id: number): Promise<StudentView> {
+    const view = await this.query.findById(id);
+    if (!view) throw new StudentNotFoundException(id);
+    return view;
   }
 }

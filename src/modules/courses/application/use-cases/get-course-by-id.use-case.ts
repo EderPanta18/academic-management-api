@@ -6,7 +6,7 @@ import { CourseNotFoundException } from '@courses/domain/exceptions';
 import {
   COURSE_REPOSITORY_PORT,
   type ICourseRepository,
-} from '@courses/domain/ports';
+} from '@courses/domain/ports/out';
 
 @Injectable()
 export class GetCourseByIdUseCase {

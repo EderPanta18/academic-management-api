@@ -26,6 +26,7 @@
       "@academic-periods/*": ["modules/academic-periods/*"],
       "@course-categories/*": ["modules/course-categories/*"],
       "@courses/*": ["modules/courses/*"],
+      "@persons/*": ["modules/persons/*"],
       "@professors/*": ["modules/professors/*"],
       "@students/*": ["modules/students/*"],
       "@course-offerings/*": ["modules/course-offerings/*"],

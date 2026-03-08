@@ -6,32 +6,32 @@ import { CourseOfferingsModule } from '@modules/course-offerings';
 import {
   ENROLLMENT_REPOSITORY_PORT,
   ENROLLMENT_FINDER_PORT,
-} from '@enrollments/domain/ports';
+} from './domain/ports';
 import {
   EnrollStudentUseCase,
   ListEnrollmentsUseCase,
   GetEnrollmentByIdUseCase,
-} from '@enrollments/application/use-cases';
-import { EnrollmentPrismaRepository } from '@enrollments/infrastructure/persistence';
-import { EnrollmentsController } from '@enrollments/presentation/controllers';
+} from './application/use-cases';
+import { EnrollmentRepository } from './infrastructure/persistence';
+import { EnrollmentsController } from './presentation/controllers';
 
 @Module({
-  controllers: [EnrollmentsController],
   imports: [StudentsModule, CourseOfferingsModule],
   providers: [
     EnrollStudentUseCase,
     ListEnrollmentsUseCase,
     GetEnrollmentByIdUseCase,
-    EnrollmentPrismaRepository,
+    EnrollmentRepository,
     {
       provide: ENROLLMENT_REPOSITORY_PORT,
-      useExisting: EnrollmentPrismaRepository,
+      useExisting: EnrollmentRepository,
     },
     {
       provide: ENROLLMENT_FINDER_PORT,
-      useExisting: EnrollmentPrismaRepository,
+      useExisting: EnrollmentRepository,
     },
   ],
+  controllers: [EnrollmentsController],
   exports: [ENROLLMENT_FINDER_PORT],
 })
 export class EnrollmentsModule {}

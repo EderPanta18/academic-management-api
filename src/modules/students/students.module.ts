@@ -2,40 +2,46 @@
 
 import { Module } from '@nestjs/common';
 import { FileParserModule } from '@shared/infrastructure/file-parser';
+import { PersonsModule } from '@modules/persons';
 import { CareersModule } from '@modules/careers';
 import {
   STUDENT_REPOSITORY_PORT,
+  STUDENT_QUERY_PORT,
   STUDENT_FINDER_PORT,
-} from '@students/domain/ports';
+} from './domain/ports';
 import {
   CreateStudentUseCase,
   ListStudentsUseCase,
   GetStudentByIdUseCase,
   BulkImportStudentsUseCase,
-} from '@students/application/use-cases';
-import { StudentPrismaRepository } from '@students/infrastructure/persistence';
-import { FileParseInterceptor } from '@students/presentation/interceptors';
-import { StudentsController } from '@students/presentation/controllers';
+} from './application/use-cases';
+import { StudentRepository } from './infrastructure/persistence';
+import { FileParseInterceptor } from './presentation/interceptors';
+import { StudentsController } from './presentation/controllers';
 
 @Module({
-  controllers: [StudentsController],
-  imports: [FileParserModule, CareersModule],
+  imports: [FileParserModule, PersonsModule, CareersModule],
   providers: [
     CreateStudentUseCase,
     ListStudentsUseCase,
     GetStudentByIdUseCase,
     BulkImportStudentsUseCase,
-    StudentPrismaRepository,
+    FileParseInterceptor,
+    StudentRepository,
     {
       provide: STUDENT_REPOSITORY_PORT,
-      useExisting: StudentPrismaRepository,
+      useExisting: StudentRepository,
+    },
+    {
+      provide: STUDENT_QUERY_PORT,
+      useExisting: StudentRepository,
     },
     {
       provide: STUDENT_FINDER_PORT,
-      useExisting: StudentPrismaRepository,
+      useExisting: StudentRepository,
     },
-    FileParseInterceptor,
   ],
+  controllers: [StudentsController],
   exports: [STUDENT_FINDER_PORT],
 })
 export class StudentsModule {}

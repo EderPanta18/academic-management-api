@@ -7,7 +7,7 @@ import { Enrollment } from '@enrollments/domain/entities';
 import {
   ENROLLMENT_REPOSITORY_PORT,
   type IEnrollmentRepository,
-} from '@enrollments/domain/ports';
+} from '@enrollments/domain/ports/out';
 import { ListEnrollmentsQuery } from '../queries';
 
 @Injectable()

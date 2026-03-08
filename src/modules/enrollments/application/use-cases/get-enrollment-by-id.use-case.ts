@@ -6,7 +6,7 @@ import { EnrollmentNotFoundException } from '@enrollments/domain/exceptions';
 import {
   ENROLLMENT_REPOSITORY_PORT,
   type IEnrollmentRepository,
-} from '@enrollments/domain/ports';
+} from '@enrollments/domain/ports/out';
 
 @Injectable()
 export class GetEnrollmentByIdUseCase {

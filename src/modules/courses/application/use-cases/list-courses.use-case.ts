@@ -7,7 +7,7 @@ import { Course } from '@courses/domain/entities';
 import {
   COURSE_REPOSITORY_PORT,
   type ICourseRepository,
-} from '@courses/domain/ports';
+} from '@courses/domain/ports/out';
 import { ListCoursesQuery } from '../queries';
 
 @Injectable()

@@ -1,15 +1,15 @@
 // modules/course-categories/course-categories.module.ts
 
 import { Module } from '@nestjs/common';
-import { COURSE_CATEGORY_FINDER_PORT } from '@course-categories/domain/ports';
-import { CourseCategoryPrismaRepository } from '@course-categories/infrastructure/persistence';
+import { COURSE_CATEGORY_FINDER_PORT } from './domain/ports';
+import { CourseCategoryRepository } from './infrastructure/persistence';
 
 @Module({
   providers: [
-    CourseCategoryPrismaRepository,
+    CourseCategoryRepository,
     {
       provide: COURSE_CATEGORY_FINDER_PORT,
-      useExisting: CourseCategoryPrismaRepository,
+      useExisting: CourseCategoryRepository,
     },
   ],
   exports: [COURSE_CATEGORY_FINDER_PORT],

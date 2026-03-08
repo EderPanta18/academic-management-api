@@ -3,35 +3,32 @@
 import { Module } from '@nestjs/common';
 import { CareersModule } from '@modules/careers';
 import { CourseCategoriesModule } from '@modules/course-categories';
-import {
-  COURSE_REPOSITORY_PORT,
-  COURSE_FINDER_PORT,
-} from '@courses/domain/ports';
+import { COURSE_REPOSITORY_PORT, COURSE_FINDER_PORT } from './domain/ports';
 import {
   CreateCourseUseCase,
   ListCoursesUseCase,
   GetCourseByIdUseCase,
-} from '@courses/application/use-cases';
-import { CoursePrismaRepository } from '@courses/infrastructure/persistence';
-import { CoursesController } from '@courses/presentation/controllers';
+} from './application/use-cases';
+import { CourseRepository } from './infrastructure/persistence';
+import { CoursesController } from './presentation/controllers';
 
 @Module({
-  controllers: [CoursesController],
   imports: [CareersModule, CourseCategoriesModule],
   providers: [
-    CoursePrismaRepository,
     CreateCourseUseCase,
     ListCoursesUseCase,
     GetCourseByIdUseCase,
+    CourseRepository,
     {
       provide: COURSE_REPOSITORY_PORT,
-      useExisting: CoursePrismaRepository,
+      useExisting: CourseRepository,
     },
     {
       provide: COURSE_FINDER_PORT,
-      useExisting: CoursePrismaRepository,
+      useExisting: CourseRepository,
     },
   ],
+  controllers: [CoursesController],
   exports: [COURSE_FINDER_PORT],
 })
 export class CoursesModule {}

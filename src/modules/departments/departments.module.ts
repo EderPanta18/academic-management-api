@@ -1,15 +1,15 @@
 // modules/departments/departments.module.ts
 
 import { Module } from '@nestjs/common';
-import { DEPARTMENT_FINDER_PORT } from '@departments/domain/ports';
-import { DepartmentPrismaRepository } from '@departments/infrastructure/persistence';
+import { DEPARTMENT_FINDER_PORT } from './domain/ports';
+import { DepartmentRepository } from './infrastructure/persistence';
 
 @Module({
   providers: [
-    DepartmentPrismaRepository,
+    DepartmentRepository,
     {
       provide: DEPARTMENT_FINDER_PORT,
-      useExisting: DepartmentPrismaRepository,
+      useExisting: DepartmentRepository,
     },
   ],
   exports: [DEPARTMENT_FINDER_PORT],

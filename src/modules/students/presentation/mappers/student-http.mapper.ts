@@ -3,12 +3,40 @@
 import { PaginationVO } from '@shared/domain/value-objects';
 import { PaginatedResultDto } from '@shared/application/dtos';
 import { Student } from '@students/domain/entities';
+import { type StudentView } from '@students/domain/read-models';
+import { CreateStudentCommand } from '@students/application/commands';
 import { StudentResponseDto } from '../dtos';
 
 export class StudentHttpMapper {
-  static toResponse(student: Student): StudentResponseDto {
+  static toResponseFromCreate(
+    student: Student,
+    command: CreateStudentCommand,
+  ): StudentResponseDto {
     const dto = new StudentResponseDto();
     dto.id = student.id!;
+    dto.careerId = student.careerId;
+    dto.code = student.code;
+    dto.institutionalEmail = student.institutionalEmail;
+    dto.enrollmentDate = student.enrollmentDate;
+    dto.status = student.status;
+    dto.dni = command.dni;
+    dto.firstName = command.firstName;
+    dto.lastName = command.lastName;
+    dto.fullName = `${command.firstName} ${command.lastName}`.trim();
+    dto.email = command.email;
+    dto.phone = command.phone ?? null;
+    dto.birthDate = command.birthDate ?? null;
+    return dto;
+  }
+
+  static toResponse(student: StudentView): StudentResponseDto {
+    const dto = new StudentResponseDto();
+    dto.id = student.id!;
+    dto.careerId = student.careerId;
+    dto.code = student.code;
+    dto.institutionalEmail = student.institutionalEmail;
+    dto.enrollmentDate = student.enrollmentDate;
+    dto.status = student.status;
     dto.dni = student.dni;
     dto.firstName = student.firstName;
     dto.lastName = student.lastName;
@@ -16,16 +44,11 @@ export class StudentHttpMapper {
     dto.email = student.email;
     dto.phone = student.phone;
     dto.birthDate = student.birthDate;
-    dto.careerId = student.careerId;
-    dto.code = student.code;
-    dto.institutionalEmail = student.institutionalEmail;
-    dto.enrollmentDate = student.enrollmentDate;
-    dto.status = student.status;
     return dto;
   }
 
   static toPaginatedResponse(
-    result: PaginatedResultDto<Student>,
+    result: PaginatedResultDto<StudentView>,
     pagination: PaginationVO,
   ): PaginatedResultDto<StudentResponseDto> {
     return PaginatedResultDto.from(

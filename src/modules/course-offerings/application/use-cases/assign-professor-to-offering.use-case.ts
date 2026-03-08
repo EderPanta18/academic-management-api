@@ -5,7 +5,7 @@ import { EntityNotFoundException } from '@shared/domain/exceptions';
 import {
   PROFESSOR_FINDER_PORT,
   type IProfessorFinder,
-} from '@professors/domain/ports';
+} from '@professors/domain/ports/in';
 import { CourseOfferingStatus } from '@course-offerings/domain/constants';
 import { CourseOffering } from '@course-offerings/domain/entities';
 import {
@@ -15,7 +15,7 @@ import {
 import {
   COURSE_OFFERING_REPOSITORY_PORT,
   type ICourseOfferingRepository,
-} from '@course-offerings/domain/ports';
+} from '@course-offerings/domain/ports/out';
 import { ProfessorNotActiveForAssignmentException } from '../exceptions';
 import { AssignProfessorToOfferingCommand } from '../commands';
 

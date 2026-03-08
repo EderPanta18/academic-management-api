@@ -12,7 +12,7 @@ import {
   ApiQuery,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { CourseOfferingStatus } from '@modules/course-offerings/domain/constants';
+import { CourseOfferingStatus } from '@course-offerings/domain/constants';
 import {
   AssignProfessorDto,
   CourseOfferingResponseDto,

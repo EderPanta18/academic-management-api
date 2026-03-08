@@ -5,27 +5,27 @@ import { EntityNotFoundException } from '@shared/domain/exceptions';
 import {
   DEPARTMENT_FINDER_PORT,
   type IDepartmentFinder,
-} from '@departments/domain/ports';
-import { Professor } from '@professors/domain/entities';
+} from '@departments/domain/ports/in';
 import {
-  ProfessorDniAlreadyExistsException,
-  ProfessorEmailAlreadyExistsException,
-  ProfessorCodeAlreadyExistsException,
-} from '@professors/domain/exceptions';
+  CREATE_PERSON_USE_CASE_PORT,
+  type ICreatePersonUseCase,
+} from '@persons/domain/ports/in';
+import { Professor } from '@professors/domain/entities';
+import { ProfessorCodeAlreadyExistsException } from '@professors/domain/exceptions';
 import {
   PROFESSOR_REPOSITORY_PORT,
   type IProfessorRepository,
-} from '@professors/domain/ports';
+} from '@professors/domain/ports/out';
 import { CreateProfessorCommand } from '../commands';
 
-/**
- * Orquesta la creación de un nuevo profesor.
- */
 @Injectable()
 export class CreateProfessorUseCase {
   constructor(
     @Inject(DEPARTMENT_FINDER_PORT)
     private readonly departmentFinder: IDepartmentFinder,
+
+    @Inject(CREATE_PERSON_USE_CASE_PORT)
+    private readonly createPerson: ICreatePersonUseCase,
 
     @Inject(PROFESSOR_REPOSITORY_PORT)
     private readonly repository: IProfessorRepository,
@@ -33,43 +33,39 @@ export class CreateProfessorUseCase {
 
   async execute(command: CreateProfessorCommand): Promise<Professor> {
     if (command.departmentId) {
-      const departmentExists = await this.departmentFinder.exists(
-        command.departmentId,
-      );
-      if (!departmentExists) {
+      const exists = await this.departmentFinder.exists(command.departmentId);
+      if (!exists)
         throw new EntityNotFoundException('Department', command.departmentId);
-      }
-    }
-
-    const dniExists = await this.repository.existsByDni(command.dni);
-    if (dniExists) {
-      throw new ProfessorDniAlreadyExistsException(command.dni);
-    }
-
-    const emailExists = await this.repository.existsByEmail(command.email);
-    if (emailExists) {
-      throw new ProfessorEmailAlreadyExistsException(command.email);
     }
 
     const codeExists = await this.repository.existsByCode(command.code);
-    if (codeExists) {
-      throw new ProfessorCodeAlreadyExistsException(command.code);
-    }
+    if (codeExists) throw new ProfessorCodeAlreadyExistsException(command.code);
 
-    const professor = Professor.create({
+    const person = await this.createPerson.execute({
       dni: command.dni,
       firstName: command.firstName,
       lastName: command.lastName,
       email: command.email,
-      departmentId: command.departmentId,
-      code: command.code,
-      specialty: command.specialty,
-      hireDate: command.hireDate,
       phone: command.phone,
       birthDate: command.birthDate,
+    });
+
+    const professor = Professor.create({
+      code: command.code,
+      departmentId: command.departmentId,
+      specialty: command.specialty,
+      institutionalEmail: command.institutionalEmail,
+      hireDate: command.hireDate,
       status: command.status,
     });
 
-    return this.repository.save(professor);
+    return this.repository.save(professor, {
+      dni: person.dni,
+      firstName: person.firstName,
+      lastName: person.lastName,
+      email: person.email,
+      phone: person.phone,
+      birthDate: person.birthDate,
+    });
   }
 }

@@ -5,21 +5,21 @@ import { EntityNotFoundException } from '@shared/domain/exceptions';
 import {
   ACADEMIC_PERIOD_FINDER_PORT,
   type IAcademicPeriodFinder,
-} from '@modules/academic-periods/domain/ports';
+} from '@modules/academic-periods/domain/ports/in';
 import {
   COURSE_FINDER_PORT,
   type ICourseFinder,
-} from '@modules/courses/domain/ports';
+} from '@modules/courses/domain/ports/in';
 import {
   PROFESSOR_FINDER_PORT,
   type IProfessorFinder,
-} from '@modules/professors/domain/ports';
+} from '@modules/professors/domain/ports/in';
 import { CourseOffering } from '@course-offerings/domain/entities';
 import { CourseOfferingDuplicateException } from '@course-offerings/domain/exceptions';
 import {
   COURSE_OFFERING_REPOSITORY_PORT,
   type ICourseOfferingRepository,
-} from '@course-offerings/domain/ports';
+} from '@course-offerings/domain/ports/out';
 import {
   AcademicPeriodNotCurrentException,
   ProfessorNotActiveForAssignmentException,

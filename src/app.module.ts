@@ -11,7 +11,8 @@ import {
   LoggingInterceptor,
   ResponseWrapperInterceptor,
 } from '@shared/presentation/interceptors';
-import { PrismaModule } from '@shared/infrastructure/database';
+import { PrismaModule } from '@shared/infrastructure/persistence';
+import { PersonsModule } from '@modules/persons';
 import { DepartmentsModule } from '@modules/departments';
 import { CareersModule } from '@modules/careers';
 import { AcademicPeriodsModule } from '@modules/academic-periods';
@@ -31,6 +32,7 @@ import { AppController } from './app.controller';
       cache: true,
     }),
     PrismaModule,
+    PersonsModule,
     DepartmentsModule,
     CareersModule,
     AcademicPeriodsModule,
@@ -41,7 +43,6 @@ import { AppController } from './app.controller';
     CourseOfferingsModule,
     EnrollmentsModule,
   ],
-  controllers: [AppController],
   providers: [
     { provide: APP_FILTER, useClass: AllExceptionsFilter },
     { provide: APP_FILTER, useClass: DomainExceptionFilter },
@@ -49,5 +50,6 @@ import { AppController } from './app.controller';
     { provide: APP_INTERCEPTOR, useClass: ResponseWrapperInterceptor },
     { provide: APP_PIPE, useClass: ValidationPipe },
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

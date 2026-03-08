@@ -1,15 +1,15 @@
 // modules/careers/careers.module.ts
 
 import { Module } from '@nestjs/common';
-import { CAREER_FINDER_PORT } from '@careers/domain/ports';
-import { CareerPrismaRepository } from '@careers/infrastructure/persistence';
+import { CAREER_FINDER_PORT } from './domain/ports';
+import { CareerRepository } from './infrastructure/persistence';
 
 @Module({
   providers: [
-    CareerPrismaRepository,
+    CareerRepository,
     {
       provide: CAREER_FINDER_PORT,
-      useExisting: CareerPrismaRepository,
+      useExisting: CareerRepository,
     },
   ],
   exports: [CAREER_FINDER_PORT],

@@ -7,7 +7,7 @@ import { CourseOffering } from '@course-offerings/domain/entities';
 import {
   COURSE_OFFERING_REPOSITORY_PORT,
   type ICourseOfferingRepository,
-} from '@course-offerings/domain/ports';
+} from '@course-offerings/domain/ports/out';
 import { ListCourseOfferingsQuery } from '../queries';
 
 @Injectable()

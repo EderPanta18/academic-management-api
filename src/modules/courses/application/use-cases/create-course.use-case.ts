@@ -2,17 +2,20 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { EntityNotFoundException } from '@shared/domain/exceptions';
-import { CAREER_FINDER_PORT, type ICareerFinder } from '@careers/domain/ports';
+import {
+  CAREER_FINDER_PORT,
+  type ICareerFinder,
+} from '@careers/domain/ports/in';
 import {
   COURSE_CATEGORY_FINDER_PORT,
   type ICourseCategoryFinder,
-} from '@course-categories/domain/ports';
+} from '@course-categories/domain/ports/in';
 import { Course } from '@courses/domain/entities';
 import { CourseDuplicateNameException } from '@courses/domain/exceptions';
 import {
   COURSE_REPOSITORY_PORT,
   type ICourseRepository,
-} from '@courses/domain/ports';
+} from '@courses/domain/ports/out';
 import { CreateCourseCommand } from '../commands';
 
 @Injectable()
