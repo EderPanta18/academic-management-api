@@ -1,6 +1,6 @@
 // modules/students/domain/ports/out/student-query.port.ts
 
-import { PaginationVO } from '@shared/domain/value-objects';
+import { PaginationVO } from '@core/domain/value-objects';
 import { StudentView } from '@students/domain/read-models';
 
 export interface FindAllStudentsFilters {

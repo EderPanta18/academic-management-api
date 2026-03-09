@@ -10,10 +10,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { PaginationVO } from '@shared/domain/value-objects';
-import { PaginatedResultDto } from '@shared/application/dtos';
+import { PaginationVO } from '@core/domain/value-objects';
+import { PaginatedResultDto } from '@core/application/dtos';
 import { SWAGGER_TAGS } from '@shared/presentation/constants';
-import { ApiPaginatedResponse } from '@shared/presentation/decorators';
 import {
   CreateCourseUseCase,
   ListCoursesUseCase,
@@ -61,7 +60,6 @@ export class CoursesController {
 
   @Get(COURSE_ROUTES.LIST)
   @ApiListCourses()
-  @ApiPaginatedResponse()
   async list(
     @Query() queryDto: ListCoursesQueryDto,
   ): Promise<PaginatedResultDto<CourseResponseDto>> {

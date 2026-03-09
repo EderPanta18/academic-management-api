@@ -2,10 +2,7 @@
 
 import { IsOptional, IsInt, Min, Max } from 'class-validator';
 import { Type } from 'class-transformer';
-import {
-  PAGINATION_LIMITS,
-  PAGINATION_DEFAULTS,
-} from '@shared/domain/constants';
+import { PAGINATION_LIMITS, PAGINATION_DEFAULTS } from '@core/domain/constants';
 
 export class PaginationQueryDto {
   @IsOptional()

@@ -1,7 +1,7 @@
 // modules/course-offerings/application/use-cases/assign-professor-to-offering.use-case.ts
 
 import { Inject, Injectable } from '@nestjs/common';
-import { EntityNotFoundException } from '@shared/domain/exceptions';
+import { EntityNotFoundException } from '@core/domain/exceptions';
 import {
   PROFESSOR_FINDER_PORT,
   type IProfessorFinder,

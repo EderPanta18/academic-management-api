@@ -1,6 +1,6 @@
 // modules/course-offerings/domain/ports/out/course-offering.repository.port.ts
 
-import { PaginationVO } from '@shared/domain/value-objects';
+import { PaginationVO } from '@core/domain/value-objects';
 import { CourseOfferingStatus } from '@course-offerings/domain/constants';
 import { CourseOffering } from '@course-offerings/domain/entities';
 

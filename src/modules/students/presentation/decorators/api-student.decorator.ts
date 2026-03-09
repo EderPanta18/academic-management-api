@@ -13,6 +13,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { BULK_IMPORT } from '@shared/application/constants';
+import { ApiPaginatedOperation } from '@shared/presentation/decorators';
 import {
   BulkImportResultResponseDto,
   CreateStudentDto,
@@ -38,27 +39,13 @@ export const ApiListStudents = () =>
   applyDecorators(
     ApiOperation({ summary: 'Listar estudiantes con paginación' }),
     ApiQuery({
-      name: 'page',
-      required: false,
-      type: Number,
-      example: 1,
-      description: 'Número de página',
-    }),
-    ApiQuery({
-      name: 'pageSize',
-      required: false,
-      type: Number,
-      example: 20,
-      description: 'Registros por página (máx. 100)',
-    }),
-    ApiQuery({
       name: 'careerId',
       required: false,
       type: Number,
       example: 1,
       description: 'Filtrar por id de carrera',
     }),
-    ApiOkResponse({ description: 'Listado paginado de estudiantes' }),
+    ApiPaginatedOperation(StudentResponseDto),
   );
 
 export const ApiGetStudentById = () =>

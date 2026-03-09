@@ -14,7 +14,10 @@ import * as path from 'path';
 import { type Observable } from 'rxjs';
 import { BULK_IMPORT } from '@shared/application/constants';
 import { BulkRowErrorDto } from '@shared/application/dtos';
-import { FILE_PARSER_PORT, type IFileParser } from '@shared/application/ports';
+import {
+  FILE_PARSER_PORT,
+  type IFileParser,
+} from '@shared/application/ports/out';
 import { type StudentRowInput } from '@students/application/commands';
 import { StudentImportHttpMapper } from '@students/presentation/mappers';
 

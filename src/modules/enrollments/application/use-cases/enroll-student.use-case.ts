@@ -1,7 +1,7 @@
 // modules/enrollments/application/use-cases/enroll-student.use-case.ts
 
 import { Inject, Injectable } from '@nestjs/common';
-import { EntityNotFoundException } from '@shared/domain/exceptions';
+import { EntityNotFoundException } from '@core/domain/exceptions';
 import {
   STUDENT_FINDER_PORT,
   type IStudentFinder,

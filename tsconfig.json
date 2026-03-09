@@ -18,15 +18,15 @@
     // aliases
     "baseUrl": "./src",
     "paths": {
+      "@core/*": ["core/*"],
       "@shared/*": ["shared/*"],
       "@modules/*": ["modules/*"],
-      "@config/*": ["config/*"],
+      "@persons/*": ["modules/persons/*"],
       "@departments/*": ["modules/departments/*"],
       "@careers/*": ["modules/careers/*"],
       "@academic-periods/*": ["modules/academic-periods/*"],
       "@course-categories/*": ["modules/course-categories/*"],
       "@courses/*": ["modules/courses/*"],
-      "@persons/*": ["modules/persons/*"],
       "@professors/*": ["modules/professors/*"],
       "@students/*": ["modules/students/*"],
       "@course-offerings/*": ["modules/course-offerings/*"],

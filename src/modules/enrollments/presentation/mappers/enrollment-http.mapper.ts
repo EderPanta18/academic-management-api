@@ -1,7 +1,7 @@
 // modules/enrollments/presentation/mappers/enrollment-http.mapper.ts
 
-import { PaginationVO } from '@shared/domain/value-objects';
-import { PaginatedResultDto } from '@shared/application/dtos';
+import { PaginationVO } from '@core/domain/value-objects';
+import { PaginatedResultDto } from '@core/application/dtos';
 import { Enrollment } from '@enrollments/domain/entities';
 import { EnrollmentResponseDto } from '../dtos';
 

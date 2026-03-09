@@ -1,8 +1,8 @@
 // modules/professors/application/use-cases/list-professors.use-case.ts
 
 import { Inject, Injectable } from '@nestjs/common';
-import { PaginationVO } from '@shared/domain/value-objects';
-import { PaginatedResultDto } from '@shared/application/dtos';
+import { PaginationVO } from '@core/domain/value-objects';
+import { PaginatedResultDto } from '@core/application/dtos';
 import { type ProfessorView } from '@professors/domain/read-models';
 import {
   PROFESSOR_QUERY_PORT,

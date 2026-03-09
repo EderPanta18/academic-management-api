@@ -1,6 +1,6 @@
 // modules/students/domain/exceptions/student.exception.ts
 
-import { DomainException } from '@shared/domain/exceptions';
+import { DomainException } from '@core/domain/exceptions';
 
 /**
  * Clase base de todas las excepciones del módulo students.

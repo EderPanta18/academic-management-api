@@ -1,6 +1,6 @@
 // modules/courses/domain/ports/out/course.repository.port.ts
 
-import { PaginationVO } from '@shared/domain/value-objects';
+import { PaginationVO } from '@core/domain/value-objects';
 import { Course } from '@courses/domain/entities';
 
 export interface FindAllCoursesFilters {

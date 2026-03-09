@@ -1,4 +1,3 @@
-// shared/application/ports/file-parser.port.ts
+// shared/application/ports/index.ts
 
-export type { IFileParser } from './file-parser.port';
-export { FILE_PARSER_PORT } from './file-parser.token';
+export { FILE_PARSER_PORT } from './out';

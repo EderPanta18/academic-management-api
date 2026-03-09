@@ -1,7 +1,7 @@
 // modules/students/presentation/mappers/student-http.mapper.ts
 
-import { PaginationVO } from '@shared/domain/value-objects';
-import { PaginatedResultDto } from '@shared/application/dtos';
+import { PaginationVO } from '@core/domain/value-objects';
+import { PaginatedResultDto } from '@core/application/dtos';
 import { Student } from '@students/domain/entities';
 import { type StudentView } from '@students/domain/read-models';
 import { CreateStudentCommand } from '@students/application/commands';

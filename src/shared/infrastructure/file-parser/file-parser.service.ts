@@ -1,7 +1,7 @@
 // shared/infrastructure/file-parser/file-parser.service.ts
 
 import { Inject, Injectable } from '@nestjs/common';
-import { type IFileParser } from '@shared/application/ports';
+import { type IFileParser } from '@shared/application/ports/out';
 import { FILE_PARSER_STRATEGIES, type IFileParserStrategy } from './strategies';
 
 @Injectable()

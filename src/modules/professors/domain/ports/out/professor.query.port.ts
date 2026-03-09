@@ -1,6 +1,6 @@
 // modules/professors/domain/ports/out/professor.query.port.ts
 
-import { PaginationVO } from '@shared/domain/value-objects';
+import { PaginationVO } from '@core/domain/value-objects';
 import { type ProfessorView } from '@professors/domain/read-models';
 
 export interface FindAllProfessorsFilters {

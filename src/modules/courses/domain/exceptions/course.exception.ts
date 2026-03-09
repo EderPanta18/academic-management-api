@@ -1,6 +1,6 @@
 // modules/courses/domain/exceptions/course.exception.ts
 
-import { DomainException } from '@shared/domain/exceptions';
+import { DomainException } from '@core/domain/exceptions';
 
 export abstract class CourseException extends DomainException {
   readonly domain = 'COURSE';

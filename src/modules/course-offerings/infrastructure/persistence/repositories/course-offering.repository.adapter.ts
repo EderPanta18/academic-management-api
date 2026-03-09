@@ -2,8 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { PaginationVO } from '@core/domain/value-objects';
 import { PrismaService } from '@shared/infrastructure/persistence';
-import { PaginationVO } from '@shared/domain/value-objects';
 import { CourseOfferingStatus } from '@course-offerings/domain/constants';
 import { CourseOffering } from '@course-offerings/domain/entities';
 import { type ICourseOfferingFinder } from '@course-offerings/domain/ports/in';

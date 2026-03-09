@@ -2,8 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { PaginationVO } from '@core/domain/value-objects';
 import { PrismaService } from '@shared/infrastructure/persistence';
-import { PaginationVO } from '@shared/domain/value-objects';
 import { Student } from '@students/domain/entities';
 import { type StudentView } from '@students/domain/read-models';
 import { type IStudentFinder } from '@students/domain/ports/in';

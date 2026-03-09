@@ -1,7 +1,7 @@
 // modules/courses/presentation/mappers/course-http.mapper.ts
 
-import { PaginationVO } from '@shared/domain/value-objects';
-import { PaginatedResultDto } from '@shared/application/dtos';
+import { PaginationVO } from '@core/domain/value-objects';
+import { PaginatedResultDto } from '@core/application/dtos';
 import { Course } from '@courses/domain/entities';
 import { CourseResponseDto } from '../dtos';
 

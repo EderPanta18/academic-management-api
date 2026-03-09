@@ -12,6 +12,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { CreateCourseDto, CourseResponseDto } from '../dtos';
+import { ApiPaginatedOperation } from '@shared/presentation/decorators';
 
 export const ApiCreateCourse = () =>
   applyDecorators(
@@ -34,20 +35,6 @@ export const ApiListCourses = () =>
   applyDecorators(
     ApiOperation({ summary: 'Listar cursos del catálogo con paginación' }),
     ApiQuery({
-      name: 'page',
-      required: false,
-      type: Number,
-      example: 1,
-      description: 'Número de página',
-    }),
-    ApiQuery({
-      name: 'pageSize',
-      required: false,
-      type: Number,
-      example: 20,
-      description: 'Registros por página (máx. 100)',
-    }),
-    ApiQuery({
       name: 'careerId',
       required: false,
       type: Number,
@@ -61,7 +48,7 @@ export const ApiListCourses = () =>
       example: 2,
       description: 'Filtrar por id de categoría',
     }),
-    ApiOkResponse({ description: 'Listado paginado de cursos' }),
+    ApiPaginatedOperation(CourseResponseDto),
   );
 
 export const ApiGetCourseById = () =>

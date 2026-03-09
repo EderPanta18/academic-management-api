@@ -2,7 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { BulkRowErrorDto, BulkResultDto } from '@shared/application/dtos';
-import { DomainException } from '@shared/domain/exceptions';
+import { DomainException } from '@core/domain/exceptions';
 import { BulkImportStudentsCommand, CreateStudentCommand } from '../commands';
 import { CreateStudentUseCase } from './create-student.use-case';
 

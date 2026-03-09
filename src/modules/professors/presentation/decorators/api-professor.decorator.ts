@@ -11,6 +11,7 @@ import {
   ApiParam,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
+import { ApiPaginatedOperation } from '@shared/presentation/decorators';
 import { CreateProfessorDto, ProfessorResponseDto } from '../dtos';
 
 export const ApiCreateProfessor = () =>
@@ -32,27 +33,13 @@ export const ApiListProfessors = () =>
   applyDecorators(
     ApiOperation({ summary: 'Listar profesores activos con paginación' }),
     ApiQuery({
-      name: 'page',
-      required: false,
-      type: Number,
-      example: 1,
-      description: 'Número de página',
-    }),
-    ApiQuery({
-      name: 'pageSize',
-      required: false,
-      type: Number,
-      example: 20,
-      description: 'Registros por página (máx. 100)',
-    }),
-    ApiQuery({
       name: 'departmentId',
       required: false,
       type: Number,
       example: 1,
       description: 'Filtrar por id de departamento',
     }),
-    ApiOkResponse({ description: 'Listado paginado de profesores' }),
+    ApiPaginatedOperation(ProfessorResponseDto),
   );
 
 export const ApiGetProfessorById = () =>

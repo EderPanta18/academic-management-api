@@ -1,8 +1,8 @@
 // modules/course-offerings/application/use-cases/list-course-offerings.use-case.ts
 
 import { Inject, Injectable } from '@nestjs/common';
-import { PaginationVO } from '@shared/domain/value-objects';
-import { PaginatedResultDto } from '@shared/application/dtos';
+import { PaginationVO } from '@core/domain/value-objects';
+import { PaginatedResultDto } from 'core/application/dtos';
 import { CourseOffering } from '@course-offerings/domain/entities';
 import {
   COURSE_OFFERING_REPOSITORY_PORT,

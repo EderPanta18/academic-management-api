@@ -12,6 +12,7 @@ import {
   ApiQuery,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
+import { ApiPaginatedOperation } from '@shared/presentation/decorators';
 import { EnrollmentStatus } from '@enrollments/domain/constants';
 import { EnrollmentResponseDto, EnrollStudentDto } from '../dtos';
 
@@ -56,20 +57,6 @@ export const ApiListEnrollments = () =>
   applyDecorators(
     ApiOperation({ summary: 'Listar inscripciones con paginación y filtros' }),
     ApiQuery({
-      name: 'page',
-      required: false,
-      type: Number,
-      example: 1,
-      description: 'Número de página',
-    }),
-    ApiQuery({
-      name: 'pageSize',
-      required: false,
-      type: Number,
-      example: 20,
-      description: 'Registros por página (máx. 100)',
-    }),
-    ApiQuery({
       name: 'studentId',
       required: false,
       type: Number,
@@ -88,5 +75,5 @@ export const ApiListEnrollments = () =>
       enum: EnrollmentStatus,
       description: 'Filtrar por estado(s)',
     }),
-    ApiOkResponse({ description: 'Listado paginado de inscripciones' }),
+    ApiPaginatedOperation(EnrollmentResponseDto),
   );

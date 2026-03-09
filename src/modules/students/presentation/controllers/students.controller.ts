@@ -14,11 +14,10 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { PaginationVO } from '@shared/domain/value-objects';
+import { PaginationVO } from '@core/domain/value-objects';
 import { BULK_IMPORT } from '@shared/application/constants';
-import { PaginatedResultDto } from '@shared/application/dtos';
+import { PaginatedResultDto } from '@core/application/dtos';
 import { SWAGGER_TAGS } from '@shared/presentation/constants';
-import { ApiPaginatedResponse } from '@shared/presentation/decorators';
 import {
   CreateStudentUseCase,
   ListStudentsUseCase,
@@ -66,7 +65,6 @@ export class StudentsController {
 
   @Get(STUDENT_ROUTES.LIST)
   @ApiListStudents()
-  @ApiPaginatedResponse()
   async list(
     @Query() queryDto: ListStudentsQueryDto,
   ): Promise<PaginatedResultDto<StudentResponseDto>> {

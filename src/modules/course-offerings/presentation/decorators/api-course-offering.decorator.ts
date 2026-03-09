@@ -12,6 +12,7 @@ import {
   ApiQuery,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
+import { ApiPaginatedOperation } from '@shared/presentation/decorators';
 import { CourseOfferingStatus } from '@course-offerings/domain/constants';
 import {
   AssignProfessorDto,
@@ -46,20 +47,6 @@ export const ApiListCourseOfferings = () =>
   applyDecorators(
     ApiOperation({ summary: 'Listar ofertas de curso con paginación' }),
     ApiQuery({
-      name: 'page',
-      required: false,
-      type: Number,
-      example: 1,
-      description: 'Número de página',
-    }),
-    ApiQuery({
-      name: 'pageSize',
-      required: false,
-      type: Number,
-      example: 20,
-      description: 'Registros por página (máx. 100)',
-    }),
-    ApiQuery({
       name: 'courseId',
       required: false,
       type: Number,
@@ -80,7 +67,7 @@ export const ApiListCourseOfferings = () =>
       isArray: true,
       description: 'Filtrar por estado(s) de la oferta',
     }),
-    ApiOkResponse({ description: 'Listado paginado de ofertas de curso' }),
+    ApiPaginatedOperation(CourseOfferingResponseDto),
   );
 
 export const ApiGetCourseOfferingById = () =>
