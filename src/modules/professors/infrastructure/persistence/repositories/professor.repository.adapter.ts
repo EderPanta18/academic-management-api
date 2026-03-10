@@ -40,6 +40,13 @@ export class ProfessorRepository
     return count > 0;
   }
 
+  async existsByInstitutionalEmail(email: string): Promise<boolean> {
+    const count = await this.prisma.professor.count({
+      where: { institutionalEmail: email, deletedAt: null },
+    });
+    return count > 0;
+  }
+
   async delete(id: number): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
       await tx.professor.update({

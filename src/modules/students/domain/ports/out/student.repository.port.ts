@@ -17,5 +17,6 @@ export interface PersonCreationData {
 export interface IStudentRepository {
   save(student: Student, personData: PersonCreationData): Promise<Student>;
   existsByCode(code: string): Promise<boolean>;
+  existsByInstitutionalEmail(email: string): Promise<boolean>;
   delete(id: number): Promise<void>;
 }

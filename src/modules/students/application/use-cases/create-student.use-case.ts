@@ -11,7 +11,10 @@ import {
   type ICreatePersonUseCase,
 } from '@persons/domain/ports/in';
 import { Student } from '@students/domain/entities';
-import { StudentCodeAlreadyExistsException } from '@students/domain/exceptions';
+import {
+  StudentCodeAlreadyExistsException,
+  StudentEmailAlreadyExistsException,
+} from '@students/domain/exceptions';
 import {
   STUDENT_REPOSITORY_PORT,
   type IStudentRepository,
@@ -38,6 +41,16 @@ export class CreateStudentUseCase {
 
     const codeExists = await this.repository.existsByCode(command.code);
     if (codeExists) throw new StudentCodeAlreadyExistsException(command.code);
+
+    if (command.institutionalEmail) {
+      const emailExists = await this.repository.existsByInstitutionalEmail(
+        command.institutionalEmail,
+      );
+      if (emailExists)
+        throw new StudentEmailAlreadyExistsException(
+          command.institutionalEmail,
+        );
+    }
 
     const person = await this.createPerson.execute({
       dni: command.dni,

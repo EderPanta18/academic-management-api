@@ -21,5 +21,6 @@ export interface IProfessorRepository {
     personData: PersonCreationData,
   ): Promise<Professor>;
   existsByCode(code: string): Promise<boolean>;
+  existsByInstitutionalEmail(email: string): Promise<boolean>;
   delete(id: number): Promise<void>;
 }
