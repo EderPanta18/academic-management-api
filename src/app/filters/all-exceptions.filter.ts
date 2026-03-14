@@ -7,16 +7,22 @@ import {
   HttpException,
   Logger,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
 
+  constructor(private readonly configService: ConfigService) {}
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
     const req = ctx.getRequest<Request>();
+
+    const nodeEnv = this.configService.get<string>('NODE_ENV', 'development');
+    const isDev = nodeEnv !== 'production';
 
     if (exception instanceof HttpException) {
       const statusCode = exception.getStatus();
@@ -30,7 +36,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
           : {
               success: false,
               statusCode,
-              errorKey: `HTTP_ERROR`,
+              errorKey: 'HTTP_ERROR',
               errorCode: `SYS_${statusCode}`,
               message: String(body),
               timestamp: new Date().toISOString(),
@@ -40,20 +46,27 @@ export class AllExceptionsFilter implements ExceptionFilter {
       return;
     }
 
-    // Error completamente inesperado
-    this.logger.error(
-      `[${req.method}] ${req.url} → 500`,
-      exception instanceof Error ? exception.stack : String(exception),
-    );
+    const error =
+      exception instanceof Error
+        ? exception
+        : new Error(
+            typeof exception === 'string' ? exception : 'Unknown error',
+          );
+
+    this.logger.error(`[${req.method}] ${req.url} → 500`, error.stack);
 
     res.status(500).json({
       success: false,
       statusCode: 500,
       errorKey: 'INTERNAL_SERVER_ERROR',
       errorCode: 'SYS_500',
-      message: 'Ha ocurrido un error inesperado. Intente nuevamente.',
+      message: error.message,
       timestamp: new Date().toISOString(),
       path: req.url,
+      ...(isDev && {
+        errorName: error.name,
+        stack: error.stack,
+      }),
     });
   }
 }

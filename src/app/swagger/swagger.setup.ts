@@ -10,7 +10,6 @@ export function setupSwagger(app: INestApplication): void {
     .setTitle('Academic Management API')
     .setDescription('API REST para gestión académica universitaria')
     .setVersion('1.0')
-    .addTag(SWAGGER_TAGS.HEALTH)
     .addTag(SWAGGER_TAGS.PROFESSORS)
     .addTag(SWAGGER_TAGS.STUDENTS)
     .addTag(SWAGGER_TAGS.COURSES)

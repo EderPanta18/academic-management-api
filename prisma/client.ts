@@ -10,7 +10,7 @@ class SeedPrismaClient extends PrismaClient {
     const url = new URL(dbUrl);
     const adapter = new PrismaMariaDb({
       host: url.hostname,
-      port: parseInt(url.port, 10),
+      port: parseInt(url.port || '3306', 10),
       user: url.username,
       password: url.password,
       database: url.pathname.slice(1),

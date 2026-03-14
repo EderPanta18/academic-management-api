@@ -34,7 +34,6 @@ export class PaginationVO {
     }
   }
 
-  // Calcula el offset para la query de Prisma
   get offset(): number {
     return (this.page - 1) * this.pageSize;
   }

@@ -1,98 +1,254 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Academic Management API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST para la gestión académica universitaria, orientada a centralizar información clave del ciclo académico en una sola plataforma backend.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Descripción
 
-## Description
+En un entorno universitario, la operación académica involucra personas, programas, cursos, períodos, oferta lectiva e inscripciones que deben mantenerse consistentes entre sí. Este proyecto aborda ese contexto mediante una API REST que permite registrar y consultar actores académicos, administrar el catálogo de cursos y modelar el proceso real en el que un curso se ofrece dentro de un período, con una sección, un docente asignado y reglas de matrícula asociadas.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+La solución está pensada como una base mantenible para sistemas académicos institucionales. Por eso el diseño no se limita al registro simple de entidades, sino que organiza la lógica del dominio en módulos independientes, incorpora validaciones de negocio, soporta importación masiva de estudiantes y expone documentación OpenAPI para facilitar consumo, pruebas e integración.
 
-## Project setup
+## Alcance funcional
 
-```bash
-$ pnpm install
-```
+El sistema cubre los procesos académicos principales de esta iteración:
 
-## Compile and run the project
+- Gestión de profesores.
+- Gestión de estudiantes.
+- Gestión del catálogo de cursos.
+- Gestión de ofertas de curso por período académico.
+- Gestión de inscripciones.
+- Importación masiva de estudiantes desde archivos `.xlsx` o `.csv`.
+- Listados paginados y documentación interactiva de la API.
 
-```bash
-# development
-$ pnpm run start
+## Documentación adicional
 
-# watch mode
-$ pnpm run start:dev
+La carpeta `docs/` reúne la documentación de apoyo del proyecto:
 
-# production mode
-$ pnpm run start:prod
-```
+- `docs/01-requirements.md`: alcance, reglas de negocio y requerimientos funcionales y no funcionales.
+- `docs/02-system-architecture.md`: arquitectura, organización por capas, módulos y flujo general del sistema.
+- `docs/03-data-model.md`: entidades, relaciones, restricciones y decisiones de modelado.
 
-## Run tests
+La documentación interactiva de la API se expone en la ruta:
 
-```bash
-# unit tests
-$ pnpm run test
+- `/api/v1/docs`
 
-# e2e tests
-$ pnpm run test:e2e
+## Stack tecnológico
 
-# test coverage
-$ pnpm run test:cov
-```
+Tecnologías principales usadas para desarrollar el proyecto:
 
-## Deployment
+- NestJS
+- TypeScript
+- Prisma ORM
+- MySQL
+- Swagger / OpenAPI
+- Docker
+- pnpm
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## Instalación
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 1. Clonar el proyecto
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+git clone <URL_DEL_REPOSITORIO>
+cd academic-management-api
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 2. Elegir una forma de ejecución
 
-## Resources
+A partir de este punto puedes continuar con una de estas dos opciones:
 
-Check out a few resources that may come in handy when working with NestJS:
+- Ejecución manual.
+- Ejecución con Docker.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Ejecución manual
 
-## Support
+### Requisitos previos
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Antes de iniciar, asegúrate de contar con lo siguiente:
 
-## Stay in touch
+- Node.js 20 o superior.
+- pnpm.
+- Acceso a una instancia MySQL mediante una URL de conexión válida.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Guía de uso
 
-## License
+La ejecución manual está pensada para quien desea revisar el proyecto de forma directa desde el entorno local, siguiendo el flujo básico de instalación, configuración y arranque de la API.
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Esta opción permite validar rápidamente que la aplicación compila, que Prisma puede conectarse a la base de datos y que el backend inicia correctamente en modo desarrollo.
+
+### Pasos
+
+1. Instala las dependencias:
+
+```bash
+pnpm install
+```
+
+2. Crea el archivo de entorno a partir del ejemplo:
+
+```bash
+cp .env.example .env
+```
+
+3. Abre `.env` y reemplaza los valores de ejemplo por los reales de tu entorno.
+
+4. Genera el cliente de Prisma:
+
+```bash
+pnpm prisma:generate
+```
+
+5. Ejecuta las migraciones de base de datos para el entorno de desarrollo:
+
+```bash
+pnpm prisma:migrate:dev
+```
+
+6. Ejecuta las semillas iniciales si deseas cargar datos base:
+
+```bash
+pnpm prisma:seed
+```
+
+7. Inicia la aplicación en modo desarrollo:
+
+```bash
+pnpm start:dev
+```
+
+### Acceso
+
+Con la aplicación en ejecución, Swagger estará disponible en la ruta `/api/v1/docs` sobre el host y puerto configurados en tu entorno.
+
+## Ejecución con Docker
+
+### Requisitos previos
+
+Antes de usar esta opción, asegúrate de contar con:
+
+- Docker.
+- Docker Compose.
+
+### Guía de uso
+
+La ejecución con Docker está pensada para facilitar la evaluación del caso en un entorno aislado y reproducible, evitando configuraciones locales adicionales más allá de Docker y Docker Compose.
+
+Esta opción permite levantar la API junto con la base de datos de forma controlada. Al iniciar el contenedor de la API, las migraciones pendientes se aplican automáticamente y luego la aplicación arranca en modo producción.
+
+### Archivos involucrados
+
+La ejecución con Docker utiliza estos archivos del proyecto:
+
+- `Dockerfile`: define la imagen de la API.
+- `docker-compose.yml`: orquesta la base de datos y la API.
+- `.env.docker`: centraliza las variables de entorno usadas por Docker Compose.
+
+### Pasos
+
+1. Crea el archivo de entorno para Docker a partir del ejemplo:
+
+```bash
+cp .env.docker.example .env.docker
+```
+
+2. Abre `.env.docker` y reemplaza los valores de ejemplo por los reales de tu entorno.
+
+3. Construye y levanta los servicios:
+
+```bash
+docker compose --env-file .env.docker up --build -d
+```
+
+4. Verifica el estado del entorno:
+
+```bash
+docker compose --env-file .env.docker ps
+```
+
+5. Consulta los logs de la API si deseas revisar el proceso de arranque:
+
+```bash
+docker compose --env-file .env.docker logs -f api
+```
+
+6. Ejecuta las semillas solo si deseas cargar datos iniciales:
+
+```bash
+docker compose --env-file .env.docker exec api pnpm prisma:seed
+```
+
+### Acceso
+
+Con el entorno levantado correctamente, la API quedará disponible sobre el host y puerto configurados en `.env.docker`.
+
+La documentación Swagger estará disponible en la ruta:
+
+- `/api/v1/docs`
+
+### Consideraciones
+
+- Docker ofrece una forma consistente de levantar la API y la base de datos como un entorno integrado.
+- Las migraciones se ejecutan automáticamente al iniciar la API mediante `prisma migrate deploy`.
+- Las semillas se mantienen como una tarea operativa manual.
+- El uso de volúmenes permite conservar la información de la base de datos entre reinicios del entorno.
+
+### Detener el entorno
+
+Para detener los contenedores:
+
+```bash
+docker compose --env-file .env.docker down
+```
+
+Para detenerlos y eliminar también los volúmenes asociados:
+
+```bash
+docker compose --env-file .env.docker down -v
+```
+
+## Endpoints principales
+
+La referencia completa de contratos, parámetros, respuestas y errores está disponible en Swagger. A continuación se listan los endpoints principales del proyecto.
+
+| Módulo           | Endpoint                                       | Descripción                                         |
+| ---------------- | ---------------------------------------------- | --------------------------------------------------- |
+| Profesores       | `POST /api/v1/professors`                      | Registrar un profesor                               |
+| Profesores       | `GET /api/v1/professors`                       | Listar profesores                                   |
+| Profesores       | `GET /api/v1/professors/:id`                   | Obtener un profesor por id                          |
+| Estudiantes      | `POST /api/v1/students`                        | Registrar un estudiante                             |
+| Estudiantes      | `GET /api/v1/students`                         | Listar estudiantes                                  |
+| Estudiantes      | `GET /api/v1/students/:id`                     | Obtener un estudiante por id                        |
+| Estudiantes      | `POST /api/v1/students/import`                 | Importar estudiantes desde archivo `.xlsx` o `.csv` |
+| Cursos           | `POST /api/v1/courses`                         | Registrar un curso                                  |
+| Cursos           | `GET /api/v1/courses`                          | Listar cursos                                       |
+| Cursos           | `GET /api/v1/courses/:id`                      | Obtener un curso por id                             |
+| Ofertas de curso | `POST /api/v1/course-offerings`                | Crear una oferta de curso                           |
+| Ofertas de curso | `GET /api/v1/course-offerings`                 | Listar ofertas de curso                             |
+| Ofertas de curso | `GET /api/v1/course-offerings/:id`             | Obtener una oferta de curso por id                  |
+| Ofertas de curso | `PATCH /api/v1/course-offerings/:id/professor` | Asignar profesor a una oferta                       |
+| Ofertas de curso | `PATCH /api/v1/course-offerings/:id/activate`  | Activar una oferta de curso                         |
+| Inscripciones    | `POST /api/v1/enrollments`                     | Inscribir un estudiante en una oferta               |
+| Inscripciones    | `GET /api/v1/enrollments`                      | Listar inscripciones                                |
+| Inscripciones    | `GET /api/v1/enrollments/:id`                  | Obtener una inscripción por id                      |
+
+## Arquitectura
+
+El proyecto adopta una organización modular basada en Clean Architecture y Ports & Adapters. La lógica de negocio permanece desacoplada del framework HTTP, del ORM y del motor de base de datos, lo que facilita mantenimiento, evolución y reemplazo de infraestructura sin impactar el dominio.
+
+La estructura principal se distribuye en zonas transversales y módulos de negocio. Dentro de `src/` se distinguen `app` para arranque y configuración global, `core` para componentes transversales del dominio y la aplicación, `shared` para infraestructura reutilizable y `modules` para los contextos funcionales del sistema.
+
+## Decisiones técnicas
+
+- La API fue desarrollada con NestJS y TypeScript.
+- La persistencia se implementó con Prisma ORM.
+- La base de datos utilizada es MySQL.
+- La documentación OpenAPI se expone mediante Swagger.
+- El proyecto incluye semillas para inicializar datos base.
+- La importación masiva de estudiantes soporta archivos `.xlsx` y `.csv`.
+- Las respuestas mantienen un formato estructurado y los listados soportan paginación.
+
+## Observaciones
+
+El caso práctico original plantea el uso de TypeORM, pero esta implementación utiliza Prisma como decisión técnica del proyecto.
+
+Para una explicación más detallada del alcance funcional, la arquitectura y el modelo de datos, revisa los documentos disponibles en la carpeta `docs/`.

@@ -1,7 +1,11 @@
-# compiled output
-/dist
-/node_modules
-/build
+# Dependencias
+node_modules/
+
+# Builds y cobertura
+dist/
+build/
+coverage/
+.nyc_output/
 
 # Logs
 logs
@@ -12,15 +16,13 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-# OS
+# Sistema operativo
 .DS_Store
+Thumbs.db
 
-# Tests
-/coverage
-/.nyc_output
-
-# IDEs and editors
-/.idea
+# IDEs y editores
+.vscode/
+.idea/
 .project
 .classpath
 .c9/
@@ -28,33 +30,33 @@ lerna-debug.log*
 .settings/
 *.sublime-workspace
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# dotenv environment variable files
-.env
-.env.development
-.env.test
-.env.production
-.env.local
-
-# temp directory
-.temp
-.tmp
+# Temporales
+.temp/
+.tmp/
+tmp/
+temp/
+*.tmp
 
 # Runtime data
 pids
 *.pid
-*.seed
 *.pid.lock
+*.seed
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
+# Reportes
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-# local
+# Variables de entorno y secretos
+.env
+.env.*
+
+# Mantener plantillas versionadas
+!.env.example
+!.env.docker.example
+
+# Archivos locales auxiliares
 total_code.txt
 total_seed.txt
+
+# Scripts locales de Windows
+*.bat

@@ -1,0 +1,12 @@
+nombres,apellidos,dni,email,codigo,careerId,fechaMatricula,emailInstitucional,telefono,fechaNacimiento
+Rodrigo Alonso,Castillo Peña,11223344,rodrigo.castillo@gmail.com,0920260061,9,2026-03-01,r.castillo@unp.edu.pe,912345678,1995-08-12
+Sandra Beatriz,Ore Mamani,44332211,sandra.ore@gmail.com,0120260062,1,2026-03-01,,,
+Natalia Milagros,Cruz Pinedo,77889900,natalia.cruz@gmail.com,0820260063,28,2026-03-01,n.cruz@unp.edu.pe,945678123,1998-05-14
+Test,DniLetras,ABCD1234,test.dni@gmail.com,0120260064,9,2026-03-01,,,
+Test,EmailMal,11000001,no-es-un-email,0120260065,9,2026-03-01,,,
+Test,FechaFormato,11000002,test.fecha@gmail.com,0120260066,9,15/03/2026,,,
+Test,CareerTexto,11000003,test.career@gmail.com,0120260067,abc,2026-03-01,,,
+,Apellido,11000004,test.sinnom@gmail.com,0120260068,9,2026-03-01,,,
+Test,DniDup,43930600,test.dnidup@gmail.com,0120260069,1,2026-03-01,,,
+Test,CodeDup,11000005,test.codedup@gmail.com,0120250001,9,2026-03-01,,,
+Test,CareerNF,11000006,test.careernf@gmail.com,0120260070,9999,2026-03-01,,,

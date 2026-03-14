@@ -2,7 +2,7 @@
 
 ## API de Gestión Académica
 
-**Versión:** 1.0 - Caso Práctico Inicial
+**Versión:** 1.0
 
 ---
 

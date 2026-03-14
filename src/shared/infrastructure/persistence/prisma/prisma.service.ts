@@ -1,6 +1,6 @@
 // shared/infrastructure/persistence/prisma/prisma.service.ts
 
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@prisma/client';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
@@ -16,7 +16,7 @@ export class PrismaService
 
     const adapter = new PrismaMariaDb({
       host: url.hostname,
-      port: parseInt(url.port, 10),
+      port: parseInt(url.port || '3306', 10),
       user: url.username,
       password: url.password,
       database: url.pathname.slice(1),
@@ -32,6 +32,7 @@ export class PrismaService
   async onModuleInit() {
     await this.$connect();
   }
+
   async onModuleDestroy() {
     await this.$disconnect();
   }
