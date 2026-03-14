@@ -4,7 +4,7 @@ API REST para la gestión académica universitaria, orientada a centralizar info
 
 ## Descripción
 
-En un entorno universitario, la operación académica involucra personas, programas, cursos, períodos, oferta lectiva e inscripciones que deben mantenerse consistentes entre sí. Este proyecto aborda ese contexto mediante una API REST que permite registrar y consultar actores académicos, administrar el catálogo de cursos y modelar el proceso real en el que un curso se ofrece dentro de un período, con una sección, un docente asignado y reglas de matrícula asociadas.
+En un entorno universitario, la operación académica involucra personas, programas, cursos, períodos, oferta lectiva e inscripciones que deben mantenerse consistentes entre sí. Este proyecto aborda ese contexto mediante una API REST que permite registrar y consultar actores académicos, administrar el catálogo de cursos y modelar el proceso real en el que un curso se ofrece dentro de un período académico, con una sección, un docente asignado y reglas de inscripción definidas.
 
 La solución está pensada como una base mantenible para sistemas académicos institucionales. Por eso el diseño no se limita al registro simple de entidades, sino que organiza la lógica del dominio en módulos independientes, incorpora validaciones de negocio, soporta importación masiva de estudiantes y expone documentación OpenAPI para facilitar consumo, pruebas e integración.
 
