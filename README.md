@@ -28,10 +28,6 @@ La carpeta `docs/` reúne la documentación de apoyo del proyecto:
 - `docs/02-system-architecture.md`: arquitectura, organización por capas, módulos y flujo general del sistema.
 - `docs/03-data-model.md`: entidades, relaciones, restricciones y decisiones de modelado.
 
-La documentación interactiva de la API se expone en la ruta:
-
-- `/api/v1/docs`
-
 ## Stack tecnológico
 
 Tecnologías principales usadas para desarrollar el proyecto:
@@ -72,9 +68,9 @@ Antes de iniciar, asegúrate de contar con lo siguiente:
 
 ### Guía de uso
 
-La ejecución manual está pensada para quien desea revisar el proyecto de forma directa desde el entorno local, siguiendo el flujo básico de instalación, configuración y arranque de la API.
+La ejecución manual está pensada para quien desea instalar, configurar y ejecutar la API directamente desde un entorno local.
 
-Esta opción permite validar rápidamente que la aplicación compila, que Prisma puede conectarse a la base de datos y que el backend inicia correctamente en modo desarrollo.
+Esta opción permite comprobar que la aplicación compila correctamente, que Prisma puede conectarse a la base de datos y que el backend inicia de forma adecuada.
 
 ### Pasos
 
@@ -98,7 +94,7 @@ cp .env.example .env
 pnpm prisma:generate
 ```
 
-5. Ejecuta las migraciones de base de datos para el entorno de desarrollo:
+5. Ejecuta las migraciones de base de datos:
 
 ```bash
 pnpm prisma:migrate:dev
@@ -110,15 +106,11 @@ pnpm prisma:migrate:dev
 pnpm prisma:seed
 ```
 
-7. Inicia la aplicación en modo desarrollo:
+7. Inicia la aplicación localmente:
 
 ```bash
 pnpm start:dev
 ```
-
-### Acceso
-
-Con la aplicación en ejecución, Swagger estará disponible en la ruta `/api/v1/docs` sobre el host y puerto configurados en tu entorno.
 
 ## Ejecución con Docker
 
@@ -177,21 +169,6 @@ docker compose --env-file .env.docker logs -f api
 docker compose --env-file .env.docker exec api pnpm prisma:seed
 ```
 
-### Acceso
-
-Con el entorno levantado correctamente, la API quedará disponible sobre el host y puerto configurados en `.env.docker`.
-
-La documentación Swagger estará disponible en la ruta:
-
-- `/api/v1/docs`
-
-### Consideraciones
-
-- Docker ofrece una forma consistente de levantar la API y la base de datos como un entorno integrado.
-- Las migraciones se ejecutan automáticamente al iniciar la API mediante `prisma migrate deploy`.
-- Las semillas se mantienen como una tarea operativa manual.
-- El uso de volúmenes permite conservar la información de la base de datos entre reinicios del entorno.
-
 ### Detener el entorno
 
 Para detener los contenedores:
@@ -205,6 +182,10 @@ Para detenerlos y eliminar también los volúmenes asociados:
 ```bash
 docker compose --env-file .env.docker down -v
 ```
+
+## Acceso
+
+Con la aplicación en ejecución, la API y la documentación Swagger estarán disponibles sobre el host y puerto configurados en tu entorno. La documentación interactiva se expone en la ruta `/api/v1/docs`.
 
 ## Endpoints principales
 
