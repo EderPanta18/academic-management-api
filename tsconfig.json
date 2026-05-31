@@ -19,18 +19,49 @@
     // aliases
     "baseUrl": "./src",
     "paths": {
+      "@app": ["app/index.ts"],
+      "@app/*": ["app/*"],
+
+      "@core": ["core/index.ts"],
       "@core/*": ["core/*"],
+
+      "@shared": ["shared/index.ts"],
       "@shared/*": ["shared/*"],
+
+      "@platform": ["platform/index.ts"],
+      "@platform/*": ["platform/*"],
+
+      "@modules": ["modules/index.ts"],
       "@modules/*": ["modules/*"],
+
+      "@persons": ["modules/persons/index.ts"],
       "@persons/*": ["modules/persons/*"],
+
+      "@departments": ["modules/departments/index.ts"],
       "@departments/*": ["modules/departments/*"],
+
+      "@careers": ["modules/careers/index.ts"],
       "@careers/*": ["modules/careers/*"],
+
+      "@academic-periods": ["modules/academic-periods/index.ts"],
       "@academic-periods/*": ["modules/academic-periods/*"],
+
+      "@course-categories": ["modules/course-categories/index.ts"],
       "@course-categories/*": ["modules/course-categories/*"],
+
+      "@courses": ["modules/courses/index.ts"],
       "@courses/*": ["modules/courses/*"],
+
+      "@professors": ["modules/professors/index.ts"],
       "@professors/*": ["modules/professors/*"],
+
+      "@students": ["modules/students/index.ts"],
       "@students/*": ["modules/students/*"],
+
+      "@course-offerings": ["modules/course-offerings/index.ts"],
       "@course-offerings/*": ["modules/course-offerings/*"],
+
+      "@enrollments": ["modules/enrollments/index.ts"],
       "@enrollments/*": ["modules/enrollments/*"]
     },
 
