@@ -1,5 +1,0 @@
-// .vscode/settings.json
-{
-  "prisma.schemaPath": "prisma/schema.prisma",
-  "prettier.trailingComma": "none"
-}
