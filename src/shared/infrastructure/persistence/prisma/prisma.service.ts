@@ -3,7 +3,7 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@prisma/client';
-import { PrismaMariaDb } from '@prisma/adapter-mariadb';
+import { PrismaPg } from '@prisma/adapter-pg';
 
 @Injectable()
 export class PrismaService
@@ -12,15 +12,9 @@ export class PrismaService
 {
   constructor(private readonly configService: ConfigService) {
     const databaseUrl = configService.getOrThrow<string>('DATABASE_URL');
-    const url = new URL(databaseUrl);
 
-    const adapter = new PrismaMariaDb({
-      host: url.hostname,
-      port: parseInt(url.port || '3306', 10),
-      user: url.username,
-      password: url.password,
-      database: url.pathname.slice(1),
-      connectionLimit: 5,
+    const adapter = new PrismaPg({
+      connectionString: databaseUrl,
     });
 
     super({

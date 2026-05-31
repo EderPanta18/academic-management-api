@@ -61,5 +61,8 @@ tmp
 temp
 *.tmp
 
+# Graphify
+graphify-out/
+
 # Scripts locales / Windows
 *.bat
