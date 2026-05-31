@@ -1,68 +1,135 @@
-# Dependencias y builds locales
-node_modules
-dist
-coverage
-.nyc_output
-build
+# =========================================================
+# Dependencias locales
+# =========================================================
+node_modules/
+.pnpm-store/
 
+
+# =========================================================
+# Builds, cobertura y cachés
+# =========================================================
+dist/
+build/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+
+# =========================================================
 # Git
-.git
+# =========================================================
+.git/
 .gitignore
 .gitattributes
 
-# Docker
+
+# =========================================================
+# Docker local
+# =========================================================
 .dockerignore
 docker-compose.yml
+docker-compose.*.yml
 
-# IDE / editor / formato
-.vscode
-.idea
-.prettierc
-.prettierrc
-.prettierrc.*
-.prettierignore
-.editorconfig
-*.swp
-*.swo
-*~
 
-# Sistema operativo
-.DS_Store
-Thumbs.db
-
-# Documentación y archivos auxiliares
-docs
-*.md
-*.pdf
-*.txt
-
-# Tests
-test
-**/*.spec.ts
-**/*.test.ts
-coverage
-
-# Assets no necesarios dentro de la imagen
-public
-
+# =========================================================
 # Variables de entorno y secretos
+# =========================================================
 .env
-.env*
+.env.*
 *.pem
 *.key
+*.crt
 
-# Logs y temporales
+
+# =========================================================
+# Logs
+# =========================================================
+logs/
+*.log
 npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-*.log
-tmp
-temp
+lerna-debug.log*
+
+
+# =========================================================
+# Temporales
+# =========================================================
+tmp/
+temp/
+.tmp/
+.temp/
 *.tmp
+*.temp
 
-# Graphify
+
+# =========================================================
+# Sistema operativo
+# =========================================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+
+# =========================================================
+# IDEs y editores
+# =========================================================
+.vscode/
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+*~
+
+
+# =========================================================
+# Documentación no necesaria en la imagen
+# =========================================================
+docs/
+*.md
+*.pdf
+*.txt
+
+
+# =========================================================
+# Tests no necesarios en producción
+# =========================================================
+test/
+tests/
+**/*.spec.ts
+**/*.test.ts
+
+
+# =========================================================
+# Assets no necesarios dentro de la imagen
+# =========================================================
+public/
+
+
+# =========================================================
+# Herramientas locales / IA
+# =========================================================
 graphify-out/
+.mempalace/
+.caveman/
 
-# Scripts locales / Windows
-*.bat
+
+# =========================================================
+# Archivos auxiliares locales
+# =========================================================
+total_code.txt
+total_seed.txt
+
+
+# =========================================================
+# Scripts locales auxiliares
+# =========================================================
+scripts/
