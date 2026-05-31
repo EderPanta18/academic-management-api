@@ -1,6 +1,6 @@
 // modules/course-offerings/domain/exceptions/course-offering.exception.ts
 
-import { DomainException } from '@core/domain/exceptions';
+import { DomainException } from '@core/exceptions';
 
 /**
  * Clase base de todas las excepciones del módulo course-offerings.

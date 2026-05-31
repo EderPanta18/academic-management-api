@@ -1,3 +1,2 @@
-// modules/students/presentation/constants/index.ts
-
+export * from './bulk-import.constants';
 export * from './student-routes.constants';

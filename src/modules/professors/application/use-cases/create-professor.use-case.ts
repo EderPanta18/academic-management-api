@@ -1,7 +1,7 @@
 // modules/professors/application/use-cases/create-professor.use-case.ts
 
 import { Inject, Injectable } from '@nestjs/common';
-import { EntityNotFoundException } from '@core/domain/exceptions';
+import { EntityNotFoundException } from '@core/exceptions';
 import {
   DEPARTMENT_FINDER_PORT,
   type IDepartmentFinder,

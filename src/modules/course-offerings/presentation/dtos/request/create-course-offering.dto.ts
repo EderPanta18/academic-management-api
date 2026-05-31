@@ -14,7 +14,7 @@ import {
   Min,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { TrimOptional } from '@shared/presentation/decorators';
+import { TrimOptional } from '@shared/decorators';
 
 export class CreateCourseOfferingDto {
   // ── Obligatorios ──────────────────────────────────────────────────────────

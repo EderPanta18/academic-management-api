@@ -1,7 +1,7 @@
 // modules/courses/application/use-cases/create-course.use-case.ts
 
 import { Inject, Injectable } from '@nestjs/common';
-import { EntityNotFoundException } from '@core/domain/exceptions';
+import { EntityNotFoundException } from '@core/exceptions';
 import {
   CAREER_FINDER_PORT,
   type ICareerFinder,

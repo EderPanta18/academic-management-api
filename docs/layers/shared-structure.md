@@ -28,7 +28,6 @@ src/shared/
 ├── decorators/
 ├── dtos/
 ├── mappers/
-├── responses/
 ├── types/
 ├── utils/
 └── index.ts
@@ -80,27 +79,8 @@ dtos/
 
 Los DTOs propios de una operación funcional permanecen dentro del módulo correspondiente. Las estructuras fundamentales del sistema pertenecen a `core`.
 
-## `responses/`
 
-Contiene estructuras reutilizables de respuesta.
-
-Ubicación:
-
-```txt
-src/shared/responses/
-```
-
-Contenido general:
-
-```txt
-responses/
-- Respuestas genéricas de API
-- Envoltorios de respuesta
-- Estructuras reutilizables de salida
-- Formatos comunes de respuesta
-```
-
-Esta carpeta agrupa formas de respuesta usadas por distintas partes del sistema, especialmente cuando están orientadas a presentación o comunicación externa.
+Los formatos globales de respuesta HTTP, como envoltorios de éxito o error aplicados por interceptores y filtros, no pertenecen a `shared/dtos`. Esos contratos deben ubicarse en `platform/http/responses` porque forman parte de la infraestructura HTTP global del backend.
 
 ## `mappers/`
 
@@ -182,8 +162,6 @@ src/shared/
 │   └── index.ts
 ├── mappers/
 │   └── index.ts
-├── responses/
-│   └── index.ts
 ├── types/
 │   └── index.ts
 ├── utils/
@@ -242,6 +220,8 @@ shared   = soporte ligero
 
 Un elemento pertenece a `platform` cuando depende de base de datos, configuración, HTTP global, archivos, logging, cache, colas, storage o integraciones externas.
 
+Los contratos globales de respuesta HTTP de la API pertenecen a `platform/http/responses` cuando son aplicados por filtros o interceptores globales. Aunque sean tipos reutilizables, su propósito está unido al transporte HTTP y a la infraestructura de respuesta del backend.
+
 Un elemento pertenece a `shared` cuando es simple, transversal y no encapsula tecnología de ejecución.
 
 ## Diferencia con `modules`
@@ -262,7 +242,6 @@ La carpeta `shared/` agrupa soporte reutilizable ligero.
 ```txt
 shared/decorators = decoradores reutilizables
 shared/dtos       = DTOs compartidos
-shared/responses  = estructuras comunes de respuesta
 shared/mappers    = mappers ligeros
 shared/types      = tipos auxiliares
 shared/utils      = utilidades simples

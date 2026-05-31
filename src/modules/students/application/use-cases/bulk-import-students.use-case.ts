@@ -1,8 +1,8 @@
 // modules/students/application/use-cases/bulk-import-students.use-case.ts
 
 import { Injectable } from '@nestjs/common';
-import { BulkRowErrorDto, BulkResultDto } from '@shared/application/dtos';
-import { DomainException } from '@core/domain/exceptions';
+import { BulkRowErrorDto, BulkResultDto } from '@shared/dtos';
+import { DomainException } from '@core/exceptions';
 import { BulkImportStudentsCommand, CreateStudentCommand } from '../commands';
 import { CreateStudentUseCase } from './create-student.use-case';
 

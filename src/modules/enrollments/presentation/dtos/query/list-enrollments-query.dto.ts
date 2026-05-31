@@ -8,7 +8,7 @@ import {
   IsArray,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
-import { PaginationQueryDto } from '@shared/presentation/dtos';
+import { PaginationQueryDto } from '@shared/dtos';
 import { EnrollmentStatus } from '@enrollments/domain/constants';
 
 export class ListEnrollmentsQueryDto extends PaginationQueryDto {

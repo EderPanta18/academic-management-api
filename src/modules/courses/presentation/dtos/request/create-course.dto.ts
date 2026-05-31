@@ -11,7 +11,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { Trim, TrimOptional } from '@shared/presentation/decorators';
+import { Trim, TrimOptional } from '@shared/decorators';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateCourseDto {

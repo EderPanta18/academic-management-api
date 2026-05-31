@@ -1,7 +1,7 @@
 // modules/course-categories/infrastructure/persistence/repositories/course-category.repository.adapter.ts
 
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@shared/infrastructure/persistence';
+import { PrismaService } from '@platform/database';
 import { type ICourseCategoryFinder } from '@course-categories/domain/ports/in';
 
 @Injectable()

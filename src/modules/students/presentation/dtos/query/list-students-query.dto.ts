@@ -2,7 +2,7 @@
 
 import { IsInt, IsOptional, IsPositive } from 'class-validator';
 import { Type } from 'class-transformer';
-import { PaginationQueryDto } from '@shared/presentation/dtos';
+import { PaginationQueryDto } from '@shared/dtos';
 
 export class ListStudentsQueryDto extends PaginationQueryDto {
   @IsOptional()

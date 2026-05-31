@@ -1,20 +1,16 @@
 // main.ts
 
-import { NestFactory } from '@nestjs/core';
-import { ConfigService } from '@nestjs/config';
-import { API_PREFIX } from './app/constants';
-import { setupSwagger } from './app/swagger';
-import { AppModule } from './app.module';
+import { NestFactory } from "@nestjs/core";
+import { RuntimeConfigService } from "@platform/config";
+import { AppModule, bootstrapApp } from "@app";
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
-  const port = app.get(ConfigService).getOrThrow<number>('PORT');
+  bootstrapApp(app);
 
-  app.setGlobalPrefix(API_PREFIX);
-  setupSwagger(app);
-
-  await app.listen(port);
+  const config = app.get(RuntimeConfigService);
+  await app.listen(config.port);
 }
 
 bootstrap();

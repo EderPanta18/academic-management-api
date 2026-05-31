@@ -133,6 +133,7 @@ Composición general:
 http/
 ├── filters/
 ├── interceptors/
+├── responses/
 ├── pipes/
 ├── guards/
 ├── swagger/
@@ -144,12 +145,48 @@ Contenido general:
 ```txt
 filters/      = manejo técnico de excepciones HTTP
 interceptors/ = transformación o registro transversal de respuestas y peticiones
+responses/    = contratos y formatos globales de respuesta HTTP de la API
 pipes/        = validación y transformación global de entrada
 guards/       = protección técnica de rutas
 swagger/      = configuración de documentación OpenAPI
 ```
 
 Esta carpeta agrupa comportamiento técnico aplicado al transporte HTTP. Los controladores funcionales pertenecen a los módulos de negocio, no a `platform/http`.
+
+
+### `http/responses/`
+
+Contiene los contratos de respuesta HTTP globales de la API.
+
+Ubicación:
+
+```txt
+src/platform/http/responses/
+```
+
+Contenido general:
+
+```txt
+responses/
+- Formato estándar de respuesta exitosa
+- Formato estándar de respuesta de error
+- Tipos compartidos por filtros e interceptores HTTP
+- Contratos de salida aplicados por la infraestructura HTTP global
+```
+
+Esta carpeta pertenece a `platform/http` porque sus elementos están ligados al transporte HTTP y son aplicados por mecanismos técnicos como filtros e interceptores globales.
+
+Ejemplo de composición:
+
+```txt
+http/responses/
+├── api-response.type.ts
+└── index.ts
+```
+
+Un tipo como `ApiResponse`, `ApiSuccessResponse` o `ApiErrorResponse` debe ubicarse aquí cuando representa el formato global que la API devuelve al cliente.
+
+No debe ubicarse en `shared/responses` si solo es usado por la infraestructura HTTP global. En ese caso, `platform/http/responses` mantiene juntos el contrato de respuesta y los mecanismos que lo aplican.
 
 ## `files/`
 
@@ -388,7 +425,7 @@ La carpeta `platform/` agrupa la infraestructura técnica global de la aplicaci�
 ```txt
 platform/config       = configuración técnica
 platform/database     = conexión y soporte de base de datos
-platform/http         = infraestructura HTTP global
+platform/http         = infraestructura HTTP global, filtros, interceptores y formatos de respuesta
 platform/files        = capacidades técnicas de archivos
 platform/logging      = registro y observabilidad
 platform/cache        = cache

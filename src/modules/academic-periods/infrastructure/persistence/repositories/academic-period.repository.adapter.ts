@@ -1,7 +1,7 @@
 // modules/academic-periods/infrastructure/persistence/repositories/academic-period.repository.adapter.ts
 
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@shared/infrastructure/persistence';
+import { PrismaService } from '@platform/database';
 import { type IAcademicPeriodFinder } from '@academic-periods/domain/ports/in';
 
 @Injectable()

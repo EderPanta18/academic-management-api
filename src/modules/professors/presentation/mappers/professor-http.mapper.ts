@@ -1,7 +1,6 @@
 // modules/professors/presentation/mappers/professor-http.mapper.ts
 
-import { PaginationVO } from '@core/domain/value-objects';
-import { PaginatedResultDto } from '@core/application/dtos';
+import { PaginationVO, PaginatedResultDto } from '@core/pagination';
 import { Professor } from '@professors/domain/entities';
 import { type ProfessorView } from '@professors/domain/read-models';
 import { CreateProfessorCommand } from '@professors/application/commands';

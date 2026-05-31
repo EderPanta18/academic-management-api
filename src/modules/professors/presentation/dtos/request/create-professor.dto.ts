@@ -15,7 +15,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Trim, TrimOptional } from '@shared/presentation/decorators';
+import { Trim, TrimOptional } from '@shared/decorators';
 import { ProfessorStatus } from '@professors/domain/constants';
 
 export class CreateProfessorDto {

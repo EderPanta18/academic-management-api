@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolvePackageJsonExports": true,
@@ -17,52 +16,51 @@
     "outDir": "./dist",
 
     // aliases
-    "baseUrl": "./src",
     "paths": {
-      "@app": ["app/index.ts"],
-      "@app/*": ["app/*"],
+      "@app": ["./src/app/index.ts"],
+      "@app/*": ["./src/app/*"],
 
-      "@core": ["core/index.ts"],
-      "@core/*": ["core/*"],
+      "@core": ["./src/core/index.ts"],
+      "@core/*": ["./src/core/*"],
 
-      "@shared": ["shared/index.ts"],
-      "@shared/*": ["shared/*"],
+      "@shared": ["./src/shared/index.ts"],
+      "@shared/*": ["./src/shared/*"],
 
-      "@platform": ["platform/index.ts"],
-      "@platform/*": ["platform/*"],
+      "@platform": ["./src/platform/index.ts"],
+      "@platform/*": ["./src/platform/*"],
 
-      "@modules": ["modules/index.ts"],
-      "@modules/*": ["modules/*"],
+      "@modules": ["./src/modules/index.ts"],
+      "@modules/*": ["./src/modules/*"],
 
-      "@persons": ["modules/persons/index.ts"],
-      "@persons/*": ["modules/persons/*"],
+      "@persons": ["./src/modules/persons/index.ts"],
+      "@persons/*": ["./src/modules/persons/*"],
 
-      "@departments": ["modules/departments/index.ts"],
-      "@departments/*": ["modules/departments/*"],
+      "@departments": ["./src/modules/departments/index.ts"],
+      "@departments/*": ["./src/modules/departments/*"],
 
-      "@careers": ["modules/careers/index.ts"],
-      "@careers/*": ["modules/careers/*"],
+      "@careers": ["./src/modules/careers/index.ts"],
+      "@careers/*": ["./src/modules/careers/*"],
 
-      "@academic-periods": ["modules/academic-periods/index.ts"],
-      "@academic-periods/*": ["modules/academic-periods/*"],
+      "@academic-periods": ["./src/modules/academic-periods/index.ts"],
+      "@academic-periods/*": ["./src/modules/academic-periods/*"],
 
-      "@course-categories": ["modules/course-categories/index.ts"],
-      "@course-categories/*": ["modules/course-categories/*"],
+      "@course-categories": ["./src/modules/course-categories/index.ts"],
+      "@course-categories/*": ["./src/modules/course-categories/*"],
 
-      "@courses": ["modules/courses/index.ts"],
-      "@courses/*": ["modules/courses/*"],
+      "@courses": ["./src/modules/courses/index.ts"],
+      "@courses/*": ["./src/modules/courses/*"],
 
-      "@professors": ["modules/professors/index.ts"],
-      "@professors/*": ["modules/professors/*"],
+      "@professors": ["./src/modules/professors/index.ts"],
+      "@professors/*": ["./src/modules/professors/*"],
 
-      "@students": ["modules/students/index.ts"],
-      "@students/*": ["modules/students/*"],
+      "@students": ["./src/modules/students/index.ts"],
+      "@students/*": ["./src/modules/students/*"],
 
-      "@course-offerings": ["modules/course-offerings/index.ts"],
-      "@course-offerings/*": ["modules/course-offerings/*"],
+      "@course-offerings": ["./src/modules/course-offerings/index.ts"],
+      "@course-offerings/*": ["./src/modules/course-offerings/*"],
 
-      "@enrollments": ["modules/enrollments/index.ts"],
-      "@enrollments/*": ["modules/enrollments/*"]
+      "@enrollments": ["./src/modules/enrollments/index.ts"],
+      "@enrollments/*": ["./src/modules/enrollments/*"]
     },
 
     "skipLibCheck": true,

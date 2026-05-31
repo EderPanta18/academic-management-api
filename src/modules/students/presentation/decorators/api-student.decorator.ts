@@ -12,8 +12,8 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { BULK_IMPORT } from '@shared/application/constants';
-import { ApiPaginatedOperation } from '@shared/presentation/decorators';
+import { BULK_IMPORT } from '@students/presentation/constants';
+import { ApiPaginatedOperation } from '@shared/decorators';
 import {
   BulkImportResultResponseDto,
   CreateStudentDto,

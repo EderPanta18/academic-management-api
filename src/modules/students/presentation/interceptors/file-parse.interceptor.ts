@@ -12,12 +12,12 @@ import { validateSync } from 'class-validator';
 import { type Request } from 'express';
 import * as path from 'path';
 import { type Observable } from 'rxjs';
-import { BULK_IMPORT } from '@shared/application/constants';
-import { BulkRowErrorDto } from '@shared/application/dtos';
+import { BULK_IMPORT } from '@students/presentation/constants';
+import { BulkRowErrorDto } from '@shared/dtos';
 import {
   FILE_PARSER_PORT,
   type IFileParser,
-} from '@shared/application/ports/out';
+} from '@platform/files/parser';
 import { type StudentRowInput } from '@students/application/commands';
 import { StudentImportHttpMapper } from '@students/presentation/mappers';
 

@@ -12,7 +12,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { Trim, TrimOptional } from 'shared/presentation/decorators';
+import { Trim, TrimOptional } from '@shared/decorators';
 
 export class StudentImportRowDto {
   @ApiProperty({ example: 'Juan Carlos' })

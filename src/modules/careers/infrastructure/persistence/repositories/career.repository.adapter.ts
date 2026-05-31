@@ -1,7 +1,7 @@
 // modules/careers/infrastructure/persistence/repositories/career.repository.adapter.ts
 
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@shared/infrastructure/persistence';
+import { PrismaService } from '@platform/database';
 import { type ICareerFinder } from '@careers/domain/ports/in';
 
 @Injectable()

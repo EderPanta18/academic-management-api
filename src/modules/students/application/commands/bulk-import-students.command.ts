@@ -1,6 +1,6 @@
 // modules/students/application/commands/bulk-import-students.command.ts
 
-import { BulkRowErrorDto } from '@shared/application/dtos';
+import { BulkRowErrorDto } from '@shared/dtos';
 
 export interface StudentRowInput {
   rowNumber: number;

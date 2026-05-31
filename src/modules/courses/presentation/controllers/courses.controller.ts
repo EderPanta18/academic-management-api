@@ -10,9 +10,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { PaginationVO } from '@core/domain/value-objects';
-import { PaginatedResultDto } from '@core/application/dtos';
-import { SWAGGER_TAGS } from '@shared/presentation/constants';
+import { PaginationVO, PaginatedResultDto } from '@core/pagination';
+import { SWAGGER_TAGS } from '@platform/http/swagger';
 import {
   CreateCourseUseCase,
   ListCoursesUseCase,

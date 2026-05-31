@@ -1,7 +1,7 @@
 // modules/students/presentation/mappers/student-import-http.mapper.ts
 
 import { plainToInstance } from 'class-transformer';
-import { BulkResultDto } from '@shared/application/dtos';
+import { BulkResultDto } from '@shared/dtos';
 import { type StudentRowInput } from '@students/application/commands';
 import { StudentImportRowDto, BulkImportResultResponseDto } from '../dtos';
 

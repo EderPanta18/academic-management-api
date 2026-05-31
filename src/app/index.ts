@@ -1,3 +1,4 @@
 // app/index.ts
 
-export { AppPipelineModule } from './app-pipeline.module';
+export { bootstrapApp } from "./app.bootstrap";
+export { AppModule } from "./app.module";

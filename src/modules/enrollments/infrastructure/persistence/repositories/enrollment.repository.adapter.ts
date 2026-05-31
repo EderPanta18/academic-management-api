@@ -2,8 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { PaginationVO } from '@core/domain/value-objects';
-import { PrismaService } from '@shared/infrastructure/persistence';
+import { PaginationVO } from '@core/pagination';
+import { PrismaService } from '@platform/database';
 import { EnrollmentStatus } from '@enrollments/domain/constants';
 import {
   Enrollment,

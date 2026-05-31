@@ -112,6 +112,7 @@ graphify-out/
 # =========================================================
 # Archivos auxiliares locales
 # =========================================================
+code/
 total_code.txt
 total_seed.txt
 

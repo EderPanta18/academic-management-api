@@ -11,7 +11,7 @@ import {
   ApiParam,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
-import { ApiPaginatedOperation } from '@shared/presentation/decorators';
+import { ApiPaginatedOperation } from '@shared/decorators';
 import { CreateProfessorDto, ProfessorResponseDto } from '../dtos';
 
 export const ApiCreateProfessor = () =>

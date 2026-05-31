@@ -14,10 +14,9 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { PaginationVO } from '@core/domain/value-objects';
-import { BULK_IMPORT } from '@shared/application/constants';
-import { PaginatedResultDto } from '@core/application/dtos';
-import { SWAGGER_TAGS } from '@shared/presentation/constants';
+import { PaginationVO, PaginatedResultDto } from '@core/pagination';
+import { BULK_IMPORT } from '@students/presentation/constants';
+import { SWAGGER_TAGS } from '@platform/http/swagger';
 import {
   CreateStudentUseCase,
   ListStudentsUseCase,

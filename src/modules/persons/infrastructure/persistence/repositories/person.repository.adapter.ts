@@ -1,7 +1,7 @@
 // modules/persons/infrastructure/persistence/repositories/person.prisma.repository.adapter.ts
 
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@shared/infrastructure/persistence';
+import { PrismaService } from '@platform/database';
 import { type IPersonRepository } from '@persons/domain/ports/out';
 
 @Injectable()

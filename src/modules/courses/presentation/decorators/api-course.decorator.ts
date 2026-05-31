@@ -12,7 +12,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { CreateCourseDto, CourseResponseDto } from '../dtos';
-import { ApiPaginatedOperation } from '@shared/presentation/decorators';
+import { ApiPaginatedOperation } from '@shared/decorators';
 
 export const ApiCreateCourse = () =>
   applyDecorators(

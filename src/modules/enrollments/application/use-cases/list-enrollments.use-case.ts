@@ -1,8 +1,7 @@
 // modules/enrollments/application/use-cases/list-enrollments.use-case.ts
 
 import { Inject, Injectable } from '@nestjs/common';
-import { PaginationVO } from '@core/domain/value-objects';
-import { PaginatedResultDto } from '@core/application/dtos';
+import { PaginationVO, PaginatedResultDto } from '@core/pagination';
 import { Enrollment } from '@enrollments/domain/entities';
 import {
   ENROLLMENT_REPOSITORY_PORT,

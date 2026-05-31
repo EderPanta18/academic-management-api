@@ -8,7 +8,7 @@ import {
   IsPositive,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
-import { PaginationQueryDto } from '@shared/presentation/dtos';
+import { PaginationQueryDto } from '@shared/dtos';
 import { CourseOfferingStatus } from '@course-offerings/domain/constants';
 
 export class ListCourseOfferingsQueryDto extends PaginationQueryDto {

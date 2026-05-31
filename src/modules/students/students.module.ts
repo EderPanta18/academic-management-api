@@ -1,7 +1,7 @@
 // modules/students/students.module.ts
 
 import { Module } from '@nestjs/common';
-import { FileParserModule } from '@shared/infrastructure/file-parser';
+import { FileParserModule } from '@platform/files/parser';
 import { PersonsModule } from '@modules/persons';
 import { CareersModule } from '@modules/careers';
 import {

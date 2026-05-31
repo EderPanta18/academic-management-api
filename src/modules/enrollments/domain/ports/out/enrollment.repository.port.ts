@@ -1,6 +1,6 @@
 // modules/enrollments/domain/ports/out/enrollment.repository.port.ts
 
-import { PaginationVO } from '@core/domain/value-objects';
+import { PaginationVO } from '@core/pagination';
 import { EnrollmentStatus } from '@enrollments/domain/constants';
 import {
   Enrollment,

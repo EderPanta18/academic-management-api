@@ -12,7 +12,7 @@ import {
   ApiQuery,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { ApiPaginatedOperation } from '@shared/presentation/decorators';
+import { ApiPaginatedOperation } from '@shared/decorators';
 import { EnrollmentStatus } from '@enrollments/domain/constants';
 import { EnrollmentResponseDto, EnrollStudentDto } from '../dtos';
 
