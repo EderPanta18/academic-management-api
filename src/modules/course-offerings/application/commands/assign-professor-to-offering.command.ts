@@ -2,13 +2,18 @@
 
 /**
  * Representa la intención de asignar un profesor a una oferta de curso.
- * Solo necesita los dos identificadores involucrados.
  */
+
+type AssignProfessorToOfferingCommandProps = {
+  offeringId: number;
+  professorId: number;
+};
+
 export class AssignProfessorToOfferingCommand {
   readonly offeringId: number;
   readonly professorId: number;
 
-  constructor(props: AssignProfessorToOfferingCommand) {
+  constructor(props: AssignProfessorToOfferingCommandProps) {
     this.offeringId = props.offeringId;
     this.professorId = props.professorId;
   }
