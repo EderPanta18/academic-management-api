@@ -42,7 +42,7 @@ Cada subcapa tiene una responsabilidad específica:
 
 ```txt
 domain         = reglas y modelo interno del negocio
-application    = casos de uso, puertos, comandos, queries, resultados y orquestación
+application    = casos de uso, servicios, puertos, contratos, comandos, queries, resultados y orquestación
 infrastructure = implementaciones técnicas del módulo
 presentation   = entrada y salida hacia el exterior, principalmente HTTP
 ```
@@ -218,7 +218,7 @@ La mayoría de contratos del sistema pertenecen a `application/ports`, no a `dom
 
 `application/` contiene la orquestación funcional del módulo.
 
-Esta subcapa coordina casos de uso, define entradas internas, salidas, puertos de comunicación, excepciones de aplicación y contratos necesarios para ejecutar operaciones del sistema.
+Esta subcapa coordina casos de uso, servicios de aplicación, contratos internos, entradas, salidas, puertos de comunicación y excepciones necesarias para ejecutar operaciones del sistema.
 
 Estructura general:
 
@@ -226,9 +226,11 @@ Estructura general:
 application/
 ├── commands/
 ├── queries/
+├── contracts/
 ├── results/
 ├── read-models/
 ├── use-cases/
+├── services/
 ├── ports/
 │   ├── in/
 │   └── out/
@@ -321,6 +323,36 @@ Read Model = proyección de lectura, usualmente compuesta o derivada
 DTO HTTP   = forma expuesta por la capa de presentación
 ```
 
+### `application/contracts/`
+
+Contiene contratos internos de aplicación que agrupan tipos de entrada y salida relacionados con una capacidad del módulo.
+
+```txt
+application/contracts/
+├── entity-creation.contract.ts
+└── index.ts
+```
+
+Un contract se usa cuando una capacidad necesita exponer o reutilizar tipos simples sin crear una carpeta separada por cada tipo. Puede agrupar `Input`, `Result` u otros tipos relacionados con una misma operación o colaboración entre módulos.
+
+Ejemplo conceptual:
+
+```txt
+PersonCreationInput
+PersonCreationResult
+```
+
+Los contracts no son DTOs HTTP, no contienen decoradores de presentación y no representan entidades de dominio. Son tipos de aplicación usados para mantener limpia la frontera entre módulos y evitar exponer detalles internos del dominio.
+
+Uso recomendado:
+
+```txt
+application/contracts/person-creation.contract.ts
+= tipos de entrada y salida usados por un puerto o servicio de aplicación
+```
+
+No es necesario crear un archivo por cada tipo pequeño. Cuando varios tipos pertenecen a una misma capacidad, pueden vivir juntos en un mismo contract.
+
 ### `application/use-cases/`
 
 Contiene los casos de uso del módulo.
@@ -349,6 +381,40 @@ Domain Entity
 Port Out
   ↓ implementado por
 Infrastructure Adapter
+```
+
+### `application/services/`
+
+Contiene servicios de aplicación.
+
+Un servicio de aplicación encapsula una capacidad reutilizable de la capa de aplicación que no necesariamente representa un caso de uso completo. Puede coordinar validaciones, contratos, entidades de dominio y puertos, pero no debe contener detalles técnicos de Prisma, HTTP, archivos o infraestructura directa.
+
+```txt
+application/services/
+├── entity-creation-validator.service.ts
+└── index.ts
+```
+
+Se usa cuando una lógica de aplicación debe ser compartida por varios casos de uso o por otros módulos mediante un puerto de entrada, pero no conviene expresarla como un caso de uso principal.
+
+Ejemplo conceptual:
+
+```txt
+PersonCreationValidator
+= valida datos de persona y devuelve datos aceptados para que otro caso de uso continúe su flujo transaccional
+```
+
+Diferencia con otros servicios:
+
+```txt
+domain/services
+= lógica pura de dominio, sin puertos ni infraestructura
+
+application/services
+= coordinación reutilizable de aplicación, puede usar puertos y lanzar excepciones de aplicación
+
+infrastructure/providers
+= implementaciones técnicas locales del módulo
 ```
 
 ### `application/ports/`
@@ -393,6 +459,7 @@ Un puerto de entrada puede usar:
 ```txt
 commands/
 queries/
+contracts/
 results/
 read-models/
 ```
@@ -822,7 +889,7 @@ Contenido público conceptual:
 ```txt
 - <module>.module.ts
 - application/ports/in
-- commands o queries necesarios para ports/in
+- commands, queries o contracts necesarios para ports/in
 - results o read-models necesarios para ports/in
 ```
 
@@ -855,6 +922,7 @@ Ejemplo conceptual:
 ```txt
 STUDENT_FINDER_PORT
 STUDENT_REPOSITORY_PORT
+PERSON_CREATION_VALIDATOR_PORT
 CREATE_PERSON_PORT
 ```
 
@@ -889,6 +957,9 @@ Command
 
 Query
 = entrada de lectura para un caso de uso
+
+Contract
+= agrupación de tipos de entrada y salida de una capacidad de aplicación
 
 Result
 = salida de una operación de aplicación
@@ -964,7 +1035,7 @@ Port In del módulo dueño
   ↓
 Use Case o servicio de aplicación del módulo dueño
   ↓
-Result / ReadModel
+Contract Result / Result / ReadModel
 ```
 
 El módulo consumidor no conoce la infraestructura ni las entidades internas del módulo dueño.
@@ -991,7 +1062,7 @@ domain
 = reglas puras, entidades, value objects, excepciones y servicios de dominio
 
 application
-= casos de uso, comandos, queries, results, read models, puertos y excepciones de aplicación
+= casos de uso, servicios, contratos, comandos, queries, results, read models, puertos y excepciones de aplicación
 
 infrastructure
 = adaptadores técnicos, repositorios, queries, mappers de persistencia y clientes
@@ -1018,9 +1089,11 @@ src/modules/<module>/
 ├── application/
 │   ├── commands/
 │   ├── queries/
+│   ├── contracts/
 │   ├── results/
 │   ├── read-models/
 │   ├── use-cases/
+│   ├── services/
 │   ├── ports/
 │   │   ├── in/
 │   │   │   ├── tokens.ts
