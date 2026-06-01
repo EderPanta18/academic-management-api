@@ -9,7 +9,7 @@ import {
 import {
   COURSE_CATEGORY_FINDER_PORT,
   type ICourseCategoryFinder
-} from "@modules/course-categories/domain/application/in";
+} from "@modules/course-categories/application/ports/in";
 import { Course } from "@courses/domain/entities";
 import { CourseDuplicateNameException } from "@courses/domain/exceptions";
 import {
