@@ -1,25 +1,25 @@
 // modules/students/application/use-cases/create-student.use-case.ts
 
-import { Inject, Injectable } from '@nestjs/common';
-import { EntityNotFoundException } from '@core/exceptions';
+import { Inject, Injectable } from "@nestjs/common";
+import { EntityNotFoundException } from "@core/exceptions";
 import {
   CAREER_FINDER_PORT,
-  type ICareerFinder,
-} from '@careers/domain/ports/in';
+  type ICareerFinder
+} from "@modules/careers/application/ports/in";
 import {
   CREATE_PERSON_USE_CASE_PORT,
-  type ICreatePersonUseCase,
-} from '@persons/domain/ports/in';
-import { Student } from '@students/domain/entities';
+  type ICreatePersonUseCase
+} from "@persons/domain/ports/in";
+import { Student } from "@students/domain/entities";
 import {
   StudentCodeAlreadyExistsException,
-  StudentEmailAlreadyExistsException,
-} from '@students/domain/exceptions';
+  StudentEmailAlreadyExistsException
+} from "@students/domain/exceptions";
 import {
   STUDENT_REPOSITORY_PORT,
-  type IStudentRepository,
-} from '@students/domain/ports/out';
-import { CreateStudentCommand } from '../commands';
+  type IStudentRepository
+} from "@students/domain/ports/out";
+import { CreateStudentCommand } from "../commands";
 
 @Injectable()
 export class CreateStudentUseCase {
@@ -31,24 +31,24 @@ export class CreateStudentUseCase {
     private readonly createPerson: ICreatePersonUseCase,
 
     @Inject(STUDENT_REPOSITORY_PORT)
-    private readonly repository: IStudentRepository,
+    private readonly repository: IStudentRepository
   ) {}
 
   async execute(command: CreateStudentCommand): Promise<Student> {
     const careerExists = await this.careerFinder.exists(command.careerId);
     if (!careerExists)
-      throw new EntityNotFoundException('Career', command.careerId);
+      throw new EntityNotFoundException("Career", command.careerId);
 
     const codeExists = await this.repository.existsByCode(command.code);
     if (codeExists) throw new StudentCodeAlreadyExistsException(command.code);
 
     if (command.institutionalEmail) {
       const emailExists = await this.repository.existsByInstitutionalEmail(
-        command.institutionalEmail,
+        command.institutionalEmail
       );
       if (emailExists)
         throw new StudentEmailAlreadyExistsException(
-          command.institutionalEmail,
+          command.institutionalEmail
         );
     }
 
@@ -58,7 +58,7 @@ export class CreateStudentUseCase {
       lastName: command.lastName,
       email: command.email,
       phone: command.phone,
-      birthDate: command.birthDate,
+      birthDate: command.birthDate
     });
 
     const student = Student.create({
@@ -66,7 +66,7 @@ export class CreateStudentUseCase {
       code: command.code,
       enrollmentDate: command.enrollmentDate,
       institutionalEmail: command.institutionalEmail,
-      status: command.status,
+      status: command.status
     });
 
     return this.repository.save(student, {
@@ -75,7 +75,7 @@ export class CreateStudentUseCase {
       lastName: person.lastName,
       email: person.email,
       phone: person.phone,
-      birthDate: person.birthDate,
+      birthDate: person.birthDate
     });
   }
 }

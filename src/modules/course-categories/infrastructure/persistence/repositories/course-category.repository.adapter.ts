@@ -1,8 +1,8 @@
 // modules/course-categories/infrastructure/persistence/repositories/course-category.repository.adapter.ts
 
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@platform/database';
-import { type ICourseCategoryFinder } from '@course-categories/domain/ports/in';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "@platform/database";
+import { type ICourseCategoryFinder } from "@modules/course-categories/domain/application/in";
 
 @Injectable()
 export class CourseCategoryRepository implements ICourseCategoryFinder {
@@ -12,7 +12,7 @@ export class CourseCategoryRepository implements ICourseCategoryFinder {
 
   async exists(id: number): Promise<boolean> {
     const count = await this.prisma.courseCategory.count({
-      where: { id, deletedAt: null },
+      where: { id, deletedAt: null }
     });
     return count > 0;
   }

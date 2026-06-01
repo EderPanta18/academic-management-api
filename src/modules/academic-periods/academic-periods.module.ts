@@ -1,6 +1,7 @@
 // modules/academic-periods/academic-periods.module.ts
 
 import { Module } from "@nestjs/common";
+
 import { ACADEMIC_PERIOD_FINDER_PORT } from "./application/ports";
 import { AcademicPeriodRepository } from "./infrastructure/persistence";
 

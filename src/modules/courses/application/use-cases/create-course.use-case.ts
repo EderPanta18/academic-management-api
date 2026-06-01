@@ -1,22 +1,22 @@
 // modules/courses/application/use-cases/create-course.use-case.ts
 
-import { Inject, Injectable } from '@nestjs/common';
-import { EntityNotFoundException } from '@core/exceptions';
+import { Inject, Injectable } from "@nestjs/common";
+import { EntityNotFoundException } from "@core/exceptions";
 import {
   CAREER_FINDER_PORT,
-  type ICareerFinder,
-} from '@careers/domain/ports/in';
+  type ICareerFinder
+} from "@modules/careers/application/ports/in";
 import {
   COURSE_CATEGORY_FINDER_PORT,
-  type ICourseCategoryFinder,
-} from '@course-categories/domain/ports/in';
-import { Course } from '@courses/domain/entities';
-import { CourseDuplicateNameException } from '@courses/domain/exceptions';
+  type ICourseCategoryFinder
+} from "@modules/course-categories/domain/application/in";
+import { Course } from "@courses/domain/entities";
+import { CourseDuplicateNameException } from "@courses/domain/exceptions";
 import {
   COURSE_REPOSITORY_PORT,
-  type ICourseRepository,
-} from '@courses/domain/ports/out';
-import { CreateCourseCommand } from '../commands';
+  type ICourseRepository
+} from "@courses/domain/ports/out";
+import { CreateCourseCommand } from "../commands";
 
 @Injectable()
 export class CreateCourseUseCase {
@@ -28,27 +28,27 @@ export class CreateCourseUseCase {
     private readonly categoryFinder: ICourseCategoryFinder,
 
     @Inject(COURSE_REPOSITORY_PORT)
-    private readonly repository: ICourseRepository,
+    private readonly repository: ICourseRepository
   ) {}
 
   async execute(command: CreateCourseCommand): Promise<Course> {
     const careerExists = await this.careerFinder.exists(command.careerId);
     if (!careerExists) {
-      throw new EntityNotFoundException('Career', command.careerId);
+      throw new EntityNotFoundException("Career", command.careerId);
     }
 
     if (command.categoryId !== undefined) {
       const categoryExists = await this.categoryFinder.exists(
-        command.categoryId,
+        command.categoryId
       );
       if (!categoryExists) {
-        throw new EntityNotFoundException('CourseCategory', command.categoryId);
+        throw new EntityNotFoundException("CourseCategory", command.categoryId);
       }
     }
 
     const isDuplicate = await this.repository.existsByCareerAndName(
       command.careerId,
-      command.name,
+      command.name
     );
     if (isDuplicate) {
       throw new CourseDuplicateNameException(command.name, command.careerId);
@@ -59,7 +59,7 @@ export class CreateCourseUseCase {
       name: command.name,
       credits: command.credits,
       categoryId: command.categoryId,
-      description: command.description,
+      description: command.description
     });
 
     return this.repository.save(course);

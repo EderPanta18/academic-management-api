@@ -1,8 +1,9 @@
 // modules/careers/infrastructure/persistence/repositories/career.repository.adapter.ts
 
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@platform/database';
-import { type ICareerFinder } from '@careers/domain/ports/in';
+import { Injectable } from "@nestjs/common";
+
+import { PrismaService } from "@platform/database";
+import type { ICareerFinder } from "@modules/careers/application/ports/in";
 
 @Injectable()
 export class CareerRepository implements ICareerFinder {
@@ -12,8 +13,9 @@ export class CareerRepository implements ICareerFinder {
 
   async exists(id: number): Promise<boolean> {
     const count = await this.prisma.career.count({
-      where: { id, deletedAt: null },
+      where: { id, deletedAt: null }
     });
+
     return count > 0;
   }
 }

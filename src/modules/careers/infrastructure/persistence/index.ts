@@ -1,3 +1,3 @@
 // modules/careers/infrastructure/persistence/index.ts
 
-export { CareerRepository } from './repositories';
+export * from "./repositories";
