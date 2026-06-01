@@ -1,18 +1,33 @@
+// shared/dtos/bulk-result.dto.ts
+
+type BulkRowErrorDtoProps = {
+  row: number;
+  field: string;
+  reason: string;
+};
+
 export class BulkRowErrorDto {
   readonly row: number;
   readonly field: string;
   readonly reason: string;
 
-  private constructor(row: number, field: string, reason: string) {
-    this.row = row;
-    this.field = field;
-    this.reason = reason;
+  private constructor(props: BulkRowErrorDtoProps) {
+    this.row = props.row;
+    this.field = props.field;
+    this.reason = props.reason;
   }
 
-  static from(row: number, field: string, reason: string): BulkRowErrorDto {
-    return new BulkRowErrorDto(row, field, reason);
+  static from(props: BulkRowErrorDtoProps): BulkRowErrorDto {
+    return new BulkRowErrorDto(props);
   }
 }
+
+type BulkResultDtoProps = {
+  totalProcessed: number;
+  totalSuccess: number;
+  totalFailed: number;
+  errors: BulkRowErrorDto[];
+};
 
 export class BulkResultDto {
   readonly totalProcessed: number;
@@ -20,23 +35,25 @@ export class BulkResultDto {
   readonly totalFailed: number;
   readonly errors: BulkRowErrorDto[];
 
-  private constructor(
-    totalProcessed: number,
-    totalSuccess: number,
-    totalFailed: number,
-    errors: BulkRowErrorDto[],
-  ) {
-    this.totalProcessed = totalProcessed;
-    this.totalSuccess = totalSuccess;
-    this.totalFailed = totalFailed;
-    this.errors = errors;
+  private constructor(props: BulkResultDtoProps) {
+    this.totalProcessed = props.totalProcessed;
+    this.totalSuccess = props.totalSuccess;
+    this.totalFailed = props.totalFailed;
+    this.errors = props.errors;
   }
 
-  static from(totalProcessed: number, errors: BulkRowErrorDto[]): BulkResultDto {
-    const failedRows = new Set(errors.map((error) => error.row)).size;
-    const totalSuccess = totalProcessed - failedRows;
+  static from(
+    totalProcessed: number,
+    errors: BulkRowErrorDto[]
+  ): BulkResultDto {
+    const totalFailed = new Set(errors.map((error) => error.row)).size;
+    const totalSuccess = Math.max(totalProcessed - totalFailed, 0);
 
-    return new BulkResultDto(totalProcessed, totalSuccess, failedRows, errors);
+    return new BulkResultDto({
+      totalProcessed,
+      totalSuccess,
+      totalFailed,
+      errors
+    });
   }
 }
-

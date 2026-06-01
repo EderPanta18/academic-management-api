@@ -1,57 +1,73 @@
-import { applyDecorators, Type } from '@nestjs/common';
+// shared/decorators/api-paginated-operation.decorator.ts
+
+import { applyDecorators, type Type } from "@nestjs/common";
 import {
   ApiExtraModels,
   ApiOkResponse,
   ApiQuery,
-  getSchemaPath,
-} from '@nestjs/swagger';
+  getSchemaPath
+} from "@nestjs/swagger";
 
-export const ApiPaginatedOperation = <T extends Type<unknown>>(model: T) =>
-  applyDecorators(
-    ApiExtraModels(model),
+function ApiPaginationQueries(): MethodDecorator {
+  return applyDecorators(
     ApiQuery({
-      name: 'page',
+      name: "page",
       required: false,
       type: Number,
       example: 1,
-      description: 'Numero de pagina',
+      description: "Número de página"
     }),
     ApiQuery({
-      name: 'pageSize',
+      name: "pageSize",
       required: false,
       type: Number,
       example: 20,
-      description: 'Registros por pagina (max. 100)',
-    }),
-    ApiOkResponse({
-      schema: {
-        properties: {
-          items: {
-            type: 'array',
-            items: { $ref: getSchemaPath(model) },
-          },
-          total: {
-            type: 'number',
-            example: 50,
-            description: 'Total de registros encontrados',
-          },
-          page: {
-            type: 'number',
-            example: 1,
-            description: 'Pagina actual',
-          },
-          pageSize: {
-            type: 'number',
-            example: 20,
-            description: 'Registros por pagina',
-          },
-          hasNextPage: {
-            type: 'boolean',
-            example: true,
-            description: 'Indica si existe una pagina siguiente',
-          },
-        },
-      },
-    }),
+      description: "Registros por página"
+    })
   );
+}
 
+function ApiPaginatedOkResponse<T extends Type<unknown>>(
+  model: T
+): MethodDecorator {
+  return ApiOkResponse({
+    schema: {
+      properties: {
+        items: {
+          type: "array",
+          items: { $ref: getSchemaPath(model) }
+        },
+        total: {
+          type: "number",
+          example: 50,
+          description: "Total de registros encontrados"
+        },
+        page: {
+          type: "number",
+          example: 1,
+          description: "Página actual"
+        },
+        pageSize: {
+          type: "number",
+          example: 20,
+          description: "Registros por página"
+        },
+        hasNextPage: {
+          type: "boolean",
+          example: true,
+          description: "Indica si existe una página siguiente"
+        }
+      }
+    }
+  });
+}
+
+export function ApiPaginatedOperation<T extends Type<unknown>>(
+  model: T
+): MethodDecorator {
+  return applyDecorators(
+    ApiPaginationQueries(),
+    ApiExtraModels(model),
+    ApiPaginatedOkResponse(model)
+  );
+}
