@@ -1,10 +1,10 @@
 // modules/persons/infrastructure/persistence/mappers/professor-persistence.mapper.ts
 
-import { Prisma } from '@prisma/client';
-import { Professor, type ProfessorProps } from '@professors/domain/entities';
-import { ProfessorStatus } from '@professors/domain/constants';
-import { type ProfessorView } from '@professors/domain/read-models';
-import { type PersonCreationData } from '@professors/domain/ports/out';
+import { Prisma } from "@prisma/client";
+import { Professor, type ProfessorProps } from "@professors/domain/entities";
+import { ProfessorStatus } from "@professors/domain/constants";
+import { type ProfessorView } from "@professors/application/read-models";
+import { type ProfessorPersonData } from "@professors/application/ports/out";
 
 type ProfessorRaw = Prisma.ProfessorGetPayload<{ include: { person: true } }>;
 
@@ -17,7 +17,7 @@ export class ProfessorPersistenceMapper {
       specialty: raw.specialty,
       institutionalEmail: raw.institutionalEmail,
       hireDate: raw.hireDate,
-      status: raw.status as ProfessorStatus,
+      status: raw.status as ProfessorStatus
     };
     return Professor.reconstitute(props);
   }
@@ -39,11 +39,11 @@ export class ProfessorPersistenceMapper {
       email: raw.person.email,
       phone: raw.person.phone,
       birthDate: raw.person.birthDate,
-      fullName: `${raw.person.firstName} ${raw.person.lastName}`.trim(),
+      fullName: `${raw.person.firstName} ${raw.person.lastName}`.trim()
     };
   }
 
-  static toPersistence(professor: Professor, personData: PersonCreationData) {
+  static toPersistence(professor: Professor, personData: ProfessorPersonData) {
     return {
       person: {
         dni: personData.dni,
@@ -51,7 +51,7 @@ export class ProfessorPersistenceMapper {
         lastName: personData.lastName,
         email: personData.email,
         phone: personData.phone ?? null,
-        birthDate: personData.birthDate ?? null,
+        birthDate: personData.birthDate ?? null
       },
       professor: {
         code: professor.code,
@@ -59,8 +59,8 @@ export class ProfessorPersistenceMapper {
         institutionalEmail: professor.institutionalEmail,
         hireDate: professor.hireDate,
         status: professor.status,
-        departmentId: professor.departmentId,
-      },
+        departmentId: professor.departmentId
+      }
     };
   }
 }

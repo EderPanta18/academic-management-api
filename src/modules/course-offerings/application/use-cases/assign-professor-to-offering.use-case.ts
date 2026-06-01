@@ -1,23 +1,23 @@
 // modules/course-offerings/application/use-cases/assign-professor-to-offering.use-case.ts
 
-import { Inject, Injectable } from '@nestjs/common';
-import { EntityNotFoundException } from '@core/exceptions';
+import { Inject, Injectable } from "@nestjs/common";
+import { EntityNotFoundException } from "@core/exceptions";
 import {
   PROFESSOR_FINDER_PORT,
-  type IProfessorFinder,
-} from '@professors/domain/ports/in';
-import { CourseOfferingStatus } from '@course-offerings/domain/constants';
-import { CourseOffering } from '@course-offerings/domain/entities';
+  type IProfessorFinder
+} from "@modules/professors/application/ports/in";
+import { CourseOfferingStatus } from "@course-offerings/domain/constants";
+import { CourseOffering } from "@course-offerings/domain/entities";
 import {
   CourseOfferingNotFoundException,
-  CourseOfferingInvalidStatusException,
-} from '@course-offerings/domain/exceptions';
+  CourseOfferingInvalidStatusException
+} from "@course-offerings/domain/exceptions";
 import {
   COURSE_OFFERING_REPOSITORY_PORT,
-  type ICourseOfferingRepository,
-} from '@course-offerings/domain/ports/out';
-import { ProfessorNotActiveForAssignmentException } from '../exceptions';
-import { AssignProfessorToOfferingCommand } from '../commands';
+  type ICourseOfferingRepository
+} from "@course-offerings/domain/ports/out";
+import { ProfessorNotActiveForAssignmentException } from "../exceptions";
+import { AssignProfessorToOfferingCommand } from "../commands";
 
 @Injectable()
 export class AssignProfessorToOfferingUseCase {
@@ -26,11 +26,11 @@ export class AssignProfessorToOfferingUseCase {
     private readonly professorFinder: IProfessorFinder,
 
     @Inject(COURSE_OFFERING_REPOSITORY_PORT)
-    private readonly repository: ICourseOfferingRepository,
+    private readonly repository: ICourseOfferingRepository
   ) {}
 
   async execute(
-    command: AssignProfessorToOfferingCommand,
+    command: AssignProfessorToOfferingCommand
   ): Promise<CourseOffering> {
     const offering = await this.repository.findById(command.offeringId);
     if (!offering) {
@@ -44,18 +44,18 @@ export class AssignProfessorToOfferingUseCase {
       throw new CourseOfferingInvalidStatusException(
         offering.id!,
         offering.status,
-        [CourseOfferingStatus.INACTIVE, CourseOfferingStatus.ACTIVE],
+        [CourseOfferingStatus.INACTIVE, CourseOfferingStatus.ACTIVE]
       );
     }
     const professorExists = await this.professorFinder.exists(
-      command.professorId,
+      command.professorId
     );
     if (!professorExists) {
-      throw new EntityNotFoundException('Professor', command.professorId);
+      throw new EntityNotFoundException("Professor", command.professorId);
     }
 
     const isProfessorActive = await this.professorFinder.isActive(
-      command.professorId,
+      command.professorId
     );
     if (!isProfessorActive) {
       throw new ProfessorNotActiveForAssignmentException(command.professorId);
@@ -63,7 +63,7 @@ export class AssignProfessorToOfferingUseCase {
 
     return this.repository.assignProfessor(
       command.professorId,
-      command.professorId,
+      command.professorId
     );
   }
 }

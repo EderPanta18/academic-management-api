@@ -2,17 +2,17 @@
 
 import { Inject, Injectable } from "@nestjs/common";
 
-import { Person } from "@modules/persons/domain/entities";
+import { Person } from "@persons/domain/entities";
+import {
+  PersonDniAlreadyExistsException,
+  PersonEmailAlreadyExistsException
+} from "@persons/domain/exceptions";
 import type { PersonCreationInput, PersonCreationResult } from "../contracts";
 import {
   PERSON_REPOSITORY_PORT,
   type IPersonCreationValidator,
   type IPersonRepository
 } from "../ports";
-import {
-  PersonDniAlreadyExistsException,
-  PersonEmailAlreadyExistsException
-} from "../exceptions";
 
 @Injectable()
 export class PersonCreationValidator implements IPersonCreationValidator {

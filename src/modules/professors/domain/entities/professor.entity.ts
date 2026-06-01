@@ -1,7 +1,7 @@
 // modules/professors/domain/entities/professor.entity.ts
 
-import { ProfessorStatus } from '../constants';
-import type { CreateProfessorProps, ProfessorProps } from './professor.types';
+import { ProfessorStatus } from "../constants";
+import type { CreateProfessorProps, ProfessorProps } from "./professor.types";
 
 type InternalProps = {
   id?: number;
@@ -30,6 +30,7 @@ export class Professor {
     this.institutionalEmail = props.institutionalEmail ?? null;
     this.hireDate = props.hireDate ?? null;
     this.status = props.status ?? ProfessorStatus.ACTIVE;
+
     Object.freeze(this);
   }
 

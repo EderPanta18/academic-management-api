@@ -1,6 +1,6 @@
-// modules/persons/application/exceptions/person-dni-already-exists.exception.ts
+// modules/persons/domain/exceptions/person-dni-already-exists.exception.ts
 
-import { PersonException } from "@persons/domain/exceptions";
+import { PersonException } from "./person.exception";
 
 export class PersonDniAlreadyExistsException extends PersonException {
   readonly statusCode = 409;

@@ -1,6 +1,6 @@
-// modules/persons/application/exceptions/person-email-already-exists.exception.ts
+// modules/persons/domain/exceptions/person-email-already-exists.exception.ts
 
-import { PersonException } from "@persons/domain/exceptions";
+import { PersonException } from "./person.exception";
 
 export class PersonEmailAlreadyExistsException extends PersonException {
   readonly statusCode = 409;

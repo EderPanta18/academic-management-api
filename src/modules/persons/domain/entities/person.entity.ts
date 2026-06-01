@@ -1,6 +1,6 @@
 // modules/persons/domain/entities/person.entity.ts
 
-import type { PersonProps, CreatePersonProps } from './person.types';
+import type { PersonProps, CreatePersonProps } from "./person.types";
 
 type InternalProps = {
   id?: number;

@@ -7,9 +7,9 @@ import {
   type ICareerFinder
 } from "@modules/careers/application/ports/in";
 import {
-  CREATE_PERSON_USE_CASE_PORT,
-  type ICreatePersonUseCase
-} from "@persons/domain/ports/in";
+  PERSON_CREATION_VALIDATOR_PORT,
+  type IPersonCreationValidator
+} from "@persons/application/ports/in";
 import { Student } from "@students/domain/entities";
 import {
   StudentCodeAlreadyExistsException,
@@ -27,8 +27,8 @@ export class CreateStudentUseCase {
     @Inject(CAREER_FINDER_PORT)
     private readonly careerFinder: ICareerFinder,
 
-    @Inject(CREATE_PERSON_USE_CASE_PORT)
-    private readonly createPerson: ICreatePersonUseCase,
+    @Inject(PERSON_CREATION_VALIDATOR_PORT)
+    private readonly personCreationValidator: IPersonCreationValidator,
 
     @Inject(STUDENT_REPOSITORY_PORT)
     private readonly repository: IStudentRepository
@@ -52,7 +52,7 @@ export class CreateStudentUseCase {
         );
     }
 
-    const person = await this.createPerson.execute({
+    const person = await this.personCreationValidator.validate({
       dni: command.dni,
       firstName: command.firstName,
       lastName: command.lastName,

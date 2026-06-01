@@ -1,20 +1,22 @@
-// modules/professors/infrastructure/persistence/repositories/professor.repository.adapter.ts
+// modules/professors/infrastructure/persistence/repositories/professor-repository.adapter.ts
 
-import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { PaginationVO } from '@core/pagination';
-import { PrismaService } from '@platform/database';
-import { ProfessorStatus } from '@professors/domain/constants';
-import { Professor } from '@professors/domain/entities';
-import { type ProfessorView } from '@professors/domain/read-models';
-import { type IProfessorFinder } from '@professors/domain/ports/in';
+import { Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+
+import { PaginationVO } from "@core/pagination";
+import { PrismaService } from "@platform/database";
+import { ProfessorStatus } from "@professors/domain/constants";
+import { Professor } from "@professors/domain/entities";
+import { type ProfessorView } from "@professors/application/read-models";
 import type {
   IProfessorRepository,
-  PersonCreationData,
+  IProfessorFinder,
   IProfessorQuery,
+  ProfessorPersonData,
   FindAllProfessorsFilters,
-} from '@professors/domain/ports/out';
-import { ProfessorPersistenceMapper } from '../mappers';
+  ProfessorSaveData
+} from "@professors/application/ports";
+import { ProfessorPersistenceMapper } from "../mappers";
 
 @Injectable()
 export class ProfessorRepository
@@ -24,10 +26,8 @@ export class ProfessorRepository
 
   // ── IProfessorRepository --------------------------------------------------
 
-  async save(
-    professor: Professor,
-    personData: PersonCreationData,
-  ): Promise<Professor> {
+  async save(data: ProfessorSaveData): Promise<Professor> {
+    const { professor, personData } = data;
     return professor.id !== undefined
       ? this.update(professor, personData)
       : this.create(professor, personData);
@@ -35,14 +35,14 @@ export class ProfessorRepository
 
   async existsByCode(code: string): Promise<boolean> {
     const count = await this.prisma.professor.count({
-      where: { code, deletedAt: null },
+      where: { code, deletedAt: null }
     });
     return count > 0;
   }
 
   async existsByInstitutionalEmail(email: string): Promise<boolean> {
     const count = await this.prisma.professor.count({
-      where: { institutionalEmail: email, deletedAt: null },
+      where: { institutionalEmail: email, deletedAt: null }
     });
     return count > 0;
   }
@@ -51,11 +51,11 @@ export class ProfessorRepository
     await this.prisma.$transaction(async (tx) => {
       await tx.professor.update({
         where: { personId: id },
-        data: { deletedAt: new Date() },
+        data: { deletedAt: new Date() }
       });
       await tx.person.update({
         where: { id },
-        data: { deletedAt: new Date() },
+        data: { deletedAt: new Date() }
       });
     });
   }
@@ -65,18 +65,18 @@ export class ProfessorRepository
   async findById(id: number): Promise<ProfessorView | null> {
     const raw = await this.prisma.professor.findFirst({
       where: { personId: id, deletedAt: null, person: { deletedAt: null } },
-      include: { person: true },
+      include: { person: true }
     });
     return raw ? ProfessorPersistenceMapper.toView(raw) : null;
   }
 
   async findAll(
     pagination: PaginationVO,
-    filters?: FindAllProfessorsFilters,
+    filters?: FindAllProfessorsFilters
   ): Promise<[ProfessorView[], number]> {
     const where: Prisma.ProfessorWhereInput = {
       deletedAt: null,
-      ...(filters?.departmentId ? { departmentId: filters.departmentId } : {}),
+      ...(filters?.departmentId ? { departmentId: filters.departmentId } : {})
     };
 
     const [raws, total] = await Promise.all([
@@ -85,9 +85,9 @@ export class ProfessorRepository
         include: { person: true },
         skip: pagination.offset,
         take: pagination.pageSize,
-        orderBy: { person: { lastName: 'asc' } },
+        orderBy: { person: { lastName: "asc" } }
       }),
-      this.prisma.professor.count({ where }),
+      this.prisma.professor.count({ where })
     ]);
 
     return [raws.map(ProfessorPersistenceMapper.toView), total];
@@ -97,7 +97,7 @@ export class ProfessorRepository
 
   async exists(id: number): Promise<boolean> {
     const count = await this.prisma.professor.count({
-      where: { personId: id, deletedAt: null, person: { deletedAt: null } },
+      where: { personId: id, deletedAt: null, person: { deletedAt: null } }
     });
     return count > 0;
   }
@@ -108,8 +108,8 @@ export class ProfessorRepository
         personId: id,
         status: ProfessorStatus.ACTIVE,
         deletedAt: null,
-        person: { deletedAt: null },
-      },
+        person: { deletedAt: null }
+      }
     });
     return count > 0;
   }
@@ -118,7 +118,7 @@ export class ProfessorRepository
 
   private async create(
     professor: Professor,
-    personData: PersonCreationData,
+    personData: ProfessorPersonData
   ): Promise<Professor> {
     const { person, professor: profData } =
       ProfessorPersistenceMapper.toPersistence(professor, personData);
@@ -127,7 +127,7 @@ export class ProfessorRepository
       const personRecord = await tx.person.create({ data: person });
       return tx.professor.create({
         data: { ...profData, personId: personRecord.id },
-        include: { person: true },
+        include: { person: true }
       });
     });
 
@@ -136,7 +136,7 @@ export class ProfessorRepository
 
   private async update(
     professor: Professor,
-    personData: PersonCreationData,
+    personData: ProfessorPersonData
   ): Promise<Professor> {
     const { person, professor: profData } =
       ProfessorPersistenceMapper.toPersistence(professor, personData);
@@ -144,12 +144,12 @@ export class ProfessorRepository
     const raw = await this.prisma.$transaction(async (tx) => {
       await tx.person.update({
         where: { id: professor.id },
-        data: person,
+        data: person
       });
       return tx.professor.update({
         where: { personId: professor.id },
         data: profData,
-        include: { person: true },
+        include: { person: true }
       });
     });
 
