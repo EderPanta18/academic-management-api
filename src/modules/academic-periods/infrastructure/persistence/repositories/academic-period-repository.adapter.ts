@@ -1,4 +1,4 @@
-// modules/academic-periods/infrastructure/persistence/repositories/academic-period.repository.adapter.ts
+// modules/academic-periods/infrastructure/persistence/repositories/academic-period-repository.adapter.ts
 
 import { Injectable } from "@nestjs/common";
 

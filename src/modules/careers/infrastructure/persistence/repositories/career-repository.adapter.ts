@@ -1,4 +1,4 @@
-// modules/careers/infrastructure/persistence/repositories/career.repository.adapter.ts
+// modules/careers/infrastructure/persistence/repositories/career-repository.adapter.ts
 
 import { Injectable } from "@nestjs/common";
 

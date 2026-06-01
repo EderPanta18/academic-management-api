@@ -1,4 +1,4 @@
-// modules/course-categories/infrastructure/persistence/repositories/course-category.repository.adapter.ts
+// modules/course-categories/infrastructure/persistence/repositories/course-category-repository.adapter.ts
 
 import { Injectable } from "@nestjs/common";
 

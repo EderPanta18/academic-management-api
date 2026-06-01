@@ -1,7 +1,8 @@
 // modules/persons/infrastructure/persistence/mappers/person-persistence.mapper.ts
 
-import { Prisma } from '@prisma/client';
-import { Person, type PersonProps } from '@persons/domain/entities';
+import { Prisma } from "@prisma/client";
+
+import { Person, type PersonProps } from "@persons/domain/entities";
 
 type PersonRaw = Prisma.PersonGetPayload<Record<string, never>>;
 
@@ -14,7 +15,7 @@ export class PersonPersistenceMapper {
       lastName: raw.lastName,
       email: raw.email,
       phone: raw.phone,
-      birthDate: raw.birthDate,
+      birthDate: raw.birthDate
     };
     return Person.reconstitute(props);
   }

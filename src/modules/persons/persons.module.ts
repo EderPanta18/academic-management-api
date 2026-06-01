@@ -1,20 +1,24 @@
 // modules/persons/persons.module.ts
 
-import { Module } from '@nestjs/common';
+import { Module } from "@nestjs/common";
+
 import {
-  PERSON_REPOSITORY_PORT,
-  CREATE_PERSON_USE_CASE_PORT,
-} from './domain/ports';
-import { CreatePersonUseCase } from './application/use-cases';
-import { PersonRepository } from './infrastructure/persistence';
+  PERSON_CREATION_VALIDATOR_PORT,
+  PERSON_REPOSITORY_PORT
+} from "./application/ports";
+import { PersonCreationValidator } from "./application/services";
+import { PersonRepository } from "./infrastructure/persistence";
 
 @Module({
   providers: [
-    CreatePersonUseCase,
-    { provide: CREATE_PERSON_USE_CASE_PORT, useExisting: CreatePersonUseCase },
+    PersonCreationValidator,
+    {
+      provide: PERSON_CREATION_VALIDATOR_PORT,
+      useExisting: PersonCreationValidator
+    },
     PersonRepository,
-    { provide: PERSON_REPOSITORY_PORT, useExisting: PersonRepository },
+    { provide: PERSON_REPOSITORY_PORT, useExisting: PersonRepository }
   ],
-  exports: [CREATE_PERSON_USE_CASE_PORT],
+  exports: [PERSON_CREATION_VALIDATOR_PORT]
 })
 export class PersonsModule {}

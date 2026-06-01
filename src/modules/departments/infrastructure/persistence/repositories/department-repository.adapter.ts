@@ -1,4 +1,4 @@
-// modules/departments/infrastructure/persistence/repositories/department.repository.adapter.ts
+// modules/departments/infrastructure/persistence/repositories/department-repository.adapter.ts
 
 import { Injectable } from "@nestjs/common";
 
