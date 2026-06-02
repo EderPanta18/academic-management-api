@@ -35,8 +35,8 @@ import {
 import { FileParseInterceptor, type ParsedImportData } from "../interceptors";
 import {
   ApiCreateStudent,
-  ApiListStudents,
   ApiGetStudentById,
+  ApiListStudents,
   ApiBulkImportStudents
 } from "../decorators";
 import {

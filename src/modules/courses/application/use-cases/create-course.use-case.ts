@@ -1,21 +1,22 @@
 // modules/courses/application/use-cases/create-course.use-case.ts
 
 import { Inject, Injectable } from "@nestjs/common";
+
 import { EntityNotFoundException } from "@core/exceptions";
 import {
   CAREER_FINDER_PORT,
   type ICareerFinder
-} from "@modules/careers/application/ports/in";
+} from "@careers/application/ports/in";
 import {
   COURSE_CATEGORY_FINDER_PORT,
   type ICourseCategoryFinder
-} from "@modules/course-categories/application/ports/in";
+} from "@course-categories/application/ports/in";
 import { Course } from "@courses/domain/entities";
-import { CourseDuplicateNameException } from "@courses/domain/exceptions";
 import {
   COURSE_REPOSITORY_PORT,
   type ICourseRepository
-} from "@courses/domain/ports/out";
+} from "@modules/courses/application/ports/out";
+import { CourseDuplicateNameException } from "@courses/domain/exceptions";
 import { CreateCourseCommand } from "../commands";
 
 @Injectable()
@@ -28,31 +29,31 @@ export class CreateCourseUseCase {
     private readonly categoryFinder: ICourseCategoryFinder,
 
     @Inject(COURSE_REPOSITORY_PORT)
-    private readonly repository: ICourseRepository
+    private readonly courseRepository: ICourseRepository
   ) {}
 
   async execute(command: CreateCourseCommand): Promise<Course> {
     const careerExists = await this.careerFinder.exists(command.careerId);
-    if (!careerExists) {
+
+    if (!careerExists)
       throw new EntityNotFoundException("Career", command.careerId);
-    }
 
     if (command.categoryId !== undefined) {
       const categoryExists = await this.categoryFinder.exists(
         command.categoryId
       );
-      if (!categoryExists) {
+
+      if (!categoryExists)
         throw new EntityNotFoundException("CourseCategory", command.categoryId);
-      }
     }
 
-    const isDuplicate = await this.repository.existsByCareerAndName(
+    const isDuplicate = await this.courseRepository.existsByCareerAndName(
       command.careerId,
       command.name
     );
-    if (isDuplicate) {
+
+    if (isDuplicate)
       throw new CourseDuplicateNameException(command.name, command.careerId);
-    }
 
     const course = Course.create({
       careerId: command.careerId,
@@ -62,6 +63,6 @@ export class CreateCourseUseCase {
       description: command.description
     });
 
-    return this.repository.save(course);
+    return this.courseRepository.save(course);
   }
 }

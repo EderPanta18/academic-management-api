@@ -1,7 +1,8 @@
 // modules/courses/infrastructure/persistence/mappers/course-persistence.mapper.ts
 
 import { Prisma } from "@prisma/client";
-import { Course, type CourseProps } from "@courses/domain/entities";
+
+import { Course } from "@courses/domain/entities";
 
 type CourseRaw = Prisma.CourseGetPayload<Record<string, never>>;
 
@@ -15,16 +16,14 @@ interface CoursePersistenceData {
 
 export class CoursePersistenceMapper {
   static toDomain(raw: CourseRaw): Course {
-    const props: CourseProps = {
+    return Course.reconstitute({
       id: raw.id,
       careerId: raw.careerId,
       categoryId: raw.categoryId,
       name: raw.name,
       description: raw.description,
       credits: raw.credits
-    };
-
-    return Course.reconstitute(props);
+    });
   }
 
   static toPersistence(course: Course): CoursePersistenceData {

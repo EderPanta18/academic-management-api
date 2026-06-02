@@ -22,8 +22,8 @@ import {
 import { PROFESSOR_SWAGGER_TAG, PROFESSOR_ROUTES } from "../constants";
 import {
   ApiCreateProfessor,
-  ApiListProfessors,
-  ApiGetProfessorById
+  ApiGetProfessorById,
+  ApiListProfessors
 } from "../decorators";
 import {
   CreateProfessorDto,

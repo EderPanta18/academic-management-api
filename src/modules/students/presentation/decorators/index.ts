@@ -2,7 +2,7 @@
 
 export {
   ApiCreateStudent,
-  ApiListStudents,
   ApiGetStudentById,
-  ApiBulkImportStudents,
-} from './api-student.decorator';
+  ApiListStudents,
+  ApiBulkImportStudents
+} from "./api-student.decorator";

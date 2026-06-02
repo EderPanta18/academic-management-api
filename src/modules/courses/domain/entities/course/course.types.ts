@@ -1,4 +1,4 @@
-// modules/courses/domain/entities/course.types.ts
+// modules/courses/domain/entities/course/course.types.ts
 
 export interface CourseProps {
   id: number;
@@ -13,6 +13,6 @@ export interface CreateCourseProps {
   careerId: number;
   name: string;
   credits: number;
-  categoryId?: number;
-  description?: string;
+  categoryId?: number | null;
+  description?: string | null;
 }

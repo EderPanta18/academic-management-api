@@ -9,7 +9,7 @@ import {
 import {
   COURSE_FINDER_PORT,
   type ICourseFinder
-} from "@modules/courses/domain/ports/in";
+} from "@modules/courses/application/ports/in";
 import {
   PROFESSOR_FINDER_PORT,
   type IProfessorFinder

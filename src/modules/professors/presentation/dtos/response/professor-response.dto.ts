@@ -1,4 +1,4 @@
-// modules/professors/presentation/dtos/response/professor.response.dto.ts
+// modules/professors/presentation/dtos/response/professor-response.dto.ts
 
 import { ApiProperty } from "@nestjs/swagger";
 import { ProfessorStatus } from "@professors/domain/constants";

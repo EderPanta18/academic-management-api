@@ -12,8 +12,8 @@ import {
 } from "./application/ports";
 import {
   CreateStudentUseCase,
-  ListStudentsUseCase,
   GetStudentByIdUseCase,
+  ListStudentsUseCase,
   BulkImportStudentsUseCase
 } from "./application/use-cases";
 import { StudentRepository } from "./infrastructure/persistence";
@@ -24,8 +24,8 @@ import { StudentsController } from "./presentation/controllers";
   imports: [FileParserModule, PersonsModule, CareersModule],
   providers: [
     CreateStudentUseCase,
-    ListStudentsUseCase,
     GetStudentByIdUseCase,
+    ListStudentsUseCase,
     BulkImportStudentsUseCase,
     FileParseInterceptor,
     StudentRepository,

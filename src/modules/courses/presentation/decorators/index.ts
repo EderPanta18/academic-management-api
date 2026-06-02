@@ -2,6 +2,6 @@
 
 export {
   ApiCreateCourse,
-  ApiListCourses,
   ApiGetCourseById,
-} from './api-course.decorator';
+  ApiListCourses
+} from "./api-course.decorator";

@@ -11,8 +11,8 @@ import {
 } from "./application/ports";
 import {
   CreateProfessorUseCase,
-  ListProfessorsUseCase,
-  GetProfessorByIdUseCase
+  GetProfessorByIdUseCase,
+  ListProfessorsUseCase
 } from "./application/use-cases";
 import { ProfessorRepository } from "./infrastructure/persistence";
 import { ProfessorsController } from "./presentation/controllers";
@@ -21,8 +21,8 @@ import { ProfessorsController } from "./presentation/controllers";
   imports: [PersonsModule, DepartmentsModule],
   providers: [
     CreateProfessorUseCase,
-    ListProfessorsUseCase,
     GetProfessorByIdUseCase,
+    ListProfessorsUseCase,
     ProfessorRepository,
     { provide: PROFESSOR_REPOSITORY_PORT, useExisting: ProfessorRepository },
     { provide: PROFESSOR_QUERY_PORT, useExisting: ProfessorRepository },

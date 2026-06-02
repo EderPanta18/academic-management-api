@@ -1,8 +1,8 @@
-// modules/courses/domain/entities/course.entity.ts
+// modules/courses/domain/entities/course/course.entity.ts
 
-import type { CourseProps, CreateCourseProps } from './course.types';
+import type { CourseProps, CreateCourseProps } from "./course.types";
 
-type InternalProps = {
+type CourseInternalProps = {
   id?: number;
   careerId: number;
   categoryId?: number | null;
@@ -19,13 +19,14 @@ export class Course {
   readonly description: string | null;
   readonly credits: number;
 
-  private constructor(props: InternalProps) {
+  private constructor(props: CourseInternalProps) {
     this.id = props.id;
     this.careerId = props.careerId;
     this.categoryId = props.categoryId ?? null;
     this.name = props.name;
     this.description = props.description ?? null;
     this.credits = props.credits;
+
     Object.freeze(this);
   }
 
