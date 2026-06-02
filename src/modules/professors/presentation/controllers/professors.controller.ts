@@ -19,7 +19,7 @@ import {
   ListProfessorsUseCase,
   GetProfessorByIdUseCase
 } from "@professors/application/use-cases";
-import { PROFESSOR_ROUTES, SWAGGER_PROFESSOR_TAG } from "../constants";
+import { PROFESSOR_SWAGGER_TAG, PROFESSOR_ROUTES } from "../constants";
 import {
   ApiCreateProfessor,
   ApiListProfessors,
@@ -32,7 +32,7 @@ import {
 } from "../dtos";
 import { ProfessorHttpMapper } from "../mappers";
 
-@ApiTags(SWAGGER_PROFESSOR_TAG.name)
+@ApiTags(PROFESSOR_SWAGGER_TAG.name)
 @Controller(PROFESSOR_ROUTES.BASE)
 export class ProfessorsController {
   constructor(

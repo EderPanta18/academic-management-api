@@ -22,7 +22,7 @@ export class BulkRowErrorResponseDto {
 export class BulkImportResultResponseDto {
   @ApiProperty({
     example: 50,
-    description: "Total de filas procesadas del archivo"
+    description: "Total de filas del archivo"
   })
   totalRows!: number;
 
