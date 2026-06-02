@@ -1,37 +1,37 @@
 // modules/students/presentation/dtos/response/bulk-import-result.response.dto.ts
 
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
 
 export class BulkRowErrorResponseDto {
   @ApiProperty({
     example: 3,
-    description: 'Número de fila en el archivo (fila 1 = encabezado)',
+    description: "Número de fila en el archivo (fila 1 = encabezado)"
   })
-  row: number;
+  row!: number;
 
   @ApiProperty({
-    example: 'email',
-    description: 'Campo que causó el error. Vacío si es error de negocio',
+    example: "email",
+    description: "Campo que causó el error. Vacío si es error de negocio"
   })
-  field: string;
+  field!: string;
 
-  @ApiProperty({ example: 'email debe ser un correo válido' })
-  reason: string;
+  @ApiProperty({ example: "email debe ser un correo válido" })
+  reason!: string;
 }
 
 export class BulkImportResultResponseDto {
   @ApiProperty({
     example: 50,
-    description: 'Total de filas procesadas del archivo',
+    description: "Total de filas procesadas del archivo"
   })
-  totalProcessed: number;
+  totalRows!: number;
 
   @ApiProperty({ example: 48 })
-  totalSuccess: number;
+  totalSuccess!: number;
 
   @ApiProperty({ example: 2 })
-  totalFailed: number;
+  totalFailed!: number;
 
   @ApiProperty({ type: [BulkRowErrorResponseDto] })
-  errors: BulkRowErrorResponseDto[];
+  errors!: BulkRowErrorResponseDto[];
 }

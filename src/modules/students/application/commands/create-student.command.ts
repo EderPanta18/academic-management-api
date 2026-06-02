@@ -1,6 +1,20 @@
 // modules/students/application/commands/create-student.command.ts
 
-import { StudentStatus } from '@students/domain/constants';
+import { StudentStatus } from "@students/domain/constants";
+
+interface CreateStudentCommandProps {
+  dni: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  careerId: number;
+  code: string;
+  enrollmentDate: Date;
+  institutionalEmail?: string;
+  status?: StudentStatus;
+  phone?: string;
+  birthDate?: Date;
+}
 
 export class CreateStudentCommand {
   readonly dni: string;
@@ -15,7 +29,7 @@ export class CreateStudentCommand {
   readonly phone?: string;
   readonly birthDate?: Date;
 
-  constructor(props: CreateStudentCommand) {
+  constructor(props: CreateStudentCommandProps) {
     this.dni = props.dni;
     this.firstName = props.firstName;
     this.lastName = props.lastName;

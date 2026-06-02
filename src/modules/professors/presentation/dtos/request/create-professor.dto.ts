@@ -94,6 +94,7 @@ export class CreateProfessorDto {
     format: "int32"
   })
   @IsOptional()
+  @Type(() => Number)
   @IsInt({ message: "El ID del departamento debe ser un número entero" })
   @IsPositive({ message: "El ID del departamento debe ser un número positivo" })
   departmentId?: number;
@@ -138,19 +139,6 @@ export class CreateProfessorDto {
   hireDate?: Date;
 
   @ApiPropertyOptional({
-    description: "Estado inicial del profesor",
-    enum: ProfessorStatus,
-    default: ProfessorStatus.ACTIVE
-  })
-  @IsOptional()
-  @IsEnum(ProfessorStatus, {
-    each: true,
-    message: (args) =>
-      `Estado inválido: '${args.value}'. Debe ser uno de: ${Object.values(ProfessorStatus).join(", ")}`
-  })
-  status?: ProfessorStatus;
-
-  @ApiPropertyOptional({
     description: "Número de teléfono del profesor",
     example: "987654321",
     pattern: "^[0-9]{9}$"
@@ -158,6 +146,7 @@ export class CreateProfessorDto {
   @TrimOptional()
   @IsOptional()
   @IsString({ message: "El teléfono debe ser una cadena de texto" })
+  @IsNotEmpty({ message: "El teléfono no puede estar vacío" })
   @Matches(/^[0-9]{9}$/, {
     message: "El teléfono debe contener exactamente 9 dígitos numéricos"
   })
@@ -173,4 +162,17 @@ export class CreateProfessorDto {
   @Type(() => Date)
   @IsDate({ message: "La fecha de nacimiento debe ser una fecha válida" })
   birthDate?: Date;
+
+  @ApiPropertyOptional({
+    description: "Estado inicial del profesor",
+    enum: ProfessorStatus,
+    default: ProfessorStatus.ACTIVE
+  })
+  @IsOptional()
+  @IsEnum(ProfessorStatus, {
+    each: true,
+    message: (args) =>
+      `Estado inválido: '${args.value}'. Debe ser uno de: ${Object.values(ProfessorStatus).join(", ")}`
+  })
+  status?: ProfessorStatus;
 }

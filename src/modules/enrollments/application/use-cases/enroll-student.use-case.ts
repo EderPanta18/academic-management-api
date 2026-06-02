@@ -1,30 +1,30 @@
 // modules/enrollments/application/use-cases/enroll-student.use-case.ts
 
-import { Inject, Injectable } from '@nestjs/common';
-import { EntityNotFoundException } from '@core/exceptions';
+import { Inject, Injectable } from "@nestjs/common";
+import { EntityNotFoundException } from "@core/exceptions";
 import {
   STUDENT_FINDER_PORT,
-  type IStudentFinder,
-} from '@students/domain/ports/in';
+  type IStudentFinder
+} from "@modules/students/application/ports/in";
 import {
   COURSE_OFFERING_FINDER_PORT,
-  type ICourseOfferingFinder,
-} from '@course-offerings/domain/ports/in';
-import { Enrollment } from '@enrollments/domain/entities';
+  type ICourseOfferingFinder
+} from "@course-offerings/domain/ports/in";
+import { Enrollment } from "@enrollments/domain/entities";
 import {
   EnrollmentDuplicateException,
-  EnrollmentCapacityExceededException,
-} from '@enrollments/domain/exceptions';
+  EnrollmentCapacityExceededException
+} from "@enrollments/domain/exceptions";
 import {
   ENROLLMENT_REPOSITORY_PORT,
-  type IEnrollmentRepository,
-} from '@enrollments/domain/ports/out';
+  type IEnrollmentRepository
+} from "@enrollments/domain/ports/out";
 import {
   StudentNotActiveForEnrollmentException,
   CourseOfferingNotOpenException,
-  EnrollmentCareerMismatchException,
-} from '../exceptions';
-import { EnrollStudentCommand } from '../commands';
+  EnrollmentCareerMismatchException
+} from "../exceptions";
+import { EnrollStudentCommand } from "../commands";
 
 @Injectable()
 export class EnrollStudentUseCase {
@@ -36,21 +36,21 @@ export class EnrollStudentUseCase {
     private readonly courseOfferingFinder: ICourseOfferingFinder,
 
     @Inject(ENROLLMENT_REPOSITORY_PORT)
-    private readonly repository: IEnrollmentRepository,
+    private readonly repository: IEnrollmentRepository
   ) {}
 
   async execute(command: EnrollStudentCommand): Promise<Enrollment> {
     const studentExists = await this.studentFinder.exists(command.studentId);
     if (!studentExists)
-      throw new EntityNotFoundException('Student', command.studentId);
+      throw new EntityNotFoundException("Student", command.studentId);
 
     const offeringExists = await this.courseOfferingFinder.exists(
-      command.courseOfferingId,
+      command.courseOfferingId
     );
     if (!offeringExists)
       throw new EntityNotFoundException(
-        'CourseOffering',
-        command.courseOfferingId,
+        "CourseOffering",
+        command.courseOfferingId
       );
 
     // Estado del alumno
@@ -60,39 +60,39 @@ export class EnrollStudentUseCase {
 
     // Oferta abierta
     const offeringOpen = await this.courseOfferingFinder.isOpenForEnrollment(
-      command.courseOfferingId,
+      command.courseOfferingId
     );
     if (!offeringOpen)
       throw new CourseOfferingNotOpenException(command.courseOfferingId);
 
     // Misma carrera
     const studentCareerId = await this.studentFinder.getCareerIdByStudentId(
-      command.studentId,
+      command.studentId
     );
     const courseCareerId =
       await this.courseOfferingFinder.getCourseCareerIdByOfferingId(
-        command.courseOfferingId,
+        command.courseOfferingId
       );
     if (studentCareerId !== courseCareerId)
       throw new EnrollmentCareerMismatchException(
         command.studentId,
-        command.courseOfferingId,
+        command.courseOfferingId
       );
 
     // Doble inscripción
     const duplicate = await this.repository.existsByStudentAndOffering(
       command.studentId,
-      command.courseOfferingId,
+      command.courseOfferingId
     );
     if (duplicate)
       throw new EnrollmentDuplicateException(
         command.studentId,
-        command.courseOfferingId,
+        command.courseOfferingId
       );
 
     // Capacidad
     const atCapacity = await this.repository.isAtCapacity(
-      command.courseOfferingId,
+      command.courseOfferingId
     );
     if (atCapacity)
       throw new EnrollmentCapacityExceededException(command.courseOfferingId);
@@ -101,7 +101,7 @@ export class EnrollStudentUseCase {
       studentId: command.studentId,
       courseOfferingId: command.courseOfferingId,
       enrollmentDate: command.enrollmentDate,
-      createdBy: command.createdBy,
+      createdBy: command.createdBy
     });
 
     return this.repository.save(enrollment);

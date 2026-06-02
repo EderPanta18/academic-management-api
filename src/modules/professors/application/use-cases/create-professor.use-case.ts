@@ -50,12 +50,12 @@ export class CreateProfessorUseCase {
     if (codeExists) throw new ProfessorCodeAlreadyExistsException(command.code);
 
     if (command.institutionalEmail) {
-      const emailExists =
+      const institutionalEmailExists =
         await this.professorRepository.existsByInstitutionalEmail(
           command.institutionalEmail
         );
 
-      if (emailExists)
+      if (institutionalEmailExists)
         throw new ProfessorEmailAlreadyExistsException(
           command.institutionalEmail
         );

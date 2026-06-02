@@ -1,16 +1,16 @@
-// modules/students/domain/entities/student.entity.ts
+// modules/students/domain/entities/student/student.entity.ts
 
-import { StudentStatus } from '../constants';
-import type { CreateStudentProps, StudentProps } from './student.types';
+import { StudentStatus } from "@students/domain/constants";
+import type { CreateStudentProps, StudentProps } from "./student.types";
 
-type InternalProps = {
+interface StudentInternalProps {
   id?: number;
   careerId: number;
   code: string;
   institutionalEmail?: string | null;
   enrollmentDate: Date;
-  status?: StudentStatus;
-};
+  status?: StudentStatus | null;
+}
 
 export class Student {
   readonly id?: number;
@@ -20,13 +20,14 @@ export class Student {
   readonly enrollmentDate: Date;
   readonly status: StudentStatus;
 
-  private constructor(props: InternalProps) {
+  private constructor(props: StudentInternalProps) {
     this.id = props.id;
     this.careerId = props.careerId;
     this.code = props.code;
     this.institutionalEmail = props.institutionalEmail ?? null;
     this.enrollmentDate = props.enrollmentDate;
     this.status = props.status ?? StudentStatus.ACTIVE;
+
     Object.freeze(this);
   }
 
@@ -48,5 +49,9 @@ export class Student {
 
   isGraduated(): boolean {
     return this.status === StudentStatus.GRADUATED;
+  }
+
+  isSuspended(): boolean {
+    return this.status === StudentStatus.SUSPENDED;
   }
 }

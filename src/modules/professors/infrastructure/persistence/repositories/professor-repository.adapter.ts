@@ -26,7 +26,7 @@ export class ProfessorRepository
   // ── IProfessorRepository --------------------------------------------------
 
   async save(data: ProfessorSaveData): Promise<Professor> {
-    const { professor, personData } = data;
+    const { professor } = data;
 
     return professor.id !== undefined ? this.update(data) : this.create(data);
   }
@@ -140,7 +140,7 @@ export class ProfessorRepository
   private async update(data: ProfessorSaveData): Promise<Professor> {
     const { professor } = data;
 
-    const { professorData, personData } =
+    const { personData, professorData } =
       ProfessorPersistenceMapper.toPersistence(data);
 
     const raw = await this.prisma.$transaction(async (tx) => {

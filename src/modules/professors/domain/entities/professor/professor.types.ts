@@ -4,8 +4,8 @@ import { ProfessorStatus } from "@professors/domain/constants";
 
 export interface ProfessorProps {
   id: number;
-  code: string;
   departmentId: number | null;
+  code: string;
   specialty: string | null;
   institutionalEmail: string | null;
   hireDate: Date | null;
@@ -13,8 +13,8 @@ export interface ProfessorProps {
 }
 
 export interface CreateProfessorProps {
-  code: string;
   departmentId?: number | null;
+  code: string;
   specialty?: string | null;
   institutionalEmail?: string | null;
   hireDate?: Date | null;

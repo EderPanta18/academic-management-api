@@ -1,17 +1,18 @@
 // modules/students/presentation/mappers/student-http.mapper.ts
 
-import { PaginationVO, PaginatedResultDto } from '@core/pagination';
-import { Student } from '@students/domain/entities';
-import { type StudentView } from '@students/domain/read-models';
-import { CreateStudentCommand } from '@students/application/commands';
-import { StudentResponseDto } from '../dtos';
+import { PaginationVO, PaginatedResultDto } from "@core/pagination";
+import { Student } from "@students/domain/entities";
+import type { StudentView } from "@students/application/read-models";
+import { CreateStudentCommand } from "@students/application/commands";
+import { StudentResponseDto } from "../dtos";
 
 export class StudentHttpMapper {
   static toResponseFromCreate(
     student: Student,
-    command: CreateStudentCommand,
+    command: CreateStudentCommand
   ): StudentResponseDto {
     const dto = new StudentResponseDto();
+
     dto.id = student.id!;
     dto.careerId = student.careerId;
     dto.code = student.code;
@@ -25,11 +26,13 @@ export class StudentHttpMapper {
     dto.email = command.email;
     dto.phone = command.phone ?? null;
     dto.birthDate = command.birthDate ?? null;
+
     return dto;
   }
 
   static toResponse(student: StudentView): StudentResponseDto {
     const dto = new StudentResponseDto();
+
     dto.id = student.id!;
     dto.careerId = student.careerId;
     dto.code = student.code;
@@ -39,21 +42,22 @@ export class StudentHttpMapper {
     dto.dni = student.dni;
     dto.firstName = student.firstName;
     dto.lastName = student.lastName;
-    dto.fullName = student.fullName;
+    dto.fullName = `${student.firstName} ${student.lastName}`.trim();
     dto.email = student.email;
     dto.phone = student.phone;
     dto.birthDate = student.birthDate;
+
     return dto;
   }
 
   static toPaginatedResponse(
     result: PaginatedResultDto<StudentView>,
-    pagination: PaginationVO,
+    pagination: PaginationVO
   ): PaginatedResultDto<StudentResponseDto> {
     return PaginatedResultDto.from(
       result.items.map(StudentHttpMapper.toResponse),
       result.total,
-      pagination,
+      pagination
     );
   }
 }

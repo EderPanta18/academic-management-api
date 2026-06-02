@@ -18,15 +18,15 @@ import {
 export class PersonCreationValidator implements IPersonCreationValidator {
   constructor(
     @Inject(PERSON_REPOSITORY_PORT)
-    private readonly repository: IPersonRepository
+    private readonly personRepository: IPersonRepository
   ) {}
 
   async validate(input: PersonCreationInput): Promise<PersonData> {
-    const dniExists = await this.repository.existsByDni(input.dni);
+    const dniExists = await this.personRepository.existsByDni(input.dni);
 
     if (dniExists) throw new PersonDniAlreadyExistsException(input.dni);
 
-    const emailExists = await this.repository.existsByEmail(input.email);
+    const emailExists = await this.personRepository.existsByEmail(input.email);
 
     if (emailExists) throw new PersonEmailAlreadyExistsException(input.email);
 

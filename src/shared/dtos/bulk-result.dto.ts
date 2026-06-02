@@ -1,10 +1,12 @@
 // shared/dtos/bulk-result.dto.ts
 
-type BulkRowErrorDtoProps = {
+import type { BulkResult, BulkRowError } from "../types";
+
+interface BulkRowErrorDtoProps {
   row: number;
   field: string;
   reason: string;
-};
+}
 
 export class BulkRowErrorDto {
   readonly row: number;
@@ -17,43 +19,41 @@ export class BulkRowErrorDto {
     this.reason = props.reason;
   }
 
-  static from(props: BulkRowErrorDtoProps): BulkRowErrorDto {
-    return new BulkRowErrorDto(props);
+  static from(error: BulkRowError): BulkRowErrorDto {
+    return new BulkRowErrorDto({
+      row: error.row,
+      field: error.field,
+      reason: error.reason
+    });
   }
 }
 
-type BulkResultDtoProps = {
-  totalProcessed: number;
+interface BulkResultDtoProps {
+  totalRows: number;
   totalSuccess: number;
   totalFailed: number;
   errors: BulkRowErrorDto[];
-};
+}
 
 export class BulkResultDto {
-  readonly totalProcessed: number;
+  readonly totalRows: number;
   readonly totalSuccess: number;
   readonly totalFailed: number;
   readonly errors: BulkRowErrorDto[];
 
   private constructor(props: BulkResultDtoProps) {
-    this.totalProcessed = props.totalProcessed;
+    this.totalRows = props.totalRows;
     this.totalSuccess = props.totalSuccess;
     this.totalFailed = props.totalFailed;
     this.errors = props.errors;
   }
 
-  static from(
-    totalProcessed: number,
-    errors: BulkRowErrorDto[]
-  ): BulkResultDto {
-    const totalFailed = new Set(errors.map((error) => error.row)).size;
-    const totalSuccess = Math.max(totalProcessed - totalFailed, 0);
-
+  static from(result: BulkResult): BulkResultDto {
     return new BulkResultDto({
-      totalProcessed,
-      totalSuccess,
-      totalFailed,
-      errors
+      totalRows: result.totalRows,
+      totalSuccess: result.totalSuccess,
+      totalFailed: result.totalFailed,
+      errors: result.errors.map(BulkRowErrorDto.from)
     });
   }
 }

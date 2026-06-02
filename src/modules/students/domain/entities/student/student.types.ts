@@ -1,6 +1,6 @@
-// modules/students/domain/entities/student.types.ts
+// modules/students/domain/entities/student/student.types.ts
 
-import { StudentStatus } from '../constants';
+import { StudentStatus } from "@students/domain/constants";
 
 export interface StudentProps {
   id: number;
@@ -15,6 +15,6 @@ export interface CreateStudentProps {
   careerId: number;
   code: string;
   enrollmentDate: Date;
-  institutionalEmail?: string;
-  status?: StudentStatus;
+  institutionalEmail?: string | null;
+  status?: StudentStatus | null;
 }

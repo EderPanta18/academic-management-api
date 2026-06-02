@@ -1,8 +1,8 @@
 // modules/students/application/commands/bulk-import-students.command.ts
 
-import { BulkRowErrorDto } from '@shared/dtos';
+import { BulkRowError } from "@shared/types";
 
-export interface StudentRowInput {
+export type StudentRowInput = {
   rowNumber: number;
   firstName: string;
   lastName: string;
@@ -10,24 +10,26 @@ export interface StudentRowInput {
   email: string;
   code: string;
   careerId: number;
-  enrollmentDate: string; // YYYY-MM-DD
+  enrollmentDate: string;
   institutionalEmail?: string;
   phone?: string;
-  birthDate?: string; // YYYY-MM-DD
+  birthDate?: string;
+};
+
+interface BulkImportStudentsCommandProps {
+  validRows: StudentRowInput[];
+  preErrors: BulkRowError[];
+  totalRows: number;
 }
 
 export class BulkImportStudentsCommand {
   readonly validRows: StudentRowInput[];
-  readonly preErrors: BulkRowErrorDto[];
-  readonly totalInFile: number;
+  readonly preErrors: BulkRowError[];
+  readonly totalRows: number;
 
-  constructor(props: {
-    validRows: StudentRowInput[];
-    preErrors: BulkRowErrorDto[];
-    totalInFile: number;
-  }) {
+  constructor(props: BulkImportStudentsCommandProps) {
     this.validRows = props.validRows;
     this.preErrors = props.preErrors;
-    this.totalInFile = props.totalInFile;
+    this.totalRows = props.totalRows;
   }
 }

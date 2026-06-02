@@ -5,8 +5,8 @@ import type { CreateProfessorProps, ProfessorProps } from "./professor.types";
 
 type ProfessorInternalProps = {
   id?: number;
-  code: string;
   departmentId?: number | null;
+  code: string;
   specialty?: string | null;
   institutionalEmail?: string | null;
   hireDate?: Date | null;
@@ -15,8 +15,8 @@ type ProfessorInternalProps = {
 
 export class Professor {
   readonly id?: number;
-  readonly code: string;
   readonly departmentId: number | null;
+  readonly code: string;
   readonly specialty: string | null;
   readonly institutionalEmail: string | null;
   readonly hireDate: Date | null;
@@ -48,5 +48,9 @@ export class Professor {
 
   isActive(): boolean {
     return this.status === ProfessorStatus.ACTIVE;
+  }
+
+  isOnLeave(): boolean {
+    return this.status === ProfessorStatus.ON_LEAVE;
   }
 }

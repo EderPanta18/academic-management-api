@@ -1,22 +1,22 @@
 // modules/students/application/use-cases/bulk-import-students.use-case.ts
 
 import { Injectable } from "@nestjs/common";
-import { BulkRowErrorDto, BulkResultDto } from "@shared/dtos";
+
 import { DomainException } from "@core/exceptions";
+import type { BulkResult, BulkRowError } from "@shared/types";
 import { BulkImportStudentsCommand, CreateStudentCommand } from "../commands";
 import { CreateStudentUseCase } from "./create-student.use-case";
 
 @Injectable()
 export class BulkImportStudentsUseCase {
-  constructor(private readonly createStudentUseCase: CreateStudentUseCase) {}
+  constructor(private readonly createUseCase: CreateStudentUseCase) {}
 
-  async execute(command: BulkImportStudentsCommand): Promise<BulkResultDto> {
-    // Parte con errores estructurales ya recolectados por el interceptor
-    const errors: BulkRowErrorDto[] = [...command.preErrors];
+  async execute(command: BulkImportStudentsCommand): Promise<BulkResult> {
+    const errors: BulkRowError[] = [...command.preErrors];
 
     for (const row of command.validRows) {
       try {
-        await this.createStudentUseCase.execute(
+        await this.createUseCase.execute(
           new CreateStudentCommand({
             firstName: row.firstName,
             lastName: row.lastName,
@@ -35,12 +35,23 @@ export class BulkImportStudentsUseCase {
           error instanceof DomainException
             ? error.message
             : "Error inesperado al procesar la fila";
-        errors.push(
-          BulkRowErrorDto.from({ row: row.rowNumber, field: "general", reason })
-        );
+
+        errors.push({
+          row: row.rowNumber,
+          field: "general",
+          reason
+        });
       }
     }
 
-    return BulkResultDto.from(command.totalInFile, errors);
+    const totalFailed = new Set(errors.map((error) => error.row)).size;
+    const totalSuccess = Math.max(command.totalRows - totalFailed, 0);
+
+    return {
+      totalRows: command.totalRows,
+      totalSuccess,
+      totalFailed,
+      errors
+    };
   }
 }
