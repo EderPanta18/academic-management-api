@@ -1,7 +1,7 @@
 // modules/courses/infrastructure/persistence/mappers/course-persistence.mapper.ts
 
-import { Prisma } from '@prisma/client';
-import { Course, type CourseProps } from '@courses/domain/entities';
+import { Prisma } from "@prisma/client";
+import { Course, type CourseProps } from "@courses/domain/entities";
 
 type CourseRaw = Prisma.CourseGetPayload<Record<string, never>>;
 
@@ -21,8 +21,9 @@ export class CoursePersistenceMapper {
       categoryId: raw.categoryId,
       name: raw.name,
       description: raw.description,
-      credits: raw.credits,
+      credits: raw.credits
     };
+
     return Course.reconstitute(props);
   }
 
@@ -32,7 +33,7 @@ export class CoursePersistenceMapper {
       categoryId: course.categoryId,
       name: course.name,
       description: course.description,
-      credits: course.credits,
+      credits: course.credits
     };
   }
 }

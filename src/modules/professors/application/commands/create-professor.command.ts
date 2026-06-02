@@ -1,17 +1,29 @@
 // modules/professors/application/commands/create-professor.command.ts
 
-import { ProfessorStatus } from '@professors/domain/constants';
+import { ProfessorStatus } from "@professors/domain/constants";
 
-/**
- * Objeto plano que representa la intención de crear un profesor.
- */
+interface CreateProfessorCommandProps {
+  dni: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  departmentId?: number;
+  code: string;
+  specialty?: string;
+  institutionalEmail?: string;
+  hireDate?: Date;
+  phone?: string;
+  birthDate?: Date;
+  status?: ProfessorStatus;
+}
+
 export class CreateProfessorCommand {
   readonly dni: string;
   readonly firstName: string;
   readonly lastName: string;
   readonly email: string;
-  readonly departmentId?: number;
   readonly code: string;
+  readonly departmentId?: number;
   readonly specialty?: string;
   readonly institutionalEmail?: string;
   readonly hireDate?: Date;
@@ -19,13 +31,13 @@ export class CreateProfessorCommand {
   readonly birthDate?: Date;
   readonly status?: ProfessorStatus;
 
-  constructor(props: CreateProfessorCommand) {
+  constructor(props: CreateProfessorCommandProps) {
     this.dni = props.dni;
     this.firstName = props.firstName;
     this.lastName = props.lastName;
     this.email = props.email;
-    this.departmentId = props.departmentId;
     this.code = props.code;
+    this.departmentId = props.departmentId;
     this.specialty = props.specialty;
     this.institutionalEmail = props.institutionalEmail;
     this.hireDate = props.hireDate;

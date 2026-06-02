@@ -7,14 +7,13 @@ import { PaginationVO } from "@core/pagination";
 import { PrismaService } from "@platform/database";
 import { ProfessorStatus } from "@professors/domain/constants";
 import { Professor } from "@professors/domain/entities";
-import { type ProfessorView } from "@professors/application/read-models";
+import type { ProfessorView } from "@professors/application/read-models";
 import type {
   IProfessorRepository,
-  IProfessorFinder,
   IProfessorQuery,
-  ProfessorPersonData,
-  FindAllProfessorsFilters,
-  ProfessorSaveData
+  IProfessorFinder,
+  ProfessorSaveData,
+  FindAllProfessorsFilters
 } from "@professors/application/ports";
 import { ProfessorPersistenceMapper } from "../mappers";
 
@@ -28,15 +27,15 @@ export class ProfessorRepository
 
   async save(data: ProfessorSaveData): Promise<Professor> {
     const { professor, personData } = data;
-    return professor.id !== undefined
-      ? this.update(professor, personData)
-      : this.create(professor, personData);
+
+    return professor.id !== undefined ? this.update(data) : this.create(data);
   }
 
   async existsByCode(code: string): Promise<boolean> {
     const count = await this.prisma.professor.count({
       where: { code, deletedAt: null }
     });
+
     return count > 0;
   }
 
@@ -44,6 +43,7 @@ export class ProfessorRepository
     const count = await this.prisma.professor.count({
       where: { institutionalEmail: email, deletedAt: null }
     });
+
     return count > 0;
   }
 
@@ -53,6 +53,7 @@ export class ProfessorRepository
         where: { personId: id },
         data: { deletedAt: new Date() }
       });
+
       await tx.person.update({
         where: { id },
         data: { deletedAt: new Date() }
@@ -67,6 +68,7 @@ export class ProfessorRepository
       where: { personId: id, deletedAt: null, person: { deletedAt: null } },
       include: { person: true }
     });
+
     return raw ? ProfessorPersistenceMapper.toView(raw) : null;
   }
 
@@ -76,7 +78,7 @@ export class ProfessorRepository
   ): Promise<[ProfessorView[], number]> {
     const where: Prisma.ProfessorWhereInput = {
       deletedAt: null,
-      ...(filters?.departmentId ? { departmentId: filters.departmentId } : {})
+      ...(filters?.departmentId && { departmentId: filters.departmentId })
     };
 
     const [raws, total] = await Promise.all([
@@ -87,6 +89,7 @@ export class ProfessorRepository
         take: pagination.pageSize,
         orderBy: { person: { lastName: "asc" } }
       }),
+
       this.prisma.professor.count({ where })
     ]);
 
@@ -99,6 +102,7 @@ export class ProfessorRepository
     const count = await this.prisma.professor.count({
       where: { personId: id, deletedAt: null, person: { deletedAt: null } }
     });
+
     return count > 0;
   }
 
@@ -111,22 +115,21 @@ export class ProfessorRepository
         person: { deletedAt: null }
       }
     });
+
     return count > 0;
   }
 
   // ── Privados ──────────────────────────────────────────────────────────────
 
-  private async create(
-    professor: Professor,
-    personData: ProfessorPersonData
-  ): Promise<Professor> {
-    const { person, professor: profData } =
-      ProfessorPersistenceMapper.toPersistence(professor, personData);
+  private async create(data: ProfessorSaveData): Promise<Professor> {
+    const { professorData, personData } =
+      ProfessorPersistenceMapper.toPersistence(data);
 
     const raw = await this.prisma.$transaction(async (tx) => {
-      const personRecord = await tx.person.create({ data: person });
+      const personRecord = await tx.person.create({ data: personData });
+
       return tx.professor.create({
-        data: { ...profData, personId: personRecord.id },
+        data: { ...professorData, personId: personRecord.id },
         include: { person: true }
       });
     });
@@ -134,21 +137,21 @@ export class ProfessorRepository
     return ProfessorPersistenceMapper.toDomain(raw);
   }
 
-  private async update(
-    professor: Professor,
-    personData: ProfessorPersonData
-  ): Promise<Professor> {
-    const { person, professor: profData } =
-      ProfessorPersistenceMapper.toPersistence(professor, personData);
+  private async update(data: ProfessorSaveData): Promise<Professor> {
+    const { professor } = data;
+
+    const { professorData, personData } =
+      ProfessorPersistenceMapper.toPersistence(data);
 
     const raw = await this.prisma.$transaction(async (tx) => {
       await tx.person.update({
         where: { id: professor.id },
-        data: person
+        data: personData
       });
+
       return tx.professor.update({
         where: { personId: professor.id },
-        data: profData,
+        data: professorData,
         include: { person: true }
       });
     });

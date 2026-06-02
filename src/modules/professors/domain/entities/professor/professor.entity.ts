@@ -1,28 +1,28 @@
-// modules/professors/domain/entities/professor.entity.ts
+// modules/professors/domain/entities/professor/professor.entity.ts
 
-import { ProfessorStatus } from "../constants";
+import { ProfessorStatus } from "@professors/domain/constants";
 import type { CreateProfessorProps, ProfessorProps } from "./professor.types";
 
-type InternalProps = {
+type ProfessorInternalProps = {
   id?: number;
-  departmentId?: number | null;
   code: string;
+  departmentId?: number | null;
   specialty?: string | null;
   institutionalEmail?: string | null;
   hireDate?: Date | null;
-  status?: ProfessorStatus;
+  status?: ProfessorStatus | null;
 };
 
 export class Professor {
   readonly id?: number;
-  readonly departmentId: number | null;
   readonly code: string;
+  readonly departmentId: number | null;
   readonly specialty: string | null;
   readonly institutionalEmail: string | null;
   readonly hireDate: Date | null;
   readonly status: ProfessorStatus;
 
-  private constructor(props: InternalProps) {
+  private constructor(props: ProfessorInternalProps) {
     this.id = props.id;
     this.departmentId = props.departmentId ?? null;
     this.code = props.code;

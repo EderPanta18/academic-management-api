@@ -8,8 +8,8 @@ import {
   getSchemaPath
 } from "@nestjs/swagger";
 
-function ApiPaginationQueries(): MethodDecorator {
-  return applyDecorators(
+const ApiPaginationQueries = (): MethodDecorator =>
+  applyDecorators(
     ApiQuery({
       name: "page",
       required: false,
@@ -25,12 +25,11 @@ function ApiPaginationQueries(): MethodDecorator {
       description: "Registros por página"
     })
   );
-}
 
-function ApiPaginatedOkResponse<T extends Type<unknown>>(
+const ApiPaginatedOkResponse = <T extends Type<unknown>>(
   model: T
-): MethodDecorator {
-  return ApiOkResponse({
+): MethodDecorator =>
+  ApiOkResponse({
     schema: {
       properties: {
         items: {
@@ -60,14 +59,12 @@ function ApiPaginatedOkResponse<T extends Type<unknown>>(
       }
     }
   });
-}
 
-export function ApiPaginatedOperation<T extends Type<unknown>>(
+export const ApiPaginatedOperation = <T extends Type<unknown>>(
   model: T
-): MethodDecorator {
-  return applyDecorators(
+): MethodDecorator =>
+  applyDecorators(
     ApiPaginationQueries(),
     ApiExtraModels(model),
     ApiPaginatedOkResponse(model)
   );
-}

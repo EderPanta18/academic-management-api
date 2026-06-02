@@ -1,4 +1,4 @@
-// modules/persons/domain/entities/person.types.ts
+// modules/persons/domain/entities/person/person.types.ts
 
 export interface PersonProps {
   id: number;
@@ -15,6 +15,6 @@ export interface CreatePersonProps {
   firstName: string;
   lastName: string;
   email: string;
-  phone?: string;
-  birthDate?: Date;
+  phone?: string | null;
+  birthDate?: Date | null;
 }

@@ -1,8 +1,9 @@
 // modules/professors/professors.module.ts
 
 import { Module } from "@nestjs/common";
-import { PersonsModule } from "@modules/persons";
-import { DepartmentsModule } from "@modules/departments";
+
+import { PersonsModule } from "@persons";
+import { DepartmentsModule } from "@departments";
 import {
   PROFESSOR_REPOSITORY_PORT,
   PROFESSOR_QUERY_PORT,

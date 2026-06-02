@@ -3,5 +3,5 @@
 export {
   ApiCreateProfessor,
   ApiListProfessors,
-  ApiGetProfessorById,
-} from './api-professor.decorator';
+  ApiGetProfessorById
+} from "./api-professor.decorator";

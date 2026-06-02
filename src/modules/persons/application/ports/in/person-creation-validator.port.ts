@@ -2,7 +2,7 @@
 
 import type {
   PersonCreationInput,
-  PersonCreationResult
+  PersonData
 } from "@persons/application/contracts";
 
 export const PERSON_CREATION_VALIDATOR_PORT = Symbol(
@@ -10,5 +10,5 @@ export const PERSON_CREATION_VALIDATOR_PORT = Symbol(
 );
 
 export interface IPersonCreationValidator {
-  validate(input: PersonCreationInput): Promise<PersonCreationResult>;
+  validate(input: PersonCreationInput): Promise<PersonData>;
 }

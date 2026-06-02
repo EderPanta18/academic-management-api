@@ -1,8 +1,8 @@
-// modules/persons/domain/entities/person.entity.ts
+// modules/persons/domain/entities/person/person.entity.ts
 
 import type { PersonProps, CreatePersonProps } from "./person.types";
 
-type InternalProps = {
+interface PersonInternalProps {
   id?: number;
   dni: string;
   firstName: string;
@@ -10,7 +10,7 @@ type InternalProps = {
   email: string;
   phone?: string | null;
   birthDate?: Date | null;
-};
+}
 
 export class Person {
   readonly id?: number;
@@ -21,7 +21,7 @@ export class Person {
   readonly phone: string | null;
   readonly birthDate: Date | null;
 
-  private constructor(props: InternalProps) {
+  private constructor(props: PersonInternalProps) {
     this.id = props.id;
     this.dni = props.dni;
     this.firstName = props.firstName;
@@ -29,6 +29,7 @@ export class Person {
     this.email = props.email;
     this.phone = props.phone ?? null;
     this.birthDate = props.birthDate ?? null;
+
     Object.freeze(this);
   }
 
@@ -38,9 +39,5 @@ export class Person {
 
   static reconstitute(props: PersonProps): Person {
     return new Person(props);
-  }
-
-  get fullName(): string {
-    return `${this.firstName} ${this.lastName}`.trim();
   }
 }

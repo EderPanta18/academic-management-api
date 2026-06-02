@@ -2,12 +2,11 @@
 
 export {
   PROFESSOR_REPOSITORY_PORT,
-  type IProfessorRepository
-  type ProfessorSaveData,
-  type ProfessorPersonData,
+  type IProfessorRepository,
+  type ProfessorSaveData
 } from "./professor-repository.port";
 export {
   PROFESSOR_QUERY_PORT,
   type IProfessorQuery,
-  type FindAllProfessorsFilters,
+  type FindAllProfessorsFilters
 } from "./professor-query.port";

@@ -32,30 +32,36 @@ export class CreateProfessorUseCase {
     private readonly personCreationValidator: IPersonCreationValidator,
 
     @Inject(PROFESSOR_REPOSITORY_PORT)
-    private readonly repository: IProfessorRepository
+    private readonly professorRepository: IProfessorRepository
   ) {}
 
   async execute(command: CreateProfessorCommand): Promise<Professor> {
     if (command.departmentId) {
       const exists = await this.departmentFinder.exists(command.departmentId);
+
       if (!exists)
         throw new EntityNotFoundException("Department", command.departmentId);
     }
 
-    const codeExists = await this.repository.existsByCode(command.code);
+    const codeExists = await this.professorRepository.existsByCode(
+      command.code
+    );
+
     if (codeExists) throw new ProfessorCodeAlreadyExistsException(command.code);
 
     if (command.institutionalEmail) {
-      const emailExists = await this.repository.existsByInstitutionalEmail(
-        command.institutionalEmail
-      );
+      const emailExists =
+        await this.professorRepository.existsByInstitutionalEmail(
+          command.institutionalEmail
+        );
+
       if (emailExists)
         throw new ProfessorEmailAlreadyExistsException(
           command.institutionalEmail
         );
     }
 
-    const person = await this.personCreationValidator.validate({
+    const personData = await this.personCreationValidator.validate({
       dni: command.dni,
       firstName: command.firstName,
       lastName: command.lastName,
@@ -73,13 +79,9 @@ export class CreateProfessorUseCase {
       status: command.status
     });
 
-    return this.repository.save(professor, {
-      dni: person.dni,
-      firstName: person.firstName,
-      lastName: person.lastName,
-      email: person.email,
-      phone: person.phone,
-      birthDate: person.birthDate
+    return this.professorRepository.save({
+      professor,
+      personData
     });
   }
 }

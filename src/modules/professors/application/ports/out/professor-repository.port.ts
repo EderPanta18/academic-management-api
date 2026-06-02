@@ -1,21 +1,13 @@
 // modules/professors/application/ports/out/professor-repository.port.ts
 
+import type { PersonData } from "@persons/application/contracts";
 import { Professor } from "@professors/domain/entities";
 
 export const PROFESSOR_REPOSITORY_PORT = Symbol("PROFESSOR_REPOSITORY_PORT");
 
-export type ProfessorPersonData = {
-  dni: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
-  birthDate?: Date;
-};
-
 export type ProfessorSaveData = {
   professor: Professor;
-  personData: ProfessorPersonData;
+  personData: PersonData;
 };
 
 export interface IProfessorRepository {

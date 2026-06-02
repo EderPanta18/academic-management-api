@@ -1,3 +1,3 @@
 // modules/professors/index.ts
 
-export { ProfessorsModule } from './professors.module';
+export { ProfessorsModule } from "./professors.module";

@@ -3,10 +3,7 @@
 import type { INestApplication } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
-export type SwaggerTag = {
-  name: string;
-  description?: string;
-};
+import { SwaggerTag } from "./swagger.types";
 
 export interface SwaggerSetupOptions {
   title: string;

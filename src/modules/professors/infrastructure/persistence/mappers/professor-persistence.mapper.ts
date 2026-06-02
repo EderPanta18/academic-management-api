@@ -1,16 +1,40 @@
 // modules/persons/infrastructure/persistence/mappers/professor-persistence.mapper.ts
 
 import { Prisma } from "@prisma/client";
-import { Professor, type ProfessorProps } from "@professors/domain/entities";
+
 import { ProfessorStatus } from "@professors/domain/constants";
-import { type ProfessorView } from "@professors/application/read-models";
-import { type ProfessorPersonData } from "@professors/application/ports/out";
+import { Professor } from "@professors/domain/entities";
+import type { ProfessorView } from "@professors/application/read-models";
+import type { ProfessorSaveData } from "@professors/application/ports/out";
 
 type ProfessorRaw = Prisma.ProfessorGetPayload<{ include: { person: true } }>;
 
+type PersonPersistenceData = {
+  dni: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string | null;
+  birthDate: Date | null;
+};
+
+type ProfessorPersistenceData = {
+  departmentId: number | null;
+  code: string;
+  specialty: string | null;
+  institutionalEmail: string | null;
+  hireDate: Date | null;
+  status: ProfessorStatus;
+};
+
+type ProfessorPersistencePayload = {
+  personData: PersonPersistenceData;
+  professorData: ProfessorPersistenceData;
+};
+
 export class ProfessorPersistenceMapper {
   static toDomain(raw: ProfessorRaw): Professor {
-    const props: ProfessorProps = {
+    return Professor.reconstitute({
       id: raw.personId,
       departmentId: raw.departmentId,
       code: raw.code,
@@ -18,13 +42,11 @@ export class ProfessorPersistenceMapper {
       institutionalEmail: raw.institutionalEmail,
       hireDate: raw.hireDate,
       status: raw.status as ProfessorStatus
-    };
-    return Professor.reconstitute(props);
+    });
   }
 
   static toView(raw: ProfessorRaw): ProfessorView {
     return {
-      // Professor fields
       id: raw.personId,
       departmentId: raw.departmentId,
       code: raw.code,
@@ -32,28 +54,28 @@ export class ProfessorPersistenceMapper {
       institutionalEmail: raw.institutionalEmail,
       hireDate: raw.hireDate,
       status: raw.status as ProfessorStatus,
-      // Person fields
       dni: raw.person.dni,
       firstName: raw.person.firstName,
       lastName: raw.person.lastName,
       email: raw.person.email,
       phone: raw.person.phone,
-      birthDate: raw.person.birthDate,
-      fullName: `${raw.person.firstName} ${raw.person.lastName}`.trim()
+      birthDate: raw.person.birthDate
     };
   }
 
-  static toPersistence(professor: Professor, personData: ProfessorPersonData) {
+  static toPersistence(data: ProfessorSaveData): ProfessorPersistencePayload {
+    const { professor, personData } = data;
+
     return {
-      person: {
+      personData: {
         dni: personData.dni,
         firstName: personData.firstName,
         lastName: personData.lastName,
         email: personData.email,
-        phone: personData.phone ?? null,
-        birthDate: personData.birthDate ?? null
+        phone: personData.phone,
+        birthDate: personData.birthDate
       },
-      professor: {
+      professorData: {
         code: professor.code,
         specialty: professor.specialty,
         institutionalEmail: professor.institutionalEmail,

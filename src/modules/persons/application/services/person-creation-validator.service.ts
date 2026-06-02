@@ -7,7 +7,7 @@ import {
   PersonDniAlreadyExistsException,
   PersonEmailAlreadyExistsException
 } from "@persons/domain/exceptions";
-import type { PersonCreationInput, PersonCreationResult } from "../contracts";
+import type { PersonCreationInput, PersonData } from "../contracts";
 import {
   PERSON_REPOSITORY_PORT,
   type IPersonCreationValidator,
@@ -21,7 +21,7 @@ export class PersonCreationValidator implements IPersonCreationValidator {
     private readonly repository: IPersonRepository
   ) {}
 
-  async validate(input: PersonCreationInput): Promise<PersonCreationResult> {
+  async validate(input: PersonCreationInput): Promise<PersonData> {
     const dniExists = await this.repository.existsByDni(input.dni);
 
     if (dniExists) throw new PersonDniAlreadyExistsException(input.dni);
@@ -35,8 +35,8 @@ export class PersonCreationValidator implements IPersonCreationValidator {
       firstName: input.firstName,
       lastName: input.lastName,
       email: input.email,
-      phone: input.phone ?? undefined,
-      birthDate: input.birthDate ?? undefined
+      phone: input.phone,
+      birthDate: input.birthDate
     });
 
     return {

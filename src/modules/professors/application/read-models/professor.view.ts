@@ -2,7 +2,7 @@
 
 import { ProfessorStatus } from "@professors/domain/constants";
 
-export interface ProfessorView {
+export type ProfessorView = {
   id: number;
   departmentId: number | null;
   code: string;
@@ -13,8 +13,7 @@ export interface ProfessorView {
   dni: string;
   firstName: string;
   lastName: string;
-  fullName: string;
   email: string;
   phone: string | null;
   birthDate: Date | null;
-}
+};

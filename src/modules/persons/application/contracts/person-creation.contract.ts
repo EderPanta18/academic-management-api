@@ -8,12 +8,3 @@ export type PersonCreationInput = {
   phone?: string | null;
   birthDate?: Date | null;
 };
-
-export type PersonCreationResult = {
-  dni: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string | null;
-  birthDate: Date | null;
-};
