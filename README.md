@@ -1,23 +1,62 @@
 # Academic Management API
 
-API REST para gestion academica universitaria. Centraliza profesores, estudiantes, cursos, ofertas academicas, inscripciones e importacion masiva de estudiantes.
+> API REST para gestion academica universitaria, construida como caso practico backend con arquitectura modular, Prisma y PostgreSQL.
 
-El proyecto esta construido con NestJS, TypeScript, Prisma ORM, PostgreSQL, Swagger/OpenAPI, Docker y pnpm.
+![NestJS](https://img.shields.io/badge/NestJS-11-E0234E?style=flat-square)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square)
+![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?style=flat-square)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square)
+![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=flat-square)
 
-## Documentacion
+Centraliza profesores, estudiantes, cursos, ofertas academicas, inscripciones e importacion masiva de estudiantes desde archivos.
 
-La documentacion detallada vive en [`docs/`](./docs/README.md):
+## Vista Rapida
 
-- Alcance y requerimientos: [`docs/overview/requirements.md`](./docs/overview/requirements.md)
-- Stack tecnico: [`docs/overview/technology-stack.md`](./docs/overview/technology-stack.md)
-- Arquitectura: [`docs/architecture/source-architecture.md`](./docs/architecture/source-architecture.md)
-- Estructura del codigo: [`docs/architecture/source-structure.md`](./docs/architecture/source-structure.md)
-- Modelo de datos: [`docs/data/data-modeling.md`](./docs/data/data-modeling.md)
-- Script SQL de referencia: [`docs/data/script_db.sql`](./docs/data/script_db.sql)
+- Backend: NestJS + TypeScript.
+- Persistencia: Prisma ORM + PostgreSQL.
+- Documentacion interactiva: Swagger/OpenAPI.
+- Calidad: Biome + Jest.
+- Ejecucion: local con pnpm o entorno aislado con Docker Compose.
 
-## Inicio Rapido
+## Primeros Pasos
 
-### Local
+### Opcion A: Docker
+
+La forma mas directa para levantar API + PostgreSQL.
+
+```bash
+cp .env.docker.example .env.docker
+docker compose --env-file .env.docker up --build
+```
+
+El contenedor de la API ejecuta migraciones y seed con `pnpm db:prod` antes de iniciar.
+
+Para correrlo en segundo plano:
+
+```bash
+docker compose --env-file .env.docker up --build -d
+```
+
+Para ver servicios y logs:
+
+```bash
+docker compose --env-file .env.docker ps
+docker compose --env-file .env.docker logs -f api
+```
+
+Para apagar Docker:
+
+```bash
+docker compose --env-file .env.docker down
+```
+
+Para apagar y borrar tambien el volumen de PostgreSQL:
+
+```bash
+docker compose --env-file .env.docker down -v
+```
+
+### Opcion B: Local
 
 ```bash
 pnpm install
@@ -26,16 +65,7 @@ pnpm db:dev
 pnpm start:dev
 ```
 
-Configura `DATABASE_URL` en `.env` antes de ejecutar `pnpm db:dev`.
-
-### Docker
-
-```bash
-cp .env.docker.example .env.docker
-docker compose --env-file .env.docker up --build
-```
-
-El contenedor de la API ejecuta migraciones y seed con `pnpm db:prod` antes de iniciar en modo produccion.
+Antes de `pnpm db:dev`, configura `DATABASE_URL` en `.env`.
 
 ## Acceso
 
@@ -43,26 +73,39 @@ Con la configuracion por defecto:
 
 - API: `http://localhost:3000/api/v1`
 - Swagger: `http://localhost:3000/api/v1/docs`
+- Prisma Studio: `pnpm db:studio`
 
-## Comandos
+## Comandos Utiles
 
-```bash
-pnpm start:dev    # desarrollo
-pnpm build        # compilar
-pnpm start:prod   # ejecutar dist
-pnpm check        # formato + lint con Biome
-pnpm check:ci     # validacion CI
-pnpm test         # pruebas unitarias
-pnpm test:e2e     # pruebas e2e
-pnpm db:dev       # migraciones dev + seed
-pnpm db:prod      # migraciones deploy + seed
-pnpm db:reset     # reset de base de datos
-pnpm db:studio    # Prisma Studio
-```
+| Comando | Uso |
+| --- | --- |
+| `pnpm start:dev` | Levanta la API en desarrollo |
+| `pnpm build` | Compila el proyecto |
+| `pnpm start:prod` | Ejecuta la version compilada |
+| `pnpm check` | Formatea y corrige con Biome |
+| `pnpm check:ci` | Valida formato/lint para CI |
+| `pnpm test` | Ejecuta pruebas unitarias |
+| `pnpm test:e2e` | Ejecuta pruebas e2e |
+| `pnpm db:dev` | Migraciones dev + seed |
+| `pnpm db:prod` | Migraciones deploy + seed |
+| `pnpm db:reset` | Reinicia la base de datos |
+| `pnpm db:push` | Sincroniza esquema sin migracion |
+| `pnpm db:studio` | Abre Prisma Studio |
+
+## Documentacion
+
+Los detalles viven en [`docs/`](./docs/README.md):
+
+- [Requerimientos](./docs/overview/requirements.md)
+- [Stack tecnico](./docs/overview/technology-stack.md)
+- [Arquitectura](./docs/architecture/source-architecture.md)
+- [Estructura del codigo](./docs/architecture/source-structure.md)
+- [Modelo de datos](./docs/data/data-modeling.md)
+- [Script SQL de referencia](./docs/data/script_db.sql)
 
 ## Variables de Entorno
 
-Usa los archivos de ejemplo como base:
+Usa estos archivos como punto de partida:
 
 - `.env.example` para ejecucion local.
 - `.env.docker.example` para Docker Compose.
