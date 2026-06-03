@@ -4,7 +4,7 @@ import type { INestApplication } from "@nestjs/common";
 
 import { RuntimeConfigService } from "@platform/config";
 import { setupSwagger } from "@platform/http";
-import { APP_CONFIG } from "./app.config";
+import { APP_CONFIG, SWAGGER_TAGS } from "./app.config";
 
 export function bootstrapApp(app: INestApplication): void {
   const config = app.get(RuntimeConfigService);
@@ -20,6 +20,7 @@ export function bootstrapApp(app: INestApplication): void {
     description: APP_CONFIG.description,
     path: `${APP_CONFIG.apiPrefix}/${APP_CONFIG.docsPath}`,
     title: APP_CONFIG.name,
-    version: APP_CONFIG.version
+    version: APP_CONFIG.version,
+    tags: SWAGGER_TAGS
   });
 }

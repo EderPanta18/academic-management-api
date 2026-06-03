@@ -10,6 +10,6 @@ export const COURSE_OFFERING_ROUTES = {
 } as const;
 
 export const COURSE_OFFERING_SWAGGER_TAG = {
-  name: "courses",
+  name: "course-offerings",
   description: "Endpoints relacionados con la gestión de ofertas de cursos."
 } as const satisfies SwaggerTag;

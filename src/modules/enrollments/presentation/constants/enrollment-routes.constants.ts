@@ -8,7 +8,7 @@ export const ENROLLMENT_ROUTES = {
 } as const;
 
 export const ENROLLMENT_SWAGGER_TAG = {
-  name: "courses",
+  name: "enrollments",
   description:
     "Endpoints relacionados con las inscripciones de alumnos a cursos."
 } as const satisfies SwaggerTag;

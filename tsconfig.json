@@ -17,49 +17,49 @@
 
     // aliases
     "paths": {
-      "@app": ["./src/app/index.ts"],
+      "@app": ["./src/app"],
       "@app/*": ["./src/app/*"],
 
-      "@core": ["./src/core/index.ts"],
+      "@core": ["./src/core"],
       "@core/*": ["./src/core/*"],
 
-      "@shared": ["./src/shared/index.ts"],
+      "@shared": ["./src/shared"],
       "@shared/*": ["./src/shared/*"],
 
-      "@platform": ["./src/platform/index.ts"],
+      "@platform": ["./src/platform"],
       "@platform/*": ["./src/platform/*"],
 
-      "@modules": ["./src/modules/index.ts"],
+      "@modules": ["./src/modules"],
       "@modules/*": ["./src/modules/*"],
 
-      "@persons": ["./src/modules/persons/index.ts"],
+      "@persons": ["./src/modules/persons"],
       "@persons/*": ["./src/modules/persons/*"],
 
-      "@departments": ["./src/modules/departments/index.ts"],
+      "@departments": ["./src/modules/departments"],
       "@departments/*": ["./src/modules/departments/*"],
 
-      "@careers": ["./src/modules/careers/index.ts"],
+      "@careers": ["./src/modules/careers"],
       "@careers/*": ["./src/modules/careers/*"],
 
-      "@academic-periods": ["./src/modules/academic-periods/index.ts"],
+      "@academic-periods": ["./src/modules/academic-periods"],
       "@academic-periods/*": ["./src/modules/academic-periods/*"],
 
-      "@course-categories": ["./src/modules/course-categories/index.ts"],
+      "@course-categories": ["./src/modules/course-categories"],
       "@course-categories/*": ["./src/modules/course-categories/*"],
 
-      "@courses": ["./src/modules/courses/index.ts"],
+      "@courses": ["./src/modules/courses"],
       "@courses/*": ["./src/modules/courses/*"],
 
-      "@professors": ["./src/modules/professors/index.ts"],
+      "@professors": ["./src/modules/professors"],
       "@professors/*": ["./src/modules/professors/*"],
 
-      "@students": ["./src/modules/students/index.ts"],
+      "@students": ["./src/modules/students"],
       "@students/*": ["./src/modules/students/*"],
 
-      "@course-offerings": ["./src/modules/course-offerings/index.ts"],
+      "@course-offerings": ["./src/modules/course-offerings"],
       "@course-offerings/*": ["./src/modules/course-offerings/*"],
 
-      "@enrollments": ["./src/modules/enrollments/index.ts"],
+      "@enrollments": ["./src/modules/enrollments"],
       "@enrollments/*": ["./src/modules/enrollments/*"]
     },
 

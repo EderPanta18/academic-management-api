@@ -3,13 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
 // ─── IDENTIDAD ───────────────────────────────────────────────────────
 
 model Person {
-  id        Int       @id @default(autoincrement()) @db.UnsignedInt
+  id        Int       @id @default(autoincrement())
   dni       String    @unique @db.Char(8)
   firstName String    @map("first_name") @db.VarChar(100)
   lastName  String    @map("last_name") @db.VarChar(100)
@@ -29,9 +29,9 @@ model Person {
 // ─── ESTRUCTURA ORGANIZACIONAL ───────────────────────────────────────
 
 model Department {
-  id          Int       @id @default(autoincrement()) @db.UnsignedInt
-  name        String    @unique @db.VarChar(100)        
-  description String?   @db.Text                        
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(100)
+  description String?   @db.Text
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
   deletedAt   DateTime? @map("deleted_at")
@@ -43,8 +43,8 @@ model Department {
 }
 
 model Career {
-  id           Int       @id @default(autoincrement()) @db.UnsignedInt
-  departmentId Int       @map("department_id") @db.UnsignedInt
+  id           Int       @id @default(autoincrement())
+  departmentId Int       @map("department_id")
   name         String    @unique @db.VarChar(150)
   totalCredits Int       @map("total_credits") @db.SmallInt
   createdAt    DateTime  @default(now()) @map("created_at")
@@ -59,10 +59,10 @@ model Career {
 }
 
 model AcademicPeriod {
-  id        Int       @id @default(autoincrement()) @db.UnsignedInt
+  id        Int       @id @default(autoincrement())
   name      String    @unique @db.VarChar(20)
-  year      Int       @db.Year
-  semester  Int       @db.TinyInt
+  year      Int       @db.SmallInt
+  semester  Int       @db.SmallInt
   startDate DateTime  @map("start_date") @db.Date
   endDate   DateTime  @map("end_date") @db.Date
   isCurrent Boolean   @default(false) @map("is_current")
@@ -71,7 +71,7 @@ model AcademicPeriod {
   deletedAt DateTime? @map("deleted_at")
 
   courseOfferings CourseOffering[]
- 
+
   @@unique([year, semester])
   @@map("academic_period")
 }
@@ -79,12 +79,12 @@ model AcademicPeriod {
 // ─── ACTORES ACADÉMICOS ──────────────────────────────────────────────
 
 model Professor {
-  personId           Int             @id @map("person_id") @db.UnsignedInt
-  departmentId       Int?            @map("department_id") @db.UnsignedInt  
-  code               String          @unique @db.VarChar(20)   
+  personId           Int             @id @map("person_id")
+  departmentId       Int?            @map("department_id")
+  code               String          @unique @db.VarChar(20)
   specialty          String?         @db.VarChar(100)
   institutionalEmail String?         @unique @map("institutional_email") @db.VarChar(150)
-  hireDate           DateTime?       @map("hire_date") @db.Date             
+  hireDate           DateTime?       @map("hire_date") @db.Date
   status             ProfessorStatus @default(ACTIVE)
   createdAt          DateTime        @default(now()) @map("created_at")
   updatedAt          DateTime        @updatedAt @map("updated_at")
@@ -104,8 +104,8 @@ enum ProfessorStatus {
 }
 
 model Student {
-  personId           Int           @id @map("person_id") @db.UnsignedInt
-  careerId           Int           @map("career_id") @db.UnsignedInt
+  personId           Int           @id @map("person_id")
+  careerId           Int           @map("career_id")
   code               String        @unique @db.Char(10)
   institutionalEmail String?       @unique @map("institutional_email") @db.VarChar(150)
   enrollmentDate     DateTime      @map("enrollment_date") @db.Date
@@ -132,7 +132,7 @@ enum StudentStatus {
 // ─── CATÁLOGO ACADÉMICO ──────────────────────────────────────────────
 
 model CourseCategory {
-  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  id          Int       @id @default(autoincrement())
   name        String    @unique @db.VarChar(100)
   description String?   @db.Text
   createdAt   DateTime  @default(now()) @map("created_at")
@@ -144,18 +144,18 @@ model CourseCategory {
   @@map("course_category")
 }
 
-// ─── GESTIÓN DE CURSOS ──────────────────────────────────-────────────
+// ─── GESTIÓN DE CURSOS ───────────────────────────────────────────────
 
 model Course {
-  id          Int            @id @default(autoincrement()) @db.UnsignedInt
-  careerId    Int            @map("career_id") @db.UnsignedInt
-  categoryId  Int?           @map("category_id") @db.UnsignedInt
-  name        String         @db.VarChar(150)
-  description String?        @db.Text
-  credits     Int            @db.TinyInt
-  createdAt   DateTime       @default(now()) @map("created_at")
-  updatedAt   DateTime       @updatedAt @map("updated_at")
-  deletedAt   DateTime?      @map("deleted_at")
+  id          Int       @id @default(autoincrement())
+  careerId    Int       @map("career_id")
+  categoryId  Int?      @map("category_id")
+  name        String    @db.VarChar(150)
+  description String?   @db.Text
+  credits     Int       @db.SmallInt
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
 
   career          Career          @relation(fields: [careerId], references: [id])
   category        CourseCategory? @relation(fields: [categoryId], references: [id])
@@ -166,11 +166,11 @@ model Course {
 }
 
 model CourseOffering {
-  id                 Int                  @id @default(autoincrement()) @db.UnsignedInt
-  courseId           Int                  @map("course_id") @db.UnsignedInt
-  academicPeriodId   Int                  @map("academic_period_id") @db.UnsignedInt
-  professorId        Int?                 @map("professor_id") @db.UnsignedInt
-  section            String               @default("A") @db.VarChar(10)  
+  id                 Int                  @id @default(autoincrement())
+  courseId           Int                  @map("course_id")
+  academicPeriodId   Int                  @map("academic_period_id")
+  professorId        Int?                 @map("professor_id")
+  section            String               @default("A") @db.VarChar(10)
   maxStudents        Int                  @default(30) @map("max_students") @db.SmallInt
   enrollmentDeadline DateTime?            @map("enrollment_deadline") @db.Date
   status             CourseOfferingStatus @default(INACTIVE)
@@ -183,7 +183,7 @@ model CourseOffering {
   professor      Professor?     @relation(fields: [professorId], references: [personId])
   enrollments    Enrollment[]
 
-  @@unique([courseId, academicPeriodId, section]) 
+  @@unique([courseId, academicPeriodId, section])
   @@map("course_offering")
 }
 
@@ -197,18 +197,18 @@ enum CourseOfferingStatus {
 // ─── INSCRIPCIONES ───────────────────────────────────────────────────
 
 model Enrollment {
-  id               Int              @id @default(autoincrement()) @db.UnsignedInt
-  studentId        Int              @map("student_id") @db.UnsignedInt
-  courseOfferingId Int              @map("course_offering_id") @db.UnsignedInt
+  id               Int              @id @default(autoincrement())
+  studentId        Int              @map("student_id")
+  courseOfferingId Int              @map("course_offering_id")
   status           EnrollmentStatus @default(ENROLLED)
   enrollmentDate   DateTime         @map("enrollment_date") @db.Date
   createdAt        DateTime         @default(now()) @map("created_at")
   updatedAt        DateTime         @updatedAt @map("updated_at")
   deletedAt        DateTime?        @map("deleted_at")
-  createdBy        Int?             @map("created_by") @db.UnsignedInt
+  createdBy        Int?             @map("created_by")
 
-  student        Student        @relation(fields: [studentId], references: [personId])
-  courseOffering CourseOffering @relation(fields: [courseOfferingId], references: [id])
+  student        Student              @relation(fields: [studentId], references: [personId])
+  courseOffering CourseOffering       @relation(fields: [courseOfferingId], references: [id])
   statusLogs     EnrollmentStatusLog[]
 
   @@unique([studentId, courseOfferingId])
@@ -223,12 +223,12 @@ enum EnrollmentStatus {
 }
 
 model EnrollmentStatusLog {
-  id             Int               @id @default(autoincrement()) @db.UnsignedInt
-  enrollmentId   Int               @map("enrollment_id") @db.UnsignedInt
+  id             Int               @id @default(autoincrement())
+  enrollmentId   Int               @map("enrollment_id")
   previousStatus EnrollmentStatus? @map("previous_status")
   newStatus      EnrollmentStatus  @map("new_status")
   reason         String?           @db.Text
-  changedBy      Int?              @map("changed_by") @db.UnsignedInt
+  changedBy      Int?              @map("changed_by")
   createdAt      DateTime          @default(now()) @map("created_at")
 
   enrollment Enrollment @relation(fields: [enrollmentId], references: [id])

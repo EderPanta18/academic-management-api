@@ -1,32 +1,33 @@
 // prisma/seeds/enrollment.seed.ts
 
-import { PrismaClient, EnrollmentStatus } from '@prisma/client';
-import * as data from '../data';
-import type { AcademicMaps } from './types';
+import { PrismaClient, EnrollmentStatus } from "@prisma/client";
+
+import * as data from "../data";
+import type { AcademicMaps } from "./types";
 
 export async function seedEnrollments(
   prisma: PrismaClient,
-  academicMaps: AcademicMaps,
+  academicMaps: AcademicMaps
 ) {
-  console.log('\nPoblando inscripciones ....');
+  console.log("\nPoblando inscripciones ....");
   const { studentMap, offeringMap } = academicMaps;
 
   const enrollmentMap = await seedEnrollmentsCore(
     prisma,
     studentMap,
     offeringMap,
-    data.enrollments,
+    data.enrollments
   );
 
   await seedEnrollmentStatusLogs(
     prisma,
     enrollmentMap,
-    data.enrollmentStatusLogs,
+    data.enrollmentStatusLogs
   );
 
-  console.log('Enrollment maps creados:');
-  console.log('- Enrollments:', enrollmentMap.size);
-  console.log('- Status Logs:', data.enrollmentStatusLogs.length);
+  console.log("Enrollment maps creados:");
+  console.log("- Enrollments:", enrollmentMap.size);
+  console.log("- Status Logs:", data.enrollmentStatusLogs.length);
 }
 
 // ─── Helpers atómicos ─────────────────────────────────────────────────
@@ -35,7 +36,7 @@ async function seedEnrollmentsCore(
   prisma: PrismaClient,
   studentMap: Map<string, number>,
   offeringMap: Map<string, number>,
-  enrollments: any[],
+  enrollments: any[]
 ) {
   const enrollmentMap = new Map<string, number>();
   let seeded = 0;
@@ -51,8 +52,8 @@ async function seedEnrollmentsCore(
       where: {
         studentId_courseOfferingId: {
           studentId,
-          courseOfferingId: offeringId,
-        },
+          courseOfferingId: offeringId
+        }
       },
       update: {},
       create: {
@@ -60,8 +61,8 @@ async function seedEnrollmentsCore(
         courseOfferingId: offeringId,
         status: e.status as EnrollmentStatus,
         enrollmentDate: new Date(e.enrollmentDate),
-        createdBy: null,
-      },
+        createdBy: null
+      }
     });
 
     enrollmentMap.set(`${e.studentCode}-${offeringKey}`, enrollment.id);
@@ -74,7 +75,7 @@ async function seedEnrollmentsCore(
 async function seedEnrollmentStatusLogs(
   prisma: PrismaClient,
   enrollmentMap: Map<string, number>,
-  logsData: any[],
+  logsData: any[]
 ) {
   const logs: {
     enrollmentId: number;
@@ -101,7 +102,7 @@ async function seedEnrollmentStatusLogs(
         : null,
       newStatus: logData.newStatus as EnrollmentStatus,
       reason: logData.reason ?? null,
-      changedBy: logData.changedBy ?? null,
+      changedBy: logData.changedBy ?? null
     });
     processed++;
   }
@@ -109,7 +110,7 @@ async function seedEnrollmentStatusLogs(
   if (logs.length > 0) {
     await prisma.enrollmentStatusLog.createMany({
       data: logs,
-      skipDuplicates: true,
+      skipDuplicates: true
     });
   }
 }

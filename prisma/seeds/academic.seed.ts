@@ -4,16 +4,17 @@ import {
   PrismaClient,
   ProfessorStatus,
   StudentStatus,
-  CourseOfferingStatus,
-} from '@prisma/client';
-import * as data from '../data';
-import type { BaseMaps, AcademicMaps } from './types';
+  CourseOfferingStatus
+} from "@prisma/client";
+
+import * as data from "../data";
+import type { BaseMaps, AcademicMaps } from "./types";
 
 export async function seedAcademicStructure(
   prisma: PrismaClient,
-  baseMaps: BaseMaps,
+  baseMaps: BaseMaps
 ): Promise<AcademicMaps> {
-  console.log('\nPoblando estructura académica ....');
+  console.log("\nPoblando estructura académica ....");
   const { departmentMap, categoryMap, personMap, periodMap } = baseMaps;
 
   const careerMap = await seedCareers(prisma, departmentMap, data.careers);
@@ -22,21 +23,21 @@ export async function seedAcademicStructure(
     prisma,
     personMap,
     departmentMap,
-    data.professors,
+    data.professors
   );
 
   const studentMap = await seedStudents(
     prisma,
     personMap,
     careerMap,
-    data.students,
+    data.students
   );
 
   const courseMap = await seedCourses(
     prisma,
     careerMap,
     categoryMap,
-    data.courses,
+    data.courses
   );
 
   const offeringMap = await seedOfferings(
@@ -44,7 +45,7 @@ export async function seedAcademicStructure(
     courseMap,
     periodMap,
     professorMap,
-    data.courseOfferings,
+    data.courseOfferings
   );
 
   const academicMaps: AcademicMaps = {
@@ -53,15 +54,15 @@ export async function seedAcademicStructure(
     professorMap,
     studentMap,
     courseMap,
-    offeringMap,
+    offeringMap
   };
 
-  console.log('Academic maps creados:');
-  console.log('- Careers:', careerMap.size);
-  console.log('- Professors:', professorMap.size);
-  console.log('- Students:', studentMap.size);
-  console.log('- Courses:', courseMap.size);
-  console.log('- Offerings:', offeringMap.size);
+  console.log("Academic maps creados:");
+  console.log("- Careers:", careerMap.size);
+  console.log("- Professors:", professorMap.size);
+  console.log("- Students:", studentMap.size);
+  console.log("- Courses:", courseMap.size);
+  console.log("- Offerings:", offeringMap.size);
 
   return academicMaps;
 }
@@ -71,7 +72,7 @@ export async function seedAcademicStructure(
 async function seedCareers(
   prisma: PrismaClient,
   departmentMap: Map<string, number>,
-  careers: any[],
+  careers: any[]
 ) {
   const careerMap = new Map<string, number>();
   for (const c of careers) {
@@ -81,8 +82,8 @@ async function seedCareers(
       create: {
         name: c.name,
         totalCredits: c.totalCredits,
-        departmentId: departmentMap.get(c.departmentName)!,
-      },
+        departmentId: departmentMap.get(c.departmentName)!
+      }
     });
     careerMap.set(c.name, career.id);
   }
@@ -93,7 +94,7 @@ async function seedProfessors(
   prisma: PrismaClient,
   personMap: Map<string, number>,
   departmentMap: Map<string, number>,
-  professors: any[],
+  professors: any[]
 ) {
   const professorMap = new Map<string, number>();
   for (const p of professors) {
@@ -107,8 +108,8 @@ async function seedProfessors(
         specialty: p.specialty ?? null,
         institutionalEmail: p.institutionalEmail ?? null,
         hireDate: p.hireDate ? new Date(p.hireDate) : null,
-        status: p.status as ProfessorStatus,
-      },
+        status: p.status as ProfessorStatus
+      }
     });
     professorMap.set(p.code, professor.personId);
   }
@@ -119,7 +120,7 @@ async function seedStudents(
   prisma: PrismaClient,
   personMap: Map<string, number>,
   careerMap: Map<string, number>,
-  students: any[],
+  students: any[]
 ) {
   const studentMap = new Map<string, number>();
   for (const s of students) {
@@ -132,8 +133,8 @@ async function seedStudents(
         careerId: careerMap.get(s.careerName)!,
         institutionalEmail: s.institutionalEmail ?? null,
         enrollmentDate: new Date(s.enrollmentDate),
-        status: s.status as StudentStatus,
-      },
+        status: s.status as StudentStatus
+      }
     });
     studentMap.set(s.code, student.personId);
   }
@@ -144,7 +145,7 @@ async function seedCourses(
   prisma: PrismaClient,
   careerMap: Map<string, number>,
   categoryMap: Map<string, number>,
-  courses: any[],
+  courses: any[]
 ) {
   const courseMap = new Map<string, number>();
   for (const c of courses) {
@@ -152,8 +153,8 @@ async function seedCourses(
       where: {
         careerId_name: {
           careerId: careerMap.get(c.careerName)!,
-          name: c.name,
-        },
+          name: c.name
+        }
       },
       update: {},
       create: {
@@ -161,8 +162,8 @@ async function seedCourses(
         description: c.description ?? null,
         credits: c.credits,
         careerId: careerMap.get(c.careerName)!,
-        categoryId: categoryMap.get(c.categoryName) ?? null,
-      },
+        categoryId: categoryMap.get(c.categoryName) ?? null
+      }
     });
     courseMap.set(`${c.careerName}-${c.name}`, course.id);
   }
@@ -174,7 +175,7 @@ async function seedOfferings(
   courseMap: Map<string, number>,
   periodMap: Map<string, number>,
   professorMap: Map<string, number>,
-  offerings: any[],
+  offerings: any[]
 ) {
   const offeringMap = new Map<string, number>();
   for (const o of offerings) {
@@ -187,8 +188,8 @@ async function seedOfferings(
         courseId_academicPeriodId_section: {
           courseId,
           academicPeriodId: periodMap.get(o.academicPeriodName)!,
-          section: o.section,
-        },
+          section: o.section
+        }
       },
       update: {},
       create: {
@@ -200,12 +201,12 @@ async function seedOfferings(
         enrollmentDeadline: o.enrollmentDeadline
           ? new Date(o.enrollmentDeadline)
           : null,
-        status: o.status as CourseOfferingStatus,
-      },
+        status: o.status as CourseOfferingStatus
+      }
     });
     offeringMap.set(
       `${o.courseName}-${o.academicPeriodName}-${o.section}`,
-      offering.id,
+      offering.id
     );
   }
   return offeringMap;
