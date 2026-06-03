@@ -4,9 +4,8 @@ import {
   COURSE_OFFERING_REPOSITORY_PORT,
   type ICourseOfferingRepository,
 } from '@course-offerings/application/ports/out';
-
 import { CourseOfferingStatus } from '@course-offerings/domain/constants';
-import type { CourseOffering } from '@course-offerings/domain/entities';
+import { CourseOffering } from '@course-offerings/domain/entities';
 import {
   CourseOfferingInvalidStatusException,
   CourseOfferingNoProfessorException,

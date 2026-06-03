@@ -1,9 +1,9 @@
 // modules/students/infrastructure/persistence/mappers/student-persistence.mapper.ts
 
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import type { StudentSaveData } from '@students/application/ports/out';
 import type { StudentView } from '@students/application/read-models';
-import type { StudentStatus } from '@students/domain/constants';
+import { StudentStatus } from '@students/domain/constants';
 import { Student } from '@students/domain/entities';
 
 type StudentRaw = Prisma.StudentGetPayload<{ include: { person: true } }>;

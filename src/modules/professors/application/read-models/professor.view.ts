@@ -1,6 +1,6 @@
 // modules/professors/application/read-models/professor.view.ts
 
-import type { ProfessorStatus } from '@professors/domain/constants';
+import { ProfessorStatus } from '@professors/domain/constants';
 
 export type ProfessorView = {
   id: number;

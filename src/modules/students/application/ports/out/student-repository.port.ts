@@ -1,7 +1,7 @@
 // modules/students/application/ports/out/student-repository.port.ts
 
 import type { PersonData } from '@persons/application/contracts';
-import type { Student } from '@students/domain/entities';
+import { Student } from '@students/domain/entities';
 
 export const STUDENT_REPOSITORY_PORT = Symbol('STUDENT_REPOSITORY_PORT');
 

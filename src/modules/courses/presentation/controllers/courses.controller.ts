@@ -1,9 +1,9 @@
 // modules/courses/presentation/controllers/courses.controller.ts
 
-import { type PaginatedResultDto, PaginationVO } from '@core/pagination';
+import { PaginatedResultDto, PaginationVO } from '@core/pagination';
 import { CreateCourseCommand } from '@courses/application/commands';
 import { ListCoursesQuery } from '@courses/application/queries';
-import type {
+import {
   CreateCourseUseCase,
   GetCourseByIdUseCase,
   ListCoursesUseCase,
@@ -12,7 +12,7 @@ import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs
 import { ApiTags } from '@nestjs/swagger';
 import { COURSE_ROUTES, COURSE_SWAGGER_TAG } from '../constants';
 import { ApiCreateCourse, ApiGetCourseById, ApiListCourses } from '../decorators';
-import type { CourseResponseDto, CreateCourseDto, ListCoursesQueryDto } from '../dtos';
+import { CourseResponseDto, CreateCourseDto, ListCoursesQueryDto } from '../dtos';
 import { CourseHttpMapper } from '../mappers';
 
 @ApiTags(COURSE_SWAGGER_TAG.name)

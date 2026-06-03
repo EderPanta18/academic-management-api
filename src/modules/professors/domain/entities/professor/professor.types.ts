@@ -1,6 +1,6 @@
 // modules/professors/domain/entities/professor/professor.types.ts
 
-import type { ProfessorStatus } from '@professors/domain/constants';
+import { ProfessorStatus } from '@professors/domain/constants';
 
 export interface ProfessorProps {
   id: number;

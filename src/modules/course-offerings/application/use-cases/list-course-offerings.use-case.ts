@@ -1,13 +1,13 @@
 // modules/course-offerings/application/use-cases/list-course-offerings.use-case.ts
 
-import { PaginatedResultDto, type PaginationVO } from '@core/pagination';
+import { PaginatedResultDto, PaginationVO } from '@core/pagination';
 import {
   COURSE_OFFERING_REPOSITORY_PORT,
   type ICourseOfferingRepository,
 } from '@course-offerings/application/ports/out';
-import type { CourseOffering } from '@course-offerings/domain/entities';
+import { CourseOffering } from '@course-offerings/domain/entities';
 import { Inject, Injectable } from '@nestjs/common';
-import type { ListCourseOfferingsQuery } from '../queries';
+import { ListCourseOfferingsQuery } from '../queries';
 
 @Injectable()
 export class ListCourseOfferingsUseCase {

@@ -2,7 +2,6 @@
 
 import type { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
 import type { SwaggerTag } from './swagger.types';
 
 export interface SwaggerSetupOptions {

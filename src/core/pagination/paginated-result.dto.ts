@@ -1,6 +1,6 @@
 // core/pagination/paginated-result.dto.ts
 
-import type { PaginationVO } from './pagination.vo';
+import { PaginationVO } from './pagination.vo';
 
 export class PaginatedResultDto<T> {
   readonly items: T[];

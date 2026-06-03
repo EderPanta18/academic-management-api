@@ -1,8 +1,8 @@
 // modules/enrollments/infrastructure/persistence/mappers/enrollment-persistence.mapper.ts
 
-import type { EnrollmentStatus } from '@enrollments/domain/constants';
+import { EnrollmentStatus } from '@enrollments/domain/constants';
 import { Enrollment, type EnrollmentStatusLogProps } from '@enrollments/domain/entities';
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 type EnrollmentRaw = Prisma.EnrollmentGetPayload<Record<string, never>>;
 type EnrollmentStatusLogRaw = Prisma.EnrollmentStatusLogGetPayload<Record<string, never>>;

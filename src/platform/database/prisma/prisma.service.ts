@@ -1,7 +1,7 @@
 // platform/database/prisma/prisma.service.ts
 
 import { Injectable, type OnModuleDestroy, type OnModuleInit } from '@nestjs/common';
-import type { RuntimeConfigService } from '@platform/config';
+import { RuntimeConfigService } from '@platform/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 

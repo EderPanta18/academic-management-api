@@ -1,7 +1,6 @@
 // modules/persons/application/services/person-creation-validator.service.ts
 
 import { Inject, Injectable } from '@nestjs/common';
-
 import { Person } from '@persons/domain/entities';
 import {
   PersonDniAlreadyExistsException,

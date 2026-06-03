@@ -1,13 +1,12 @@
 // platform/http/pipes/request-validation.pipe.ts
 
 import type { ValidationError } from '@nestjs/common';
-import { BadRequestException, ValidationPipe as NestValidationPipe } from '@nestjs/common';
-
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import type { ApiErrorResponse } from '../responses';
 
 type RequestValidationErrorPayload = Omit<ApiErrorResponse, 'timestamp' | 'path'>;
 
-export class RequestValidationPipe extends NestValidationPipe {
+export class RequestValidationPipe extends ValidationPipe {
   constructor() {
     super({
       transform: true,

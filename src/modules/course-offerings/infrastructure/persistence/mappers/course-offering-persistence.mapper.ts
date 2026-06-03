@@ -1,8 +1,8 @@
 // modules/course-offerings/infrastructure/persistence/mappers/course-offering-persistence.mapper.ts
 
-import type { CourseOfferingStatus } from '@course-offerings/domain/constants';
+import { CourseOfferingStatus } from '@course-offerings/domain/constants';
 import { CourseOffering } from '@course-offerings/domain/entities';
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 type CourseOfferingRaw = Prisma.CourseOfferingGetPayload<Record<string, never>>;
 

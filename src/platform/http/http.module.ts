@@ -2,7 +2,6 @@
 
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
-
 import { AllExceptionsFilter, DomainExceptionFilter } from './filters';
 import { HealthController } from './health';
 import { HttpLoggingInterceptor, SuccessResponseInterceptor } from './interceptors';

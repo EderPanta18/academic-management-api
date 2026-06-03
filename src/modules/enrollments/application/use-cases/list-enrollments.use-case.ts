@@ -1,13 +1,13 @@
 // modules/enrollments/application/use-cases/list-enrollments.use-case.ts
 
-import { PaginatedResultDto, type PaginationVO } from '@core/pagination';
+import { PaginatedResultDto, PaginationVO } from '@core/pagination';
 import {
   ENROLLMENT_REPOSITORY_PORT,
   type IEnrollmentRepository,
 } from '@enrollments/application/ports/out';
-import type { Enrollment } from '@enrollments/domain/entities';
+import { Enrollment } from '@enrollments/domain/entities';
 import { Inject, Injectable } from '@nestjs/common';
-import type { ListEnrollmentsQuery } from '../queries';
+import { ListEnrollmentsQuery } from '../queries';
 
 @Injectable()
 export class ListEnrollmentsUseCase {

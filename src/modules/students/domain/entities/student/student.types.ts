@@ -1,6 +1,6 @@
 // modules/students/domain/entities/student/student.types.ts
 
-import type { StudentStatus } from '@students/domain/constants';
+import { StudentStatus } from '@students/domain/constants';
 
 export interface StudentProps {
   id: number;

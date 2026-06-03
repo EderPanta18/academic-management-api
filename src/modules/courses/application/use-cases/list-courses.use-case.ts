@@ -1,10 +1,10 @@
 // modules/courses/application/use-cases/list-courses.use-case.ts
 
-import { PaginatedResultDto, type PaginationVO } from '@core/pagination';
+import { PaginatedResultDto, PaginationVO } from '@core/pagination';
 import { COURSE_REPOSITORY_PORT, type ICourseRepository } from '@courses/application/ports/out';
-import type { Course } from '@courses/domain/entities';
+import { Course } from '@courses/domain/entities';
 import { Inject, Injectable } from '@nestjs/common';
-import type { ListCoursesQuery } from '../queries';
+import { ListCoursesQuery } from '../queries';
 
 @Injectable()
 export class ListCoursesUseCase {

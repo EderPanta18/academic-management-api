@@ -2,7 +2,6 @@
 
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-
 import { validateEnvironment } from './env.validation';
 import { RuntimeConfigService } from './runtime-config.service';
 

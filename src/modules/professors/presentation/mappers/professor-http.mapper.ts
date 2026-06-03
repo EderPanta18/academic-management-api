@@ -1,9 +1,9 @@
 // modules/professors/presentation/mappers/professor-http.mapper.ts
 
-import { PaginatedResultDto, type PaginationVO } from '@core/pagination';
-import type { CreateProfessorCommand } from '@professors/application/commands';
+import { PaginatedResultDto, PaginationVO } from '@core/pagination';
+import { CreateProfessorCommand } from '@professors/application/commands';
 import type { ProfessorView } from '@professors/application/read-models';
-import type { Professor } from '@professors/domain/entities';
+import { Professor } from '@professors/domain/entities';
 import { ProfessorResponseDto } from '../dtos';
 
 export class ProfessorHttpMapper {

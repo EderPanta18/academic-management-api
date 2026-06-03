@@ -1,9 +1,9 @@
 // modules/enrollments/presentation/controllers/enrollments.controller.ts
 
-import { type PaginatedResultDto, PaginationVO } from '@core/pagination';
+import { PaginatedResultDto, PaginationVO } from '@core/pagination';
 import { EnrollStudentCommand } from '@enrollments/application/commands';
 import { ListEnrollmentsQuery } from '@enrollments/application/queries';
-import type {
+import {
   EnrollStudentUseCase,
   GetEnrollmentByIdUseCase,
   ListEnrollmentsUseCase,
@@ -12,7 +12,7 @@ import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs
 import { ApiTags } from '@nestjs/swagger';
 import { ENROLLMENT_ROUTES, ENROLLMENT_SWAGGER_TAG } from '../constants';
 import { ApiEnrollStudent, ApiGetEnrollmentById, ApiListEnrollments } from '../decorators';
-import type { EnrollmentResponseDto, EnrollStudentDto, ListEnrollmentsQueryDto } from '../dtos';
+import { EnrollmentResponseDto, EnrollStudentDto, ListEnrollmentsQueryDto } from '../dtos';
 import { EnrollmentHttpMapper } from '../mappers';
 
 @ApiTags(ENROLLMENT_SWAGGER_TAG.name)

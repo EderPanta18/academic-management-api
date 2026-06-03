@@ -6,14 +6,14 @@ import {
   type ICourseOfferingRepository,
 } from '@course-offerings/application/ports/out';
 import { CourseOfferingStatus } from '@course-offerings/domain/constants';
-import type { CourseOffering } from '@course-offerings/domain/entities';
+import { CourseOffering } from '@course-offerings/domain/entities';
 import {
   CourseOfferingInvalidStatusException,
   CourseOfferingNotFoundException,
 } from '@course-offerings/domain/exceptions';
 import { Inject, Injectable } from '@nestjs/common';
 import { type IProfessorFinder, PROFESSOR_FINDER_PORT } from '@professors/application/ports/in';
-import type { AssignProfessorToOfferingCommand } from '../commands';
+import { AssignProfessorToOfferingCommand } from '../commands';
 import { ProfessorNotActiveForAssignmentException } from '../exceptions';
 
 @Injectable()

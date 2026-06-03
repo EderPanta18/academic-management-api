@@ -16,7 +16,7 @@ import {
 } from '@enrollments/domain/exceptions';
 import { Inject, Injectable } from '@nestjs/common';
 import { type IStudentFinder, STUDENT_FINDER_PORT } from '@students/application/ports/in';
-import type { EnrollStudentCommand } from '../commands';
+import { EnrollStudentCommand } from '../commands';
 import {
   CourseOfferingNotOpenException,
   EnrollmentCareerMismatchException,

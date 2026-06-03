@@ -16,7 +16,7 @@ import { STUDENT_BULK_IMPORT } from '@students/presentation/constants';
 import { StudentImportHttpMapper } from '@students/presentation/mappers';
 import { validateSync } from 'class-validator';
 import type { Request } from 'express';
-import type { Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 export interface ParsedImportData {
   validRows: StudentRowInput[];

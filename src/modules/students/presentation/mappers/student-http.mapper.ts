@@ -1,9 +1,9 @@
 // modules/students/presentation/mappers/student-http.mapper.ts
 
-import { PaginatedResultDto, type PaginationVO } from '@core/pagination';
-import type { CreateStudentCommand } from '@students/application/commands';
+import { PaginatedResultDto, PaginationVO } from '@core/pagination';
+import { CreateStudentCommand } from '@students/application/commands';
 import type { StudentView } from '@students/application/read-models';
-import type { Student } from '@students/domain/entities';
+import { Student } from '@students/domain/entities';
 import { StudentResponseDto } from '../dtos';
 
 export class StudentHttpMapper {

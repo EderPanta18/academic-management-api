@@ -1,6 +1,6 @@
 // modules/enrollments/domain/exceptions/enrollment-invalid-status-transition.exception.ts
 
-import type { EnrollmentStatus } from '../constants';
+import { EnrollmentStatus } from '../constants';
 import { EnrollmentException } from './enrollment.exception';
 
 export class EnrollmentInvalidStatusTransitionException extends EnrollmentException {

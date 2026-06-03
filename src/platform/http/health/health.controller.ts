@@ -2,8 +2,7 @@
 
 import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-
-import type { RuntimeConfigService } from '@platform/config';
+import { RuntimeConfigService } from '@platform/config';
 import { HEALTH_SWAGGER_TAG } from './health-constants';
 
 @ApiTags(HEALTH_SWAGGER_TAG.name)
@@ -18,7 +17,6 @@ export class HealthController {
       status: 'ok',
       environment: this.config.nodeEnv,
       uptime: process.uptime(),
-      timestamp: new Date().toISOString(),
     };
   }
 }

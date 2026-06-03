@@ -1,7 +1,6 @@
 // platform.module.ts
 
 import { Module } from '@nestjs/common';
-
 import { RuntimeConfigModule } from './config';
 import { PrismaModule } from './database';
 import { HttpModule } from './http';

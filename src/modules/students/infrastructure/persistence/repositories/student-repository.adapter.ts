@@ -1,9 +1,9 @@
 // modules/students/infrastructure/persistence/repositories/student-repository.adapter.ts
 
-import type { PaginationVO } from '@core/pagination';
+import { PaginationVO } from '@core/pagination';
 import { Injectable } from '@nestjs/common';
-import type { PrismaService } from '@platform/database';
-import type { Prisma } from '@prisma/client';
+import { PrismaService } from '@platform/database';
+import { Prisma } from '@prisma/client';
 import type {
   FindAllStudentsFilters,
   IStudentFinder,
@@ -13,7 +13,7 @@ import type {
 } from '@students/application/ports';
 import type { StudentView } from '@students/application/read-models';
 import { StudentStatus } from '@students/domain/constants';
-import type { Student } from '@students/domain/entities';
+import { Student } from '@students/domain/entities';
 import { StudentPersistenceMapper } from '../mappers';
 
 @Injectable()

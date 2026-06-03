@@ -16,7 +16,7 @@ import {
   ProfessorCodeAlreadyExistsException,
   ProfessorEmailAlreadyExistsException,
 } from '@professors/domain/exceptions';
-import type { CreateProfessorCommand } from '../commands';
+import { CreateProfessorCommand } from '../commands';
 
 @Injectable()
 export class CreateProfessorUseCase {

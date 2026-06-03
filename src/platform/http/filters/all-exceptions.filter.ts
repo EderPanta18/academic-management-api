@@ -7,9 +7,8 @@ import {
   HttpException,
   Logger,
 } from '@nestjs/common';
-import type { RuntimeConfigService } from '@platform/config';
+import { RuntimeConfigService } from '@platform/config';
 import type { Request, Response } from 'express';
-
 import type { ApiErrorResponse } from '../responses';
 
 @Catch()

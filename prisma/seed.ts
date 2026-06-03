@@ -11,6 +11,7 @@ async function main() {
 
     const baseMaps = await seedBaseTables(prisma);
     const academicMaps = await seedAcademicStructure(prisma, baseMaps);
+
     await seedEnrollments(prisma, academicMaps);
 
     console.log('\n¡Poblado de base de datos completado exitosamente!');
@@ -19,6 +20,7 @@ async function main() {
     process.exit(1);
   } finally {
     console.log('\nDesconectando DB ....');
+
     await prisma.disconnect();
   }
 }

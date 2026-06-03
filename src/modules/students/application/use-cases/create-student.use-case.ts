@@ -1,7 +1,6 @@
 // modules/students/application/use-cases/create-student.use-case.ts
 
 import { CAREER_FINDER_PORT, type ICareerFinder } from '@careers/application/ports/in';
-
 import { EntityNotFoundException } from '@core/exceptions';
 import { Inject, Injectable } from '@nestjs/common';
 import {
@@ -14,7 +13,7 @@ import {
   StudentCodeAlreadyExistsException,
   StudentEmailAlreadyExistsException,
 } from '@students/domain/exceptions';
-import type { CreateStudentCommand } from '../commands';
+import { CreateStudentCommand } from '../commands';
 
 @Injectable()
 export class CreateStudentUseCase {

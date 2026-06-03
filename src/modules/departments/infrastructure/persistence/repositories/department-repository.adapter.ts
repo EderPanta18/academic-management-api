@@ -2,7 +2,7 @@
 
 import type { IDepartmentFinder } from '@departments/application/ports/in';
 import { Injectable } from '@nestjs/common';
-import type { PrismaService } from '@platform/database';
+import { PrismaService } from '@platform/database';
 
 @Injectable()
 export class DepartmentRepository implements IDepartmentFinder {

@@ -1,10 +1,10 @@
 // modules/students/application/use-cases/list-students.use-case.ts
 
-import { PaginatedResultDto, type PaginationVO } from '@core/pagination';
+import { PaginatedResultDto, PaginationVO } from '@core/pagination';
 import { Inject, Injectable } from '@nestjs/common';
 import { type IStudentQuery, STUDENT_QUERY_PORT } from '@students/application/ports/out';
 import type { StudentView } from '@students/application/read-models';
-import type { ListStudentsQuery } from '../queries';
+import { ListStudentsQuery } from '../queries';
 
 @Injectable()
 export class ListStudentsUseCase {

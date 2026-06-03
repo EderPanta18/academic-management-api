@@ -1,6 +1,6 @@
 // modules/students/application/ports/out/student-query.port.ts
 
-import type { PaginationVO } from '@core/pagination';
+import { PaginationVO } from '@core/pagination';
 import type { StudentView } from '@students/application/read-models';
 
 export const STUDENT_QUERY_PORT = Symbol('STUDENT_QUERY_PORT');

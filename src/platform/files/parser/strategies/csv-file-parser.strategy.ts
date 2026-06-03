@@ -2,7 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 import * as XLSX from 'xlsx';
-
 import type { IFileParserStrategy } from './file-parser.strategy';
 
 @Injectable()
@@ -17,6 +16,7 @@ export class CsvFileParserStrategy implements IFileParserStrategy {
       raw: true,
     });
     const sheet = wb.Sheets[wb.SheetNames[0]];
+
     return XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, {
       defval: '',
       raw: true,

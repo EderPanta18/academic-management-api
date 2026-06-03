@@ -3,8 +3,8 @@
 import { DomainException } from '@core/exceptions';
 import { Injectable } from '@nestjs/common';
 import type { BulkResult, BulkRowError } from '@shared/types';
-import { type BulkImportStudentsCommand, CreateStudentCommand } from '../commands';
-import type { CreateStudentUseCase } from './create-student.use-case';
+import { BulkImportStudentsCommand, CreateStudentCommand } from '../commands';
+import { CreateStudentUseCase } from './create-student.use-case';
 
 @Injectable()
 export class BulkImportStudentsUseCase {

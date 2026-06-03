@@ -1,6 +1,6 @@
 // modules/course-offerings/infrastructure/persistence/repositories/course-offering-repository.adapter.ts
 
-import type { PaginationVO } from '@core/pagination';
+import { PaginationVO } from '@core/pagination';
 import type {
   FindAllCourseOfferingsFilters,
   ICourseOfferingFinder,
@@ -9,8 +9,8 @@ import type {
 import { CourseOfferingStatus } from '@course-offerings/domain/constants';
 import { CourseOffering } from '@course-offerings/domain/entities';
 import { Injectable } from '@nestjs/common';
-import type { PrismaService } from '@platform/database';
-import type { Prisma } from '@prisma/client';
+import { PrismaService } from '@platform/database';
+import { Prisma } from '@prisma/client';
 import { CourseOfferingPersistenceMapper } from '../mappers';
 
 @Injectable()

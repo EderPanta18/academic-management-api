@@ -1,12 +1,12 @@
 // modules/course-offerings/presentation/controllers/course-offerings.controller.ts
 
-import { type PaginatedResultDto, PaginationVO } from '@core/pagination';
+import { PaginatedResultDto, PaginationVO } from '@core/pagination';
 import {
   AssignProfessorToOfferingCommand,
   CreateCourseOfferingCommand,
 } from '@course-offerings/application/commands';
 import { ListCourseOfferingsQuery } from '@course-offerings/application/queries';
-import type {
+import {
   ActivateCourseOfferingUseCase,
   AssignProfessorToOfferingUseCase,
   CreateCourseOfferingUseCase,
@@ -23,7 +23,7 @@ import {
   ApiGetCourseOfferingById,
   ApiListCourseOfferings,
 } from '../decorators';
-import type {
+import {
   AssignProfessorDto,
   CourseOfferingResponseDto,
   CreateCourseOfferingDto,

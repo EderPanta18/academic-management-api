@@ -1,6 +1,6 @@
 // modules/students/application/read-models/student.view.ts
 
-import type { StudentStatus } from '@students/domain/constants';
+import { StudentStatus } from '@students/domain/constants';
 
 export type StudentView = {
   id: number;

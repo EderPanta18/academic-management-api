@@ -4,8 +4,7 @@ import {
   COURSE_OFFERING_REPOSITORY_PORT,
   type ICourseOfferingRepository,
 } from '@course-offerings/application/ports/out';
-
-import type { CourseOffering } from '@course-offerings/domain/entities';
+import { CourseOffering } from '@course-offerings/domain/entities';
 import { CourseOfferingNotFoundException } from '@course-offerings/domain/exceptions';
 import { Inject, Injectable } from '@nestjs/common';
 

@@ -1,7 +1,7 @@
 // modules/courses/infrastructure/persistence/mappers/course-persistence.mapper.ts
 
 import { Course } from '@courses/domain/entities';
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 type CourseRaw = Prisma.CourseGetPayload<Record<string, never>>;
 

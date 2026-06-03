@@ -1,15 +1,15 @@
 // modules/courses/infrastructure/persistence/repositories/course.repository.adapter.ts
 
-import type { PaginationVO } from '@core/pagination';
+import { PaginationVO } from '@core/pagination';
 import type {
   FindAllCoursesFilters,
   ICourseFinder,
   ICourseRepository,
 } from '@courses/application/ports';
-import type { Course } from '@courses/domain/entities';
+import { Course } from '@courses/domain/entities';
 import { Injectable } from '@nestjs/common';
-import type { PrismaService } from '@platform/database';
-import type { Prisma } from '@prisma/client';
+import { PrismaService } from '@platform/database';
+import { Prisma } from '@prisma/client';
 import { CoursePersistenceMapper } from '../mappers';
 
 @Injectable()

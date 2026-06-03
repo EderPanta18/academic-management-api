@@ -4,8 +4,7 @@ import {
   ENROLLMENT_REPOSITORY_PORT,
   type IEnrollmentRepository,
 } from '@enrollments/application/ports/out';
-
-import type { Enrollment } from '@enrollments/domain/entities';
+import { Enrollment } from '@enrollments/domain/entities';
 import { EnrollmentNotFoundException } from '@enrollments/domain/exceptions';
 import { Inject, Injectable } from '@nestjs/common';
 

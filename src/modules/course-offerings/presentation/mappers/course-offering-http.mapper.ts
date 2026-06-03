@@ -1,7 +1,7 @@
 // modules/course-offerings/presentation/mappers/course-offering-http.mapper.ts
 
-import { PaginatedResultDto, type PaginationVO } from '@core/pagination';
-import type { CourseOffering } from '@course-offerings/domain/entities';
+import { PaginatedResultDto, PaginationVO } from '@core/pagination';
+import { CourseOffering } from '@course-offerings/domain/entities';
 import { CourseOfferingResponseDto } from '../dtos';
 
 export class CourseOfferingHttpMapper {

@@ -4,7 +4,6 @@ import {
   ACADEMIC_PERIOD_FINDER_PORT,
   type IAcademicPeriodFinder,
 } from '@academic-periods/application/ports/in';
-
 import { EntityNotFoundException } from '@core/exceptions';
 import {
   COURSE_OFFERING_REPOSITORY_PORT,
@@ -15,7 +14,7 @@ import { CourseOfferingDuplicateException } from '@course-offerings/domain/excep
 import { COURSE_FINDER_PORT, type ICourseFinder } from '@courses/application/ports/in';
 import { Inject, Injectable } from '@nestjs/common';
 import { type IProfessorFinder, PROFESSOR_FINDER_PORT } from '@professors/application/ports/in';
-import type { CreateCourseOfferingCommand } from '../commands';
+import { CreateCourseOfferingCommand } from '../commands';
 import {
   AcademicPeriodNotCurrentException,
   ProfessorNotActiveForAssignmentException,

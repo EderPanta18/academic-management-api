@@ -1,9 +1,9 @@
 // modules/persons/infrastructure/persistence/mappers/professor-persistence.mapper.ts
 
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import type { ProfessorSaveData } from '@professors/application/ports/out';
 import type { ProfessorView } from '@professors/application/read-models';
-import type { ProfessorStatus } from '@professors/domain/constants';
+import { ProfessorStatus } from '@professors/domain/constants';
 import { Professor } from '@professors/domain/entities';
 
 type ProfessorRaw = Prisma.ProfessorGetPayload<{ include: { person: true } }>;

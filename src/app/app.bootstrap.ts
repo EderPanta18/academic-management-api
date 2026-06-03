@@ -1,7 +1,6 @@
 // app/app.bootstrap.ts
 
 import type { INestApplication } from '@nestjs/common';
-
 import { RuntimeConfigService } from '@platform/config';
 import { setupSwagger } from '@platform/http';
 import { APP_CONFIG, SWAGGER_TAGS } from './app.config';

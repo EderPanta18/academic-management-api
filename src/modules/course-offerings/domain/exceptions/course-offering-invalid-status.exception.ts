@@ -1,6 +1,6 @@
 // modules/course-offerings/domain/exceptions/course-offering-invalid-status.exception.ts
 
-import type { CourseOfferingStatus } from '../constants';
+import { CourseOfferingStatus } from '../constants';
 import { CourseOfferingException } from './course-offering.exception';
 
 export class CourseOfferingInvalidStatusException extends CourseOfferingException {

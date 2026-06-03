@@ -1,6 +1,6 @@
 // modules/course-offerings/application/queries/list-course-offerings.query.ts
 
-import type { CourseOfferingStatus } from '@course-offerings/domain/constants';
+import { CourseOfferingStatus } from '@course-offerings/domain/constants';
 
 interface ListCourseOfferingsQueryProps {
   courseId?: number;

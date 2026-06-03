@@ -1,6 +1,6 @@
 // modules/students/presentation/controllers/students.controller.ts
 
-import { type PaginatedResultDto, PaginationVO } from '@core/pagination';
+import { PaginatedResultDto, PaginationVO } from '@core/pagination';
 import {
   Body,
   Controller,
@@ -16,7 +16,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { BulkImportStudentsCommand, CreateStudentCommand } from '@students/application/commands';
 import { ListStudentsQuery } from '@students/application/queries';
-import type {
+import {
   BulkImportStudentsUseCase,
   CreateStudentUseCase,
   GetStudentByIdUseCase,
@@ -30,7 +30,7 @@ import {
   ApiGetStudentById,
   ApiListStudents,
 } from '../decorators';
-import type {
+import {
   BulkImportResultResponseDto,
   CreateStudentDto,
   ListStudentsQueryDto,

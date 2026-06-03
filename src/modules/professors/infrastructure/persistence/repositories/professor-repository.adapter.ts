@@ -1,9 +1,9 @@
 // modules/professors/infrastructure/persistence/repositories/professor-repository.adapter.ts
 
-import type { PaginationVO } from '@core/pagination';
+import { PaginationVO } from '@core/pagination';
 import { Injectable } from '@nestjs/common';
-import type { PrismaService } from '@platform/database';
-import type { Prisma } from '@prisma/client';
+import { PrismaService } from '@platform/database';
+import { Prisma } from '@prisma/client';
 import type {
   FindAllProfessorsFilters,
   IProfessorFinder,
@@ -13,7 +13,7 @@ import type {
 } from '@professors/application/ports';
 import type { ProfessorView } from '@professors/application/read-models';
 import { ProfessorStatus } from '@professors/domain/constants';
-import type { Professor } from '@professors/domain/entities';
+import { Professor } from '@professors/domain/entities';
 import { ProfessorPersistenceMapper } from '../mappers';
 
 @Injectable()

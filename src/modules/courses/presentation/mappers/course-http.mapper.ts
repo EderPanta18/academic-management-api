@@ -1,7 +1,7 @@
 // modules/courses/presentation/mappers/course-http.mapper.ts
 
-import { PaginatedResultDto, type PaginationVO } from '@core/pagination';
-import type { Course } from '@courses/domain/entities';
+import { PaginatedResultDto, PaginationVO } from '@core/pagination';
+import { Course } from '@courses/domain/entities';
 import { CourseResponseDto } from '../dtos';
 
 export class CourseHttpMapper {

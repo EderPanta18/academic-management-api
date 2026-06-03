@@ -11,7 +11,6 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-
 import { ApiPaginatedOperation } from '@shared/decorators';
 import { CreateProfessorDto, ProfessorResponseDto } from '../dtos';
 

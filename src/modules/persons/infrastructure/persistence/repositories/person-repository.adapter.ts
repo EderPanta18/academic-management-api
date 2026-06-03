@@ -2,7 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 import type { IPersonRepository } from '@persons/application/ports/out';
-import type { PrismaService } from '@platform/database';
+import { PrismaService } from '@platform/database';
 
 @Injectable()
 export class PersonRepository implements IPersonRepository {

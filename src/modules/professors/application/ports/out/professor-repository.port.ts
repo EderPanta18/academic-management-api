@@ -1,7 +1,7 @@
 // modules/professors/application/ports/out/professor-repository.port.ts
 
 import type { PersonData } from '@persons/application/contracts';
-import type { Professor } from '@professors/domain/entities';
+import { Professor } from '@professors/domain/entities';
 
 export const PROFESSOR_REPOSITORY_PORT = Symbol('PROFESSOR_REPOSITORY_PORT');
 

@@ -1,7 +1,7 @@
 // modules/enrollments/presentation/mappers/enrollment-http.mapper.ts
 
-import { PaginatedResultDto, type PaginationVO } from '@core/pagination';
-import type { Enrollment } from '@enrollments/domain/entities';
+import { PaginatedResultDto, PaginationVO } from '@core/pagination';
+import { Enrollment } from '@enrollments/domain/entities';
 import { EnrollmentResponseDto } from '../dtos';
 
 export class EnrollmentHttpMapper {

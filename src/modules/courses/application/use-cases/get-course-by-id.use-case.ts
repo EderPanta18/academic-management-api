@@ -1,8 +1,7 @@
 // modules/courses/application/use-cases/get-course-by-id.use-case.ts
 
 import { COURSE_REPOSITORY_PORT, type ICourseRepository } from '@courses/application/ports/out';
-
-import type { Course } from '@courses/domain/entities';
+import { Course } from '@courses/domain/entities';
 import { CourseNotFoundException } from '@courses/domain/exceptions';
 import { Inject, Injectable } from '@nestjs/common';
 

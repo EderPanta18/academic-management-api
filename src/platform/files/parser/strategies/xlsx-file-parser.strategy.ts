@@ -2,7 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 import * as XLSX from 'xlsx';
-
 import type { IFileParserStrategy } from './file-parser.strategy';
 
 @Injectable()

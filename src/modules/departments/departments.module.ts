@@ -1,7 +1,6 @@
 // modules/departments/departments.module.ts
 
 import { Module } from '@nestjs/common';
-
 import { DEPARTMENT_FINDER_PORT } from './application/ports';
 import { DepartmentRepository } from './infrastructure/persistence';
 

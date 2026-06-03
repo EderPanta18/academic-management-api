@@ -3,7 +3,6 @@
 import { DomainException } from '@core/exceptions';
 import { type ArgumentsHost, Catch, type ExceptionFilter } from '@nestjs/common';
 import type { Request, Response } from 'express';
-
 import type { ApiErrorResponse } from '../responses';
 
 @Catch(DomainException)

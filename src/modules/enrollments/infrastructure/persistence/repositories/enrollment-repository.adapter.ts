@@ -1,6 +1,6 @@
 // modules/enrollments/infrastructure/persistence/repositories/enrollment-repository.adapter.ts
 
-import type { PaginationVO } from '@core/pagination';
+import { PaginationVO } from '@core/pagination';
 import type {
   ChangeEnrollmentStatusProps,
   FindAllEnrollmentsFilters,
@@ -8,10 +8,10 @@ import type {
   IEnrollmentRepository,
 } from '@enrollments/application/ports';
 import { EnrollmentStatus } from '@enrollments/domain/constants';
-import type { Enrollment, EnrollmentStatusLogProps } from '@enrollments/domain/entities';
+import { Enrollment, type EnrollmentStatusLogProps } from '@enrollments/domain/entities';
 import { Injectable } from '@nestjs/common';
-import type { PrismaService } from '@platform/database';
-import type { Prisma } from '@prisma/client';
+import { PrismaService } from '@platform/database';
+import { Prisma } from '@prisma/client';
 import { EnrollmentPersistenceMapper } from '../mappers';
 
 @Injectable()

@@ -1,7 +1,6 @@
 // modules/courses/application/use-cases/create-course.use-case.ts
 
 import { CAREER_FINDER_PORT, type ICareerFinder } from '@careers/application/ports/in';
-
 import { EntityNotFoundException } from '@core/exceptions';
 import {
   COURSE_CATEGORY_FINDER_PORT,
@@ -11,7 +10,7 @@ import { COURSE_REPOSITORY_PORT, type ICourseRepository } from '@courses/applica
 import { Course } from '@courses/domain/entities';
 import { CourseDuplicateNameException } from '@courses/domain/exceptions';
 import { Inject, Injectable } from '@nestjs/common';
-import type { CreateCourseCommand } from '../commands';
+import { CreateCourseCommand } from '../commands';
 
 @Injectable()
 export class CreateCourseUseCase {
