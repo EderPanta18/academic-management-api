@@ -17,8 +17,8 @@ export class StudentImportHttpMapper {
   static toInput(dto: StudentImportRowDto, rowNumber: number): StudentRowInput {
     return {
       rowNumber,
-      firstName: dto.nombre,
-      lastName: dto.apellido,
+      firstName: dto.nombres,
+      lastName: dto.apellidos,
       dni: dto.dni,
       email: dto.email,
       code: dto.codigo,

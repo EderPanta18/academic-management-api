@@ -25,7 +25,7 @@ export class StudentImportRowDto {
   @IsString({ message: "El nombre debe ser una cadena de texto" })
   @IsNotEmpty({ message: "El nombre no puede estar vacío" })
   @MaxLength(100)
-  nombre!: string;
+  nombres!: string;
 
   @ApiProperty({ example: "Pérez García" })
   @Trim()
@@ -33,7 +33,7 @@ export class StudentImportRowDto {
   @IsString({ message: "El apellido debe ser una cadena de texto" })
   @IsNotEmpty({ message: "El apellido no puede estar vacío" })
   @MaxLength(100)
-  apellido!: string;
+  apellidos!: string;
 
   @ApiProperty({ example: "87654321" })
   @Trim()
