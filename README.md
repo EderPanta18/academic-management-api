@@ -166,7 +166,7 @@ docker compose --env-file .env.docker logs -f api
 6. Ejecuta las semillas solo si deseas cargar datos iniciales:
 
 ```bash
-docker compose --env-file .env.docker exec api pnpm prisma:seed
+docker compose --env-file .env.docker exec api pnpm prisma seed
 ```
 
 ### Detener el entorno

@@ -1,16 +1,17 @@
 allowBuilds:
-  '@nestjs/core': set this to true or false
-  '@prisma/engines': set this to true or false
-  '@scarf/scarf': set this to true or false
+  "@nestjs/core": set this to true or false
+  "@prisma/engines": set this to true or false
+  "@scarf/scarf": set this to true or false
   esbuild: set this to true or false
   prisma: set this to true or false
   unrs-resolver: set this to true or false
+
 ignoredBuiltDependencies:
-  - '@nestjs/core'
-  - '@prisma/engines'
+  - "@nestjs/core"
+  - "@prisma/engines"
   - prisma
   - unrs-resolver
 
 onlyBuiltDependencies:
-  - '@prisma/client'
-  - '@scarf/scarf'
+  - "@prisma/client"
+  - "@scarf/scarf"
