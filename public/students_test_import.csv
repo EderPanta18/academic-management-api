@@ -1,4 +1,4 @@
-nombres,apellidos,dni,email,codigo,careerId,fechaMatricula,emailInstitucional,telefono,fechaNacimiento
+nombres,apellidos,dni,email,codigo,carreraId,fechaMatricula,emailInstitucional,telefono,fechaNacimiento
 Rodrigo Alonso,Castillo Peña,11223344,rodrigo.castillo@gmail.com,0920260061,9,2026-03-01,r.castillo@unp.edu.pe,912345678,1995-08-12
 Sandra Beatriz,Ore Mamani,44332211,sandra.ore@gmail.com,0120260062,1,2026-03-01,,,
 Natalia Milagros,Cruz Pinedo,77889900,natalia.cruz@gmail.com,0820260063,28,2026-03-01,n.cruz@unp.edu.pe,945678123,1998-05-14
