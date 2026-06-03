@@ -83,8 +83,7 @@ export class StudentsController {
   ): Promise<PaginatedResultDto<StudentResponseDto>> {
     const pagination = new PaginationVO(queryDto.page, queryDto.pageSize);
 
-    const query = new ListStudentsQuery({ careerId: queryDto.careerId });
-
+    const query = new ListStudentsQuery(queryDto);
     const result = await this.listUseCase.execute(pagination, query);
 
     return StudentHttpMapper.toPaginatedResponse(result, pagination);
@@ -104,9 +103,13 @@ export class StudentsController {
   ): Promise<BulkImportResultResponseDto> {
     const { validRows, preErrors, totalRows } = req.importData;
 
-    const result = await this.bulkImportUseCase.execute(
-      new BulkImportStudentsCommand({ validRows, preErrors, totalRows })
-    );
+    const commnad = new BulkImportStudentsCommand({
+      validRows,
+      preErrors,
+      totalRows
+    });
+
+    const result = await this.bulkImportUseCase.execute(commnad);
 
     return StudentImportHttpMapper.toResponse(result);
   }

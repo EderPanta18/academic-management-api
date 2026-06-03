@@ -9,5 +9,5 @@ export const PROFESSOR_ROUTES = {
 
 export const PROFESSOR_SWAGGER_TAG = {
   name: "professors",
-  description: "Endpoints relacionados con la gestión de profesores"
+  description: "Endpoints relacionados con la gestión de profesores."
 } as const satisfies SwaggerTag;

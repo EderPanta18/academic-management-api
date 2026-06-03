@@ -1,9 +1,14 @@
 // modules/course-offerings/application/commands/create-course-offering.command.ts
 
-/**
- * Representa la intención de crear una nueva oferta de curso.
- * courseId y academicPeriodId son obligatorios — definen la oferta.
- */
+interface CreateCourseOfferingCommandProps {
+  courseId: number;
+  academicPeriodId: number;
+  professorId?: number;
+  section?: string;
+  maxStudents?: number;
+  enrollmentDeadline?: Date;
+}
+
 export class CreateCourseOfferingCommand {
   readonly courseId: number;
   readonly academicPeriodId: number;
@@ -12,7 +17,7 @@ export class CreateCourseOfferingCommand {
   readonly maxStudents?: number;
   readonly enrollmentDeadline?: Date;
 
-  constructor(props: CreateCourseOfferingCommand) {
+  constructor(props: CreateCourseOfferingCommandProps) {
     this.courseId = props.courseId;
     this.academicPeriodId = props.academicPeriodId;
     this.professorId = props.professorId;

@@ -1,26 +1,27 @@
 // modules/course-offerings/presentation/dtos/query/list-course-offerings-query.dto.ts
 
+import { Transform, Type } from "class-transformer";
 import {
   IsOptional,
   IsEnum,
   IsArray,
   IsInt,
-  IsPositive,
-} from 'class-validator';
-import { Transform, Type } from 'class-transformer';
-import { PaginationQueryDto } from '@shared/dtos';
-import { CourseOfferingStatus } from '@course-offerings/domain/constants';
+  IsPositive
+} from "class-validator";
+
+import { PaginationQueryDto } from "@shared/dtos";
+import { CourseOfferingStatus } from "@course-offerings/domain/constants";
 
 export class ListCourseOfferingsQueryDto extends PaginationQueryDto {
   @IsOptional()
-  @IsInt({ message: 'El id del curso debe ser un número entero' })
-  @IsPositive({ message: 'El id del curso debe ser positivo' })
+  @IsInt({ message: "El id del curso debe ser un número entero" })
+  @IsPositive({ message: "El id del curso debe ser positivo" })
   @Type(() => Number)
   courseId?: number;
 
   @IsOptional()
-  @IsInt({ message: 'El id del período debe ser un número entero' })
-  @IsPositive({ message: 'El id del período debe ser positivo' })
+  @IsInt({ message: "El id del período debe ser un número entero" })
+  @IsPositive({ message: "El id del período debe ser positivo" })
   @Type(() => Number)
   academicPeriodId?: number;
 
@@ -29,13 +30,13 @@ export class ListCourseOfferingsQueryDto extends PaginationQueryDto {
   @IsEnum(CourseOfferingStatus, {
     each: true,
     message: (args) =>
-      `Estado inválido: '${args.value}'. Debe ser uno de: ${Object.values(CourseOfferingStatus).join(', ')}`,
+      `Estado inválido: '${args.value}'. Debe ser uno de: ${Object.values(CourseOfferingStatus).join(", ")}`
   })
   @Transform(({ value }) => {
     const rawValues = Array.isArray(value)
       ? value
       : String(value)
-          .split(',')
+          .split(",")
           .map((v) => v.trim());
 
     return rawValues.map((v) => String(v).toUpperCase());

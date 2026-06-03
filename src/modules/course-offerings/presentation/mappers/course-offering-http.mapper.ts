@@ -1,12 +1,13 @@
 // modules/course-offerings/presentation/mappers/course-offering-http.mapper.ts
 
-import { PaginationVO, PaginatedResultDto } from '@core/pagination';
-import { CourseOffering } from '@course-offerings/domain/entities';
-import { CourseOfferingResponseDto } from '../dtos';
+import { PaginationVO, PaginatedResultDto } from "@core/pagination";
+import { CourseOffering } from "@course-offerings/domain/entities";
+import { CourseOfferingResponseDto } from "../dtos";
 
 export class CourseOfferingHttpMapper {
   static toResponse(offering: CourseOffering): CourseOfferingResponseDto {
     const dto = new CourseOfferingResponseDto();
+
     dto.id = offering.id!;
     dto.courseId = offering.courseId;
     dto.academicPeriodId = offering.academicPeriodId;
@@ -18,17 +19,18 @@ export class CourseOfferingHttpMapper {
     dto.canAssignProfessor = offering.canAssignProfessor;
     dto.isOpenForEnrollment = offering.isOpenForEnrollment;
     dto.hasProfessor = offering.hasProfessor;
+
     return dto;
   }
 
   static toPaginatedResponse(
     result: PaginatedResultDto<CourseOffering>,
-    pagination: PaginationVO,
+    pagination: PaginationVO
   ): PaginatedResultDto<CourseOfferingResponseDto> {
     return PaginatedResultDto.from(
       result.items.map(CourseOfferingHttpMapper.toResponse),
       result.total,
-      pagination,
+      pagination
     );
   }
 }

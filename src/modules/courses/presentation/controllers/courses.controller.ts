@@ -68,11 +68,7 @@ export class CoursesController {
   ): Promise<PaginatedResultDto<CourseResponseDto>> {
     const pagination = new PaginationVO(queryDto.page, queryDto.pageSize);
 
-    const query = new ListCoursesQuery({
-      careerId: queryDto.careerId,
-      categoryId: queryDto.categoryId
-    });
-
+    const query = new ListCoursesQuery(queryDto);
     const result = await this.listUseCase.execute(pagination, query);
 
     return CourseHttpMapper.toPaginatedResponse(result, pagination);

@@ -1,10 +1,11 @@
-// modules/course-offerings/presentation/pipes/status.pipe.ts
+// modules/course-offerings/presentation/pipes/course-offering-status.pipe.ts
 
-import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
-import { CourseOfferingStatus } from '@course-offerings/domain/constants';
+import { PipeTransform, Injectable, BadRequestException } from "@nestjs/common";
+
+import { CourseOfferingStatus } from "@course-offerings/domain/constants";
 
 @Injectable()
-export class StatusPipe implements PipeTransform {
+export class CourseOfferingStatusPipe implements PipeTransform {
   transform(value: any): CourseOfferingStatus[] | undefined {
     if (!value) return undefined;
 
@@ -16,12 +17,12 @@ export class StatusPipe implements PipeTransform {
       const validStatus =
         CourseOfferingStatus[upperStatus as keyof typeof CourseOfferingStatus];
 
-      if (!validStatus) {
+      if (!validStatus)
         throw new BadRequestException(
           `Estado inválido: '${status}'. ` +
-            `Debe ser uno de: ${Object.values(CourseOfferingStatus).join(', ')}`,
+            `Debe ser uno de: ${Object.values(CourseOfferingStatus).join(", ")}`
         );
-      }
+
       return validStatus;
     });
 

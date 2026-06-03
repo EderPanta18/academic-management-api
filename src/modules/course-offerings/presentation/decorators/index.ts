@@ -5,5 +5,5 @@ export {
   ApiListCourseOfferings,
   ApiGetCourseOfferingById,
   ApiAssignProfessorToOffering,
-  ApiActivateCourseOffering,
-} from './api-course-offering.decorator';
+  ApiActivateCourseOffering
+} from "./api-course-offering.decorator";

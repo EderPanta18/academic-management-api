@@ -9,5 +9,5 @@ export const COURSE_ROUTES = {
 
 export const COURSE_SWAGGER_TAG = {
   name: "courses",
-  description: "Endpoints relacionados con la gestión de cursos"
+  description: "Endpoints relacionados con la gestión de cursos."
 } as const satisfies SwaggerTag;

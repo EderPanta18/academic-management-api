@@ -1,3 +1,3 @@
 // modules/course-offerings/presentation/pipes/index.ts
 
-export { StatusPipe } from './status.pipe';
+export { CourseOfferingStatusPipe } from "./course-offering-status.pipe";

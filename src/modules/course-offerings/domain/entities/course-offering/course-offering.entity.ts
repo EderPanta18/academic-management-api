@@ -1,35 +1,22 @@
-// modules/course-offerings/domain/entities/course-offering.entity.ts
+// modules/course-offerings/domain/entities/course-offering/course-offering.entity.ts
 
-import { CourseOfferingStatus } from '../constants';
+import { CourseOfferingStatus } from "@course-offerings/domain/constants";
 import type {
   CourseOfferingProps,
-  CreateCourseOfferingProps,
-} from './course-offering.types';
+  CreateCourseOfferingProps
+} from "./course-offering.types";
 
-/**
- * Superset interno del constructor.
- */
-type InternalProps = {
+type CourseOfferingInternalProps = {
   id?: number;
   courseId: number;
   academicPeriodId: number;
   professorId?: number | null;
-  section?: string;
-  maxStudents?: number;
+  section?: string | null;
+  maxStudents?: number | null;
   enrollmentDeadline?: Date | null;
-  status?: CourseOfferingStatus;
+  status?: CourseOfferingStatus | null;
 };
 
-/**
- * Entidad de dominio CourseOffering.
- *
- * Representa la instancia semestral de un curso:
- * qué curso, en qué período, con qué profesor, en qué sección y con cuántos cupos.
- *
- * Ciclo de vida:
- *   CourseOffering.create()       → id undefined (nueva, no persistida)
- *   CourseOffering.reconstitute() → id number    (desde DB, ya persistida)
- */
 export class CourseOffering {
   readonly id?: number;
   readonly courseId: number;
@@ -40,19 +27,18 @@ export class CourseOffering {
   readonly enrollmentDeadline: Date | null;
   readonly status: CourseOfferingStatus;
 
-  private constructor(props: InternalProps) {
+  private constructor(props: CourseOfferingInternalProps) {
     this.id = props.id;
     this.courseId = props.courseId;
     this.academicPeriodId = props.academicPeriodId;
     this.professorId = props.professorId ?? null;
-    this.section = props.section ?? 'A';
+    this.section = props.section ?? "A";
     this.maxStudents = props.maxStudents ?? 30;
     this.enrollmentDeadline = props.enrollmentDeadline ?? null;
     this.status = props.status ?? CourseOfferingStatus.INACTIVE;
+
     Object.freeze(this);
   }
-
-  // ─── Factories ───────────────────────────────────────────────────────────
 
   static create(props: CreateCourseOfferingProps): CourseOffering {
     return new CourseOffering(props);
@@ -62,12 +48,6 @@ export class CourseOffering {
     return new CourseOffering(props);
   }
 
-  // ─── Reglas de negocio ───────────────────────────────────────────────────
-
-  /**
-   * Solo una oferta ACTIVE puede recibir un profesor asignado.
-   * CANCELLED y COMPLETED están cerradas; INACTIVE aún no está disponible.
-   */
   get canAssignProfessor(): boolean {
     return (
       this.status === CourseOfferingStatus.ACTIVE ||
@@ -75,13 +55,11 @@ export class CourseOffering {
     );
   }
 
-  /**
-   * Solo una oferta ACTIVE acepta nuevas inscripciones.
-   * Si enrollmentDeadline existe, también debe no haber vencido.
-   */
   get isOpenForEnrollment(): boolean {
     if (this.status !== CourseOfferingStatus.ACTIVE) return false;
+
     if (!this.enrollmentDeadline) return true;
+
     return new Date() <= this.enrollmentDeadline;
   }
 

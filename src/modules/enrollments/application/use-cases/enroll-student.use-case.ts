@@ -9,7 +9,7 @@ import {
 import {
   COURSE_OFFERING_FINDER_PORT,
   type ICourseOfferingFinder
-} from "@course-offerings/domain/ports/in";
+} from "@modules/course-offerings/application/ports/in";
 import { Enrollment } from "@enrollments/domain/entities";
 import {
   EnrollmentDuplicateException,

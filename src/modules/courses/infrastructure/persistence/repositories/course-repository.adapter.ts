@@ -37,8 +37,8 @@ export class CourseRepository implements ICourseRepository, ICourseFinder {
   ): Promise<[Course[], number]> {
     const where: Prisma.CourseWhereInput = {
       deletedAt: null,
-      ...(filters?.careerId ? { careerId: filters.careerId } : {}),
-      ...(filters?.categoryId ? { categoryId: filters.categoryId } : {})
+      ...(filters?.careerId && { careerId: filters.careerId }),
+      ...(filters?.categoryId && { categoryId: filters.categoryId })
     };
 
     const [raws, total] = await Promise.all([

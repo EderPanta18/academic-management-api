@@ -1,13 +1,9 @@
 // modules/course-offerings/application/commands/assign-professor-to-offering.command.ts
 
-/**
- * Representa la intención de asignar un profesor a una oferta de curso.
- */
-
-type AssignProfessorToOfferingCommandProps = {
+interface AssignProfessorToOfferingCommandProps {
   offeringId: number;
   professorId: number;
-};
+}
 
 export class AssignProfessorToOfferingCommand {
   readonly offeringId: number;

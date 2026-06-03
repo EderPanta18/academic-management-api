@@ -67,10 +67,7 @@ export class ProfessorsController {
   ): Promise<PaginatedResultDto<ProfessorResponseDto>> {
     const pagination = new PaginationVO(queryDto.page, queryDto.pageSize);
 
-    const query = new ListProfessorsQuery({
-      departmentId: queryDto.departmentId
-    });
-
+    const query = new ListProfessorsQuery(queryDto);
     const result = await this.listUseCase.execute(pagination, query);
 
     return ProfessorHttpMapper.toPaginatedResponse(result, pagination);

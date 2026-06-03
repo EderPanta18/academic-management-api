@@ -10,5 +10,5 @@ export const STUDENT_ROUTES = {
 
 export const STUDENT_SWAGGER_TAG = {
   name: "students",
-  description: "Endpoints relacionados con la gestión de estudiantes"
+  description: "Endpoints relacionados con la gestión de estudiantes."
 } as const satisfies SwaggerTag;
