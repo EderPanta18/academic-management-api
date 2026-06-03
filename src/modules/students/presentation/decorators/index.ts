@@ -1,8 +1,8 @@
 // modules/students/presentation/decorators/index.ts
 
 export {
+  ApiBulkImportStudents,
   ApiCreateStudent,
   ApiGetStudentById,
   ApiListStudents,
-  ApiBulkImportStudents
-} from "./api-student.decorator";
+} from './api-student.decorator';

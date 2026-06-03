@@ -1,3 +1,3 @@
 // modules/enrollments/presentation/dtos/query/index.ts
 
-export { ListEnrollmentsQueryDto } from "./list-enrollments-query.dto";
+export { ListEnrollmentsQueryDto } from './list-enrollments-query.dto';

@@ -1,11 +1,10 @@
 // modules/students/infrastructure/persistence/mappers/student-persistence.mapper.ts
 
-import { Prisma } from "@prisma/client";
-
-import { StudentStatus } from "@students/domain/constants";
-import { Student } from "@students/domain/entities";
-import type { StudentView } from "@students/application/read-models";
-import type { StudentSaveData } from "@students/application/ports/out";
+import type { Prisma } from '@prisma/client';
+import type { StudentSaveData } from '@students/application/ports/out';
+import type { StudentView } from '@students/application/read-models';
+import type { StudentStatus } from '@students/domain/constants';
+import { Student } from '@students/domain/entities';
 
 type StudentRaw = Prisma.StudentGetPayload<{ include: { person: true } }>;
 
@@ -39,7 +38,7 @@ export class StudentPersistenceMapper {
       code: raw.code,
       institutionalEmail: raw.institutionalEmail,
       enrollmentDate: raw.enrollmentDate,
-      status: raw.status as StudentStatus
+      status: raw.status as StudentStatus,
     });
   }
 
@@ -56,7 +55,7 @@ export class StudentPersistenceMapper {
       lastName: raw.person.lastName,
       email: raw.person.email,
       phone: raw.person.phone,
-      birthDate: raw.person.birthDate
+      birthDate: raw.person.birthDate,
     };
   }
 
@@ -70,15 +69,15 @@ export class StudentPersistenceMapper {
         lastName: personData.lastName,
         email: personData.email,
         phone: personData.phone,
-        birthDate: personData.birthDate
+        birthDate: personData.birthDate,
       },
       studentData: {
         careerId: student.careerId,
         code: student.code,
         institutionalEmail: student.institutionalEmail,
         enrollmentDate: student.enrollmentDate,
-        status: student.status
-      }
+        status: student.status,
+      },
     };
   }
 }

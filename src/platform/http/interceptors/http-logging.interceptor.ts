@@ -1,19 +1,19 @@
 // platform/http/interceptors/http-logging.interceptor.ts
 
 import {
-  CallHandler,
-  ExecutionContext,
+  type CallHandler,
+  type ExecutionContext,
   Injectable,
   Logger,
-  NestInterceptor
-} from "@nestjs/common";
-import type { Request, Response } from "express";
-import type { Observable } from "rxjs";
-import { tap } from "rxjs/operators";
+  type NestInterceptor,
+} from '@nestjs/common';
+import type { Request, Response } from 'express';
+import type { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class HttpLoggingInterceptor implements NestInterceptor {
-  private readonly logger = new Logger("HTTP");
+  private readonly logger = new Logger('HTTP');
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const http = context.switchToHttp();
@@ -29,11 +29,9 @@ export class HttpLoggingInterceptor implements NestInterceptor {
         next: () => {
           const durationMs = Date.now() - startedAt;
 
-          this.logger.log(
-            `${method} ${path} → ${res.statusCode} [${durationMs}ms]`
-          );
-        }
-      })
+          this.logger.log(`${method} ${path} → ${res.statusCode} [${durationMs}ms]`);
+        },
+      }),
     );
   }
 }

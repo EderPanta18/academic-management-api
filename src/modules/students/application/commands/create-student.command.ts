@@ -1,6 +1,6 @@
 // modules/students/application/commands/create-student.command.ts
 
-import { StudentStatus } from "@students/domain/constants";
+import type { StudentStatus } from '@students/domain/constants';
 
 interface CreateStudentCommandProps {
   dni: string;

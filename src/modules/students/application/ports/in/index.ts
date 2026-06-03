@@ -1,6 +1,6 @@
 // modules/students/application/ports/in/index.ts
 
 export {
+  type IStudentFinder,
   STUDENT_FINDER_PORT,
-  type IStudentFinder
-} from "./student-finder.port";
+} from './student-finder.port';

@@ -1,28 +1,21 @@
 // modules/enrollments/presentation/dtos/query/list-enrollments-query.dto.ts
 
-import { Type, Transform } from "class-transformer";
-import {
-  IsOptional,
-  IsInt,
-  IsPositive,
-  IsEnum,
-  IsArray
-} from "class-validator";
-
-import { PaginationQueryDto } from "@shared/dtos";
-import { EnrollmentStatus } from "@enrollments/domain/constants";
+import { EnrollmentStatus } from '@enrollments/domain/constants';
+import { PaginationQueryDto } from '@shared/dtos';
+import { Transform, Type } from 'class-transformer';
+import { IsArray, IsEnum, IsInt, IsOptional, IsPositive } from 'class-validator';
 
 export class ListEnrollmentsQueryDto extends PaginationQueryDto {
   @IsOptional()
   @Type(() => Number)
-  @IsInt({ message: "El id del alumno debe ser un número entero" })
-  @IsPositive({ message: "El id del alumno debe ser positivo" })
+  @IsInt({ message: 'El id del alumno debe ser un número entero' })
+  @IsPositive({ message: 'El id del alumno debe ser positivo' })
   studentId?: number;
 
   @IsOptional()
   @Type(() => Number)
-  @IsInt({ message: "El id de la oferta debe ser un número entero" })
-  @IsPositive({ message: "El id de la oferta debe ser positivo" })
+  @IsInt({ message: 'El id de la oferta debe ser un número entero' })
+  @IsPositive({ message: 'El id de la oferta debe ser positivo' })
   courseOfferingId?: number;
 
   @IsOptional()
@@ -30,7 +23,7 @@ export class ListEnrollmentsQueryDto extends PaginationQueryDto {
   @IsEnum(EnrollmentStatus, {
     each: true,
     message: (args) =>
-      `Estado inválido: '${args.value}'. Debe ser uno de: ${Object.values(EnrollmentStatus).join(", ")}`
+      `Estado inválido: '${args.value}'. Debe ser uno de: ${Object.values(EnrollmentStatus).join(', ')}`,
   })
   @Transform(({ value }) => {
     if (!value) return undefined;
@@ -38,7 +31,7 @@ export class ListEnrollmentsQueryDto extends PaginationQueryDto {
     const rawValues = Array.isArray(value)
       ? value
       : String(value)
-          .split(",")
+          .split(',')
           .map((v) => v.trim());
 
     return rawValues.map((v) => String(v).toUpperCase());

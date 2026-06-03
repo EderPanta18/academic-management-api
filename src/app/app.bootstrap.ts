@@ -1,17 +1,17 @@
 // app/app.bootstrap.ts
 
-import type { INestApplication } from "@nestjs/common";
+import type { INestApplication } from '@nestjs/common';
 
-import { RuntimeConfigService } from "@platform/config";
-import { setupSwagger } from "@platform/http";
-import { APP_CONFIG, SWAGGER_TAGS } from "./app.config";
+import { RuntimeConfigService } from '@platform/config';
+import { setupSwagger } from '@platform/http';
+import { APP_CONFIG, SWAGGER_TAGS } from './app.config';
 
 export function bootstrapApp(app: INestApplication): void {
   const config = app.get(RuntimeConfigService);
 
   app.enableCors({
     credentials: true,
-    origin: config.corsOrigins
+    origin: config.corsOrigins,
   });
 
   app.setGlobalPrefix(APP_CONFIG.apiPrefix);
@@ -21,6 +21,6 @@ export function bootstrapApp(app: INestApplication): void {
     path: `${APP_CONFIG.apiPrefix}/${APP_CONFIG.docsPath}`,
     title: APP_CONFIG.name,
     version: APP_CONFIG.version,
-    tags: SWAGGER_TAGS
+    tags: SWAGGER_TAGS,
   });
 }

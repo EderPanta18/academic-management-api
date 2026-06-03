@@ -1,10 +1,7 @@
 // modules/course-offerings/domain/entities/course-offering/course-offering.entity.ts
 
-import { CourseOfferingStatus } from "@course-offerings/domain/constants";
-import type {
-  CourseOfferingProps,
-  CreateCourseOfferingProps
-} from "./course-offering.types";
+import { CourseOfferingStatus } from '@course-offerings/domain/constants';
+import type { CourseOfferingProps, CreateCourseOfferingProps } from './course-offering.types';
 
 type CourseOfferingInternalProps = {
   id?: number;
@@ -32,7 +29,7 @@ export class CourseOffering {
     this.courseId = props.courseId;
     this.academicPeriodId = props.academicPeriodId;
     this.professorId = props.professorId ?? null;
-    this.section = props.section ?? "A";
+    this.section = props.section ?? 'A';
     this.maxStudents = props.maxStudents ?? 30;
     this.enrollmentDeadline = props.enrollmentDeadline ?? null;
     this.status = props.status ?? CourseOfferingStatus.INACTIVE;
@@ -50,8 +47,7 @@ export class CourseOffering {
 
   get canAssignProfessor(): boolean {
     return (
-      this.status === CourseOfferingStatus.ACTIVE ||
-      this.status === CourseOfferingStatus.INACTIVE
+      this.status === CourseOfferingStatus.ACTIVE || this.status === CourseOfferingStatus.INACTIVE
     );
   }
 

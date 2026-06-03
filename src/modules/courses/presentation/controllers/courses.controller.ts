@@ -1,36 +1,19 @@
 // modules/courses/presentation/controllers/courses.controller.ts
 
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-  Query
-} from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-
-import { PaginationVO, PaginatedResultDto } from "@core/pagination";
-import { CreateCourseCommand } from "@courses/application/commands";
-import { ListCoursesQuery } from "@courses/application/queries";
-import {
+import { type PaginatedResultDto, PaginationVO } from '@core/pagination';
+import { CreateCourseCommand } from '@courses/application/commands';
+import { ListCoursesQuery } from '@courses/application/queries';
+import type {
   CreateCourseUseCase,
+  GetCourseByIdUseCase,
   ListCoursesUseCase,
-  GetCourseByIdUseCase
-} from "@courses/application/use-cases";
-import { COURSE_ROUTES, COURSE_SWAGGER_TAG } from "../constants";
-import {
-  ApiCreateCourse,
-  ApiGetCourseById,
-  ApiListCourses
-} from "../decorators";
-import {
-  CreateCourseDto,
-  CourseResponseDto,
-  ListCoursesQueryDto
-} from "../dtos";
-import { CourseHttpMapper } from "../mappers";
+} from '@courses/application/use-cases';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { COURSE_ROUTES, COURSE_SWAGGER_TAG } from '../constants';
+import { ApiCreateCourse, ApiGetCourseById, ApiListCourses } from '../decorators';
+import type { CourseResponseDto, CreateCourseDto, ListCoursesQueryDto } from '../dtos';
+import { CourseHttpMapper } from '../mappers';
 
 @ApiTags(COURSE_SWAGGER_TAG.name)
 @Controller(COURSE_ROUTES.BASE)
@@ -38,7 +21,7 @@ export class CoursesController {
   constructor(
     private readonly createUseCase: CreateCourseUseCase,
     private readonly listUseCase: ListCoursesUseCase,
-    private readonly getByIdUseCase: GetCourseByIdUseCase
+    private readonly getByIdUseCase: GetCourseByIdUseCase,
   ) {}
 
   @Post()
@@ -53,9 +36,7 @@ export class CoursesController {
 
   @Get(COURSE_ROUTES.GET_BY_ID)
   @ApiGetCourseById()
-  async getById(
-    @Param("id", ParseIntPipe) id: number
-  ): Promise<CourseResponseDto> {
+  async getById(@Param('id', ParseIntPipe) id: number): Promise<CourseResponseDto> {
     const course = await this.getByIdUseCase.execute(id);
 
     return CourseHttpMapper.toResponse(course);
@@ -64,7 +45,7 @@ export class CoursesController {
   @Get()
   @ApiListCourses()
   async list(
-    @Query() queryDto: ListCoursesQueryDto
+    @Query() queryDto: ListCoursesQueryDto,
   ): Promise<PaginatedResultDto<CourseResponseDto>> {
     const pagination = new PaginationVO(queryDto.page, queryDto.pageSize);
 

@@ -1,21 +1,20 @@
 // modules/professors/infrastructure/persistence/repositories/professor-repository.adapter.ts
 
-import { Injectable } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
-
-import { PaginationVO } from "@core/pagination";
-import { PrismaService } from "@platform/database";
-import { ProfessorStatus } from "@professors/domain/constants";
-import { Professor } from "@professors/domain/entities";
-import type { ProfessorView } from "@professors/application/read-models";
+import type { PaginationVO } from '@core/pagination';
+import { Injectable } from '@nestjs/common';
+import type { PrismaService } from '@platform/database';
+import type { Prisma } from '@prisma/client';
 import type {
-  IProfessorRepository,
-  IProfessorQuery,
+  FindAllProfessorsFilters,
   IProfessorFinder,
+  IProfessorQuery,
+  IProfessorRepository,
   ProfessorSaveData,
-  FindAllProfessorsFilters
-} from "@professors/application/ports";
-import { ProfessorPersistenceMapper } from "../mappers";
+} from '@professors/application/ports';
+import type { ProfessorView } from '@professors/application/read-models';
+import { ProfessorStatus } from '@professors/domain/constants';
+import type { Professor } from '@professors/domain/entities';
+import { ProfessorPersistenceMapper } from '../mappers';
 
 @Injectable()
 export class ProfessorRepository
@@ -33,7 +32,7 @@ export class ProfessorRepository
 
   async existsByCode(code: string): Promise<boolean> {
     const count = await this.prisma.professor.count({
-      where: { code, deletedAt: null }
+      where: { code, deletedAt: null },
     });
 
     return count > 0;
@@ -41,7 +40,7 @@ export class ProfessorRepository
 
   async existsByInstitutionalEmail(email: string): Promise<boolean> {
     const count = await this.prisma.professor.count({
-      where: { institutionalEmail: email, deletedAt: null }
+      where: { institutionalEmail: email, deletedAt: null },
     });
 
     return count > 0;
@@ -51,12 +50,12 @@ export class ProfessorRepository
     await this.prisma.$transaction(async (tx) => {
       await tx.professor.update({
         where: { personId: id },
-        data: { deletedAt: new Date() }
+        data: { deletedAt: new Date() },
       });
 
       await tx.person.update({
         where: { id },
-        data: { deletedAt: new Date() }
+        data: { deletedAt: new Date() },
       });
     });
   }
@@ -66,7 +65,7 @@ export class ProfessorRepository
   async findById(id: number): Promise<ProfessorView | null> {
     const raw = await this.prisma.professor.findFirst({
       where: { personId: id, deletedAt: null, person: { deletedAt: null } },
-      include: { person: true }
+      include: { person: true },
     });
 
     return raw ? ProfessorPersistenceMapper.toView(raw) : null;
@@ -74,11 +73,11 @@ export class ProfessorRepository
 
   async findAll(
     pagination: PaginationVO,
-    filters?: FindAllProfessorsFilters
+    filters?: FindAllProfessorsFilters,
   ): Promise<[ProfessorView[], number]> {
     const where: Prisma.ProfessorWhereInput = {
       deletedAt: null,
-      ...(filters?.departmentId && { departmentId: filters.departmentId })
+      ...(filters?.departmentId && { departmentId: filters.departmentId }),
     };
 
     const [raws, total] = await Promise.all([
@@ -87,10 +86,10 @@ export class ProfessorRepository
         include: { person: true },
         skip: pagination.offset,
         take: pagination.pageSize,
-        orderBy: { person: { lastName: "asc" } }
+        orderBy: { person: { lastName: 'asc' } },
       }),
 
-      this.prisma.professor.count({ where })
+      this.prisma.professor.count({ where }),
     ]);
 
     return [raws.map(ProfessorPersistenceMapper.toView), total];
@@ -100,7 +99,7 @@ export class ProfessorRepository
 
   async exists(id: number): Promise<boolean> {
     const count = await this.prisma.professor.count({
-      where: { personId: id, deletedAt: null, person: { deletedAt: null } }
+      where: { personId: id, deletedAt: null, person: { deletedAt: null } },
     });
 
     return count > 0;
@@ -112,8 +111,8 @@ export class ProfessorRepository
         personId: id,
         status: ProfessorStatus.ACTIVE,
         deletedAt: null,
-        person: { deletedAt: null }
-      }
+        person: { deletedAt: null },
+      },
     });
 
     return count > 0;
@@ -122,15 +121,14 @@ export class ProfessorRepository
   // ── Privados ──────────────────────────────────────────────────────────────
 
   private async create(data: ProfessorSaveData): Promise<Professor> {
-    const { professorData, personData } =
-      ProfessorPersistenceMapper.toPersistence(data);
+    const { professorData, personData } = ProfessorPersistenceMapper.toPersistence(data);
 
     const raw = await this.prisma.$transaction(async (tx) => {
       const personRecord = await tx.person.create({ data: personData });
 
       return tx.professor.create({
         data: { ...professorData, personId: personRecord.id },
-        include: { person: true }
+        include: { person: true },
       });
     });
 
@@ -140,19 +138,18 @@ export class ProfessorRepository
   private async update(data: ProfessorSaveData): Promise<Professor> {
     const { professor } = data;
 
-    const { personData, professorData } =
-      ProfessorPersistenceMapper.toPersistence(data);
+    const { personData, professorData } = ProfessorPersistenceMapper.toPersistence(data);
 
     const raw = await this.prisma.$transaction(async (tx) => {
       await tx.person.update({
         where: { id: professor.id },
-        data: personData
+        data: personData,
       });
 
       return tx.professor.update({
         where: { personId: professor.id },
         data: professorData,
-        include: { person: true }
+        include: { person: true },
       });
     });
 

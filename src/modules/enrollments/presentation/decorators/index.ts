@@ -2,6 +2,6 @@
 
 export {
   ApiEnrollStudent,
+  ApiGetEnrollmentById,
   ApiListEnrollments,
-  ApiGetEnrollmentById
-} from "./api-enrollment.decorator";
+} from './api-enrollment.decorator';

@@ -1,6 +1,6 @@
 // modules/courses/domain/entities/course/course.entity.ts
 
-import type { CourseProps, CreateCourseProps } from "./course.types";
+import type { CourseProps, CreateCourseProps } from './course.types';
 
 type CourseInternalProps = {
   id?: number;

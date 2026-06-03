@@ -1,23 +1,19 @@
 // modules/course-offerings/course-offerings.module.ts
 
-import { Module } from "@nestjs/common";
-
-import { AcademicPeriodsModule } from "@academic-periods";
-import { CoursesModule } from "@courses";
-import { ProfessorsModule } from "@professors";
+import { AcademicPeriodsModule } from '@academic-periods';
+import { CoursesModule } from '@courses';
+import { Module } from '@nestjs/common';
+import { ProfessorsModule } from '@professors';
+import { COURSE_OFFERING_FINDER_PORT, COURSE_OFFERING_REPOSITORY_PORT } from './application/ports';
 import {
-  COURSE_OFFERING_REPOSITORY_PORT,
-  COURSE_OFFERING_FINDER_PORT
-} from "./application/ports";
-import {
+  ActivateCourseOfferingUseCase,
+  AssignProfessorToOfferingUseCase,
   CreateCourseOfferingUseCase,
   GetCourseOfferingByIdUseCase,
   ListCourseOfferingsUseCase,
-  AssignProfessorToOfferingUseCase,
-  ActivateCourseOfferingUseCase
-} from "./application/use-cases";
-import { CourseOfferingRepository } from "./infrastructure/persistence";
-import { CourseOfferingsController } from "./presentation/controllers";
+} from './application/use-cases';
+import { CourseOfferingRepository } from './infrastructure/persistence';
+import { CourseOfferingsController } from './presentation/controllers';
 
 @Module({
   imports: [AcademicPeriodsModule, CoursesModule, ProfessorsModule],
@@ -30,14 +26,14 @@ import { CourseOfferingsController } from "./presentation/controllers";
     CourseOfferingRepository,
     {
       provide: COURSE_OFFERING_REPOSITORY_PORT,
-      useExisting: CourseOfferingRepository
+      useExisting: CourseOfferingRepository,
     },
     {
       provide: COURSE_OFFERING_FINDER_PORT,
-      useExisting: CourseOfferingRepository
-    }
+      useExisting: CourseOfferingRepository,
+    },
   ],
   controllers: [CourseOfferingsController],
-  exports: [COURSE_OFFERING_FINDER_PORT]
+  exports: [COURSE_OFFERING_FINDER_PORT],
 })
 export class CourseOfferingsModule {}

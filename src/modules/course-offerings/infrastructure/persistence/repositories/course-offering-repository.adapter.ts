@@ -1,36 +1,31 @@
 // modules/course-offerings/infrastructure/persistence/repositories/course-offering-repository.adapter.ts
 
-import { Injectable } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
-
-import { PaginationVO } from "@core/pagination";
-import { PrismaService } from "@platform/database";
-import { CourseOfferingStatus } from "@course-offerings/domain/constants";
-import { CourseOffering } from "@course-offerings/domain/entities";
+import type { PaginationVO } from '@core/pagination';
 import type {
-  ICourseOfferingRepository,
+  FindAllCourseOfferingsFilters,
   ICourseOfferingFinder,
-  FindAllCourseOfferingsFilters
-} from "@course-offerings/application/ports";
-import { CourseOfferingPersistenceMapper } from "../mappers";
+  ICourseOfferingRepository,
+} from '@course-offerings/application/ports';
+import { CourseOfferingStatus } from '@course-offerings/domain/constants';
+import { CourseOffering } from '@course-offerings/domain/entities';
+import { Injectable } from '@nestjs/common';
+import type { PrismaService } from '@platform/database';
+import type { Prisma } from '@prisma/client';
+import { CourseOfferingPersistenceMapper } from '../mappers';
 
 @Injectable()
-export class CourseOfferingRepository
-  implements ICourseOfferingRepository, ICourseOfferingFinder
-{
+export class CourseOfferingRepository implements ICourseOfferingRepository, ICourseOfferingFinder {
   constructor(private readonly prisma: PrismaService) {}
 
   // ── ICourseOfferingRepository ─────────────────────────────────────────────
 
   async save(offering: CourseOffering): Promise<CourseOffering> {
-    return offering.id !== undefined
-      ? this.update(offering)
-      : this.create(offering);
+    return offering.id !== undefined ? this.update(offering) : this.create(offering);
   }
 
   async findById(id: number): Promise<CourseOffering | null> {
     const raw = await this.prisma.courseOffering.findFirst({
-      where: { id, deletedAt: null }
+      where: { id, deletedAt: null },
     });
 
     return raw ? CourseOfferingPersistenceMapper.toDomain(raw) : null;
@@ -38,15 +33,15 @@ export class CourseOfferingRepository
 
   async findAll(
     pagination: PaginationVO,
-    filters?: FindAllCourseOfferingsFilters
+    filters?: FindAllCourseOfferingsFilters,
   ): Promise<[CourseOffering[], number]> {
     const where: Prisma.CourseOfferingWhereInput = {
       deletedAt: null,
       ...(filters?.courseId && { courseId: filters.courseId }),
       ...(filters?.academicPeriodId && {
-        academicPeriodId: filters.academicPeriodId
+        academicPeriodId: filters.academicPeriodId,
       }),
-      ...(filters?.statuses?.length && { status: { in: filters.statuses } })
+      ...(filters?.statuses?.length && { status: { in: filters.statuses } }),
     };
 
     const [raws, total] = await Promise.all([
@@ -54,22 +49,19 @@ export class CourseOfferingRepository
         where,
         skip: pagination.offset,
         take: pagination.pageSize,
-        orderBy: { id: "asc" }
+        orderBy: { id: 'asc' },
       }),
 
-      this.prisma.courseOffering.count({ where })
+      this.prisma.courseOffering.count({ where }),
     ]);
 
     return [raws.map(CourseOfferingPersistenceMapper.toDomain), total];
   }
 
-  async assignProfessor(
-    offeringId: number,
-    professorId: number
-  ): Promise<CourseOffering> {
+  async assignProfessor(offeringId: number, professorId: number): Promise<CourseOffering> {
     const raw = await this.prisma.courseOffering.update({
       where: { id: offeringId },
-      data: { professorId }
+      data: { professorId },
     });
 
     return CourseOfferingPersistenceMapper.toDomain(raw);
@@ -78,7 +70,7 @@ export class CourseOfferingRepository
   async activate(id: number): Promise<CourseOffering> {
     const raw = await this.prisma.courseOffering.update({
       where: { id },
-      data: { status: CourseOfferingStatus.ACTIVE }
+      data: { status: CourseOfferingStatus.ACTIVE },
     });
 
     return CourseOfferingPersistenceMapper.toDomain(raw);
@@ -87,10 +79,10 @@ export class CourseOfferingRepository
   async existsByCourseAndPeriodAndSection(
     courseId: number,
     academicPeriodId: number,
-    section: string
+    section: string,
   ): Promise<boolean> {
     const count = await this.prisma.courseOffering.count({
-      where: { courseId, academicPeriodId, section, deletedAt: null }
+      where: { courseId, academicPeriodId, section, deletedAt: null },
     });
 
     return count > 0;
@@ -99,7 +91,7 @@ export class CourseOfferingRepository
   async delete(id: number): Promise<void> {
     await this.prisma.courseOffering.update({
       where: { id },
-      data: { deletedAt: new Date() }
+      data: { deletedAt: new Date() },
     });
   }
 
@@ -107,7 +99,7 @@ export class CourseOfferingRepository
 
   async exists(id: number): Promise<boolean> {
     const count = await this.prisma.courseOffering.count({
-      where: { id, deletedAt: null }
+      where: { id, deletedAt: null },
     });
 
     return count > 0;
@@ -116,7 +108,7 @@ export class CourseOfferingRepository
   async isOpenForEnrollment(id: number): Promise<boolean> {
     const raw = await this.prisma.courseOffering.findFirst({
       where: { id, deletedAt: null },
-      select: { status: true, enrollmentDeadline: true }
+      select: { status: true, enrollmentDeadline: true },
     });
 
     if (!raw) return false;
@@ -126,23 +118,21 @@ export class CourseOfferingRepository
       courseId: 0,
       academicPeriodId: 0,
       professorId: null,
-      section: "",
+      section: '',
       maxStudents: 0,
       enrollmentDeadline: raw.enrollmentDeadline,
-      status: raw.status as any
+      status: raw.status as CourseOfferingStatus,
     });
 
     return offering.isOpenForEnrollment;
   }
 
-  async getCourseCareerIdByOfferingId(
-    offeringId: number
-  ): Promise<number | null> {
+  async getCourseCareerIdByOfferingId(offeringId: number): Promise<number | null> {
     const raw = await this.prisma.courseOffering.findFirst({
       where: { id: offeringId, deletedAt: null },
       select: {
-        course: { select: { careerId: true } }
-      }
+        course: { select: { careerId: true } },
+      },
     });
 
     return raw?.course.careerId ?? null;
@@ -163,7 +153,7 @@ export class CourseOfferingRepository
 
     const raw = await this.prisma.courseOffering.update({
       where: { id: offering.id },
-      data
+      data,
     });
 
     return CourseOfferingPersistenceMapper.toDomain(raw);

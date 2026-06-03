@@ -1,13 +1,13 @@
 // platform/http/health/health.controller.ts
 
-import { Controller, Get, HttpCode, HttpStatus } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
-import { RuntimeConfigService } from "@platform/config";
-import { HEALTH_SWAGGER_TAG } from "./health-constants";
+import type { RuntimeConfigService } from '@platform/config';
+import { HEALTH_SWAGGER_TAG } from './health-constants';
 
 @ApiTags(HEALTH_SWAGGER_TAG.name)
-@Controller("health")
+@Controller('health')
 export class HealthController {
   constructor(private readonly config: RuntimeConfigService) {}
 
@@ -15,10 +15,10 @@ export class HealthController {
   @HttpCode(HttpStatus.OK)
   getHealth() {
     return {
-      status: "ok",
+      status: 'ok',
       environment: this.config.nodeEnv,
       uptime: process.uptime(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }

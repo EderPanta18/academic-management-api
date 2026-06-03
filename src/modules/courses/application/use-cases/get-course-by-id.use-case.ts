@@ -1,19 +1,16 @@
 // modules/courses/application/use-cases/get-course-by-id.use-case.ts
 
-import { Inject, Injectable } from "@nestjs/common";
+import { COURSE_REPOSITORY_PORT, type ICourseRepository } from '@courses/application/ports/out';
 
-import { Course } from "@courses/domain/entities";
-import { CourseNotFoundException } from "@courses/domain/exceptions";
-import {
-  COURSE_REPOSITORY_PORT,
-  type ICourseRepository
-} from "@courses/application/ports/out";
+import type { Course } from '@courses/domain/entities';
+import { CourseNotFoundException } from '@courses/domain/exceptions';
+import { Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class GetCourseByIdUseCase {
   constructor(
     @Inject(COURSE_REPOSITORY_PORT)
-    private readonly courseRepository: ICourseRepository
+    private readonly courseRepository: ICourseRepository,
   ) {}
 
   async execute(id: number): Promise<Course> {

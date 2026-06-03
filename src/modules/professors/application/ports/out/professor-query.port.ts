@@ -1,9 +1,9 @@
 // modules/professors/application/ports/out/professor-query.port.ts
 
-import { PaginationVO } from "@core/pagination";
-import type { ProfessorView } from "@professors/application/read-models";
+import type { PaginationVO } from '@core/pagination';
+import type { ProfessorView } from '@professors/application/read-models';
 
-export const PROFESSOR_QUERY_PORT = Symbol("PROFESSOR_QUERY_PORT");
+export const PROFESSOR_QUERY_PORT = Symbol('PROFESSOR_QUERY_PORT');
 
 export interface FindAllProfessorsFilters {
   departmentId?: number;
@@ -14,6 +14,6 @@ export interface IProfessorQuery {
 
   findAll(
     pagination: PaginationVO,
-    filters?: FindAllProfessorsFilters
+    filters?: FindAllProfessorsFilters,
   ): Promise<[ProfessorView[], number]>;
 }

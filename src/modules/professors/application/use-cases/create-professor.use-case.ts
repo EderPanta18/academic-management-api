@@ -1,26 +1,22 @@
 // modules/professors/application/use-cases/create-professor.use-case.ts
 
-import { Inject, Injectable } from "@nestjs/common";
-
-import { EntityNotFoundException } from "@core/exceptions";
+import { EntityNotFoundException } from '@core/exceptions';
+import { DEPARTMENT_FINDER_PORT, type IDepartmentFinder } from '@departments/application/ports/in';
+import { Inject, Injectable } from '@nestjs/common';
 import {
-  DEPARTMENT_FINDER_PORT,
-  type IDepartmentFinder
-} from "@departments/application/ports/in";
-import {
+  type IPersonCreationValidator,
   PERSON_CREATION_VALIDATOR_PORT,
-  type IPersonCreationValidator
-} from "@persons/application/ports/in";
-import { Professor } from "@professors/domain/entities";
+} from '@persons/application/ports/in';
 import {
+  type IProfessorRepository,
   PROFESSOR_REPOSITORY_PORT,
-  type IProfessorRepository
-} from "@professors/application/ports/out";
+} from '@professors/application/ports/out';
+import { Professor } from '@professors/domain/entities';
 import {
   ProfessorCodeAlreadyExistsException,
-  ProfessorEmailAlreadyExistsException
-} from "@professors/domain/exceptions";
-import { CreateProfessorCommand } from "../commands";
+  ProfessorEmailAlreadyExistsException,
+} from '@professors/domain/exceptions';
+import type { CreateProfessorCommand } from '../commands';
 
 @Injectable()
 export class CreateProfessorUseCase {
@@ -32,33 +28,27 @@ export class CreateProfessorUseCase {
     private readonly personCreationValidator: IPersonCreationValidator,
 
     @Inject(PROFESSOR_REPOSITORY_PORT)
-    private readonly professorRepository: IProfessorRepository
+    private readonly professorRepository: IProfessorRepository,
   ) {}
 
   async execute(command: CreateProfessorCommand): Promise<Professor> {
     if (command.departmentId) {
       const exists = await this.departmentFinder.exists(command.departmentId);
 
-      if (!exists)
-        throw new EntityNotFoundException("Department", command.departmentId);
+      if (!exists) throw new EntityNotFoundException('Department', command.departmentId);
     }
 
-    const codeExists = await this.professorRepository.existsByCode(
-      command.code
-    );
+    const codeExists = await this.professorRepository.existsByCode(command.code);
 
     if (codeExists) throw new ProfessorCodeAlreadyExistsException(command.code);
 
     if (command.institutionalEmail) {
-      const institutionalEmailExists =
-        await this.professorRepository.existsByInstitutionalEmail(
-          command.institutionalEmail
-        );
+      const institutionalEmailExists = await this.professorRepository.existsByInstitutionalEmail(
+        command.institutionalEmail,
+      );
 
       if (institutionalEmailExists)
-        throw new ProfessorEmailAlreadyExistsException(
-          command.institutionalEmail
-        );
+        throw new ProfessorEmailAlreadyExistsException(command.institutionalEmail);
     }
 
     const personData = await this.personCreationValidator.validate({
@@ -67,7 +57,7 @@ export class CreateProfessorUseCase {
       lastName: command.lastName,
       email: command.email,
       phone: command.phone,
-      birthDate: command.birthDate
+      birthDate: command.birthDate,
     });
 
     const professor = Professor.create({
@@ -76,12 +66,12 @@ export class CreateProfessorUseCase {
       specialty: command.specialty,
       institutionalEmail: command.institutionalEmail,
       hireDate: command.hireDate,
-      status: command.status
+      status: command.status,
     });
 
     return this.professorRepository.save({
       professor,
-      personData
+      personData,
     });
   }
 }

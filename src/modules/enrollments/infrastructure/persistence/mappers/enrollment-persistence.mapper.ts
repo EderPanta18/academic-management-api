@@ -1,17 +1,11 @@
 // modules/enrollments/infrastructure/persistence/mappers/enrollment-persistence.mapper.ts
 
-import { Prisma } from "@prisma/client";
-
-import { EnrollmentStatus } from "@enrollments/domain/constants";
-import {
-  Enrollment,
-  type EnrollmentStatusLogProps
-} from "@enrollments/domain/entities";
+import type { EnrollmentStatus } from '@enrollments/domain/constants';
+import { Enrollment, type EnrollmentStatusLogProps } from '@enrollments/domain/entities';
+import type { Prisma } from '@prisma/client';
 
 type EnrollmentRaw = Prisma.EnrollmentGetPayload<Record<string, never>>;
-type EnrollmentStatusLogRaw = Prisma.EnrollmentStatusLogGetPayload<
-  Record<string, never>
->;
+type EnrollmentStatusLogRaw = Prisma.EnrollmentStatusLogGetPayload<Record<string, never>>;
 
 interface EnrollmentPersistenceData {
   studentId: number;
@@ -29,7 +23,7 @@ export class EnrollmentPersistenceMapper {
       courseOfferingId: raw.courseOfferingId,
       status: raw.status as EnrollmentStatus,
       enrollmentDate: raw.enrollmentDate,
-      createdBy: raw.createdBy
+      createdBy: raw.createdBy,
     });
   }
 
@@ -39,13 +33,11 @@ export class EnrollmentPersistenceMapper {
       courseOfferingId: enrollment.courseOfferingId,
       status: enrollment.status,
       enrollmentDate: enrollment.enrollmentDate,
-      createdBy: enrollment.createdBy
+      createdBy: enrollment.createdBy,
     };
   }
 
-  static statusLogToDomain(
-    raw: EnrollmentStatusLogRaw
-  ): EnrollmentStatusLogProps {
+  static statusLogToDomain(raw: EnrollmentStatusLogRaw): EnrollmentStatusLogProps {
     return {
       id: raw.id,
       enrollmentId: raw.enrollmentId,
@@ -53,7 +45,7 @@ export class EnrollmentPersistenceMapper {
       newStatus: raw.newStatus as EnrollmentStatus,
       reason: raw.reason,
       changedBy: raw.changedBy,
-      createdAt: raw.createdAt
+      createdAt: raw.createdAt,
     };
   }
 }

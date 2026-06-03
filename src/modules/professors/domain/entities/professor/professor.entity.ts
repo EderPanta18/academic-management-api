@@ -1,7 +1,7 @@
 // modules/professors/domain/entities/professor/professor.entity.ts
 
-import { ProfessorStatus } from "@professors/domain/constants";
-import type { CreateProfessorProps, ProfessorProps } from "./professor.types";
+import { ProfessorStatus } from '@professors/domain/constants';
+import type { CreateProfessorProps, ProfessorProps } from './professor.types';
 
 type ProfessorInternalProps = {
   id?: number;

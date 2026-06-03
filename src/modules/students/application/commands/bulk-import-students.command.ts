@@ -1,6 +1,6 @@
 // modules/students/application/commands/bulk-import-students.command.ts
 
-import { BulkRowError } from "@shared/types";
+import type { BulkRowError } from '@shared/types';
 
 export type StudentRowInput = {
   rowNumber: number;

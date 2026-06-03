@@ -1,6 +1,6 @@
 // prisma/seeds/enrollment.seed.ts
 
-import { PrismaClient, EnrollmentStatus } from "@prisma/client";
+import type { EnrollmentStatus, PrismaClient } from "@prisma/client";
 
 import * as data from "../data";
 import type { AcademicMaps } from "./types";
@@ -10,6 +10,7 @@ export async function seedEnrollments(
   academicMaps: AcademicMaps
 ) {
   console.log("\nPoblando inscripciones ....");
+
   const { studentMap, offeringMap } = academicMaps;
 
   const enrollmentMap = await seedEnrollmentsCore(
@@ -86,12 +87,14 @@ async function seedEnrollmentStatusLogs(
   }[] = [];
 
   let processed = 0;
+
   for (const logData of logsData) {
     const enrollmentKey = `${logData.enrollment.studentCode}-${logData.enrollment.courseName}-${logData.enrollment.academicPeriodName}-${logData.enrollment.section}`;
     const enrollmentId = enrollmentMap.get(enrollmentKey);
 
     if (!enrollmentId) {
       console.warn(`Omitiendo registro: inscripción="${enrollmentKey}"`);
+
       continue;
     }
 
@@ -104,13 +107,13 @@ async function seedEnrollmentStatusLogs(
       reason: logData.reason ?? null,
       changedBy: logData.changedBy ?? null
     });
+
     processed++;
   }
 
-  if (logs.length > 0) {
+  if (logs.length > 0)
     await prisma.enrollmentStatusLog.createMany({
       data: logs,
       skipDuplicates: true
     });
-  }
 }

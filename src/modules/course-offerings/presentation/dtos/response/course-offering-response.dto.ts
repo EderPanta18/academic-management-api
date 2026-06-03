@@ -1,8 +1,7 @@
 // modules/course-offerings/presentation/dtos/response/course-offering-response.dto.ts
 
-import { ApiProperty } from "@nestjs/swagger";
-
-import { CourseOfferingStatus } from "@course-offerings/domain/constants";
+import { CourseOfferingStatus } from '@course-offerings/domain/constants';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CourseOfferingResponseDto {
   @ApiProperty({ example: 1 })
@@ -17,23 +16,23 @@ export class CourseOfferingResponseDto {
   @ApiProperty({ example: 5, nullable: true })
   professorId!: number | null;
 
-  @ApiProperty({ example: "A" })
+  @ApiProperty({ example: 'A' })
   section!: string;
 
   @ApiProperty({ example: 30 })
   maxStudents!: number;
 
   @ApiProperty({
-    example: "2026-04-15",
+    example: '2026-04-15',
     nullable: true,
     type: String,
-    format: "date"
+    format: 'date',
   })
   enrollmentDeadline!: Date | null;
 
   @ApiProperty({
     enum: CourseOfferingStatus,
-    example: CourseOfferingStatus.INACTIVE
+    example: CourseOfferingStatus.INACTIVE,
   })
   status!: CourseOfferingStatus;
 

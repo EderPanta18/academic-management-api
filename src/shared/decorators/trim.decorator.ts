@@ -1,10 +1,10 @@
 // shared/decorators/trim.decorator.ts
 
-import { Transform } from "class-transformer";
+import { Transform } from 'class-transformer';
 
 export const Trim = (): PropertyDecorator =>
   Transform(({ value }) => {
-    if (value === null || value === undefined) return "";
+    if (value === null || value === undefined) return '';
 
     return String(value).trim();
   });
@@ -15,5 +15,5 @@ export const TrimOptional = (): PropertyDecorator =>
 
     const text = String(value).trim();
 
-    return text === "" ? undefined : text;
+    return text === '' ? undefined : text;
   });

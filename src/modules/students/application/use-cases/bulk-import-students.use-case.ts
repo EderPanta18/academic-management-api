@@ -1,11 +1,10 @@
 // modules/students/application/use-cases/bulk-import-students.use-case.ts
 
-import { Injectable } from "@nestjs/common";
-
-import { DomainException } from "@core/exceptions";
-import type { BulkResult, BulkRowError } from "@shared/types";
-import { BulkImportStudentsCommand, CreateStudentCommand } from "../commands";
-import { CreateStudentUseCase } from "./create-student.use-case";
+import { DomainException } from '@core/exceptions';
+import { Injectable } from '@nestjs/common';
+import type { BulkResult, BulkRowError } from '@shared/types';
+import { type BulkImportStudentsCommand, CreateStudentCommand } from '../commands';
+import type { CreateStudentUseCase } from './create-student.use-case';
 
 @Injectable()
 export class BulkImportStudentsUseCase {
@@ -27,19 +26,17 @@ export class BulkImportStudentsUseCase {
             enrollmentDate: new Date(row.enrollmentDate),
             institutionalEmail: row.institutionalEmail,
             phone: row.phone,
-            birthDate: row.birthDate ? new Date(row.birthDate) : undefined
-          })
+            birthDate: row.birthDate ? new Date(row.birthDate) : undefined,
+          }),
         );
       } catch (error) {
         const reason =
-          error instanceof DomainException
-            ? error.message
-            : "Error inesperado al procesar la fila";
+          error instanceof DomainException ? error.message : 'Error inesperado al procesar la fila';
 
         errors.push({
           row: row.rowNumber,
-          field: "general",
-          reason
+          field: 'general',
+          reason,
         });
       }
     }
@@ -51,7 +48,7 @@ export class BulkImportStudentsUseCase {
       totalRows: command.totalRows,
       totalSuccess,
       totalFailed,
-      errors
+      errors,
     };
   }
 }

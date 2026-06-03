@@ -1,60 +1,60 @@
 // modules/professors/presentation/decorators/api-professor.decorator.ts
 
-import { applyDecorators, HttpCode, HttpStatus } from "@nestjs/common";
+import { applyDecorators, HttpCode, HttpStatus } from '@nestjs/common';
 import {
   ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiQuery,
   ApiParam,
-  ApiNotFoundResponse
-} from "@nestjs/swagger";
+  ApiQuery,
+} from '@nestjs/swagger';
 
-import { ApiPaginatedOperation } from "@shared/decorators";
-import { CreateProfessorDto, ProfessorResponseDto } from "../dtos";
+import { ApiPaginatedOperation } from '@shared/decorators';
+import { CreateProfessorDto, ProfessorResponseDto } from '../dtos';
 
 export const ApiCreateProfessor = () =>
   applyDecorators(
-    ApiOperation({ summary: "Registrar un nuevo profesor" }),
+    ApiOperation({ summary: 'Registrar un nuevo profesor' }),
     HttpCode(HttpStatus.CREATED),
     ApiBody({ type: CreateProfessorDto }),
     ApiCreatedResponse({
       type: ProfessorResponseDto,
-      description: "Profesor creado correctamente"
+      description: 'Profesor creado correctamente',
     }),
     ApiNotFoundResponse({
-      description: "El departamento especificado no existe"
+      description: 'El departamento especificado no existe',
     }),
-    ApiConflictResponse({ description: "El DNI o email ya están registrados" })
+    ApiConflictResponse({ description: 'El DNI o email ya están registrados' }),
   );
 
 export const ApiListProfessors = () =>
   applyDecorators(
-    ApiOperation({ summary: "Listar profesores activos con paginación" }),
+    ApiOperation({ summary: 'Listar profesores activos con paginación' }),
     ApiQuery({
-      name: "departmentId",
+      name: 'departmentId',
       required: false,
       type: Number,
       example: 1,
-      description: "Filtrar por id de departamento"
+      description: 'Filtrar por id de departamento',
     }),
-    ApiPaginatedOperation(ProfessorResponseDto)
+    ApiPaginatedOperation(ProfessorResponseDto),
   );
 
 export const ApiGetProfessorById = () =>
   applyDecorators(
-    ApiOperation({ summary: "Obtener un profesor por id" }),
+    ApiOperation({ summary: 'Obtener un profesor por id' }),
     ApiParam({
-      name: "id",
+      name: 'id',
       type: Number,
-      description: "Id del profesor",
-      example: 1
+      description: 'Id del profesor',
+      example: 1,
     }),
     ApiOkResponse({
       type: ProfessorResponseDto,
-      description: "Profesor encontrado"
+      description: 'Profesor encontrado',
     }),
-    ApiNotFoundResponse({ description: "Profesor no encontrado" })
+    ApiNotFoundResponse({ description: 'Profesor no encontrado' }),
   );

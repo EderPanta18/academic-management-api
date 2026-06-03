@@ -2,6 +2,6 @@
 
 export {
   COURSE_REPOSITORY_PORT,
+  type FindAllCoursesFilters,
   type ICourseRepository,
-  type FindAllCoursesFilters
-} from "./course-repository.port";
+} from './course-repository.port';

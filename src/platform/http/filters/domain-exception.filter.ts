@@ -1,10 +1,10 @@
 // platform/http/filters/domain-exception.filter.ts
 
-import { ArgumentsHost, Catch, ExceptionFilter } from "@nestjs/common";
-import { DomainException } from "@core/exceptions";
-import type { Request, Response } from "express";
+import { DomainException } from '@core/exceptions';
+import { type ArgumentsHost, Catch, type ExceptionFilter } from '@nestjs/common';
+import type { Request, Response } from 'express';
 
-import type { ApiErrorResponse } from "../responses";
+import type { ApiErrorResponse } from '../responses';
 
 @Catch(DomainException)
 export class DomainExceptionFilter implements ExceptionFilter {
@@ -21,7 +21,7 @@ export class DomainExceptionFilter implements ExceptionFilter {
       errorCode: exception.errorCode,
       message: exception.message,
       timestamp: new Date().toISOString(),
-      path: req.url
+      path: req.url,
     };
 
     res.status(exception.statusCode).json(response);

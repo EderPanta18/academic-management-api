@@ -1,24 +1,24 @@
 // modules/persons/application/services/person-creation-validator.service.ts
 
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable } from '@nestjs/common';
 
-import { Person } from "@persons/domain/entities";
+import { Person } from '@persons/domain/entities';
 import {
   PersonDniAlreadyExistsException,
-  PersonEmailAlreadyExistsException
-} from "@persons/domain/exceptions";
-import type { PersonCreationInput, PersonData } from "../contracts";
+  PersonEmailAlreadyExistsException,
+} from '@persons/domain/exceptions';
+import type { PersonCreationInput, PersonData } from '../contracts';
 import {
-  PERSON_REPOSITORY_PORT,
   type IPersonCreationValidator,
-  type IPersonRepository
-} from "../ports";
+  type IPersonRepository,
+  PERSON_REPOSITORY_PORT,
+} from '../ports';
 
 @Injectable()
 export class PersonCreationValidator implements IPersonCreationValidator {
   constructor(
     @Inject(PERSON_REPOSITORY_PORT)
-    private readonly personRepository: IPersonRepository
+    private readonly personRepository: IPersonRepository,
   ) {}
 
   async validate(input: PersonCreationInput): Promise<PersonData> {
@@ -36,7 +36,7 @@ export class PersonCreationValidator implements IPersonCreationValidator {
       lastName: input.lastName,
       email: input.email,
       phone: input.phone,
-      birthDate: input.birthDate
+      birthDate: input.birthDate,
     });
 
     return {
@@ -45,7 +45,7 @@ export class PersonCreationValidator implements IPersonCreationValidator {
       lastName: person.lastName,
       email: person.email,
       phone: person.phone,
-      birthDate: person.birthDate
+      birthDate: person.birthDate,
     };
   }
 }

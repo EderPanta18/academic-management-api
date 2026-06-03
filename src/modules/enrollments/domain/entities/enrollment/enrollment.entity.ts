@@ -1,10 +1,7 @@
 // modules/enrollments/domain/entities/enrollment.entity.ts
 
-import { EnrollmentStatus } from "@enrollments/domain/constants";
-import type {
-  EnrollmentProps,
-  CreateEnrollmentProps
-} from "./enrollment.types";
+import { EnrollmentStatus } from '@enrollments/domain/constants';
+import type { CreateEnrollmentProps, EnrollmentProps } from './enrollment.types';
 
 type EnrollmentInternalProps = {
   id?: number;
@@ -75,9 +72,6 @@ export class Enrollment {
   }
 
   get isTerminal(): boolean {
-    return (
-      this.status === EnrollmentStatus.WITHDRAWN ||
-      this.status === EnrollmentStatus.COMPLETED
-    );
+    return this.status === EnrollmentStatus.WITHDRAWN || this.status === EnrollmentStatus.COMPLETED;
   }
 }

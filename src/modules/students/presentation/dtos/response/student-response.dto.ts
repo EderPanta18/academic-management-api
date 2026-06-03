@@ -1,51 +1,51 @@
 // modules/students/presentation/dtos/response/student-response.dto.ts
 
-import { ApiProperty } from "@nestjs/swagger";
-import { StudentStatus } from "@students/domain/constants";
+import { ApiProperty } from '@nestjs/swagger';
+import { StudentStatus } from '@students/domain/constants';
 
 export class StudentResponseDto {
   @ApiProperty({ example: 1 })
   id!: number;
 
-  @ApiProperty({ example: "87654321" })
+  @ApiProperty({ example: '87654321' })
   dni!: string;
 
-  @ApiProperty({ example: "María Elena" })
+  @ApiProperty({ example: 'María Elena' })
   firstName!: string;
 
-  @ApiProperty({ example: "García Torres" })
+  @ApiProperty({ example: 'García Torres' })
   lastName!: string;
 
-  @ApiProperty({ example: "María Elena García Torres" })
+  @ApiProperty({ example: 'María Elena García Torres' })
   fullName!: string;
 
-  @ApiProperty({ example: "maria.garcia@gmail.com" })
+  @ApiProperty({ example: 'maria.garcia@gmail.com' })
   email!: string;
 
-  @ApiProperty({ example: "987654321", nullable: true })
+  @ApiProperty({ example: '987654321', nullable: true })
   phone!: string | null;
 
   @ApiProperty({
-    example: "2000-05-20",
+    example: '2000-05-20',
     nullable: true,
     type: String,
-    format: "date"
+    format: 'date',
   })
   birthDate!: Date | null;
 
   @ApiProperty({ example: 1 })
   careerId!: number;
 
-  @ApiProperty({ example: "2024000042" })
+  @ApiProperty({ example: '2024000042' })
   code!: string;
 
-  @ApiProperty({ example: "maria.garcia@universidad.edu.pe", nullable: true })
+  @ApiProperty({ example: 'maria.garcia@universidad.edu.pe', nullable: true })
   institutionalEmail!: string | null;
 
   @ApiProperty({
-    example: "2024-03-01",
+    example: '2024-03-01',
     type: String,
-    format: "date"
+    format: 'date',
   })
   enrollmentDate!: Date;
 

@@ -2,5 +2,5 @@
 
 export {
   DEPARTMENT_FINDER_PORT,
-  type IDepartmentFinder
-} from "./department-finder.port";
+  type IDepartmentFinder,
+} from './department-finder.port';

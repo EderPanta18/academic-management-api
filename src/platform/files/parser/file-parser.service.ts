@@ -1,21 +1,20 @@
 // platform/files/parser/file-parser.service.ts
 
-import { Inject, Injectable } from "@nestjs/common";
-
-import { FILE_PARSER_STRATEGIES, type IFileParserStrategy } from "./strategies";
-import type { IFileParser } from "./file-parser.port";
+import { Inject, Injectable } from '@nestjs/common';
+import type { IFileParser } from './file-parser.port';
+import { FILE_PARSER_STRATEGIES, type IFileParserStrategy } from './strategies';
 
 @Injectable()
 export class FileParserService implements IFileParser {
   constructor(
     @Inject(FILE_PARSER_STRATEGIES)
-    private readonly strategies: IFileParserStrategy[]
+    private readonly strategies: IFileParserStrategy[],
   ) {}
 
   parse(
     buffer: Buffer,
     extension: string,
-    allowedExtensions?: string[]
+    allowedExtensions?: string[],
   ): Record<string, unknown>[] {
     if (allowedExtensions && !allowedExtensions.includes(extension))
       throw new Error(`Formato no permitido: "${extension}"`);

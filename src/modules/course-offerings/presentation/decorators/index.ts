@@ -1,9 +1,9 @@
 // modules/course-offerings/presentation/decorators/index.ts
 
 export {
-  ApiCreateCourseOffering,
-  ApiListCourseOfferings,
-  ApiGetCourseOfferingById,
+  ApiActivateCourseOffering,
   ApiAssignProfessorToOffering,
-  ApiActivateCourseOffering
-} from "./api-course-offering.decorator";
+  ApiCreateCourseOffering,
+  ApiGetCourseOfferingById,
+  ApiListCourseOfferings,
+} from './api-course-offering.decorator';

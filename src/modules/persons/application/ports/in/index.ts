@@ -1,6 +1,6 @@
 // modules/persons/application/ports/in/index.ts
 
 export {
+  type IPersonCreationValidator,
   PERSON_CREATION_VALIDATOR_PORT,
-  type IPersonCreationValidator
-} from "./person-creation-validator.port";
+} from './person-creation-validator.port';

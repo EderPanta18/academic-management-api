@@ -1,20 +1,21 @@
 // prisma/seeds/academic.seed.ts
 
-import {
+import type {
+  CourseOfferingStatus,
   PrismaClient,
   ProfessorStatus,
-  StudentStatus,
-  CourseOfferingStatus
+  StudentStatus
 } from "@prisma/client";
 
 import * as data from "../data";
-import type { BaseMaps, AcademicMaps } from "./types";
+import type { AcademicMaps, BaseMaps } from "./types";
 
 export async function seedAcademicStructure(
   prisma: PrismaClient,
   baseMaps: BaseMaps
 ): Promise<AcademicMaps> {
   console.log("\nPoblando estructura académica ....");
+
   const { departmentMap, categoryMap, personMap, periodMap } = baseMaps;
 
   const careerMap = await seedCareers(prisma, departmentMap, data.careers);
@@ -75,6 +76,7 @@ async function seedCareers(
   careers: any[]
 ) {
   const careerMap = new Map<string, number>();
+
   for (const c of careers) {
     const career = await prisma.career.upsert({
       where: { name: c.name },
@@ -85,8 +87,10 @@ async function seedCareers(
         departmentId: departmentMap.get(c.departmentName)!
       }
     });
+
     careerMap.set(c.name, career.id);
   }
+
   return careerMap;
 }
 
@@ -97,6 +101,7 @@ async function seedProfessors(
   professors: any[]
 ) {
   const professorMap = new Map<string, number>();
+
   for (const p of professors) {
     const professor = await prisma.professor.upsert({
       where: { code: p.code },
@@ -111,8 +116,10 @@ async function seedProfessors(
         status: p.status as ProfessorStatus
       }
     });
+
     professorMap.set(p.code, professor.personId);
   }
+
   return professorMap;
 }
 
@@ -123,6 +130,7 @@ async function seedStudents(
   students: any[]
 ) {
   const studentMap = new Map<string, number>();
+
   for (const s of students) {
     const student = await prisma.student.upsert({
       where: { code: s.code },
@@ -136,8 +144,10 @@ async function seedStudents(
         status: s.status as StudentStatus
       }
     });
+
     studentMap.set(s.code, student.personId);
   }
+
   return studentMap;
 }
 
@@ -148,6 +158,7 @@ async function seedCourses(
   courses: any[]
 ) {
   const courseMap = new Map<string, number>();
+
   for (const c of courses) {
     const course = await prisma.course.upsert({
       where: {
@@ -165,8 +176,10 @@ async function seedCourses(
         categoryId: categoryMap.get(c.categoryName) ?? null
       }
     });
+
     courseMap.set(`${c.careerName}-${c.name}`, course.id);
   }
+
   return courseMap;
 }
 
@@ -180,9 +193,11 @@ async function seedOfferings(
   const offeringMap = new Map<string, number>();
   for (const o of offerings) {
     const courseData = data.courses.find((c: any) => c.name === o.courseName);
+
     if (!courseData) continue;
 
     const courseId = courseMap.get(`${courseData.careerName}-${o.courseName}`)!;
+
     const offering = await prisma.courseOffering.upsert({
       where: {
         courseId_academicPeriodId_section: {
@@ -204,10 +219,12 @@ async function seedOfferings(
         status: o.status as CourseOfferingStatus
       }
     });
+
     offeringMap.set(
       `${o.courseName}-${o.academicPeriodName}-${o.section}`,
       offering.id
     );
   }
+
   return offeringMap;
 }

@@ -1,6 +1,6 @@
 // modules/enrollments/domain/entities/enrollment.types.ts
 
-import { EnrollmentStatus } from "@enrollments/domain/constants";
+import type { EnrollmentStatus } from '@enrollments/domain/constants';
 
 export interface EnrollmentProps {
   id: number;

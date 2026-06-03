@@ -1,9 +1,9 @@
 // platform/http/swagger/swagger-setup.ts
 
-import type { INestApplication } from "@nestjs/common";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import type { INestApplication } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-import { SwaggerTag } from "./swagger.types";
+import type { SwaggerTag } from './swagger.types';
 
 export interface SwaggerSetupOptions {
   title: string;
@@ -13,10 +13,7 @@ export interface SwaggerSetupOptions {
   tags?: readonly SwaggerTag[];
 }
 
-export function setupSwagger(
-  app: INestApplication,
-  options: SwaggerSetupOptions
-): void {
+export function setupSwagger(app: INestApplication, options: SwaggerSetupOptions): void {
   const builder = new DocumentBuilder()
     .setTitle(options.title)
     .setDescription(options.description)

@@ -1,12 +1,12 @@
 // modules/professors/domain/ports/out/index.ts
 
 export {
-  PROFESSOR_REPOSITORY_PORT,
-  type IProfessorRepository,
-  type ProfessorSaveData
-} from "./professor-repository.port";
-export {
-  PROFESSOR_QUERY_PORT,
+  type FindAllProfessorsFilters,
   type IProfessorQuery,
-  type FindAllProfessorsFilters
-} from "./professor-query.port";
+  PROFESSOR_QUERY_PORT,
+} from './professor-query.port';
+export {
+  type IProfessorRepository,
+  PROFESSOR_REPOSITORY_PORT,
+  type ProfessorSaveData,
+} from './professor-repository.port';

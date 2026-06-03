@@ -1,17 +1,16 @@
 // modules/courses/infrastructure/persistence/repositories/course.repository.adapter.ts
 
-import { Injectable } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
-
-import { PaginationVO } from "@core/pagination";
-import { PrismaService } from "@platform/database";
-import { Course } from "@courses/domain/entities";
+import type { PaginationVO } from '@core/pagination';
 import type {
-  ICourseRepository,
+  FindAllCoursesFilters,
   ICourseFinder,
-  FindAllCoursesFilters
-} from "@courses/application/ports";
-import { CoursePersistenceMapper } from "../mappers";
+  ICourseRepository,
+} from '@courses/application/ports';
+import type { Course } from '@courses/domain/entities';
+import { Injectable } from '@nestjs/common';
+import type { PrismaService } from '@platform/database';
+import type { Prisma } from '@prisma/client';
+import { CoursePersistenceMapper } from '../mappers';
 
 @Injectable()
 export class CourseRepository implements ICourseRepository, ICourseFinder {
@@ -25,7 +24,7 @@ export class CourseRepository implements ICourseRepository, ICourseFinder {
 
   async findById(id: number): Promise<Course | null> {
     const raw = await this.prisma.course.findFirst({
-      where: { id, deletedAt: null }
+      where: { id, deletedAt: null },
     });
 
     return raw ? CoursePersistenceMapper.toDomain(raw) : null;
@@ -33,12 +32,12 @@ export class CourseRepository implements ICourseRepository, ICourseFinder {
 
   async findAll(
     pagination: PaginationVO,
-    filters?: FindAllCoursesFilters
+    filters?: FindAllCoursesFilters,
   ): Promise<[Course[], number]> {
     const where: Prisma.CourseWhereInput = {
       deletedAt: null,
       ...(filters?.careerId && { careerId: filters.careerId }),
-      ...(filters?.categoryId && { categoryId: filters.categoryId })
+      ...(filters?.categoryId && { categoryId: filters.categoryId }),
     };
 
     const [raws, total] = await Promise.all([
@@ -46,21 +45,18 @@ export class CourseRepository implements ICourseRepository, ICourseFinder {
         where,
         skip: pagination.offset,
         take: pagination.pageSize,
-        orderBy: { name: "asc" }
+        orderBy: { name: 'asc' },
       }),
 
-      this.prisma.course.count({ where })
+      this.prisma.course.count({ where }),
     ]);
 
     return [raws.map(CoursePersistenceMapper.toDomain), total];
   }
 
-  async existsByCareerAndName(
-    careerId: number,
-    name: string
-  ): Promise<boolean> {
+  async existsByCareerAndName(careerId: number, name: string): Promise<boolean> {
     const count = await this.prisma.course.count({
-      where: { careerId, name, deletedAt: null }
+      where: { careerId, name, deletedAt: null },
     });
 
     return count > 0;
@@ -69,7 +65,7 @@ export class CourseRepository implements ICourseRepository, ICourseFinder {
   async delete(id: number): Promise<void> {
     await this.prisma.course.update({
       where: { id },
-      data: { deletedAt: new Date() }
+      data: { deletedAt: new Date() },
     });
   }
 
@@ -77,7 +73,7 @@ export class CourseRepository implements ICourseRepository, ICourseFinder {
 
   async exists(id: number): Promise<boolean> {
     const count = await this.prisma.course.count({
-      where: { id, deletedAt: null }
+      where: { id, deletedAt: null },
     });
 
     return count > 0;
@@ -98,7 +94,7 @@ export class CourseRepository implements ICourseRepository, ICourseFinder {
 
     const raw = await this.prisma.course.update({
       where: { id: course.id },
-      data
+      data,
     });
 
     return CoursePersistenceMapper.toDomain(raw);

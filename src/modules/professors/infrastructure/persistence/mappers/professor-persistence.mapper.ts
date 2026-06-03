@@ -1,11 +1,10 @@
 // modules/persons/infrastructure/persistence/mappers/professor-persistence.mapper.ts
 
-import { Prisma } from "@prisma/client";
-
-import { ProfessorStatus } from "@professors/domain/constants";
-import { Professor } from "@professors/domain/entities";
-import type { ProfessorView } from "@professors/application/read-models";
-import type { ProfessorSaveData } from "@professors/application/ports/out";
+import type { Prisma } from '@prisma/client';
+import type { ProfessorSaveData } from '@professors/application/ports/out';
+import type { ProfessorView } from '@professors/application/read-models';
+import type { ProfessorStatus } from '@professors/domain/constants';
+import { Professor } from '@professors/domain/entities';
 
 type ProfessorRaw = Prisma.ProfessorGetPayload<{ include: { person: true } }>;
 
@@ -41,7 +40,7 @@ export class ProfessorPersistenceMapper {
       specialty: raw.specialty,
       institutionalEmail: raw.institutionalEmail,
       hireDate: raw.hireDate,
-      status: raw.status as ProfessorStatus
+      status: raw.status as ProfessorStatus,
     });
   }
 
@@ -59,7 +58,7 @@ export class ProfessorPersistenceMapper {
       lastName: raw.person.lastName,
       email: raw.person.email,
       phone: raw.person.phone,
-      birthDate: raw.person.birthDate
+      birthDate: raw.person.birthDate,
     };
   }
 
@@ -73,7 +72,7 @@ export class ProfessorPersistenceMapper {
         lastName: personData.lastName,
         email: personData.email,
         phone: personData.phone,
-        birthDate: personData.birthDate
+        birthDate: personData.birthDate,
       },
       professorData: {
         code: professor.code,
@@ -81,8 +80,8 @@ export class ProfessorPersistenceMapper {
         institutionalEmail: professor.institutionalEmail,
         hireDate: professor.hireDate,
         status: professor.status,
-        departmentId: professor.departmentId
-      }
+        departmentId: professor.departmentId,
+      },
     };
   }
 }

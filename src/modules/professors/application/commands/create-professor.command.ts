@@ -1,6 +1,6 @@
 // modules/professors/application/commands/create-professor.command.ts
 
-import { ProfessorStatus } from "@professors/domain/constants";
+import type { ProfessorStatus } from '@professors/domain/constants';
 
 interface CreateProfessorCommandProps {
   dni: string;

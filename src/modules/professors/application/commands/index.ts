@@ -1,3 +1,3 @@
 // modules/professors/application/commands/index.ts
 
-export { CreateProfessorCommand } from "./create-professor.command";
+export { CreateProfessorCommand } from './create-professor.command';

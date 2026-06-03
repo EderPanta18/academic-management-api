@@ -2,5 +2,5 @@
 
 export {
   ENROLLMENT_FINDER_PORT,
-  type IEnrollmentFinder
-} from "./enrollment-finder.port";
+  type IEnrollmentFinder,
+} from './enrollment-finder.port';

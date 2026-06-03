@@ -1,6 +1,7 @@
 // modules/course-offerings/presentation/decorators/api-course-offering.decorator.ts
 
-import { applyDecorators, HttpCode, HttpStatus } from "@nestjs/common";
+import { CourseOfferingStatus } from '@course-offerings/domain/constants';
+import { applyDecorators, HttpCode, HttpStatus } from '@nestjs/common';
 import {
   ApiBody,
   ApiConflictResponse,
@@ -10,122 +11,112 @@ import {
   ApiOperation,
   ApiParam,
   ApiQuery,
-  ApiUnprocessableEntityResponse
-} from "@nestjs/swagger";
-
-import { ApiPaginatedOperation } from "@shared/decorators";
-import { CourseOfferingStatus } from "@course-offerings/domain/constants";
-import {
-  AssignProfessorDto,
-  CourseOfferingResponseDto,
-  CreateCourseOfferingDto
-} from "../dtos";
+  ApiUnprocessableEntityResponse,
+} from '@nestjs/swagger';
+import { ApiPaginatedOperation } from '@shared/decorators';
+import { AssignProfessorDto, CourseOfferingResponseDto, CreateCourseOfferingDto } from '../dtos';
 
 export const ApiCreateCourseOffering = () =>
   applyDecorators(
-    ApiOperation({ summary: "Crear una nueva oferta de curso" }),
+    ApiOperation({ summary: 'Crear una nueva oferta de curso' }),
     HttpCode(HttpStatus.CREATED),
     ApiBody({ type: CreateCourseOfferingDto }),
     ApiCreatedResponse({
       type: CourseOfferingResponseDto,
-      description: "Oferta creada correctamente"
+      description: 'Oferta creada correctamente',
     }),
     ApiNotFoundResponse({
-      description: "Curso, período académico o profesor no encontrado"
+      description: 'Curso, período académico o profesor no encontrado',
     }),
     ApiUnprocessableEntityResponse({
       description:
-        "El período académico no es el vigente / " +
-        "El profesor no tiene estado ACTIVE"
+        'El período académico no es el vigente / ' + 'El profesor no tiene estado ACTIVE',
     }),
     ApiConflictResponse({
-      description:
-        "Ya existe una oferta para esa combinación de curso, período y sección"
-    })
+      description: 'Ya existe una oferta para esa combinación de curso, período y sección',
+    }),
   );
 
 export const ApiListCourseOfferings = () =>
   applyDecorators(
-    ApiOperation({ summary: "Listar ofertas de curso con paginación" }),
+    ApiOperation({ summary: 'Listar ofertas de curso con paginación' }),
     ApiQuery({
-      name: "courseId",
+      name: 'courseId',
       required: false,
       type: Number,
       example: 1,
-      description: "Filtrar por id de curso"
+      description: 'Filtrar por id de curso',
     }),
     ApiQuery({
-      name: "academicPeriodId",
+      name: 'academicPeriodId',
       required: false,
       type: Number,
       example: 1,
-      description: "Filtrar por id de período académico"
+      description: 'Filtrar por id de período académico',
     }),
     ApiQuery({
-      name: "status",
+      name: 'status',
       required: false,
       enum: CourseOfferingStatus,
       isArray: true,
-      description: "Filtrar por estado(s) de la oferta"
+      description: 'Filtrar por estado(s) de la oferta',
     }),
-    ApiPaginatedOperation(CourseOfferingResponseDto)
+    ApiPaginatedOperation(CourseOfferingResponseDto),
   );
 
 export const ApiGetCourseOfferingById = () =>
   applyDecorators(
-    ApiOperation({ summary: "Obtener una oferta de curso por id" }),
+    ApiOperation({ summary: 'Obtener una oferta de curso por id' }),
     ApiParam({
-      name: "id",
+      name: 'id',
       type: Number,
-      description: "Id de la oferta de curso",
-      example: 1
+      description: 'Id de la oferta de curso',
+      example: 1,
     }),
     ApiOkResponse({
       type: CourseOfferingResponseDto,
-      description: "Oferta encontrada"
+      description: 'Oferta encontrada',
     }),
-    ApiNotFoundResponse({ description: "Oferta no encontrada" })
+    ApiNotFoundResponse({ description: 'Oferta no encontrada' }),
   );
 
 export const ApiAssignProfessorToOffering = () =>
   applyDecorators(
-    ApiOperation({ summary: "Asignar profesor a una oferta de curso" }),
+    ApiOperation({ summary: 'Asignar profesor a una oferta de curso' }),
     ApiParam({
-      name: "id",
+      name: 'id',
       type: Number,
-      description: "Id de la oferta de curso",
-      example: 1
+      description: 'Id de la oferta de curso',
+      example: 1,
     }),
     ApiBody({ type: AssignProfessorDto }),
     ApiOkResponse({
       type: CourseOfferingResponseDto,
-      description: "Profesor asignado correctamente"
+      description: 'Profesor asignado correctamente',
     }),
-    ApiNotFoundResponse({ description: "Oferta o profesor no encontrado" }),
+    ApiNotFoundResponse({ description: 'Oferta o profesor no encontrado' }),
     ApiUnprocessableEntityResponse({
       description:
-        "La oferta está en estado CANCELLED o COMPLETED / " +
-        "El profesor no tiene estado ACTIVE"
-    })
+        'La oferta está en estado CANCELLED o COMPLETED / ' + 'El profesor no tiene estado ACTIVE',
+    }),
   );
 
 export const ApiActivateCourseOffering = () =>
   applyDecorators(
-    ApiOperation({ summary: "Activar oferta de curso (INACTIVE → ACTIVE)" }),
+    ApiOperation({ summary: 'Activar oferta de curso (INACTIVE → ACTIVE)' }),
     ApiParam({
-      name: "id",
+      name: 'id',
       type: Number,
-      description: "Id de la oferta de curso",
-      example: 1
+      description: 'Id de la oferta de curso',
+      example: 1,
     }),
     ApiOkResponse({
       type: CourseOfferingResponseDto,
-      description: "Oferta activada correctamente"
+      description: 'Oferta activada correctamente',
     }),
-    ApiNotFoundResponse({ description: "Oferta no encontrada" }),
+    ApiNotFoundResponse({ description: 'Oferta no encontrada' }),
     ApiUnprocessableEntityResponse({
       description:
-        "La oferta no está en estado INACTIVE / " +
-        "La oferta no tiene profesor asignado"
-    })
+        'La oferta no está en estado INACTIVE / ' + 'La oferta no tiene profesor asignado',
+    }),
   );

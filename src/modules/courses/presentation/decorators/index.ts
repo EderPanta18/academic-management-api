@@ -3,5 +3,5 @@
 export {
   ApiCreateCourse,
   ApiGetCourseById,
-  ApiListCourses
-} from "./api-course.decorator";
+  ApiListCourses,
+} from './api-course.decorator';

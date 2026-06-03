@@ -1,6 +1,6 @@
 // platform/config/env.validation.ts
 
-import { Type, plainToInstance } from "class-transformer";
+import { plainToInstance, Type } from 'class-transformer';
 import {
   IsBooleanString,
   IsIn,
@@ -9,18 +9,18 @@ import {
   IsString,
   Max,
   Min,
-  validateSync
-} from "class-validator";
+  validateSync,
+} from 'class-validator';
 
-export const NODE_ENV_VALUES = ["development", "test", "production"] as const;
+export const NODE_ENV_VALUES = ['development', 'test', 'production'] as const;
 
 export type NodeEnvironment = (typeof NODE_ENV_VALUES)[number];
 
 export const ENV_DEFAULTS = {
   PORT: 3000,
-  NODE_ENV: "development",
-  CORS_ORIGIN: "http://localhost:5173",
-  DATABASE_LOG_QUERIES: "false"
+  NODE_ENV: 'development',
+  CORS_ORIGIN: 'http://localhost:5173',
+  DATABASE_LOG_QUERIES: 'false',
 } as const;
 
 export class EnvironmentVariables {
@@ -45,17 +45,15 @@ export class EnvironmentVariables {
   DATABASE_LOG_QUERIES = ENV_DEFAULTS.DATABASE_LOG_QUERIES;
 }
 
-export function validateEnvironment(
-  config: Record<string, unknown>
-): EnvironmentVariables {
+export function validateEnvironment(config: Record<string, unknown>): EnvironmentVariables {
   const validatedConfig = plainToInstance(EnvironmentVariables, config, {
     exposeDefaultValues: true,
-    enableImplicitConversion: false
+    enableImplicitConversion: false,
   });
 
   const errors = validateSync(validatedConfig, {
     skipMissingProperties: false,
-    whitelist: true
+    whitelist: true,
   });
 
   if (errors.length > 0) throw new Error(errors.toString());

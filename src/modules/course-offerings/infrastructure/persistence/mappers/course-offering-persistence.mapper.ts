@@ -1,9 +1,8 @@
 // modules/course-offerings/infrastructure/persistence/mappers/course-offering-persistence.mapper.ts
 
-import { Prisma } from "@prisma/client";
-
-import { CourseOfferingStatus } from "@course-offerings/domain/constants";
-import { CourseOffering } from "@course-offerings/domain/entities";
+import type { CourseOfferingStatus } from '@course-offerings/domain/constants';
+import { CourseOffering } from '@course-offerings/domain/entities';
+import type { Prisma } from '@prisma/client';
 
 type CourseOfferingRaw = Prisma.CourseOfferingGetPayload<Record<string, never>>;
 
@@ -27,13 +26,11 @@ export class CourseOfferingPersistenceMapper {
       section: raw.section,
       maxStudents: raw.maxStudents,
       enrollmentDeadline: raw.enrollmentDeadline,
-      status: raw.status as CourseOfferingStatus
+      status: raw.status as CourseOfferingStatus,
     });
   }
 
-  static toPersistence(
-    offering: CourseOffering
-  ): CourseOfferingPersistenceData {
+  static toPersistence(offering: CourseOffering): CourseOfferingPersistenceData {
     return {
       courseId: offering.courseId,
       academicPeriodId: offering.academicPeriodId,
@@ -41,7 +38,7 @@ export class CourseOfferingPersistenceMapper {
       section: offering.section,
       maxStudents: offering.maxStudents,
       enrollmentDeadline: offering.enrollmentDeadline,
-      status: offering.status
+      status: offering.status,
     };
   }
 }

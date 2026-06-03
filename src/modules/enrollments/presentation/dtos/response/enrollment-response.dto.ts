@@ -1,8 +1,7 @@
 // modules/enrollments/presentation/dtos/response/enrollment-response.dto.ts
 
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-
-import { EnrollmentStatus } from "@enrollments/domain/constants";
+import { EnrollmentStatus } from '@enrollments/domain/constants';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class EnrollmentResponseDto {
   @ApiProperty({ example: 1 })
@@ -17,7 +16,7 @@ export class EnrollmentResponseDto {
   @ApiProperty({ enum: EnrollmentStatus, example: EnrollmentStatus.ENROLLED })
   status!: EnrollmentStatus;
 
-  @ApiProperty({ example: "2026-02-28" })
+  @ApiProperty({ example: '2026-02-28' })
   enrollmentDate!: string;
 
   @ApiPropertyOptional({ example: 1, nullable: true })

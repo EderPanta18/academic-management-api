@@ -1,18 +1,18 @@
 // modules/academic-periods/academic-periods.module.ts
 
-import { Module } from "@nestjs/common";
+import { Module } from '@nestjs/common';
 
-import { ACADEMIC_PERIOD_FINDER_PORT } from "./application/ports";
-import { AcademicPeriodRepository } from "./infrastructure/persistence";
+import { ACADEMIC_PERIOD_FINDER_PORT } from './application/ports';
+import { AcademicPeriodRepository } from './infrastructure/persistence';
 
 @Module({
   providers: [
     AcademicPeriodRepository,
     {
       provide: ACADEMIC_PERIOD_FINDER_PORT,
-      useExisting: AcademicPeriodRepository
-    }
+      useExisting: AcademicPeriodRepository,
+    },
   ],
-  exports: [ACADEMIC_PERIOD_FINDER_PORT]
+  exports: [ACADEMIC_PERIOD_FINDER_PORT],
 })
 export class AcademicPeriodsModule {}

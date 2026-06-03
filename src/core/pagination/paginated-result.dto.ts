@@ -1,6 +1,6 @@
 // core/pagination/paginated-result.dto.ts
 
-import { PaginationVO } from "./pagination.vo";
+import type { PaginationVO } from './pagination.vo';
 
 export class PaginatedResultDto<T> {
   readonly items: T[];
@@ -17,11 +17,7 @@ export class PaginatedResultDto<T> {
     this.hasNextPage = pagination.offset + pagination.pageSize < total;
   }
 
-  static from<T>(
-    items: T[],
-    total: number,
-    pagination: PaginationVO
-  ): PaginatedResultDto<T> {
+  static from<T>(items: T[], total: number, pagination: PaginationVO): PaginatedResultDto<T> {
     return new PaginatedResultDto(items, total, pagination);
   }
 }

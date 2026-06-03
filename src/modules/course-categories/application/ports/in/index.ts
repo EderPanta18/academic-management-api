@@ -2,5 +2,5 @@
 
 export {
   COURSE_CATEGORY_FINDER_PORT,
-  type ICourseCategoryFinder
-} from "./course-category-finder.port";
+  type ICourseCategoryFinder,
+} from './course-category-finder.port';

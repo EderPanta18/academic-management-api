@@ -1,3 +1,3 @@
 // platform/files/index.ts
 
-export * from "./parser";
+export * from './parser';

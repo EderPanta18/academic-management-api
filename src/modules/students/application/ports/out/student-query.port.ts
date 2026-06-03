@@ -1,9 +1,9 @@
 // modules/students/application/ports/out/student-query.port.ts
 
-import { PaginationVO } from "@core/pagination";
-import type { StudentView } from "@students/application/read-models";
+import type { PaginationVO } from '@core/pagination';
+import type { StudentView } from '@students/application/read-models';
 
-export const STUDENT_QUERY_PORT = Symbol("STUDENT_QUERY_PORT");
+export const STUDENT_QUERY_PORT = Symbol('STUDENT_QUERY_PORT');
 
 export interface FindAllStudentsFilters {
   careerId?: number;
@@ -14,6 +14,6 @@ export interface IStudentQuery {
 
   findAll(
     pagination: PaginationVO,
-    filters?: FindAllStudentsFilters
+    filters?: FindAllStudentsFilters,
   ): Promise<[StudentView[], number]>;
 }

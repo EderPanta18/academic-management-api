@@ -1,9 +1,8 @@
 // main.ts
 
-import { NestFactory } from "@nestjs/core";
-
-import { RuntimeConfigService } from "@platform/config";
-import { AppModule, bootstrapApp } from "@app";
+import { AppModule, bootstrapApp } from '@app';
+import { NestFactory } from '@nestjs/core';
+import { RuntimeConfigService } from '@platform/config';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);

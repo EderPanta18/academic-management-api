@@ -2,5 +2,5 @@
 
 export {
   FileParseInterceptor,
-  type ParsedImportData
-} from "./file-parse.interceptor";
+  type ParsedImportData,
+} from './file-parse.interceptor';

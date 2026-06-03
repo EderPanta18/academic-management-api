@@ -1,14 +1,16 @@
 // prisma/client.ts
 
-import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/client';
 
-const dbUrl = process.env.DATABASE_URL!;
+const dbUrl = process.env.DATABASE_URL;
+
+if (!dbUrl) throw new Error('DATABASE_URL is not defined');
 
 class SeedPrismaClient extends PrismaClient {
   constructor() {
     const adapter = new PrismaPg({
-      connectionString: dbUrl
+      connectionString: dbUrl,
     });
 
     super({ adapter });

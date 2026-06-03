@@ -1,20 +1,16 @@
 // modules/enrollments/enrollments.module.ts
 
-import { Module } from "@nestjs/common";
-
-import { StudentsModule } from "@students";
-import { CourseOfferingsModule } from "@course-offerings";
-import {
-  ENROLLMENT_REPOSITORY_PORT,
-  ENROLLMENT_FINDER_PORT
-} from "./application/ports";
+import { CourseOfferingsModule } from '@course-offerings';
+import { Module } from '@nestjs/common';
+import { StudentsModule } from '@students';
+import { ENROLLMENT_FINDER_PORT, ENROLLMENT_REPOSITORY_PORT } from './application/ports';
 import {
   EnrollStudentUseCase,
   GetEnrollmentByIdUseCase,
-  ListEnrollmentsUseCase
-} from "./application/use-cases";
-import { EnrollmentRepository } from "./infrastructure/persistence";
-import { EnrollmentsController } from "./presentation/controllers";
+  ListEnrollmentsUseCase,
+} from './application/use-cases';
+import { EnrollmentRepository } from './infrastructure/persistence';
+import { EnrollmentsController } from './presentation/controllers';
 
 @Module({
   imports: [StudentsModule, CourseOfferingsModule],
@@ -25,14 +21,14 @@ import { EnrollmentsController } from "./presentation/controllers";
     EnrollmentRepository,
     {
       provide: ENROLLMENT_REPOSITORY_PORT,
-      useExisting: EnrollmentRepository
+      useExisting: EnrollmentRepository,
     },
     {
       provide: ENROLLMENT_FINDER_PORT,
-      useExisting: EnrollmentRepository
-    }
+      useExisting: EnrollmentRepository,
+    },
   ],
   controllers: [EnrollmentsController],
-  exports: [ENROLLMENT_FINDER_PORT]
+  exports: [ENROLLMENT_FINDER_PORT],
 })
 export class EnrollmentsModule {}

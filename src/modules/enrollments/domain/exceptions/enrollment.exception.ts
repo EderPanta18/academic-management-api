@@ -1,7 +1,7 @@
 // modules/enrollments/domain/exceptions/enrollment.exception.ts
 
-import { DomainException } from "@core/exceptions";
+import { DomainException } from '@core/exceptions';
 
 export abstract class EnrollmentException extends DomainException {
-  readonly domain = "ENROLLMENT";
+  readonly domain = 'ENROLLMENT';
 }

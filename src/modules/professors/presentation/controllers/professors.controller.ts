@@ -1,36 +1,19 @@
 // modules/professors/presentation/controllers/professors.controller.ts
 
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-  Query
-} from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-
-import { PaginationVO, PaginatedResultDto } from "@core/pagination";
-import { CreateProfessorCommand } from "@professors/application/commands";
-import { ListProfessorsQuery } from "@professors/application/queries";
-import {
+import { type PaginatedResultDto, PaginationVO } from '@core/pagination';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { CreateProfessorCommand } from '@professors/application/commands';
+import { ListProfessorsQuery } from '@professors/application/queries';
+import type {
   CreateProfessorUseCase,
+  GetProfessorByIdUseCase,
   ListProfessorsUseCase,
-  GetProfessorByIdUseCase
-} from "@professors/application/use-cases";
-import { PROFESSOR_SWAGGER_TAG, PROFESSOR_ROUTES } from "../constants";
-import {
-  ApiCreateProfessor,
-  ApiGetProfessorById,
-  ApiListProfessors
-} from "../decorators";
-import {
-  CreateProfessorDto,
-  ListProfessorsQueryDto,
-  ProfessorResponseDto
-} from "../dtos";
-import { ProfessorHttpMapper } from "../mappers";
+} from '@professors/application/use-cases';
+import { PROFESSOR_ROUTES, PROFESSOR_SWAGGER_TAG } from '../constants';
+import { ApiCreateProfessor, ApiGetProfessorById, ApiListProfessors } from '../decorators';
+import type { CreateProfessorDto, ListProfessorsQueryDto, ProfessorResponseDto } from '../dtos';
+import { ProfessorHttpMapper } from '../mappers';
 
 @ApiTags(PROFESSOR_SWAGGER_TAG.name)
 @Controller(PROFESSOR_ROUTES.BASE)
@@ -38,7 +21,7 @@ export class ProfessorsController {
   constructor(
     private readonly createUseCase: CreateProfessorUseCase,
     private readonly listUseCase: ListProfessorsUseCase,
-    private readonly getByIdUseCase: GetProfessorByIdUseCase
+    private readonly getByIdUseCase: GetProfessorByIdUseCase,
   ) {}
 
   @Post()
@@ -52,9 +35,7 @@ export class ProfessorsController {
 
   @Get(PROFESSOR_ROUTES.GET_BY_ID)
   @ApiGetProfessorById()
-  async getById(
-    @Param("id", ParseIntPipe) id: number
-  ): Promise<ProfessorResponseDto> {
+  async getById(@Param('id', ParseIntPipe) id: number): Promise<ProfessorResponseDto> {
     const professor = await this.getByIdUseCase.execute(id);
 
     return ProfessorHttpMapper.toResponse(professor);
@@ -63,7 +44,7 @@ export class ProfessorsController {
   @Get()
   @ApiListProfessors()
   async list(
-    @Query() queryDto: ListProfessorsQueryDto
+    @Query() queryDto: ListProfessorsQueryDto,
   ): Promise<PaginatedResultDto<ProfessorResponseDto>> {
     const pagination = new PaginationVO(queryDto.page, queryDto.pageSize);
 

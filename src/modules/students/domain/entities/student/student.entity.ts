@@ -1,7 +1,7 @@
 // modules/students/domain/entities/student/student.entity.ts
 
-import { StudentStatus } from "@students/domain/constants";
-import type { CreateStudentProps, StudentProps } from "./student.types";
+import { StudentStatus } from '@students/domain/constants';
+import type { CreateStudentProps, StudentProps } from './student.types';
 
 interface StudentInternalProps {
   id?: number;

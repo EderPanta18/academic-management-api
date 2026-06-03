@@ -1,5 +1,6 @@
 // modules/students/presentation/controllers/students.controller.ts
 
+import { type PaginatedResultDto, PaginationVO } from '@core/pagination';
 import {
   Body,
   Controller,
@@ -9,43 +10,34 @@ import {
   Post,
   Query,
   Req,
-  UseInterceptors
-} from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { memoryStorage } from "multer";
-
-import { PaginationVO, PaginatedResultDto } from "@core/pagination";
-import {
-  CreateStudentCommand,
-  BulkImportStudentsCommand
-} from "@students/application/commands";
-import { ListStudentsQuery } from "@students/application/queries";
-import {
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags } from '@nestjs/swagger';
+import { BulkImportStudentsCommand, CreateStudentCommand } from '@students/application/commands';
+import { ListStudentsQuery } from '@students/application/queries';
+import type {
+  BulkImportStudentsUseCase,
   CreateStudentUseCase,
-  ListStudentsUseCase,
   GetStudentByIdUseCase,
-  BulkImportStudentsUseCase
-} from "@students/application/use-cases";
+  ListStudentsUseCase,
+} from '@students/application/use-cases';
+import { memoryStorage } from 'multer';
+import { STUDENT_BULK_IMPORT, STUDENT_ROUTES, STUDENT_SWAGGER_TAG } from '../constants';
 import {
-  STUDENT_BULK_IMPORT,
-  STUDENT_ROUTES,
-  STUDENT_SWAGGER_TAG
-} from "../constants";
-import { FileParseInterceptor, type ParsedImportData } from "../interceptors";
-import {
+  ApiBulkImportStudents,
   ApiCreateStudent,
   ApiGetStudentById,
   ApiListStudents,
-  ApiBulkImportStudents
-} from "../decorators";
-import {
+} from '../decorators';
+import type {
+  BulkImportResultResponseDto,
   CreateStudentDto,
   ListStudentsQueryDto,
   StudentResponseDto,
-  BulkImportResultResponseDto
-} from "../dtos";
-import { StudentHttpMapper, StudentImportHttpMapper } from "../mappers";
+} from '../dtos';
+import { FileParseInterceptor, type ParsedImportData } from '../interceptors';
+import { StudentHttpMapper, StudentImportHttpMapper } from '../mappers';
 
 @ApiTags(STUDENT_SWAGGER_TAG.name)
 @Controller(STUDENT_ROUTES.BASE)
@@ -54,7 +46,7 @@ export class StudentsController {
     private readonly createUseCase: CreateStudentUseCase,
     private readonly getByIdUseCase: GetStudentByIdUseCase,
     private readonly listUseCase: ListStudentsUseCase,
-    private readonly bulkImportUseCase: BulkImportStudentsUseCase
+    private readonly bulkImportUseCase: BulkImportStudentsUseCase,
   ) {}
 
   @Post()
@@ -68,9 +60,7 @@ export class StudentsController {
 
   @Get(STUDENT_ROUTES.GET_BY_ID)
   @ApiGetStudentById()
-  async getById(
-    @Param("id", ParseIntPipe) id: number
-  ): Promise<StudentResponseDto> {
+  async getById(@Param('id', ParseIntPipe) id: number): Promise<StudentResponseDto> {
     const student = await this.getByIdUseCase.execute(id);
 
     return StudentHttpMapper.toResponse(student);
@@ -79,7 +69,7 @@ export class StudentsController {
   @Get()
   @ApiListStudents()
   async list(
-    @Query() queryDto: ListStudentsQueryDto
+    @Query() queryDto: ListStudentsQueryDto,
   ): Promise<PaginatedResultDto<StudentResponseDto>> {
     const pagination = new PaginationVO(queryDto.page, queryDto.pageSize);
 
@@ -92,21 +82,21 @@ export class StudentsController {
   @Post(STUDENT_ROUTES.BULK_IMPORT)
   @ApiBulkImportStudents()
   @UseInterceptors(
-    FileInterceptor("file", {
+    FileInterceptor('file', {
       storage: memoryStorage(),
-      limits: { fileSize: STUDENT_BULK_IMPORT.MAX_FILE_SIZE_BYTES }
+      limits: { fileSize: STUDENT_BULK_IMPORT.MAX_FILE_SIZE_BYTES },
     }),
-    FileParseInterceptor
+    FileParseInterceptor,
   )
   async bulkImport(
-    @Req() req: Request & { importData: ParsedImportData }
+    @Req() req: Request & { importData: ParsedImportData },
   ): Promise<BulkImportResultResponseDto> {
     const { validRows, preErrors, totalRows } = req.importData;
 
     const commnad = new BulkImportStudentsCommand({
       validRows,
       preErrors,
-      totalRows
+      totalRows,
     });
 
     const result = await this.bulkImportUseCase.execute(commnad);

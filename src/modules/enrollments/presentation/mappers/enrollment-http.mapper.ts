@@ -1,8 +1,8 @@
 // modules/enrollments/presentation/mappers/enrollment-http.mapper.ts
 
-import { PaginationVO, PaginatedResultDto } from "@core/pagination";
-import { Enrollment } from "@enrollments/domain/entities";
-import { EnrollmentResponseDto } from "../dtos";
+import { PaginatedResultDto, type PaginationVO } from '@core/pagination';
+import type { Enrollment } from '@enrollments/domain/entities';
+import { EnrollmentResponseDto } from '../dtos';
 
 export class EnrollmentHttpMapper {
   static toResponse(enrollment: Enrollment): EnrollmentResponseDto {
@@ -12,7 +12,7 @@ export class EnrollmentHttpMapper {
     dto.studentId = enrollment.studentId;
     dto.courseOfferingId = enrollment.courseOfferingId;
     dto.status = enrollment.status;
-    dto.enrollmentDate = enrollment.enrollmentDate.toISOString().split("T")[0];
+    dto.enrollmentDate = enrollment.enrollmentDate.toISOString().split('T')[0];
     dto.createdBy = enrollment.createdBy;
 
     return dto;
@@ -20,12 +20,12 @@ export class EnrollmentHttpMapper {
 
   static toPaginatedResponse(
     result: PaginatedResultDto<Enrollment>,
-    pagination: PaginationVO
+    pagination: PaginationVO,
   ): PaginatedResultDto<EnrollmentResponseDto> {
     return PaginatedResultDto.from(
       result.items.map(EnrollmentHttpMapper.toResponse),
       result.total,
-      pagination
+      pagination,
     );
   }
 }

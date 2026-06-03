@@ -1,9 +1,9 @@
 // modules/courses/application/ports/out/course-repository.port.ts
 
-import { PaginationVO } from "@core/pagination";
-import { Course } from "@courses/domain/entities";
+import type { PaginationVO } from '@core/pagination';
+import type { Course } from '@courses/domain/entities';
 
-export const COURSE_REPOSITORY_PORT = Symbol("COURSE_REPOSITORY_PORT");
+export const COURSE_REPOSITORY_PORT = Symbol('COURSE_REPOSITORY_PORT');
 
 export interface FindAllCoursesFilters {
   careerId?: number;
@@ -15,10 +15,7 @@ export interface ICourseRepository {
 
   findById(id: number): Promise<Course | null>;
 
-  findAll(
-    pagination: PaginationVO,
-    filters?: FindAllCoursesFilters
-  ): Promise<[Course[], number]>;
+  findAll(pagination: PaginationVO, filters?: FindAllCoursesFilters): Promise<[Course[], number]>;
 
   existsByCareerAndName(careerId: number, name: string): Promise<boolean>;
 

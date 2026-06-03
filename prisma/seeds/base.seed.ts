@@ -1,6 +1,6 @@
 // prisma/seeds/base.seed.ts
 
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
 
 import * as data from "../data";
 import type { BaseMaps } from "./types";
@@ -41,7 +41,7 @@ export async function seedBaseTables(prisma: PrismaClient): Promise<BaseMaps> {
 // ─── Helpers atómicos ─────────────────────────────────────────────────
 
 async function seedDepartments(prisma: PrismaClient, departments: any[]) {
-  for (const d of departments) {
+  for (const d of departments)
     await prisma.department.upsert({
       where: { name: d.name },
       update: {},
@@ -50,11 +50,10 @@ async function seedDepartments(prisma: PrismaClient, departments: any[]) {
         description: d.description ?? null
       }
     });
-  }
 }
 
 async function seedAcademicPeriods(prisma: PrismaClient, periods: any[]) {
-  for (const p of periods) {
+  for (const p of periods)
     await prisma.academicPeriod.upsert({
       where: { name: p.name },
       update: {},
@@ -67,11 +66,10 @@ async function seedAcademicPeriods(prisma: PrismaClient, periods: any[]) {
         isCurrent: p.isCurrent ?? false
       }
     });
-  }
 }
 
 async function seedCourseCategories(prisma: PrismaClient, categories: any[]) {
-  for (const c of categories) {
+  for (const c of categories)
     await prisma.courseCategory.upsert({
       where: { name: c.name },
       update: {},
@@ -80,11 +78,10 @@ async function seedCourseCategories(prisma: PrismaClient, categories: any[]) {
         description: c.description ?? null
       }
     });
-  }
 }
 
 async function seedPersons(prisma: PrismaClient, persons: any[]) {
-  for (const p of persons) {
+  for (const p of persons)
     await prisma.person.upsert({
       where: { dni: p.dni },
       update: {},
@@ -97,5 +94,4 @@ async function seedPersons(prisma: PrismaClient, persons: any[]) {
         birthDate: p.birthDate ? new Date(p.birthDate) : null
       }
     });
-  }
 }

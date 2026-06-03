@@ -1,3 +1,3 @@
 // modules/careers/index.ts
 
-export { CareersModule } from "./careers.module";
+export { CareersModule } from './careers.module';

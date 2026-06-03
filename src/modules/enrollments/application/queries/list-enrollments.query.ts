@@ -1,6 +1,6 @@
 // modules/enrollments/application/queries/list-enrollments.query.ts
 
-import { EnrollmentStatus } from "@enrollments/domain/constants";
+import type { EnrollmentStatus } from '@enrollments/domain/constants';
 
 interface ListEnrollmentsQueryProps {
   studentId?: number;

@@ -2,5 +2,5 @@
 
 export {
   ACADEMIC_PERIOD_FINDER_PORT,
-  type IAcademicPeriodFinder
-} from "./academic-period-finder.port";
+  type IAcademicPeriodFinder,
+} from './academic-period-finder.port';

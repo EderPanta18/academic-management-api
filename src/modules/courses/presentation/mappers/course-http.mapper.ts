@@ -1,8 +1,8 @@
 // modules/courses/presentation/mappers/course-http.mapper.ts
 
-import { PaginationVO, PaginatedResultDto } from "@core/pagination";
-import { Course } from "@courses/domain/entities";
-import { CourseResponseDto } from "../dtos";
+import { PaginatedResultDto, type PaginationVO } from '@core/pagination';
+import type { Course } from '@courses/domain/entities';
+import { CourseResponseDto } from '../dtos';
 
 export class CourseHttpMapper {
   static toResponse(course: Course): CourseResponseDto {
@@ -20,12 +20,12 @@ export class CourseHttpMapper {
 
   static toPaginatedResponse(
     result: PaginatedResultDto<Course>,
-    pagination: PaginationVO
+    pagination: PaginationVO,
   ): PaginatedResultDto<CourseResponseDto> {
     return PaginatedResultDto.from(
       result.items.map(CourseHttpMapper.toResponse),
       result.total,
-      pagination
+      pagination,
     );
   }
 }

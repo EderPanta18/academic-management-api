@@ -1,23 +1,22 @@
 // modules/students/presentation/interceptors/file-parse.interceptor.ts
 
+import * as path from 'node:path';
 import {
   BadRequestException,
-  CallHandler,
-  ExecutionContext,
+  type CallHandler,
+  type ExecutionContext,
   Inject,
   Injectable,
-  NestInterceptor
-} from "@nestjs/common";
-import { validateSync } from "class-validator";
-import type { Request } from "express";
-import * as path from "path";
-import type { Observable } from "rxjs";
-
-import type { BulkRowError } from "@shared/types";
-import { FILE_PARSER_PORT, type IFileParser } from "@platform/files/parser";
-import type { StudentRowInput } from "@students/application/commands";
-import { STUDENT_BULK_IMPORT } from "@students/presentation/constants";
-import { StudentImportHttpMapper } from "@students/presentation/mappers";
+  type NestInterceptor,
+} from '@nestjs/common';
+import { FILE_PARSER_PORT, type IFileParser } from '@platform/files/parser';
+import type { BulkRowError } from '@shared/types';
+import type { StudentRowInput } from '@students/application/commands';
+import { STUDENT_BULK_IMPORT } from '@students/presentation/constants';
+import { StudentImportHttpMapper } from '@students/presentation/mappers';
+import { validateSync } from 'class-validator';
+import type { Request } from 'express';
+import type { Observable } from 'rxjs';
 
 export interface ParsedImportData {
   validRows: StudentRowInput[];
@@ -34,7 +33,7 @@ type ReqWithImport = Request & {
 export class FileParseInterceptor implements NestInterceptor {
   constructor(
     @Inject(FILE_PARSER_PORT)
-    private readonly parser: IFileParser
+    private readonly parser: IFileParser,
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
@@ -43,18 +42,14 @@ export class FileParseInterceptor implements NestInterceptor {
 
     if (!file)
       throw new BadRequestException(
-        'Se requiere un archivo. Envía el campo "file" como multipart/form-data'
+        'Se requiere un archivo. Envía el campo "file" como multipart/form-data',
       );
 
     const ext = path.extname(file.originalname).toLowerCase();
 
-    if (
-      !(STUDENT_BULK_IMPORT.ALLOWED_EXTENSIONS as readonly string[]).includes(
-        ext
-      )
-    )
+    if (!(STUDENT_BULK_IMPORT.ALLOWED_EXTENSIONS as readonly string[]).includes(ext))
       throw new BadRequestException(
-        `Extensión no soportada: "${ext}". Use: ${STUDENT_BULK_IMPORT.ALLOWED_EXTENSIONS.join(", ")}`
+        `Extensión no soportada: "${ext}". Use: ${STUDENT_BULK_IMPORT.ALLOWED_EXTENSIONS.join(', ')}`,
       );
 
     let rawRows: Record<string, unknown>[];
@@ -62,18 +57,17 @@ export class FileParseInterceptor implements NestInterceptor {
     try {
       rawRows = this.parser.parse(file.buffer, ext);
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Error al parsear el archivo";
+      const message = error instanceof Error ? error.message : 'Error al parsear el archivo';
 
       throw new BadRequestException(message);
     }
 
     if (rawRows.length < STUDENT_BULK_IMPORT.MIN_ROWS)
-      throw new BadRequestException("El archivo no contiene filas de datos");
+      throw new BadRequestException('El archivo no contiene filas de datos');
 
     if (rawRows.length > STUDENT_BULK_IMPORT.MAX_ROWS)
       throw new BadRequestException(
-        `El archivo supera el límite de ${STUDENT_BULK_IMPORT.MAX_ROWS} filas (recibidas: ${rawRows.length})`
+        `El archivo supera el límite de ${STUDENT_BULK_IMPORT.MAX_ROWS} filas (recibidas: ${rawRows.length})`,
       );
 
     const validRows: StudentRowInput[] = [];
@@ -85,17 +79,17 @@ export class FileParseInterceptor implements NestInterceptor {
 
       const errors = validateSync(dto, {
         whitelist: true,
-        forbidUnknownValues: false
+        forbidUnknownValues: false,
       });
 
       if (errors.length > 0) {
         errors.forEach((error) => {
-          const reason = Object.values(error.constraints ?? {}).join("; ");
+          const reason = Object.values(error.constraints ?? {}).join('; ');
 
           preErrors.push({
             row: rowNumber,
             field: error.property,
-            reason
+            reason,
           });
         });
 
@@ -108,7 +102,7 @@ export class FileParseInterceptor implements NestInterceptor {
     req.importData = {
       validRows,
       preErrors,
-      totalRows: rawRows.length
+      totalRows: rawRows.length,
     };
 
     return next.handle();

@@ -1,6 +1,9 @@
 // modules/professors/presentation/dtos/request/create-professor.dto.ts
 
-import { Type } from "class-transformer";
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ProfessorStatus } from '@professors/domain/constants';
+import { Trim, TrimOptional } from '@shared/decorators';
+import { Type } from 'class-transformer';
 import {
   IsDate,
   IsDefined,
@@ -13,166 +16,162 @@ import {
   IsString,
   Length,
   Matches,
-  MaxLength
-} from "class-validator";
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-
-import { Trim, TrimOptional } from "@shared/decorators";
-import { ProfessorStatus } from "@professors/domain/constants";
+  MaxLength,
+} from 'class-validator';
 
 export class CreateProfessorDto {
   // ── Obligatorios ──────────────────────────────────────────────────────────
 
   @ApiProperty({
-    description: "DNI del profesor — 8 dígitos numéricos",
-    example: "12345678",
-    pattern: "^[0-9]{8}$"
+    description: 'DNI del profesor — 8 dígitos numéricos',
+    example: '12345678',
+    pattern: '^[0-9]{8}$',
   })
   @Trim()
-  @IsDefined({ message: "El DNI es obligatorio" })
-  @IsString({ message: "El DNI debe ser una cadena de texto" })
-  @IsNotEmpty({ message: "El DNI no puede estar vacío" })
-  @Length(8, 8, { message: "El DNI debe tener exactamente 8 dígitos" })
-  @Matches(/^\d{8}$/, { message: "El DNI debe contener solo dígitos" })
+  @IsDefined({ message: 'El DNI es obligatorio' })
+  @IsString({ message: 'El DNI debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'El DNI no puede estar vacío' })
+  @Length(8, 8, { message: 'El DNI debe tener exactamente 8 dígitos' })
+  @Matches(/^\d{8}$/, { message: 'El DNI debe contener solo dígitos' })
   dni!: string;
 
   @ApiProperty({
-    description: "Nombre del profesor",
-    example: "Juan Carlos",
-    pattern: "^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$"
+    description: 'Nombre del profesor',
+    example: 'Juan Carlos',
+    pattern: '^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$',
   })
   @Trim()
-  @IsDefined({ message: "El nombre es obligatorio" })
-  @IsString({ message: "El nombre debe ser una cadena de texto" })
-  @IsNotEmpty({ message: "El nombre no puede estar vacío" })
-  @MaxLength(100, { message: "El nombre no puede tener más de 100 caracteres" })
+  @IsDefined({ message: 'El nombre es obligatorio' })
+  @IsString({ message: 'El nombre debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'El nombre no puede estar vacío' })
+  @MaxLength(100, { message: 'El nombre no puede tener más de 100 caracteres' })
   firstName!: string;
 
   @ApiProperty({
-    description: "Apellido del profesor",
-    example: "Pérez López",
-    pattern: "^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$"
+    description: 'Apellido del profesor',
+    example: 'Pérez López',
+    pattern: '^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$',
   })
   @Trim()
-  @IsDefined({ message: "El apellido es obligatorio" })
-  @IsString({ message: "El apellido debe ser una cadena de texto" })
-  @IsNotEmpty({ message: "El apellido no puede estar vacío" })
+  @IsDefined({ message: 'El apellido es obligatorio' })
+  @IsString({ message: 'El apellido debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'El apellido no puede estar vacío' })
   @MaxLength(100, {
-    message: "El apellido no puede tener más de 100 caracteres"
+    message: 'El apellido no puede tener más de 100 caracteres',
   })
   lastName!: string;
 
   @ApiProperty({
-    description: "Email personal del profesor",
-    example: "juan.perez@gmail.com",
-    format: "email"
+    description: 'Email personal del profesor',
+    example: 'juan.perez@gmail.com',
+    format: 'email',
   })
   @Trim()
-  @IsDefined({ message: "El email es obligatorio" })
-  @IsEmail({}, { message: "El email no tiene un formato válido" })
-  @IsNotEmpty({ message: "El email no puede estar vacío" })
-  @MaxLength(150, { message: "El email no puede tener más de 150 caracteres" })
+  @IsDefined({ message: 'El email es obligatorio' })
+  @IsEmail({}, { message: 'El email no tiene un formato válido' })
+  @IsNotEmpty({ message: 'El email no puede estar vacío' })
+  @MaxLength(150, { message: 'El email no puede tener más de 150 caracteres' })
   email!: string;
 
   @ApiProperty({
-    description: "Código único del profesor",
-    example: "PROF-001",
-    pattern: "^[A-Z]{4}-\\d{3}$"
+    description: 'Código único del profesor',
+    example: 'PROF-001',
+    pattern: '^[A-Z]{4}-\\d{3}$',
   })
   @Trim()
-  @IsDefined({ message: "El código es obligatorio" })
-  @IsString({ message: "El código debe ser una cadena de texto" })
-  @IsNotEmpty({ message: "El código no puede estar vacío" })
-  @MaxLength(20, { message: "El código no puede tener más de 20 caracteres" })
+  @IsDefined({ message: 'El código es obligatorio' })
+  @IsString({ message: 'El código debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'El código no puede estar vacío' })
+  @MaxLength(20, { message: 'El código no puede tener más de 20 caracteres' })
   code!: string;
 
   // ── Opcionales ────────────────────────────────────────────────────────────
 
   @ApiPropertyOptional({
-    description: "ID del departamento del profesor",
+    description: 'ID del departamento del profesor',
     example: 1,
-    format: "int32"
+    format: 'int32',
   })
   @IsOptional()
   @Type(() => Number)
-  @IsInt({ message: "El ID del departamento debe ser un número entero" })
-  @IsPositive({ message: "El ID del departamento debe ser un número positivo" })
+  @IsInt({ message: 'El ID del departamento debe ser un número entero' })
+  @IsPositive({ message: 'El ID del departamento debe ser un número positivo' })
   departmentId?: number;
 
   @ApiPropertyOptional({
-    description: "Especialidad del profesor",
-    example: "Bases de Datos",
-    pattern: "^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$"
+    description: 'Especialidad del profesor',
+    example: 'Bases de Datos',
+    pattern: '^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$',
   })
   @TrimOptional()
   @IsOptional()
-  @IsString({ message: "La especialidad debe ser una cadena de texto" })
-  @IsNotEmpty({ message: "La especialidad no puede estar vacía" })
+  @IsString({ message: 'La especialidad debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'La especialidad no puede estar vacía' })
   @MaxLength(100, {
-    message: "La especialidad no puede tener más de 100 caracteres"
+    message: 'La especialidad no puede tener más de 100 caracteres',
   })
   specialty?: string;
 
   @ApiPropertyOptional({
-    description: "Email institucional del profesor",
-    example: "juan.perez@universidad.edu.pe",
-    pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    description: 'Email institucional del profesor',
+    example: 'juan.perez@universidad.edu.pe',
+    pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$',
   })
   @TrimOptional()
   @IsOptional()
-  @IsString({ message: "El email institucional debe ser una cadena de texto" })
-  @IsNotEmpty({ message: "El email institucional no puede estar vacío" })
+  @IsString({ message: 'El email institucional debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'El email institucional no puede estar vacío' })
   @MaxLength(150, {
-    message: "El email institucional no puede tener más de 150 caracteres"
+    message: 'El email institucional no puede tener más de 150 caracteres',
   })
   institutionalEmail?: string;
 
   @ApiPropertyOptional({
-    description: "Fecha de contratación del profesor",
-    example: "2024-03-01",
-    format: "date",
-    type: String
+    description: 'Fecha de contratación del profesor',
+    example: '2024-03-01',
+    format: 'date',
+    type: String,
   })
   @IsOptional()
   @Type(() => Date)
-  @IsDate({ message: "La fecha de contratación debe ser una fecha válida" })
+  @IsDate({ message: 'La fecha de contratación debe ser una fecha válida' })
   hireDate?: Date;
 
   @ApiPropertyOptional({
-    description: "Número de teléfono del profesor",
-    example: "987654321",
-    pattern: "^[0-9]{9}$"
+    description: 'Número de teléfono del profesor',
+    example: '987654321',
+    pattern: '^[0-9]{9}$',
   })
   @TrimOptional()
   @IsOptional()
-  @IsString({ message: "El teléfono debe ser una cadena de texto" })
-  @IsNotEmpty({ message: "El teléfono no puede estar vacío" })
+  @IsString({ message: 'El teléfono debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'El teléfono no puede estar vacío' })
   @Matches(/^[0-9]{9}$/, {
-    message: "El teléfono debe contener exactamente 9 dígitos numéricos"
+    message: 'El teléfono debe contener exactamente 9 dígitos numéricos',
   })
   phone?: string;
 
   @ApiPropertyOptional({
-    description: "Fecha de nacimiento del profesor",
-    example: "1985-06-15",
-    format: "date",
-    type: String
+    description: 'Fecha de nacimiento del profesor',
+    example: '1985-06-15',
+    format: 'date',
+    type: String,
   })
   @IsOptional()
   @Type(() => Date)
-  @IsDate({ message: "La fecha de nacimiento debe ser una fecha válida" })
+  @IsDate({ message: 'La fecha de nacimiento debe ser una fecha válida' })
   birthDate?: Date;
 
   @ApiPropertyOptional({
-    description: "Estado inicial del profesor",
+    description: 'Estado inicial del profesor',
     enum: ProfessorStatus,
-    default: ProfessorStatus.ACTIVE
+    default: ProfessorStatus.ACTIVE,
   })
   @IsOptional()
   @IsEnum(ProfessorStatus, {
     each: true,
     message: (args) =>
-      `Estado inválido: '${args.value}'. Debe ser uno de: ${Object.values(ProfessorStatus).join(", ")}`
+      `Estado inválido: '${args.value}'. Debe ser uno de: ${Object.values(ProfessorStatus).join(', ')}`,
   })
   status?: ProfessorStatus;
 }

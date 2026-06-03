@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -12,7 +12,9 @@
       "!node_modules",
       "!dist",
       "!coverage",
-      "!prisma/migrations"
+      "!prisma/migrations",
+      "!prisma/seeds",
+      "!prisma/seeds"
     ]
   },
   "formatter": {
@@ -26,6 +28,9 @@
       "quoteStyle": "single",
       "semicolons": "always",
       "trailingCommas": "all"
+    },
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
     }
   },
   "json": {
@@ -46,7 +51,11 @@
     "rules": {
       "recommended": true,
       "style": {
-        "useImportType": "error"
+        "useImportType": "error",
+        "noNonNullAssertion": "off"
+      },
+      "complexity": {
+        "noStaticOnlyClass": "off"
       },
       "suspicious": {
         "noExplicitAny": "warn"

@@ -1,13 +1,8 @@
 // modules/persons/application/ports/in/person-creation-validator.port.ts
 
-import type {
-  PersonCreationInput,
-  PersonData
-} from "@persons/application/contracts";
+import type { PersonCreationInput, PersonData } from '@persons/application/contracts';
 
-export const PERSON_CREATION_VALIDATOR_PORT = Symbol(
-  "PERSON_CREATION_VALIDATOR_PORT"
-);
+export const PERSON_CREATION_VALIDATOR_PORT = Symbol('PERSON_CREATION_VALIDATOR_PORT');
 
 export interface IPersonCreationValidator {
   validate(input: PersonCreationInput): Promise<PersonData>;

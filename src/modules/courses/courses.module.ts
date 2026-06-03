@@ -1,20 +1,16 @@
 // modules/courses/courses.module.ts
 
-import { Module } from "@nestjs/common";
-
-import { CareersModule } from "@careers";
-import { CourseCategoriesModule } from "@course-categories";
-import {
-  COURSE_REPOSITORY_PORT,
-  COURSE_FINDER_PORT
-} from "./application/ports";
+import { CareersModule } from '@careers';
+import { CourseCategoriesModule } from '@course-categories';
+import { Module } from '@nestjs/common';
+import { COURSE_FINDER_PORT, COURSE_REPOSITORY_PORT } from './application/ports';
 import {
   CreateCourseUseCase,
+  GetCourseByIdUseCase,
   ListCoursesUseCase,
-  GetCourseByIdUseCase
-} from "./application/use-cases";
-import { CourseRepository } from "./infrastructure/persistence";
-import { CoursesController } from "./presentation/controllers";
+} from './application/use-cases';
+import { CourseRepository } from './infrastructure/persistence';
+import { CoursesController } from './presentation/controllers';
 
 @Module({
   imports: [CareersModule, CourseCategoriesModule],
@@ -25,14 +21,14 @@ import { CoursesController } from "./presentation/controllers";
     CourseRepository,
     {
       provide: COURSE_REPOSITORY_PORT,
-      useExisting: CourseRepository
+      useExisting: CourseRepository,
     },
     {
       provide: COURSE_FINDER_PORT,
-      useExisting: CourseRepository
-    }
+      useExisting: CourseRepository,
+    },
   ],
   controllers: [CoursesController],
-  exports: [COURSE_FINDER_PORT]
+  exports: [COURSE_FINDER_PORT],
 })
 export class CoursesModule {}

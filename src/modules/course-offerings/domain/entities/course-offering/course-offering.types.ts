@@ -1,6 +1,6 @@
 // modules/course-offerings/domain/entities/course-offering/course-offering.types.ts
 
-import { CourseOfferingStatus } from "@course-offerings/domain/constants";
+import type { CourseOfferingStatus } from '@course-offerings/domain/constants';
 
 export interface CourseOfferingProps {
   id: number;

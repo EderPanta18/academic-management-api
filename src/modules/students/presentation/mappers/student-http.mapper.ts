@@ -1,16 +1,13 @@
 // modules/students/presentation/mappers/student-http.mapper.ts
 
-import { PaginationVO, PaginatedResultDto } from "@core/pagination";
-import { Student } from "@students/domain/entities";
-import type { StudentView } from "@students/application/read-models";
-import { CreateStudentCommand } from "@students/application/commands";
-import { StudentResponseDto } from "../dtos";
+import { PaginatedResultDto, type PaginationVO } from '@core/pagination';
+import type { CreateStudentCommand } from '@students/application/commands';
+import type { StudentView } from '@students/application/read-models';
+import type { Student } from '@students/domain/entities';
+import { StudentResponseDto } from '../dtos';
 
 export class StudentHttpMapper {
-  static toResponseFromCreate(
-    student: Student,
-    command: CreateStudentCommand
-  ): StudentResponseDto {
+  static toResponseFromCreate(student: Student, command: CreateStudentCommand): StudentResponseDto {
     const dto = new StudentResponseDto();
 
     dto.id = student.id!;
@@ -52,12 +49,12 @@ export class StudentHttpMapper {
 
   static toPaginatedResponse(
     result: PaginatedResultDto<StudentView>,
-    pagination: PaginationVO
+    pagination: PaginationVO,
   ): PaginatedResultDto<StudentResponseDto> {
     return PaginatedResultDto.from(
       result.items.map(StudentHttpMapper.toResponse),
       result.total,
-      pagination
+      pagination,
     );
   }
 }

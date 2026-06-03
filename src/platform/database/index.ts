@@ -1,3 +1,3 @@
 // platform/database/index.ts
 
-export * from "./prisma";
+export * from './prisma';

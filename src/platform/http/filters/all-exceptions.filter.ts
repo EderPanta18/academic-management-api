@@ -1,16 +1,16 @@
 // platform/http/filters/all-exceptions.filter.ts
 
 import {
-  ArgumentsHost,
+  type ArgumentsHost,
   Catch,
-  ExceptionFilter,
+  type ExceptionFilter,
   HttpException,
-  Logger
-} from "@nestjs/common";
-import { RuntimeConfigService } from "@platform/config";
-import type { Request, Response } from "express";
+  Logger,
+} from '@nestjs/common';
+import type { RuntimeConfigService } from '@platform/config';
+import type { Request, Response } from 'express';
 
-import type { ApiErrorResponse } from "../responses";
+import type { ApiErrorResponse } from '../responses';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -35,25 +35,25 @@ export class AllExceptionsFilter implements ExceptionFilter {
       this.logger.warn(`[${req.method}] ${path} → ${statusCode}`);
 
       const response: ApiErrorResponse =
-        typeof body === "object" && body !== null
+        typeof body === 'object' && body !== null
           ? {
               success: false,
               statusCode,
-              errorKey: "HTTP_ERROR",
+              errorKey: 'HTTP_ERROR',
               errorCode: `SYS_${statusCode}`,
-              message: "HTTP exception",
+              message: 'HTTP exception',
               ...body,
               timestamp,
-              path
+              path,
             }
           : {
               success: false,
               statusCode,
-              errorKey: "HTTP_ERROR",
+              errorKey: 'HTTP_ERROR',
               errorCode: `SYS_${statusCode}`,
               message: String(body),
               timestamp,
-              path
+              path,
             };
 
       res.status(statusCode).json(response);
@@ -64,24 +64,22 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const error =
       exception instanceof Error
         ? exception
-        : new Error(
-            typeof exception === "string" ? exception : "Unknown error"
-          );
+        : new Error(typeof exception === 'string' ? exception : 'Unknown error');
 
     this.logger.error(`[${req.method}] ${path} → 500`, error.stack);
 
     const response: ApiErrorResponse = {
       success: false,
       statusCode: 500,
-      errorKey: "INTERNAL_SERVER_ERROR",
-      errorCode: "SYS_500",
+      errorKey: 'INTERNAL_SERVER_ERROR',
+      errorCode: 'SYS_500',
       message: error.message,
       timestamp,
       path,
       ...(isDev && {
         errorName: error.name,
-        stack: error.stack
-      })
+        stack: error.stack,
+      }),
     };
 
     res.status(500).json(response);

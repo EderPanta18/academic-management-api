@@ -1,15 +1,15 @@
 // modules/professors/presentation/mappers/professor-http.mapper.ts
 
-import { PaginationVO, PaginatedResultDto } from "@core/pagination";
-import { Professor } from "@professors/domain/entities";
-import { CreateProfessorCommand } from "@professors/application/commands";
-import type { ProfessorView } from "@professors/application/read-models";
-import { ProfessorResponseDto } from "../dtos";
+import { PaginatedResultDto, type PaginationVO } from '@core/pagination';
+import type { CreateProfessorCommand } from '@professors/application/commands';
+import type { ProfessorView } from '@professors/application/read-models';
+import type { Professor } from '@professors/domain/entities';
+import { ProfessorResponseDto } from '../dtos';
 
 export class ProfessorHttpMapper {
   static toResponseFromCreate(
     professor: Professor,
-    command: CreateProfessorCommand
+    command: CreateProfessorCommand,
   ): ProfessorResponseDto {
     const dto = new ProfessorResponseDto();
 
@@ -54,12 +54,12 @@ export class ProfessorHttpMapper {
 
   static toPaginatedResponse(
     result: PaginatedResultDto<ProfessorView>,
-    pagination: PaginationVO
+    pagination: PaginationVO,
   ): PaginatedResultDto<ProfessorResponseDto> {
     return PaginatedResultDto.from(
       result.items.map(ProfessorHttpMapper.toResponse),
       result.total,
-      pagination
+      pagination,
     );
   }
 }

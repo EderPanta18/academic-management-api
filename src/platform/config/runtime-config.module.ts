@@ -1,10 +1,10 @@
 // platform/config/runtime-config.module.ts
 
-import { Global, Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { Global, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
-import { validateEnvironment } from "./env.validation";
-import { RuntimeConfigService } from "./runtime-config.service";
+import { validateEnvironment } from './env.validation';
+import { RuntimeConfigService } from './runtime-config.service';
 
 @Global()
 @Module({
@@ -12,10 +12,10 @@ import { RuntimeConfigService } from "./runtime-config.service";
     ConfigModule.forRoot({
       cache: true,
       isGlobal: true,
-      validate: validateEnvironment
-    })
+      validate: validateEnvironment,
+    }),
   ],
   providers: [RuntimeConfigService],
-  exports: [RuntimeConfigService]
+  exports: [RuntimeConfigService],
 })
 export class RuntimeConfigModule {}
