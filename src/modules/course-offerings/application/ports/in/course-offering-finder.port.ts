@@ -7,5 +7,7 @@ export const COURSE_OFFERING_FINDER_PORT = Symbol(
 export interface ICourseOfferingFinder {
   exists(id: number): Promise<boolean>;
 
+  isOpenForEnrollment(id: number): Promise<boolean>;
+
   getCourseCareerIdByOfferingId(offeringId: number): Promise<number | null>;
 }

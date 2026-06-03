@@ -33,6 +33,8 @@ export class ListCourseOfferingsQueryDto extends PaginationQueryDto {
       `Estado inválido: '${args.value}'. Debe ser uno de: ${Object.values(CourseOfferingStatus).join(", ")}`
   })
   @Transform(({ value }) => {
+    if (!value) return undefined;
+
     const rawValues = Array.isArray(value)
       ? value
       : String(value)

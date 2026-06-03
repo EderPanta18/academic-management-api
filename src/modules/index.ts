@@ -1,3 +1,3 @@
 // modules/index.ts
 
-export { ModulesModule } from './modules.module';
+export { ModulesModule } from "./modules.module";

@@ -3,7 +3,7 @@
 import { Injectable } from "@nestjs/common";
 
 import { PrismaService } from "@platform/database";
-import type { ICourseCategoryFinder } from "@modules/course-categories/application/ports/in";
+import type { ICourseCategoryFinder } from "@course-categories/application/ports/in";
 
 @Injectable()
 export class CourseCategoryRepository implements ICourseCategoryFinder {

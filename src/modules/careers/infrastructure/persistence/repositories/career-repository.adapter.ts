@@ -3,7 +3,7 @@
 import { Injectable } from "@nestjs/common";
 
 import { PrismaService } from "@platform/database";
-import type { ICareerFinder } from "@modules/careers/application/ports/in";
+import type { ICareerFinder } from "@careers/application/ports/in";
 
 @Injectable()
 export class CareerRepository implements ICareerFinder {

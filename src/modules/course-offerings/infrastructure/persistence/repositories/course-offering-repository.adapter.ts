@@ -56,6 +56,7 @@ export class CourseOfferingRepository
         take: pagination.pageSize,
         orderBy: { id: "asc" }
       }),
+
       this.prisma.courseOffering.count({ where })
     ]);
 
@@ -110,6 +111,28 @@ export class CourseOfferingRepository
     });
 
     return count > 0;
+  }
+
+  async isOpenForEnrollment(id: number): Promise<boolean> {
+    const raw = await this.prisma.courseOffering.findFirst({
+      where: { id, deletedAt: null },
+      select: { status: true, enrollmentDeadline: true }
+    });
+
+    if (!raw) return false;
+
+    const offering = CourseOffering.reconstitute({
+      id,
+      courseId: 0,
+      academicPeriodId: 0,
+      professorId: null,
+      section: "",
+      maxStudents: 0,
+      enrollmentDeadline: raw.enrollmentDeadline,
+      status: raw.status as any
+    });
+
+    return offering.isOpenForEnrollment;
   }
 
   async getCourseCareerIdByOfferingId(

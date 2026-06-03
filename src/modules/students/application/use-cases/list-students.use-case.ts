@@ -7,7 +7,7 @@ import type { StudentView } from "@students/application/read-models";
 import {
   STUDENT_QUERY_PORT,
   type IStudentQuery
-} from "@modules/students/application/ports/out";
+} from "@students/application/ports/out";
 import { ListStudentsQuery } from "../queries";
 
 @Injectable()

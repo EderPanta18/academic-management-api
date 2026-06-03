@@ -5,23 +5,22 @@ import { CourseOfferingStatus } from "@course-offerings/domain/constants";
 interface ListCourseOfferingsQueryProps {
   courseId?: number;
   academicPeriodId?: number;
-  status?: CourseOfferingStatus | CourseOfferingStatus[];
+  statuses?: CourseOfferingStatus | CourseOfferingStatus[];
 }
 
 export class ListCourseOfferingsQuery {
   readonly courseId?: number;
   readonly academicPeriodId?: number;
-  readonly status?: CourseOfferingStatus | CourseOfferingStatus[];
+  readonly statuses?: CourseOfferingStatus[];
 
   constructor(props: ListCourseOfferingsQueryProps) {
     this.courseId = props.courseId;
     this.academicPeriodId = props.academicPeriodId;
-    this.status = props.status;
-  }
-
-  get normalizedStatuses(): CourseOfferingStatus[] | undefined {
-    if (this.status === undefined) return undefined;
-
-    return Array.isArray(this.status) ? this.status : [this.status];
+    this.statuses =
+      props.statuses === undefined
+        ? undefined
+        : Array.isArray(props.statuses)
+          ? props.statuses
+          : [props.statuses];
   }
 }

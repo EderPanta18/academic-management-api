@@ -1,3 +1,3 @@
 // modules/enrollments/presentation/constants/index.ts
 
-export * from './enrollment-routes.constants';
+export * from "./enrollment-routes.constants";

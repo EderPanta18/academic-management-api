@@ -10,7 +10,7 @@ import type {
   ICourseRepository,
   ICourseFinder,
   FindAllCoursesFilters
-} from "@modules/courses/application/ports";
+} from "@courses/application/ports";
 import { CoursePersistenceMapper } from "../mappers";
 
 @Injectable()

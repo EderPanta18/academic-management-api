@@ -1,16 +1,12 @@
 // modules/enrollments/domain/exceptions/enrollment-invalid-status-transition.exception.ts
 
-import { EnrollmentStatus } from '../constants';
-import { EnrollmentException } from './enrollment.exception';
+import { EnrollmentStatus } from "../constants";
+import { EnrollmentException } from "./enrollment.exception";
 
-/**
- * Se lanza cuando se intenta una transición de estado no permitida.
- * Ejemplos inválidos: COMPLETED → ENROLLED, WITHDRAWN → SUSPENDED.
- */
 export class EnrollmentInvalidStatusTransitionException extends EnrollmentException {
   readonly statusCode = 422;
-  readonly errorKey = 'ENROLLMENT_INVALID_STATUS_TRANSITION';
-  readonly errorCode = 'EN_003';
+  readonly errorKey = "ENROLLMENT_INVALID_STATUS_TRANSITION";
+  readonly errorCode = "EN_003";
 
   constructor(
     id: number,
@@ -19,7 +15,7 @@ export class EnrollmentInvalidStatusTransitionException extends EnrollmentExcept
   ) {
     super(
       `La inscripción ${id} está en estado ${currentStatus}. ` +
-        `Se requiere uno de: ${allowedStatuses.join(', ')}`,
+        `Se requiere uno de: ${allowedStatuses.join(", ")}`
     );
   }
 }

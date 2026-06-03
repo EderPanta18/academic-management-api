@@ -1,14 +1,14 @@
 // modules/enrollments/presentation/constants/enrollment-routes.constants.ts
 
+import type { SwaggerTag } from "@platform/http/swagger";
+
 export const ENROLLMENT_ROUTES = {
-  BASE: 'enrollments',
-
-  /** POST  /enrollments      — crear matrícula */
-  CREATE: '',
-
-  /** GET   /enrollments      — listar matrículas */
-  LIST: '',
-
-  /** GET   /enrollments/:id  — obtener matrícula por id */
-  GET_BY_ID: ':id',
+  BASE: "enrollments",
+  GET_BY_ID: ":id"
 } as const;
+
+export const ENROLLMENT_SWAGGER_TAG = {
+  name: "courses",
+  description:
+    "Endpoints relacionados con las inscripciones de alumnos a cursos."
+} as const satisfies SwaggerTag;

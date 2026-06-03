@@ -24,7 +24,7 @@ export class ListCourseOfferingsUseCase {
     const [offerings, total] = await this.repository.findAll(pagination, {
       courseId: query.courseId,
       academicPeriodId: query.academicPeriodId,
-      statuses: query.normalizedStatuses
+      statuses: query.statuses
     });
 
     return PaginatedResultDto.from(offerings, total, pagination);

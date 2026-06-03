@@ -3,8 +3,8 @@
 import { Module } from "@nestjs/common";
 
 import { FileParserModule } from "@platform/files/parser";
-import { PersonsModule } from "@modules/persons";
-import { CareersModule } from "@modules/careers";
+import { PersonsModule } from "@persons";
+import { CareersModule } from "@careers";
 import {
   STUDENT_REPOSITORY_PORT,
   STUDENT_QUERY_PORT,

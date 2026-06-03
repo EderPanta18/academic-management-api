@@ -5,7 +5,7 @@ import { Prisma } from "@prisma/client";
 
 import { PaginationVO } from "@core/pagination";
 import { PrismaService } from "@platform/database";
-import { StudentStatus } from "@modules/students/domain/constants";
+import { StudentStatus } from "@students/domain/constants";
 import { Student } from "@students/domain/entities";
 import type { StudentView } from "@students/application/read-models";
 import type {
@@ -14,7 +14,7 @@ import type {
   IStudentFinder,
   StudentSaveData,
   FindAllStudentsFilters
-} from "@modules/students/application/ports";
+} from "@students/application/ports";
 import { StudentPersistenceMapper } from "../mappers";
 
 @Injectable()

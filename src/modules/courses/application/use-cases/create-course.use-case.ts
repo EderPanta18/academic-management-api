@@ -15,7 +15,7 @@ import { Course } from "@courses/domain/entities";
 import {
   COURSE_REPOSITORY_PORT,
   type ICourseRepository
-} from "@modules/courses/application/ports/out";
+} from "@courses/application/ports/out";
 import { CourseDuplicateNameException } from "@courses/domain/exceptions";
 import { CreateCourseCommand } from "../commands";
 

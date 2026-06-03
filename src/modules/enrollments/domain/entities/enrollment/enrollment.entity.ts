@@ -1,13 +1,12 @@
 // modules/enrollments/domain/entities/enrollment.entity.ts
 
-import { EnrollmentStatus } from '../constants';
+import { EnrollmentStatus } from "@enrollments/domain/constants";
 import type {
   EnrollmentProps,
-  CreateEnrollmentProps,
-} from './enrollment.types';
+  CreateEnrollmentProps
+} from "./enrollment.types";
 
-/** Superset interno del constructor. */
-type InternalProps = {
+type EnrollmentInternalProps = {
   id?: number;
   studentId: number;
   courseOfferingId: number;
@@ -16,10 +15,6 @@ type InternalProps = {
   createdBy?: number | null;
 };
 
-/**
- * Entidad de dominio Enrollment.
- * Representa la matrícula de un alumno en una oferta de curso concreta.
- */
 export class Enrollment {
   readonly id?: number;
   readonly studentId: number;
@@ -28,17 +23,16 @@ export class Enrollment {
   readonly enrollmentDate: Date;
   readonly createdBy: number | null;
 
-  private constructor(props: InternalProps) {
+  private constructor(props: EnrollmentInternalProps) {
     this.id = props.id;
     this.studentId = props.studentId;
     this.courseOfferingId = props.courseOfferingId;
     this.status = props.status ?? EnrollmentStatus.ENROLLED;
     this.enrollmentDate = props.enrollmentDate;
     this.createdBy = props.createdBy ?? null;
+
     Object.freeze(this);
   }
-
-  // ── Factories ────────────────────────────────────────────────────────────
 
   static create(props: CreateEnrollmentProps): Enrollment {
     return new Enrollment(props);
@@ -48,32 +42,22 @@ export class Enrollment {
     return new Enrollment(props);
   }
 
-  // ── Reglas de negocio ─────────────────────────────────────────────────────
-
-  /** Solo ENROLLED puede retirarse formalmente. */
   get canWithdraw(): boolean {
     return this.status === EnrollmentStatus.ENROLLED;
   }
 
-  /** Solo ENROLLED puede cerrarse como completado. */
   get canComplete(): boolean {
     return this.status === EnrollmentStatus.ENROLLED;
   }
 
-  /** Solo ENROLLED puede recibir una suspensión. */
   get canSuspend(): boolean {
     return this.status === EnrollmentStatus.ENROLLED;
   }
 
-  /**
-   * Solo SUSPENDED puede ser reactivado.
-   * WITHDRAWN y COMPLETED son estados terminales — no se revierten.
-   */
   get canReactivate(): boolean {
     return this.status === EnrollmentStatus.SUSPENDED;
   }
 
-  /** Participa activamente: puede recibir notas y asistencia. */
   get isEnrolled(): boolean {
     return this.status === EnrollmentStatus.ENROLLED;
   }
@@ -90,7 +74,6 @@ export class Enrollment {
     return this.status === EnrollmentStatus.SUSPENDED;
   }
 
-  /** Estado terminal: no puede recibir ninguna operación de cambio. */
   get isTerminal(): boolean {
     return (
       this.status === EnrollmentStatus.WITHDRAWN ||
