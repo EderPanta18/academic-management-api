@@ -7,8 +7,8 @@ export class PaginationVO {
   readonly pageSize: number;
 
   constructor(page?: number, pageSize?: number) {
-    this.page = page ?? PAGINATION_DEFAULTS.PAGE;
-    this.pageSize = pageSize ?? PAGINATION_DEFAULTS.PAGE_SIZE;
+    this.page = page ?? PAGINATION_DEFAULTS.page;
+    this.pageSize = pageSize ?? PAGINATION_DEFAULTS.pageSize;
 
     this.validate();
 
@@ -16,14 +16,14 @@ export class PaginationVO {
   }
 
   private validate(): void {
-    if (this.page < PAGINATION_LIMITS.MIN_PAGE)
-      throw new Error(`page debe ser mayor o igual a ${PAGINATION_LIMITS.MIN_PAGE}`);
+    if (this.page < PAGINATION_LIMITS.minPage)
+      throw new Error(`page debe ser mayor o igual a ${PAGINATION_LIMITS.minPage}`);
 
-    if (this.pageSize < PAGINATION_LIMITS.MIN_PAGE_SIZE)
-      throw new Error(`pageSize debe ser mayor o igual a ${PAGINATION_LIMITS.MIN_PAGE_SIZE}`);
+    if (this.pageSize < PAGINATION_LIMITS.minPageSize)
+      throw new Error(`pageSize debe ser mayor o igual a ${PAGINATION_LIMITS.minPageSize}`);
 
-    if (this.pageSize > PAGINATION_LIMITS.MAX_PAGE_SIZE)
-      throw new Error(`pageSize no puede superar ${PAGINATION_LIMITS.MAX_PAGE_SIZE}`);
+    if (this.pageSize > PAGINATION_LIMITS.maxPageSize)
+      throw new Error(`pageSize no puede superar ${PAGINATION_LIMITS.maxPageSize}`);
   }
 
   get offset(): number {
