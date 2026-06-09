@@ -17,7 +17,7 @@ export function bootstrapApp(app: INestApplication): void {
 
   setupSwagger(app, {
     description: APP_CONFIG.description,
-    path: `${APP_CONFIG.apiPrefix}/${APP_CONFIG.docsPath}`,
+    path: `${APP_CONFIG.apiPrefix}${APP_CONFIG.docsPath}`,
     title: APP_CONFIG.name,
     version: APP_CONFIG.version,
     tags: SWAGGER_TAGS,

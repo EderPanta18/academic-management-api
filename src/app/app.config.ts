@@ -12,7 +12,7 @@ export const APP_CONFIG = {
   description: 'API REST para gestion academica universitaria',
   version: '1.0',
   apiPrefix: '/api/v1',
-  docsPath: 'docs',
+  docsPath: '/docs',
 } as const;
 
 export const SWAGGER_TAGS = [
