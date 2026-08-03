@@ -10,10 +10,6 @@
 
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'record_status') THEN
-    CREATE TYPE record_status AS ENUM ('ACTIVE', 'INACTIVE');
-  END IF;
-
   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'student_status') THEN
     CREATE TYPE student_status AS ENUM ('ACTIVE', 'INACTIVE', 'SUSPENDED', 'WITHDRAWN', 'GRADUATED');
   END IF;
@@ -61,7 +57,6 @@ CREATE TABLE IF NOT EXISTS document_types (
   code VARCHAR(30) NOT NULL,
   name VARCHAR(120) NOT NULL,
   description TEXT,
-  is_active BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ,
@@ -105,7 +100,6 @@ CREATE TABLE IF NOT EXISTS academic_programs (
   code VARCHAR(40) NOT NULL,
   name VARCHAR(180) NOT NULL,
   academic_unit VARCHAR(180),
-  status record_status NOT NULL DEFAULT 'ACTIVE',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ,
@@ -114,15 +108,11 @@ CREATE TABLE IF NOT EXISTS academic_programs (
   CONSTRAINT uq_academic_programs_name UNIQUE (name)
 );
 
-CREATE INDEX IF NOT EXISTS ix_academic_programs_status
-  ON academic_programs (status);
-
 CREATE TABLE IF NOT EXISTS course_categories (
   id UUID PRIMARY KEY,
   code VARCHAR(40) NOT NULL,
   name VARCHAR(160) NOT NULL,
   description TEXT,
-  is_active BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ,
@@ -140,7 +130,6 @@ CREATE TABLE IF NOT EXISTS courses (
   description TEXT,
   credits INTEGER NOT NULL,
   hours INTEGER,
-  status record_status NOT NULL DEFAULT 'ACTIVE',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ,
@@ -163,9 +152,6 @@ CREATE INDEX IF NOT EXISTS ix_courses_academic_program_id
 
 CREATE INDEX IF NOT EXISTS ix_courses_course_category_id
   ON courses (course_category_id);
-
-CREATE INDEX IF NOT EXISTS ix_courses_status
-  ON courses (status);
 
 CREATE TABLE IF NOT EXISTS academic_periods (
   id UUID PRIMARY KEY,
@@ -284,7 +270,6 @@ CREATE TABLE IF NOT EXISTS roles (
   name VARCHAR(120) NOT NULL,
   description TEXT,
   is_system BOOLEAN NOT NULL DEFAULT FALSE,
-  status record_status NOT NULL DEFAULT 'ACTIVE',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ,
@@ -293,9 +278,6 @@ CREATE TABLE IF NOT EXISTS roles (
   CONSTRAINT uq_roles_name UNIQUE (name)
 );
 
-CREATE INDEX IF NOT EXISTS ix_roles_status
-  ON roles (status);
-
 CREATE TABLE IF NOT EXISTS permissions (
   id UUID PRIMARY KEY,
   code VARCHAR(120) NOT NULL,
@@ -303,7 +285,6 @@ CREATE TABLE IF NOT EXISTS permissions (
   description TEXT,
   module VARCHAR(80) NOT NULL,
   is_system BOOLEAN NOT NULL DEFAULT FALSE,
-  status record_status NOT NULL DEFAULT 'ACTIVE',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ,
@@ -313,9 +294,6 @@ CREATE TABLE IF NOT EXISTS permissions (
 
 CREATE INDEX IF NOT EXISTS ix_permissions_module
   ON permissions (module);
-
-CREATE INDEX IF NOT EXISTS ix_permissions_status
-  ON permissions (status);
 
 CREATE TABLE IF NOT EXISTS user_roles (
   user_id UUID NOT NULL,

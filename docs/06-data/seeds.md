@@ -118,11 +118,11 @@ document_types
 
 Datos sugeridos:
 
-| code | name | is_active |
-| --- | --- | --- |
-| `DNI` | Documento Nacional de Identidad | true |
-| `CE` | Carné de Extranjería | true |
-| `PASSPORT` | Pasaporte | true |
+| code | name |
+| --- | --- |
+| `DNI` | Documento Nacional de Identidad |
+| `CE` | Carné de Extranjería |
+| `PASSPORT` | Pasaporte |
 
 Estos valores pueden ajustarse según la institución o país.
 
@@ -136,12 +136,12 @@ course_categories
 
 Datos sugeridos:
 
-| code | name | is_active |
+| code | name |
 | --- | --- | --- |
-| `GENERAL` | Formación general | true |
-| `SPECIALTY` | Especialidad | true |
-| `ELECTIVE` | Electivo | true |
-| `LABORATORY` | Laboratorio | true |
+| `GENERAL` | Formación general |
+| `SPECIALTY` | Especialidad |
+| `ELECTIVE` | Electivo |
+| `LABORATORY` | Laboratorio |
 
 Si la institución no requiere categorías administrables, este catálogo puede mantenerse mínimo.
 
@@ -167,7 +167,6 @@ Campos recomendados:
 
 ```txt
 is_system = true
-status = ACTIVE
 ```
 
 Los roles base no deberían eliminarse físicamente.
@@ -541,10 +540,10 @@ academic_programs
 
 Ejemplos:
 
-| code | name | status |
+| code | name |
 | --- | --- | --- |
-| `SOFT-ENG` | Ingeniería de Software | ACTIVE |
-| `INFO-SYS` | Sistemas de Información | ACTIVE |
+| `SOFT-ENG` | Ingeniería de Software |
+| `INFO-SYS` | Sistemas de Información |
 
 ## Cursos de desarrollo
 

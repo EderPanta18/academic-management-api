@@ -184,7 +184,6 @@ Se modela como tabla catálogo porque sus valores pueden variar según país, in
 | `code` | texto corto | único, requerido | Código del tipo de documento. |
 | `name` | texto | único, requerido | Nombre visible. |
 | `description` | texto | opcional | Descripción. |
-| `is_active` | booleano | requerido | Indica si puede usarse. |
 | `created_at` | fecha-hora | requerido | Fecha de creación. |
 | `updated_at` | fecha-hora | requerido | Fecha de actualización. |
 | `deleted_at` | fecha-hora | opcional | Baja lógica. |
@@ -339,18 +338,9 @@ Se usa este nombre en lugar de carrera para mantener el modelo general.
 | `code` | texto corto | único, requerido | Código del programa. |
 | `name` | texto | único, requerido | Nombre del programa. |
 | `academic_unit` | texto | opcional | Unidad académica asociada. |
-| `status` | enum | requerido | Estado del programa. |
 | `created_at` | fecha-hora | requerido | Fecha de creación. |
 | `updated_at` | fecha-hora | requerido | Fecha de actualización. |
 | `deleted_at` | fecha-hora | opcional | Baja lógica. |
-
-Enum reutilizable:
-
-```txt
-record_status:
-- ACTIVE
-- INACTIVE
-```
 
 Relaciones:
 
@@ -371,7 +361,6 @@ Se modela como tabla catálogo porque sus valores pueden variar según la instit
 | `code` | texto corto | único, requerido | Código de categoría. |
 | `name` | texto | único, requerido | Nombre de categoría. |
 | `description` | texto | opcional | Descripción. |
-| `is_active` | booleano | requerido | Indica si puede usarse. |
 | `created_at` | fecha-hora | requerido | Fecha de creación. |
 | `updated_at` | fecha-hora | requerido | Fecha de actualización. |
 | `deleted_at` | fecha-hora | opcional | Baja lógica. |
@@ -665,14 +654,6 @@ Representa una agrupación de responsabilidades.
 | `updated_at` | fecha-hora | requerido | Fecha de actualización. |
 | `deleted_at` | fecha-hora | opcional | Baja lógica. |
 
-Enum reutilizable:
-
-```txt
-record_status:
-- ACTIVE
-- INACTIVE
-```
-
 Ejemplos:
 
 ```txt
@@ -695,7 +676,6 @@ Representa una acción permitida dentro del sistema.
 | `description` | texto | opcional | Descripción. |
 | `module` | texto corto | requerido | Módulo o capacidad asociada. |
 | `is_system` | booleano | requerido | Indica si es permiso base del sistema. |
-| `status` | enum | requerido | Estado. |
 | `created_at` | fecha-hora | requerido | Fecha de creación. |
 | `updated_at` | fecha-hora | requerido | Fecha de actualización. |
 | `deleted_at` | fecha-hora | opcional | Baja lógica. |
@@ -1050,7 +1030,6 @@ students.status
 professors.code
 academic_programs.code
 courses.code
-academic_periods.status
 course_offerings.academic_period_id
 course_offerings.course_id
 course_offerings.professor_id

@@ -90,7 +90,6 @@ Los estados con pocos valores y comportamiento estable se modelan como enums.
 Enums definidos:
 
 ```txt
-record_status
 student_status
 professor_status
 academic_period_status
