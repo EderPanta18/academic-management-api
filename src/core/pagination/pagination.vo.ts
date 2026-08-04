@@ -1,32 +1,54 @@
-// core/pagination/pagination.vo.ts
+// src/core/pagination/pagination.vo.ts
 
-import { PAGINATION_DEFAULTS, PAGINATION_LIMITS } from './pagination.constants';
+import { ValidationException } from '@core/exceptions';
+import { PAGINATION_LIMIT, PAGINATION_PAGE } from './pagination.constants';
+
+export type CreatePaginationProps = {
+  page?: number;
+  limit?: number;
+};
 
 export class PaginationVO {
-  readonly page: number;
-  readonly pageSize: number;
+  private static readonly VALIDATION_ERROR_MESSAGE = 'Los parámetros de paginación no son válidos.';
 
-  constructor(page?: number, pageSize?: number) {
-    this.page = page ?? PAGINATION_DEFAULTS.page;
-    this.pageSize = pageSize ?? PAGINATION_DEFAULTS.pageSize;
+  readonly page: number;
+  readonly limit: number;
+
+  private constructor(page?: number, limit?: number) {
+    this.page = page ?? PAGINATION_PAGE.default;
+    this.limit = limit ?? PAGINATION_LIMIT.default;
 
     this.validate();
 
     Object.freeze(this);
   }
 
+  static create(props: CreatePaginationProps = {}): PaginationVO {
+    return new PaginationVO(props.page, props.limit);
+  }
+
   private validate(): void {
-    if (this.page < PAGINATION_LIMITS.minPage)
-      throw new Error(`page debe ser mayor o igual a ${PAGINATION_LIMITS.minPage}`);
+    if (!Number.isInteger(this.page) || this.page < PAGINATION_PAGE.min)
+      this.throwValidationError(
+        'page',
+        `page debe ser un entero mayor o igual a ${PAGINATION_PAGE.min}.`,
+      );
 
-    if (this.pageSize < PAGINATION_LIMITS.minPageSize)
-      throw new Error(`pageSize debe ser mayor o igual a ${PAGINATION_LIMITS.minPageSize}`);
+    if (!Number.isInteger(this.limit) || this.limit < PAGINATION_LIMIT.range.min)
+      this.throwValidationError(
+        'limit',
+        `limit debe ser un entero mayor o igual a ${PAGINATION_LIMIT.range.min}.`,
+      );
 
-    if (this.pageSize > PAGINATION_LIMITS.maxPageSize)
-      throw new Error(`pageSize no puede superar ${PAGINATION_LIMITS.maxPageSize}`);
+    if (this.limit > PAGINATION_LIMIT.range.max)
+      this.throwValidationError('limit', `limit no puede superar ${PAGINATION_LIMIT.range.max}.`);
+  }
+
+  private throwValidationError(field: string, message: string): void {
+    throw new ValidationException(PaginationVO.VALIDATION_ERROR_MESSAGE, [{ field, message }]);
   }
 
   get offset(): number {
-    return (this.page - 1) * this.pageSize;
+    return (this.page - 1) * this.limit;
   }
 }

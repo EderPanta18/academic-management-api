@@ -1,12 +1,14 @@
-// core/pagination/pagination.constants.ts
+// src/core/pagination/pagination.constants.ts
 
-export const PAGINATION_DEFAULTS = {
-  page: 1,
-  pageSize: 20,
+export const PAGINATION_PAGE = {
+  default: 1,
+  min: 1,
 } as const;
 
-export const PAGINATION_LIMITS = {
-  minPage: 1,
-  minPageSize: 1,
-  maxPageSize: 100,
+export const PAGINATION_LIMIT = {
+  default: 20,
+  range: {
+    min: 1,
+    max: 100,
+  },
 } as const;

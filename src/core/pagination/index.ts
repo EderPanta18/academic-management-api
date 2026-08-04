@@ -1,5 +1,5 @@
 // core/pagination/index.ts
 
-export * from './paginated-result.dto';
+export { createPaginatedResult, type PaginatedResult } from './paginated-result';
 export * from './pagination.constants';
-export * from './pagination.vo';
+export { type CreatePaginationProps, PaginationVO } from './pagination.vo';
