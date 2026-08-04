@@ -1,20 +1,22 @@
 // platform/database/prisma/prisma.service.ts
 
 import { Injectable, type OnModuleDestroy, type OnModuleInit } from '@nestjs/common';
-import { RuntimeConfigService } from '@platform/config';
+import { AppConfigService } from '@platform/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
-  constructor(config: RuntimeConfigService) {
+  constructor(config: AppConfigService) {
+    const databaseConfig = config.database;
+
     const adapter = new PrismaPg({
-      connectionString: config.databaseUrl,
+      connectionString: databaseConfig.url,
     });
 
     super({
       adapter,
-      log: config.databaseLogQueries ? ['query', 'info', 'warn', 'error'] : ['warn', 'error'],
+      log: databaseConfig.logQueries ? ['query', 'info', 'warn', 'error'] : ['warn', 'error'],
     });
   }
 
