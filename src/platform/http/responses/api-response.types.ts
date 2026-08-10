@@ -1,26 +1,33 @@
 // platform/http/responses/api-response.types.ts
 
-export interface ApiResponseBase {
+export type ApiResponseBase = {
   success: boolean;
   statusCode: number;
   timestamp: string;
   path: string;
-}
+};
 
-export interface ApiSuccessResponse<T> extends ApiResponseBase {
-  success: true;
-  data: T;
-}
+export type ApiFieldError = {
+  field: string;
+  messages: string[];
+};
 
-export interface ApiErrorResponse extends ApiResponseBase {
-  success: false;
-  errorKey: string;
-  errorCode: string;
+export type ErrorPayload = {
+  key: string;
+  code: string;
   message: string;
   domain?: string;
-  fieldErrors?: Record<string, string[]>;
-  errorName?: string;
-  stack?: string;
-}
+  fieldErrors?: ApiFieldError[];
+};
+
+export type ApiSuccessResponse<T> = ApiResponseBase & {
+  success: true;
+  data: T;
+};
+
+export type ApiErrorResponse = ApiResponseBase & {
+  success: false;
+  error: ErrorPayload;
+};
 
 export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;

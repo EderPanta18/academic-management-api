@@ -2,7 +2,7 @@
 
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
-import { AllExceptionsFilter, DomainExceptionFilter } from './filters';
+import { AllExceptionsFilter, AppExceptionFilter } from './filters';
 import { HealthController } from './health';
 import { HttpLoggingInterceptor, SuccessResponseInterceptor } from './interceptors';
 import { RequestValidationPipe } from './pipes';
@@ -15,7 +15,7 @@ import { RequestValidationPipe } from './pipes';
     },
     {
       provide: APP_FILTER,
-      useClass: DomainExceptionFilter,
+      useClass: AppExceptionFilter,
     },
     {
       provide: APP_INTERCEPTOR,

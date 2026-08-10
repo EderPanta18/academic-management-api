@@ -1,47 +1,44 @@
 // platform/http/pipes/request-validation.pipe.ts
 
-import type { ValidationError } from '@nestjs/common';
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
-import type { ApiErrorResponse } from '../responses';
-
-type RequestValidationErrorPayload = Omit<ApiErrorResponse, 'timestamp' | 'path'>;
+import { type FieldError, ValidationException } from '@core/exceptions';
+import { ValidationError, ValidationPipe } from '@nestjs/common';
 
 export class RequestValidationPipe extends ValidationPipe {
   constructor() {
     super({
       transform: true,
-      transformOptions: {
-        enableImplicitConversion: true,
-      },
+      transformOptions: { enableImplicitConversion: true },
       whitelist: true,
       exceptionFactory: (errors: ValidationError[]) => {
-        const response: RequestValidationErrorPayload = {
-          success: false,
-          statusCode: 400,
-          errorKey: 'VALIDATION_ERROR',
-          errorCode: 'SYS_400',
-          message: 'Los datos enviados no son válidos',
-          fieldErrors: RequestValidationPipe.flattenErrors(errors),
-        };
+        const fieldErrors = this.groupErrors(errors);
 
-        return new BadRequestException(response);
+        throw new ValidationException('Los datos enviados no son válidos.', fieldErrors);
       },
     });
   }
 
-  private static flattenErrors(
-    errors: ValidationError[],
-    parentField = '',
-  ): Record<string, string[]> {
-    return errors.reduce<Record<string, string[]>>((acc, error) => {
-      const field = parentField ? `${parentField}.${error.property}` : error.property;
+  private groupErrors(errors: ValidationError[], parentField = ''): FieldError[] {
+    const map = new Map<string, string[]>();
 
-      if (error.constraints) acc[field] = Object.values(error.constraints);
+    const flatten = (errs: ValidationError[], prefix: string) => {
+      for (const error of errs) {
+        const field = prefix ? `${prefix}.${error.property}` : error.property;
 
-      if (error.children?.length)
-        Object.assign(acc, RequestValidationPipe.flattenErrors(error.children, field));
+        if (error.constraints) {
+          const messages = Object.values(error.constraints);
+          const existing = map.get(field) || [];
+          map.set(field, [...existing, ...messages]);
+        }
 
-      return acc;
-    }, {});
+        if (error.children?.length) flatten(error.children, field);
+      }
+    };
+
+    flatten(errors, parentField);
+
+    return Array.from(map.entries()).map(([field, messages]) => ({
+      field,
+      messages,
+    }));
   }
 }

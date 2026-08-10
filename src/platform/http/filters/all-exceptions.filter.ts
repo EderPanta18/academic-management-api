@@ -1,13 +1,7 @@
 // platform/http/filters/all-exceptions.filter.ts
 
-import {
-  type ArgumentsHost,
-  Catch,
-  type ExceptionFilter,
-  HttpException,
-  Logger,
-} from '@nestjs/common';
-import { RuntimeConfigService } from '@platform/config';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus, Logger } from '@nestjs/common';
+import { AppConfigService } from '@platform/config';
 import type { Request, Response } from 'express';
 import type { ApiErrorResponse } from '../responses';
 
@@ -15,72 +9,43 @@ import type { ApiErrorResponse } from '../responses';
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
 
-  constructor(private readonly config: RuntimeConfigService) {}
+  constructor(private readonly config: AppConfigService) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
+
     const res = ctx.getResponse<Response>();
     const req = ctx.getRequest<Request>();
 
-    const timestamp = new Date().toISOString();
-    const path = req.url;
+    const statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+    const errorKey = 'INTERNAL_SERVER_ERROR';
+    const errorCode = 'SYS_001';
 
-    const isDev = this.config.isProduction;
+    const message = this.config.isProduction
+      ? 'Ocurrió un error inesperado.'
+      : exception instanceof Error
+        ? exception.message
+        : 'Error desconocido';
 
-    if (exception instanceof HttpException) {
-      const statusCode = exception.getStatus();
-      const body = exception.getResponse();
-
-      this.logger.warn(`[${req.method}] ${path} → ${statusCode}`);
-
-      const response: ApiErrorResponse =
-        typeof body === 'object' && body !== null
-          ? {
-              success: false,
-              statusCode,
-              errorKey: 'HTTP_ERROR',
-              errorCode: `SYS_${statusCode}`,
-              message: 'HTTP exception',
-              ...body,
-              timestamp,
-              path,
-            }
-          : {
-              success: false,
-              statusCode,
-              errorKey: 'HTTP_ERROR',
-              errorCode: `SYS_${statusCode}`,
-              message: String(body),
-              timestamp,
-              path,
-            };
-
-      res.status(statusCode).json(response);
-
-      return;
-    }
-
-    const error =
-      exception instanceof Error
-        ? exception
-        : new Error(typeof exception === 'string' ? exception : 'Unknown error');
-
-    this.logger.error(`[${req.method}] ${path} → 500`, error.stack);
+    this.logger.error(
+      `Error inesperado: ${exception instanceof Error ? exception.stack : exception}`,
+    );
 
     const response: ApiErrorResponse = {
       success: false,
-      statusCode: 500,
-      errorKey: 'INTERNAL_SERVER_ERROR',
-      errorCode: 'SYS_500',
-      message: error.message,
-      timestamp,
-      path,
-      ...(isDev && {
-        errorName: error.name,
-        stack: error.stack,
-      }),
+      statusCode,
+      timestamp: new Date().toISOString(),
+      path: req.originalUrl ?? req.url,
+      error: {
+        key: errorKey,
+        code: errorCode,
+        message,
+        ...(this.config.isDevelopment && exception instanceof Error
+          ? { details: exception.stack }
+          : {}),
+      },
     };
 
-    res.status(500).json(response);
+    res.status(statusCode).json(response);
   }
 }

@@ -9,14 +9,15 @@ import {
 import type { Request, Response } from 'express';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
 import type { ApiSuccessResponse } from '../responses';
 
 @Injectable()
 export class SuccessResponseInterceptor<T> implements NestInterceptor<T, ApiSuccessResponse<T>> {
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<ApiSuccessResponse<T>> {
-    const req = context.switchToHttp().getRequest<Request>();
-    const res = context.switchToHttp().getResponse<Response>();
+    const ctx = context.switchToHttp();
+
+    const req = ctx.getRequest<Request>();
+    const res = ctx.getResponse<Response>();
 
     return next.handle().pipe(
       map(
@@ -25,7 +26,7 @@ export class SuccessResponseInterceptor<T> implements NestInterceptor<T, ApiSucc
           statusCode: res.statusCode,
           data,
           timestamp: new Date().toISOString(),
-          path: req.url,
+          path: req.originalUrl || req.url,
         }),
       ),
     );

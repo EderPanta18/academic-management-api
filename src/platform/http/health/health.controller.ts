@@ -2,13 +2,13 @@
 
 import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { RuntimeConfigService } from '@platform/config';
-import { HEALTH_SWAGGER_TAG } from './health-constants';
+import { AppConfigService } from '@platform/config';
+import { HEALTH_ROUTES, HEALTH_SWAGGER_TAG } from './health-constants';
 
 @ApiTags(HEALTH_SWAGGER_TAG.name)
-@Controller('health')
+@Controller(HEALTH_ROUTES.ROOT)
 export class HealthController {
-  constructor(private readonly config: RuntimeConfigService) {}
+  constructor(private readonly config: AppConfigService) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)

@@ -4,13 +4,13 @@ import type { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import type { SwaggerTag } from './swagger.types';
 
-export interface SwaggerSetupOptions {
+export type SwaggerSetupOptions = {
   title: string;
   description: string;
   version: string;
   path: string;
   tags?: readonly SwaggerTag[];
-}
+};
 
 export function setupSwagger(app: INestApplication, options: SwaggerSetupOptions): void {
   const builder = new DocumentBuilder()
