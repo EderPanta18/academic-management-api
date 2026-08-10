@@ -1,25 +1,20 @@
 // app/app.bootstrap.ts
 
-import type { INestApplication } from '@nestjs/common';
-import { RuntimeConfigService } from '@platform/config';
-import { setupSwagger } from '@platform/http';
-import { APP_CONFIG, SWAGGER_TAGS } from './app.config';
+import { type INestApplication, Logger } from '@nestjs/common';
+import { AppConfigService } from '@platform/config';
+import { setupHttp } from '@platform/http';
+import { SWAGGER_TAGS } from './app.config';
 
-export function bootstrapApp(app: INestApplication): void {
-  const config = app.get(RuntimeConfigService);
+export async function bootstrapApp(app: INestApplication): Promise<void> {
+  const logger = new Logger('Bootstrap');
 
-  app.enableCors({
-    credentials: true,
-    origin: config.corsOrigins,
+  const config = app.get(AppConfigService);
+
+  setupHttp(app, config, {
+    swaggerTags: SWAGGER_TAGS,
   });
 
-  app.setGlobalPrefix(APP_CONFIG.apiPrefix);
+  await app.listen(config.port);
 
-  setupSwagger(app, {
-    description: APP_CONFIG.description,
-    path: `${APP_CONFIG.apiPrefix}${APP_CONFIG.docsPath}`,
-    title: APP_CONFIG.name,
-    version: APP_CONFIG.version,
-    tags: SWAGGER_TAGS,
-  });
+  logger.log(`Servidor ejecutándose en puerto ${config.port} en modo ${config.nodeEnv}`);
 }
