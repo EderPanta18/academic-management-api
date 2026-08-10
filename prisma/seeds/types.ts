@@ -1,4 +1,4 @@
-// prisma/seeds/types.ts
+/* // prisma/seeds/types.ts
 
 export interface BaseMaps {
   departmentMap: Map<string, number>;
@@ -14,3 +14,4 @@ export interface AcademicMaps extends BaseMaps {
   courseMap: Map<string, number>;
   offeringMap: Map<string, number>;
 }
+ */

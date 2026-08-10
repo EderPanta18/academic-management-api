@@ -1,4 +1,4 @@
-// prisma/seeds/academic.seed.ts
+/* // prisma/seeds/academic.seed.ts
 
 import type {
   CourseOfferingStatus,
@@ -228,3 +228,4 @@ async function seedOfferings(
 
   return offeringMap;
 }
+ */

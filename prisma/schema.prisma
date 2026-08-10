@@ -6,95 +6,12 @@ datasource db {
   provider = "postgresql"
 }
 
-// ─── IDENTIDAD ───────────────────────────────────────────────────────
-
-model Person {
-  id        Int       @id @default(autoincrement())
-  dni       String    @unique @db.Char(8)
-  firstName String    @map("first_name") @db.VarChar(100)
-  lastName  String    @map("last_name") @db.VarChar(100)
-  email     String    @unique @db.VarChar(150)
-  phone     String?   @db.Char(9)
-  birthDate DateTime? @map("birth_date") @db.Date
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  professor Professor?
-  student   Student?
-
-  @@map("person")
-}
-
-// ─── ESTRUCTURA ORGANIZACIONAL ───────────────────────────────────────
-
-model Department {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique @db.VarChar(100)
-  description String?   @db.Text
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
-
-  professors Professor[]
-  careers    Career[]
-
-  @@map("department")
-}
-
-model Career {
-  id           Int       @id @default(autoincrement())
-  departmentId Int       @map("department_id")
-  name         String    @unique @db.VarChar(150)
-  totalCredits Int       @map("total_credits") @db.SmallInt
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
-  deletedAt    DateTime? @map("deleted_at")
-
-  department Department @relation(fields: [departmentId], references: [id])
-  students   Student[]
-  courses    Course[]
-
-  @@map("career")
-}
-
-model AcademicPeriod {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique @db.VarChar(20)
-  year      Int       @db.SmallInt
-  semester  Int       @db.SmallInt
-  startDate DateTime  @map("start_date") @db.Date
-  endDate   DateTime  @map("end_date") @db.Date
-  isCurrent Boolean   @default(false) @map("is_current")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  courseOfferings CourseOffering[]
-
-  @@unique([year, semester])
-  @@map("academic_period")
-}
-
-// ─── ACTORES ACADÉMICOS ──────────────────────────────────────────────
-
-model Professor {
-  personId           Int             @id @map("person_id")
-  departmentId       Int?            @map("department_id")
-  code               String          @unique @db.VarChar(20)
-  specialty          String?         @db.VarChar(100)
-  institutionalEmail String?         @unique @map("institutional_email") @db.VarChar(150)
-  hireDate           DateTime?       @map("hire_date") @db.Date
-  status             ProfessorStatus @default(ACTIVE)
-  createdAt          DateTime        @default(now()) @map("created_at")
-  updatedAt          DateTime        @updatedAt @map("updated_at")
-  deletedAt          DateTime?       @map("deleted_at")
-
-  person          Person           @relation(fields: [personId], references: [id])
-  department      Department?      @relation(fields: [departmentId], references: [id])
-  courseOfferings CourseOffering[]
-
-  @@map("professor")
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  WITHDRAWN
+  GRADUATED
 }
 
 enum ProfessorStatus {
@@ -103,135 +20,462 @@ enum ProfessorStatus {
   ON_LEAVE
 }
 
-model Student {
-  personId           Int           @id @map("person_id")
-  careerId           Int           @map("career_id")
-  code               String        @unique @db.Char(10)
-  institutionalEmail String?       @unique @map("institutional_email") @db.VarChar(150)
-  enrollmentDate     DateTime      @map("enrollment_date") @db.Date
-  status             StudentStatus @default(ACTIVE)
-  createdAt          DateTime      @default(now()) @map("created_at")
-  updatedAt          DateTime      @updatedAt @map("updated_at")
-  deletedAt          DateTime?     @map("deleted_at")
-
-  person      Person       @relation(fields: [personId], references: [id])
-  career      Career       @relation(fields: [careerId], references: [id])
-  enrollments Enrollment[]
-
-  @@map("student")
-}
-
-enum StudentStatus {
-  ACTIVE
-  INACTIVE
-  GRADUATED
-  WITHDRAWN
-  SUSPENDED
-}
-
-// ─── CATÁLOGO ACADÉMICO ──────────────────────────────────────────────
-
-model CourseCategory {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique @db.VarChar(100)
-  description String?   @db.Text
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
-
-  courses Course[]
-
-  @@map("course_category")
-}
-
-// ─── GESTIÓN DE CURSOS ───────────────────────────────────────────────
-
-model Course {
-  id          Int       @id @default(autoincrement())
-  careerId    Int       @map("career_id")
-  categoryId  Int?      @map("category_id")
-  name        String    @db.VarChar(150)
-  description String?   @db.Text
-  credits     Int       @db.SmallInt
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
-
-  career          Career          @relation(fields: [careerId], references: [id])
-  category        CourseCategory? @relation(fields: [categoryId], references: [id])
-  courseOfferings CourseOffering[]
-
-  @@unique([careerId, name])
-  @@map("course")
-}
-
-model CourseOffering {
-  id                 Int                  @id @default(autoincrement())
-  courseId           Int                  @map("course_id")
-  academicPeriodId   Int                  @map("academic_period_id")
-  professorId        Int?                 @map("professor_id")
-  section            String               @default("A") @db.VarChar(10)
-  maxStudents        Int                  @default(30) @map("max_students") @db.SmallInt
-  enrollmentDeadline DateTime?            @map("enrollment_deadline") @db.Date
-  status             CourseOfferingStatus @default(INACTIVE)
-  createdAt          DateTime             @default(now()) @map("created_at")
-  updatedAt          DateTime             @updatedAt @map("updated_at")
-  deletedAt          DateTime?            @map("deleted_at")
-
-  course         Course         @relation(fields: [courseId], references: [id])
-  academicPeriod AcademicPeriod @relation(fields: [academicPeriodId], references: [id])
-  professor      Professor?     @relation(fields: [professorId], references: [personId])
-  enrollments    Enrollment[]
-
-  @@unique([courseId, academicPeriodId, section])
-  @@map("course_offering")
+enum AcademicPeriodStatus {
+  PLANNED
+  OPEN
+  IN_PROGRESS
+  CLOSED
+  CANCELLED
 }
 
 enum CourseOfferingStatus {
-  INACTIVE
-  ACTIVE
+  DRAFT
+  OPEN
+  CLOSED
   CANCELLED
-  COMPLETED
-}
-
-// ─── INSCRIPCIONES ───────────────────────────────────────────────────
-
-model Enrollment {
-  id               Int              @id @default(autoincrement())
-  studentId        Int              @map("student_id")
-  courseOfferingId Int              @map("course_offering_id")
-  status           EnrollmentStatus @default(ENROLLED)
-  enrollmentDate   DateTime         @map("enrollment_date") @db.Date
-  createdAt        DateTime         @default(now()) @map("created_at")
-  updatedAt        DateTime         @updatedAt @map("updated_at")
-  deletedAt        DateTime?        @map("deleted_at")
-  createdBy        Int?             @map("created_by")
-
-  student        Student              @relation(fields: [studentId], references: [personId])
-  courseOffering CourseOffering       @relation(fields: [courseOfferingId], references: [id])
-  statusLogs     EnrollmentStatusLog[]
-
-  @@unique([studentId, courseOfferingId])
-  @@map("enrollment")
+  FINISHED
 }
 
 enum EnrollmentStatus {
+  PENDING
   ENROLLED
+  CANCELLED
   WITHDRAWN
+  REJECTED
+  FINISHED
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+}
+
+enum SessionStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum ImportStatus {
+  PENDING
+  PROCESSING
   COMPLETED
-  SUSPENDED
+  COMPLETED_WITH_ERRORS
+  FAILED
+}
+
+enum ImportRowStatus {
+  ACCEPTED
+  REJECTED
+  DUPLICATED
+  OBSERVED
+  UPDATED
+}
+
+model DocumentType {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique @db.VarChar(50)
+  name        String   @unique @db.VarChar(100)
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  persons     Person[]
+
+  @@index([deletedAt])
+  @@map("document_types")
+}
+
+model Person {
+  id             String    @id @default(uuid()) @db.Uuid
+  documentTypeId String    @db.Uuid
+  documentNumber String    @db.VarChar(50)
+  firstName      String    @db.VarChar(100)
+  lastName       String    @db.VarChar(100)
+  email          String?   @db.VarChar(255)
+  phone          String?   @db.VarChar(30)
+  birthDate      DateTime? @db.Date
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  documentType   DocumentType @relation(fields: [documentTypeId], references: [id])
+  student        Student?
+  professor      Professor?
+  user           User?
+
+  @@unique([documentTypeId, documentNumber])
+  @@unique([email])
+  @@index([documentNumber])
+  @@index([deletedAt])
+  @@map("persons")
+}
+
+model Student {
+  id                 String         @id @default(uuid()) @db.Uuid
+  personId           String         @unique @db.Uuid
+  academicProgramId  String         @db.Uuid
+  code               String         @unique @db.VarChar(50)
+  institutionalEmail String?        @unique @db.VarChar(255)
+  admissionPeriod    String?        @db.VarChar(50)
+  status             StudentStatus
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  deletedAt          DateTime?
+
+  person             Person         @relation(fields: [personId], references: [id])
+  academicProgram    AcademicProgram @relation(fields: [academicProgramId], references: [id])
+  enrollments        Enrollment[]
+  createdImportRows  StudentImportRow[] @relation("CreatedStudentImportRows")
+  updatedImportRows  StudentImportRow[] @relation("UpdatedStudentImportRows")
+
+  @@index([academicProgramId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("students")
+}
+
+model Professor {
+  id                 String          @id @default(uuid()) @db.Uuid
+  personId           String          @unique @db.Uuid
+  code               String          @unique @db.VarChar(50)
+  institutionalEmail String?         @unique @db.VarChar(255)
+  department         String?         @db.VarChar(100)
+  specialty          String?         @db.VarChar(100)
+  status             ProfessorStatus
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  deletedAt          DateTime?
+
+  person             Person          @relation(fields: [personId], references: [id])
+  courseOfferings    CourseOffering[]
+
+  @@index([deletedAt])
+  @@map("professors")
+}
+
+model AcademicProgram {
+  id           String       @id @default(uuid()) @db.Uuid
+  code         String       @unique @db.VarChar(50)
+  name         String       @unique @db.VarChar(150)
+  academicUnit String?      @db.VarChar(150)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime?
+
+  students     Student[]
+  courses      Course[]
+
+  @@index([deletedAt])
+  @@map("academic_programs")
+}
+
+model CourseCategory {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique @db.VarChar(50)
+  name        String   @unique @db.VarChar(100)
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  courses     Course[]
+
+  @@index([deletedAt])
+  @@map("course_categories")
+}
+
+model Course {
+  id               String         @id @default(uuid()) @db.Uuid
+  academicProgramId String        @db.Uuid
+  courseCategoryId String?        @db.Uuid
+  code             String         @db.VarChar(50)
+  name             String         @db.VarChar(150)
+  description      String?        @db.Text
+  credits          Int
+  hours            Int?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  deletedAt        DateTime?
+
+  academicProgram  AcademicProgram @relation(fields: [academicProgramId], references: [id])
+  courseCategory   CourseCategory? @relation(fields: [courseCategoryId], references: [id])
+  courseOfferings  CourseOffering[]
+
+  @@unique([academicProgramId, code])
+  @@index([code])
+  @@index([deletedAt])
+  @@map("courses")
+}
+
+model AcademicPeriod {
+  id                  String               @id @default(uuid()) @db.Uuid
+  code                String               @unique @db.VarChar(50)
+  name                String               @db.VarChar(150)
+  startDate           DateTime             @db.Date
+  endDate             DateTime             @db.Date
+  enrollmentStartDate DateTime?            @db.Date
+  enrollmentEndDate   DateTime?            @db.Date
+  status              AcademicPeriodStatus
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  deletedAt           DateTime?
+
+  courseOfferings     CourseOffering[]
+
+  @@index([status])
+  @@index([deletedAt])
+  @@map("academic_periods")
+}
+
+model CourseOffering {
+  id                String               @id @default(uuid()) @db.Uuid
+  courseId          String               @db.Uuid
+  academicPeriodId  String               @db.Uuid
+  professorId       String?              @db.Uuid
+  section           String               @db.VarChar(20)
+  maxCapacity       Int
+  availableCapacity Int?
+  status            CourseOfferingStatus
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  deletedAt         DateTime?
+
+  course            Course               @relation(fields: [courseId], references: [id])
+  academicPeriod    AcademicPeriod       @relation(fields: [academicPeriodId], references: [id])
+  professor         Professor?           @relation(fields: [professorId], references: [id])
+  enrollments       Enrollment[]
+
+  @@unique([courseId, academicPeriodId, section])
+  @@index([academicPeriodId])
+  @@index([courseId])
+  @@index([professorId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("course_offerings")
+}
+
+model Enrollment {
+  id                 String            @id @default(uuid()) @db.Uuid
+  studentId          String            @db.Uuid
+  courseOfferingId   String            @db.Uuid
+  status             EnrollmentStatus
+  enrolledAt         DateTime
+  registeredByUserId String?           @db.Uuid
+  statusReason       String?           @db.Text
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  deletedAt          DateTime?
+
+  student            Student           @relation(fields: [studentId], references: [id])
+  courseOffering     CourseOffering    @relation(fields: [courseOfferingId], references: [id])
+  registeredByUser   User?             @relation("RegisteredEnrollments", fields: [registeredByUserId], references: [id])
+  statusLogs         EnrollmentStatusLog[]
+
+  @@unique([studentId, courseOfferingId])
+  @@index([studentId])
+  @@index([courseOfferingId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("enrollments")
 }
 
 model EnrollmentStatusLog {
-  id             Int               @id @default(autoincrement())
-  enrollmentId   Int               @map("enrollment_id")
-  previousStatus EnrollmentStatus? @map("previous_status")
-  newStatus      EnrollmentStatus  @map("new_status")
-  reason         String?           @db.Text
-  changedBy      Int?              @map("changed_by")
-  createdAt      DateTime          @default(now()) @map("created_at")
+  id              String           @id @default(uuid()) @db.Uuid
+  enrollmentId    String           @db.Uuid
+  previousStatus  EnrollmentStatus?
+  newStatus       EnrollmentStatus
+  reason          String?          @db.Text
+  changedByUserId String?          @db.Uuid
+  createdAt       DateTime         @default(now())
 
-  enrollment Enrollment @relation(fields: [enrollmentId], references: [id])
+  enrollment      Enrollment       @relation(fields: [enrollmentId], references: [id])
+  changedByUser   User?            @relation("EnrollmentStatusChangedBy", fields: [changedByUserId], references: [id])
 
-  @@map("enrollment_status_log")
+  @@index([enrollmentId])
+  @@map("enrollment_status_logs")
+}
+
+model User {
+  id                   String            @id @default(uuid()) @db.Uuid
+  personId             String?           @unique @db.Uuid
+  email                String            @unique @db.VarChar(255)
+  passwordHash         String            @db.Text
+  status               UserStatus
+  lastLoginAt          DateTime?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  deletedAt            DateTime?
+
+  person               Person?           @relation(fields: [personId], references: [id])
+  sessions             UserSession[]
+  userRoles            UserRole[]
+  registeredEnrollments Enrollment[]     @relation("RegisteredEnrollments")
+  enrollmentStatusLogs EnrollmentStatusLog[] @relation("EnrollmentStatusChangedBy")
+  createdStudentImports StudentImport[]  @relation("CreatedStudentImports")
+  assignedUserRoles    UserRole[]        @relation("AssignedUserRoles")
+  assignedRolePermissions RolePermission[] @relation("AssignedRolePermissions")
+  auditLogs            AuditLog[]        @relation("ActorAuditLogs")
+
+  @@index([deletedAt])
+  @@map("users")
+}
+
+model Role {
+  id               String           @id @default(uuid()) @db.Uuid
+  code             String           @unique @db.VarChar(100)
+  name             String           @unique @db.VarChar(100)
+  description      String?          @db.Text
+  isSystem         Boolean          @default(false)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  deletedAt        DateTime?
+
+  userRoles        UserRole[]
+  rolePermissions  RolePermission[]
+
+  @@index([deletedAt])
+  @@map("roles")
+}
+
+model Permission {
+  id               String           @id @default(uuid()) @db.Uuid
+  code             String           @unique @db.VarChar(150)
+  name             String           @db.VarChar(150)
+  description      String?          @db.Text
+  module           String           @db.VarChar(100)
+  isSystem         Boolean          @default(false)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  deletedAt        DateTime?
+
+  rolePermissions  RolePermission[]
+
+  @@index([deletedAt])
+  @@map("permissions")
+}
+
+model UserRole {
+  userId            String    @db.Uuid
+  roleId            String    @db.Uuid
+  assignedByUserId  String?   @db.Uuid
+  assignedAt        DateTime  @default(now())
+
+  user              User      @relation(fields: [userId], references: [id])
+  role              Role      @relation(fields: [roleId], references: [id])
+  assignedByUser    User?     @relation("AssignedUserRoles", fields: [assignedByUserId], references: [id])
+
+  @@id([userId, roleId])
+  @@index([roleId])
+  @@map("user_roles")
+}
+
+model RolePermission {
+  roleId            String    @db.Uuid
+  permissionId      String    @db.Uuid
+  assignedByUserId  String?   @db.Uuid
+  assignedAt        DateTime  @default(now())
+
+  role              Role      @relation(fields: [roleId], references: [id])
+  permission        Permission @relation(fields: [permissionId], references: [id])
+  assignedByUser    User?     @relation("AssignedRolePermissions", fields: [assignedByUserId], references: [id])
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+model UserSession {
+  id               String        @id @default(uuid()) @db.Uuid
+  userId           String        @db.Uuid
+  refreshTokenHash String?       @db.Text
+  accessTokenJti   String?       @unique @db.VarChar(255)
+  deviceName       String?       @db.VarChar(255)
+  ipAddress        String?       @db.VarChar(64)
+  userAgent        String?       @db.Text
+  status           SessionStatus
+  createdAt        DateTime      @default(now())
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  lastUsedAt       DateTime?
+
+  user             User          @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@map("user_sessions")
+}
+
+model AuditLog {
+  id            String    @id @default(uuid()) @db.Uuid
+  actorUserId   String?   @db.Uuid
+  action        String    @db.VarChar(100)
+  resourceType  String    @db.VarChar(100)
+  resourceId    String?   @db.VarChar(100)
+  module        String?   @db.VarChar(100)
+  description   String?   @db.Text
+  metadata      Json?
+  ipAddress     String?   @db.VarChar(64)
+  userAgent     String?   @db.Text
+  createdAt     DateTime  @default(now())
+
+  actorUser     User?     @relation("ActorAuditLogs", fields: [actorUserId], references: [id])
+
+  @@index([actorUserId])
+  @@index([resourceType])
+  @@index([resourceId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model StudentImport {
+  id              String         @id @default(uuid()) @db.Uuid
+  fileName        String         @db.VarChar(255)
+  fileSize        Int?
+  fileMimeType    String?        @db.VarChar(150)
+  status          ImportStatus
+  totalRows       Int
+  processedRows   Int
+  acceptedRows    Int
+  rejectedRows    Int
+  duplicatedRows  Int
+  observedRows    Int
+  createdByUserId String?        @db.Uuid
+  createdAt       DateTime       @default(now())
+  startedAt       DateTime?
+  finishedAt      DateTime?
+
+  createdByUser   User?          @relation("CreatedStudentImports", fields: [createdByUserId], references: [id])
+  rows            StudentImportRow[]
+
+  @@index([createdByUserId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("student_imports")
+}
+
+model StudentImportRow {
+  id               String          @id @default(uuid()) @db.Uuid
+  studentImportId  String          @db.Uuid
+  rowNumber        Int
+  rawData          Json
+  normalizedData   Json?
+  status           ImportRowStatus
+  errorSummary     String?         @db.Text
+  fieldErrors      Json?
+  createdStudentId String?         @db.Uuid
+  updatedStudentId String?         @db.Uuid
+  createdAt        DateTime        @default(now())
+
+  studentImport    StudentImport   @relation(fields: [studentImportId], references: [id])
+  createdStudent   Student?        @relation("CreatedStudentImportRows", fields: [createdStudentId], references: [id])
+  updatedStudent   Student?        @relation("UpdatedStudentImportRows", fields: [updatedStudentId], references: [id])
+
+  @@unique([studentImportId, rowNumber])
+  @@index([studentImportId])
+  @@index([status])
+  @@index([createdStudentId])
+  @@map("student_import_rows")
 }

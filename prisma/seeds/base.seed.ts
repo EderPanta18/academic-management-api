@@ -1,4 +1,4 @@
-// prisma/seeds/base.seed.ts
+/* // prisma/seeds/base.seed.ts
 
 import type { PrismaClient } from "@prisma/client";
 
@@ -95,3 +95,4 @@ async function seedPersons(prisma: PrismaClient, persons: any[]) {
       }
     });
 }
+ */

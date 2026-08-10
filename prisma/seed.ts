@@ -1,4 +1,4 @@
-// prisma/seed.ts
+/* // prisma/seed.ts
 
 import { prisma } from './client';
 import { seedAcademicStructure, seedBaseTables, seedEnrollments } from './seeds';
@@ -29,3 +29,4 @@ main().catch((error) => {
   console.error('\nError fatal:', error);
   process.exit(1);
 });
+ */

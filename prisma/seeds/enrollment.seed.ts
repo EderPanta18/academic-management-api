@@ -1,4 +1,4 @@
-// prisma/seeds/enrollment.seed.ts
+/* // prisma/seeds/enrollment.seed.ts
 
 import type { EnrollmentStatus, PrismaClient } from "@prisma/client";
 
@@ -117,3 +117,4 @@ async function seedEnrollmentStatusLogs(
       skipDuplicates: true
     });
 }
+ */
