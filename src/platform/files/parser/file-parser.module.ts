@@ -1,11 +1,11 @@
 // platform/files/parser/file-parser.module.ts
 
 import { Module } from '@nestjs/common';
-import { FILE_PARSER_PORT } from './file-parser.port';
+import { FILE_PARSER_TOKEN } from './file-parser.port';
 import { FileParserService } from './file-parser.service';
 import {
   CsvFileParserStrategy,
-  FILE_PARSER_STRATEGIES,
+  FILE_PARSER_STRATEGIES_TOKEN,
   XlsxFileParserStrategy,
 } from './strategies';
 
@@ -14,14 +14,13 @@ import {
     CsvFileParserStrategy,
     XlsxFileParserStrategy,
     {
-      provide: FILE_PARSER_STRATEGIES,
-      useFactory: (csv: CsvFileParserStrategy, xlsx: XlsxFileParserStrategy) => [csv, xlsx],
+      provide: FILE_PARSER_STRATEGIES_TOKEN,
+      useFactory: (...strategies) => strategies,
       inject: [CsvFileParserStrategy, XlsxFileParserStrategy],
     },
     FileParserService,
-    { provide: FILE_PARSER_PORT, useExisting: FileParserService },
+    { provide: FILE_PARSER_TOKEN, useExisting: FileParserService },
   ],
-
-  exports: [FILE_PARSER_PORT],
+  exports: [FILE_PARSER_TOKEN],
 })
 export class FileParserModule {}
