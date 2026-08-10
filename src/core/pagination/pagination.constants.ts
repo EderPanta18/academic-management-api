@@ -2,7 +2,9 @@
 
 export const PAGINATION_PAGE = {
   default: 1,
-  min: 1,
+  range: {
+    min: 1,
+  },
 } as const;
 
 export const PAGINATION_LIMIT = {

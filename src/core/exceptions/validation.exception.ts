@@ -16,6 +16,26 @@ export class ValidationException extends AppException {
 
   constructor(message: string, fieldErrors: FieldError[] = [], cause?: unknown) {
     super(message, cause);
-    this.fieldErrors = fieldErrors;
+
+    this.fieldErrors = ValidationException.normalize(fieldErrors);
+  }
+
+  private static normalize(fieldErrors: FieldError[]): FieldError[] {
+    const map = new Map<string, string[]>();
+
+    for (const { field, messages } of fieldErrors) {
+      const existing = map.get(field);
+      if (existing) {
+        const newMessages = messages.filter((msg) => !existing.includes(msg));
+        existing.push(...newMessages);
+      } else {
+        map.set(field, [...messages]);
+      }
+    }
+
+    return Array.from(map.entries()).map(([field, messages]) => ({
+      field,
+      messages,
+    }));
   }
 }

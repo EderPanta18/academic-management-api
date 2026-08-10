@@ -1,6 +1,6 @@
 // src/core/pagination/pagination.vo.ts
 
-import { ValidationException } from '@core/exceptions';
+import { type FieldError, ValidationException } from '@core/exceptions';
 import { PAGINATION_LIMIT, PAGINATION_PAGE } from './pagination.constants';
 
 export type CreatePaginationProps = {
@@ -28,24 +28,28 @@ export class PaginationVO {
   }
 
   private validate(): void {
-    if (!Number.isInteger(this.page) || this.page < PAGINATION_PAGE.min)
-      this.throwValidationError(
-        'page',
-        `page debe ser un entero mayor o igual a ${PAGINATION_PAGE.min}.`,
-      );
+    const errors: FieldError[] = [];
+
+    if (!Number.isInteger(this.page) || this.page < PAGINATION_PAGE.range.min)
+      errors.push({
+        field: 'page',
+        messages: [`page debe ser un entero mayor o igual a ${PAGINATION_PAGE.range.min}.`],
+      });
 
     if (!Number.isInteger(this.limit) || this.limit < PAGINATION_LIMIT.range.min)
-      this.throwValidationError(
-        'limit',
-        `limit debe ser un entero mayor o igual a ${PAGINATION_LIMIT.range.min}.`,
-      );
+      errors.push({
+        field: 'limit',
+        messages: [`limit debe ser un entero mayor o igual a ${PAGINATION_LIMIT.range.min}.`],
+      });
 
     if (this.limit > PAGINATION_LIMIT.range.max)
-      this.throwValidationError('limit', `limit no puede superar ${PAGINATION_LIMIT.range.max}.`);
-  }
+      errors.push({
+        field: 'limit',
+        messages: [`limit no puede superar ${PAGINATION_LIMIT.range.max}.`],
+      });
 
-  private throwValidationError(field: string, message: string): void {
-    throw new ValidationException(PaginationVO.VALIDATION_ERROR_MESSAGE, [{ field, message }]);
+    if (errors.length > 0)
+      throw new ValidationException(PaginationVO.VALIDATION_ERROR_MESSAGE, errors);
   }
 
   get offset(): number {
