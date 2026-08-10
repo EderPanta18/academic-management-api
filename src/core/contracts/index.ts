@@ -1,5 +1,5 @@
 // src/core/contracts/index.ts
 
-export type * from './event-bus.contract';
-export type * from './id-generator.contract';
-export type * from './job-queue.contract';
+export * from './event-bus.contract';
+export * from './id-generator.contract';
+export * from './job-queue.contract';

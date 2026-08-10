@@ -1,5 +1,7 @@
 // src/core/contracts/event-bus.contract.ts
 
+export const EVENT_BUS_TOKEN = Symbol('EVENT_BUS');
+
 export type EventPublishOptions = {
   delay?: number;
   idempotencyKey?: string;

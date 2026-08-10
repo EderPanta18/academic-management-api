@@ -1,5 +1,7 @@
 // src/core/contracts/job-queue.contract.ts
 
+export const JOB_QUEUE_TOKEN = Symbol('JOB_QUEUE');
+
 export type JobEnqueueOptions = {
   priority?: number;
   delay?: number;
