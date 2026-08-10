@@ -5,12 +5,11 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppConfigService } from './app-config.service';
 import { buildAppConfig } from './configuration';
-import { EnvironmentVariables } from './env.types';
-import { validateEnvironment } from './env.validation';
+import { type EnvironmentVariables, validateEnvironment } from './env';
 
 let validatedEnv: EnvironmentVariables;
 
-export function getValidatedEnv(): EnvironmentVariables {
+function getValidatedEnv(): EnvironmentVariables {
   if (!validatedEnv) throw new SystemException('El entorno aún no se ha validado.');
 
   return validatedEnv;

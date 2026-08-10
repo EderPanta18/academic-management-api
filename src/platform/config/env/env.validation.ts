@@ -34,7 +34,15 @@ class EnvironmentVariablesClass {
 
   @IsString()
   @IsNotEmpty()
+  APP_DESCRIPTION!: string;
+
+  @IsString()
+  @IsNotEmpty()
   APP_VERSION!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  API_PREFIX!: string;
 
   @IsIn(LOG_LEVEL_VALUES)
   LOG_LEVEL!: LogLevel;
@@ -196,7 +204,9 @@ export function validateEnvironment(rawConfig: Record<string, unknown>): Environ
     NODE_ENV: validated.NODE_ENV,
     APP_PORT: validated.APP_PORT,
     APP_NAME: validated.APP_NAME,
+    APP_DESCRIPTION: validated.APP_DESCRIPTION,
     APP_VERSION: validated.APP_VERSION,
+    API_PREFIX: validated.API_PREFIX,
     LOG_LEVEL: validated.LOG_LEVEL,
     DATABASE_URL: validated.DATABASE_URL,
     DATABASE_LOG_QUERIES: validated.DATABASE_LOG_QUERIES,

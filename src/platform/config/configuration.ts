@@ -1,13 +1,15 @@
 // src/platform/config/configuration.ts
 
-import type { EnvironmentVariables, LogLevel, NodeEnvironment } from './env.types';
+import type { EnvironmentVariables, LogLevel, NodeEnvironment } from './env';
 
 export type AppConfig = {
   app: {
     port: number;
     nodeEnv: NodeEnvironment;
     name: string;
+    description: string;
     version: string;
+    apiPrefix: string;
   };
   log: {
     level: LogLevel;
@@ -76,7 +78,9 @@ export function buildAppConfig(env: EnvironmentVariables): AppConfig {
       port: env.APP_PORT,
       nodeEnv: env.NODE_ENV,
       name: env.APP_NAME,
+      description: env.APP_DESCRIPTION,
       version: env.APP_VERSION,
+      apiPrefix: env.API_PREFIX,
     },
     log: {
       level: env.LOG_LEVEL,

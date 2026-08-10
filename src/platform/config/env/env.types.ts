@@ -10,7 +10,10 @@ export type EnvironmentVariables = {
 
   APP_PORT: number;
   APP_NAME: string;
+  APP_DESCRIPTION: string;
   APP_VERSION: string;
+
+  API_PREFIX: string;
 
   // Log
   LOG_LEVEL: LogLevel;
