@@ -180,22 +180,6 @@ plan-implementacion.md
 
 Evitar nombres demasiado extensos con exceso de conectores.
 
-## Relación con el README raíz
-
-El `README.md` raíz del proyecto debe explicar cómo instalar, configurar y levantar el backend de forma rápida.
-
-Este `docs/README.md` funciona como índice de documentación interna.
-
-Separación esperada:
-
-```txt
-README.md raíz
-= entrada rápida al proyecto
-
-docs/README.md
-= índice de documentación interna
-```
-
 ## Orden de lectura recomendado
 
 Para entender el sistema desde cero:

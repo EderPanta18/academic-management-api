@@ -42,7 +42,9 @@ El archivo `.env.example` puede mostrar nombres y valores de referencia, pero no
 | `NODE_ENV` | Sí | `development` | Entorno de ejecución. |
 | `APP_PORT` | Sí | `3000` | Puerto HTTP del backend. |
 | `APP_NAME` | No | `Academic Backend API` | Nombre visible de la aplicación. |
+| `APP_DESCRIPTION` | No | `API for managing academic data` | Descripción visible de la aplicación. |
 | `APP_VERSION` | No | `1.0.0` | Versión de referencia de la API. |
+| `API_PREFIX` | SI | `/api/v1` | Prefijo de la ruta base de la API. |
 
 Valores esperados para `NODE_ENV`:
 
@@ -50,6 +52,21 @@ Valores esperados para `NODE_ENV`:
 development
 test
 production
+```
+
+## Variables de logging
+
+| Variable | Requerida | Ejemplo | Descripción |
+| --- | --- | --- | --- |
+| `LOG_LEVEL` | No | `debug` | Nivel de logs del sistema. |
+
+Valores comunes:
+
+```txt
+debug
+info
+warn
+error
 ```
 
 ## Variables de base de datos
@@ -75,8 +92,10 @@ La autenticación actual usa credenciales internas de la tabla `users`, sesiones
 
 | Variable | Requerida | Ejemplo | Descripción |
 | --- | --- | --- | --- |
+| `JWT_ACCESS_NAME` | Sí | `accessJwt` | Nombre del token access. |
 | `JWT_ACCESS_SECRET` | Sí | `change-me-access-secret` | Secreto para firmar access tokens. |
 | `JWT_ACCESS_EXPIRES_IN` | Sí | `15m` | Tiempo de vida del access token. |
+| `JWT_REFRESH_NAME` | Sí | `refreshJwt` | Nombre del token refresh. |
 | `JWT_REFRESH_SECRET` | Sí | `change-me-refresh-secret` | Secreto para firmar refresh tokens. |
 | `JWT_REFRESH_EXPIRES_IN` | Sí | `7d` | Tiempo de vida del refresh token. |
 
@@ -144,21 +163,6 @@ La importación de estudiantes puede requerir límites de archivo.
 
 Estas variables pueden ajustarse cuando se implemente la importación de archivos.
 
-## Variables de logging
-
-| Variable | Requerida | Ejemplo | Descripción |
-| --- | --- | --- | --- |
-| `LOG_LEVEL` | No | `debug` | Nivel de logs del sistema. |
-
-Valores comunes:
-
-```txt
-debug
-info
-warn
-error
-```
-
 En producción conviene evitar logs excesivamente detallados.
 
 ## Ejemplo de `.env`
@@ -167,20 +171,26 @@ En producción conviene evitar logs excesivamente detallados.
 NODE_ENV=development
 APP_PORT=3000
 APP_NAME="Academic Backend API"
+APP_DESCRIPTION="API for managing academic data"
 APP_VERSION=1.0.0
+API_PREFIX="/api/v1"
+
+LOG_LEVEL=debug
 
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/academic_backend_dev"
 DATABASE_LOG_QUERIES=false
 
+JWT_ACCESS_NAME="accessJwt"
 JWT_ACCESS_SECRET="change-me-access-secret"
 JWT_ACCESS_EXPIRES_IN="15m"
+JWT_REFRESH_NAME="refreshJwt"
 JWT_REFRESH_SECRET="change-me-refresh-secret"
 JWT_REFRESH_EXPIRES_IN="7d"
 
 AUTH_SINGLE_SESSION=true
 AUTH_REFRESH_TOKEN_ROTATION=true
 
-CORS_ORIGIN="http://localhost:5173"
+CORS_ORIGIN="http://localhost:5173,..."
 CORS_CREDENTIALS=true
 
 OPENAPI_ENABLED=true
@@ -193,8 +203,6 @@ ADMIN_LAST_NAME="System"
 
 UPLOAD_MAX_FILE_SIZE=5242880
 UPLOAD_ALLOWED_MIME_TYPES="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv"
-
-LOG_LEVEL=debug
 ```
 
 ## Variables que no deben subirse
