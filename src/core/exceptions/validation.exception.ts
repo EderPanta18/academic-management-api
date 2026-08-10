@@ -3,8 +3,8 @@
 import { AppException } from './app.exception';
 
 export type FieldError = {
-  field?: string;
-  message: string;
+  field: string;
+  messages: string[];
 };
 
 export class ValidationException extends AppException {
