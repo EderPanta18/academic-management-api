@@ -25,8 +25,10 @@ export class ValidationException extends AppException {
 
     for (const { field, messages } of fieldErrors) {
       const existing = map.get(field);
+
       if (existing) {
         const newMessages = messages.filter((msg) => !existing.includes(msg));
+
         existing.push(...newMessages);
       } else {
         map.set(field, [...messages]);
