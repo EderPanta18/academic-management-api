@@ -1,6 +1,6 @@
 // shared/dtos/request/pagination-query.dto.ts
 
-import { PAGINATION_DEFAULTS, PAGINATION_LIMITS } from '@core/pagination';
+import { PAGINATION_LIMIT, PAGINATION_PAGE } from '@core/pagination';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, Max, Min } from 'class-validator';
 
@@ -8,19 +8,19 @@ export class PaginationQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt({ message: 'La página debe ser un número entero' })
-  @Min(PAGINATION_LIMITS.minPage, {
-    message: `La página debe ser mayor o igual a ${PAGINATION_LIMITS.minPage}`,
+  @Min(PAGINATION_PAGE.range.min, {
+    message: `La página debe ser mayor o igual a ${PAGINATION_PAGE.range.min}`,
   })
-  page: number = PAGINATION_DEFAULTS.page;
+  page: number = PAGINATION_PAGE.default;
 
   @IsOptional()
   @Type(() => Number)
   @IsInt({ message: 'El tamaño de página debe ser un número entero' })
-  @Min(PAGINATION_LIMITS.minPageSize, {
-    message: `El tamaño de página debe ser al menos ${PAGINATION_LIMITS.minPageSize}`,
+  @Min(PAGINATION_LIMIT.range.min, {
+    message: `El tamaño de página debe ser al menos ${PAGINATION_LIMIT.range.min}`,
   })
-  @Max(PAGINATION_LIMITS.maxPageSize, {
-    message: `El tamaño de página no puede superar los ${PAGINATION_LIMITS.maxPageSize}`,
+  @Max(PAGINATION_LIMIT.range.max, {
+    message: `El tamaño de página no puede superar los ${PAGINATION_LIMIT.range.max}`,
   })
-  pageSize: number = PAGINATION_DEFAULTS.pageSize;
+  pageSize: number = PAGINATION_LIMIT.default;
 }

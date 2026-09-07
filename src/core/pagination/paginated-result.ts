@@ -3,7 +3,7 @@
 import type { PaginationVO } from './pagination.vo';
 
 export type PaginatedResult<TItem> = {
-  data: TItem[];
+  items: TItem[];
   meta: {
     page: number;
     limit: number;
@@ -15,7 +15,7 @@ export type PaginatedResult<TItem> = {
 };
 
 export function createPaginatedResult<TItem>(
-  data: TItem[],
+  items: TItem[],
   pagination: PaginationVO,
   totalItems: number,
 ): PaginatedResult<TItem> {
@@ -27,7 +27,7 @@ export function createPaginatedResult<TItem>(
   const hasPreviousPage = page > 1;
 
   return {
-    data,
+    items,
     meta: {
       page,
       limit,
