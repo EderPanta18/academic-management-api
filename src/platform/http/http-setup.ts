@@ -4,9 +4,9 @@ import type { INestApplication } from '@nestjs/common';
 import { AppConfigService } from '@platform/config';
 import { type SwaggerTag, setupSwagger } from './swagger';
 
-export interface HttpSetupOptions {
+export type HttpSetupOptions = {
   swaggerTags?: readonly SwaggerTag[];
-}
+};
 
 export function setupHttp(
   app: INestApplication,
