@@ -1,71 +1,75 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2023",
-    "sourceMap": true,
-    "outDir": "./dist",
+    "compilerOptions": {
+        "module": "commonjs",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "isolatedModules": true,
+        "declaration": true,
+        "removeComments": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "target": "ES2023",
+        "sourceMap": true,
+        "outDir": "./dist",
 
-    // aliases
-    "paths": {
-      "@app": ["./src/app"],
-      "@app/*": ["./src/app/*"],
+        // aliases
+        "paths": {
+            "@app": ["./src/app"],
+            "@app/*": ["./src/app/*"],
 
-      "@core": ["./src/core"],
-      "@core/*": ["./src/core/*"],
+            "@core": ["./src/core"],
+            "@core/*": ["./src/core/*"],
 
-      "@shared": ["./src/shared"],
-      "@shared/*": ["./src/shared/*"],
+            "@shared": ["./src/shared"],
+            "@shared/*": ["./src/shared/*"],
 
-      "@platform": ["./src/platform"],
-      "@platform/*": ["./src/platform/*"],
+            "@platform": ["./src/platform"],
+            "@platform/*": ["./src/platform/*"],
 
-      "@modules": ["./src/modules"],
-      "@modules/*": ["./src/modules/*"],
+            "@modules": ["./src/modules"],
+            "@modules/*": ["./src/modules/*"],
 
-      "@persons": ["./src/modules/persons"],
-      "@persons/*": ["./src/modules/persons/*"],
+            "@identity": ["./src/modules/identity"],
+            "@identity/*": ["./src/modules/identity/*"],
 
-      "@departments": ["./src/modules/departments"],
-      "@departments/*": ["./src/modules/departments/*"],
+            "@persons": ["./src/modules/persons"],
+            "@persons/*": ["./src/modules/persons/*"],
 
-      "@careers": ["./src/modules/careers"],
-      "@careers/*": ["./src/modules/careers/*"],
+            "@departments": ["./src/modules/departments"],
+            "@departments/*": ["./src/modules/departments/*"],
 
-      "@academic-periods": ["./src/modules/academic-periods"],
-      "@academic-periods/*": ["./src/modules/academic-periods/*"],
+            "@careers": ["./src/modules/careers"],
+            "@careers/*": ["./src/modules/careers/*"],
 
-      "@course-categories": ["./src/modules/course-categories"],
-      "@course-categories/*": ["./src/modules/course-categories/*"],
+            "@academic-periods": ["./src/modules/academic-periods"],
+            "@academic-periods/*": ["./src/modules/academic-periods/*"],
 
-      "@courses": ["./src/modules/courses"],
-      "@courses/*": ["./src/modules/courses/*"],
+            "@course-categories": ["./src/modules/course-categories"],
+            "@course-categories/*": ["./src/modules/course-categories/*"],
 
-      "@professors": ["./src/modules/professors"],
-      "@professors/*": ["./src/modules/professors/*"],
+            "@courses": ["./src/modules/courses"],
+            "@courses/*": ["./src/modules/courses/*"],
 
-      "@students": ["./src/modules/students"],
-      "@students/*": ["./src/modules/students/*"],
+            "@professors": ["./src/modules/professors"],
+            "@professors/*": ["./src/modules/professors/*"],
 
-      "@course-offerings": ["./src/modules/course-offerings"],
-      "@course-offerings/*": ["./src/modules/course-offerings/*"],
+            "@students": ["./src/modules/students"],
+            "@students/*": ["./src/modules/students/*"],
 
-      "@enrollments": ["./src/modules/enrollments"],
-      "@enrollments/*": ["./src/modules/enrollments/*"]
+            "@course-offerings": ["./src/modules/course-offerings"],
+            "@course-offerings/*": ["./src/modules/course-offerings/*"],
+
+            "@enrollments": ["./src/modules/enrollments"],
+            "@enrollments/*": ["./src/modules/enrollments/*"],
+        },
+
+        "skipLibCheck": true,
+        "strictNullChecks": true,
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitAny": false,
+        "strictBindCallApply": false,
+        "noFallthroughCasesInSwitch": false,
     },
-
-    "skipLibCheck": true,
-    "strictNullChecks": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "include": ["src/**/*", "prisma/**/*"],
 }

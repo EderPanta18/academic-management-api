@@ -1,69 +1,69 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
-  },
-  "files": {
-    "ignoreUnknown": false,
-    "includes": [
-      "**",
-      "!node_modules",
-      "!dist",
-      "!coverage",
-      "!prisma/migrations",
-      "!prisma/seeds",
-      "!prisma/seeds"
-    ]
-  },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "space",
-    "indentWidth": 2,
-    "lineWidth": 100
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "single",
-      "semicolons": "always",
-      "trailingCommas": "all"
+    "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true
     },
-    "parser": {
-      "unsafeParameterDecoratorsEnabled": true
-    }
-  },
-  "json": {
+    "files": {
+        "ignoreUnknown": false,
+        "includes": [
+            "**",
+            "!node_modules",
+            "!dist",
+            "!coverage",
+            "!prisma/migrations",
+            "!prisma/seeds",
+            "!prisma/seeds"
+        ]
+    },
     "formatter": {
-      "trailingCommas": "none"
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 2,
+        "lineWidth": 100
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single",
+            "semicolons": "always",
+            "trailingCommas": "all"
+        },
+        "parser": {
+            "unsafeParameterDecoratorsEnabled": true
+        }
+    },
+    "json": {
+        "formatter": {
+            "trailingCommas": "none"
+        }
+    },
+    "assist": {
+        "enabled": true,
+        "actions": {
+            "source": {
+                "organizeImports": "on"
+            }
+        }
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true,
+            "style": {
+                "useImportType": "off",
+                "noNonNullAssertion": "off"
+            },
+            "complexity": {
+                "noStaticOnlyClass": "off"
+            },
+            "suspicious": {
+                "noExplicitAny": "warn"
+            },
+            "correctness": {
+                "noUnusedImports": "error",
+                "noUnusedVariables": "warn"
+            }
+        }
     }
-  },
-  "assist": {
-    "enabled": true,
-    "actions": {
-      "source": {
-        "organizeImports": "on"
-      }
-    }
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true,
-      "style": {
-        "useImportType": "off",
-        "noNonNullAssertion": "off"
-      },
-      "complexity": {
-        "noStaticOnlyClass": "off"
-      },
-      "suspicious": {
-        "noExplicitAny": "warn"
-      },
-      "correctness": {
-        "noUnusedImports": "error",
-        "noUnusedVariables": "warn"
-      }
-    }
-  }
 }

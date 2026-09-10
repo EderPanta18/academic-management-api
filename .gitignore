@@ -64,6 +64,7 @@ Desktop.ini
 # IDEs y editores
 # =========================================================
 .vscode/
+.zed/
 .idea/
 .project
 .classpath

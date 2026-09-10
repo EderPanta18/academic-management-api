@@ -77,20 +77,20 @@ Con la configuracion por defecto:
 
 ## Comandos Utiles
 
-| Comando | Uso |
-| --- | --- |
-| `pnpm start:dev` | Levanta la API en desarrollo |
-| `pnpm build` | Compila el proyecto |
-| `pnpm start:prod` | Ejecuta la version compilada |
-| `pnpm check` | Formatea y corrige con Biome |
-| `pnpm check:ci` | Valida formato/lint para CI |
-| `pnpm test` | Ejecuta pruebas unitarias |
-| `pnpm test:e2e` | Ejecuta pruebas e2e |
-| `pnpm db:dev` | Migraciones dev + seed |
-| `pnpm db:prod` | Migraciones deploy + seed |
-| `pnpm db:reset` | Reinicia la base de datos |
-| `pnpm db:push` | Sincroniza esquema sin migracion |
-| `pnpm db:studio` | Abre Prisma Studio |
+| Comando           | Uso                              |
+| ----------------- | -------------------------------- |
+| `pnpm start:dev`  | Levanta la API en desarrollo     |
+| `pnpm build`      | Compila el proyecto              |
+| `pnpm start:prod` | Ejecuta la version compilada     |
+| `pnpm check`      | Formatea y corrige con Biome     |
+| `pnpm check:ci`   | Valida formato/lint para CI      |
+| `pnpm test`       | Ejecuta pruebas unitarias        |
+| `pnpm test:e2e`   | Ejecuta pruebas e2e              |
+| `pnpm db:dev`     | Migraciones dev + seed           |
+| `pnpm db:prod`    | Migraciones deploy + seed        |
+| `pnpm db:reset`   | Reinicia la base de datos        |
+| `pnpm db:push`    | Sincroniza esquema sin migracion |
+| `pnpm db:studio`  | Abre Prisma Studio               |
 
 ## Documentacion
 
