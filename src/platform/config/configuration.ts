@@ -16,7 +16,24 @@ export type AppConfig = {
   };
   database: {
     url: string;
+    directUrl: string;
     logQueries: boolean;
+  };
+  queue: {
+    schema: string;
+    workerConcurrency: number;
+    job: {
+      retryLimit: number;
+      retryDelayMs: number;
+      retryBackoff: boolean;
+      expireInMinutes: number;
+      archiveCompletedAfterDays: number;
+      archiveFailedAfterDays: number;
+    };
+    event: {
+      retryLimit: number;
+      concurrency: number;
+    };
   };
   jwt: {
     access: {
@@ -52,24 +69,6 @@ export type AppConfig = {
     maxFileSize: number;
     allowedMimeTypes: string[];
   };
-  redis: {
-    url: string;
-  };
-  queue: {
-    eventBus: {
-      attempts: number;
-      removeOnComplete: number;
-      removeOnFail: number;
-      concurrency: number;
-    };
-    job: {
-      attempts: number;
-      backoffDelayMs: number;
-      removeOnComplete: number;
-      removeOnFail: number;
-      concurrency: number;
-    };
-  };
 };
 
 export function buildAppConfig(env: EnvironmentVariables): AppConfig {
@@ -87,7 +86,24 @@ export function buildAppConfig(env: EnvironmentVariables): AppConfig {
     },
     database: {
       url: env.DATABASE_URL,
+      directUrl: env.DIRECT_DATABASE_URL,
       logQueries: env.DATABASE_LOG_QUERIES,
+    },
+    queue: {
+      schema: env.QUEUE_SCHEMA,
+      workerConcurrency: env.QUEUE_WORKER_CONCURRENCY,
+      job: {
+        retryLimit: env.QUEUE_JOB_RETRY_LIMIT,
+        retryDelayMs: env.QUEUE_JOB_RETRY_DELAY_MS,
+        retryBackoff: env.QUEUE_JOB_RETRY_BACKOFF,
+        expireInMinutes: env.QUEUE_JOB_EXPIRE_IN_MINUTES,
+        archiveCompletedAfterDays: env.QUEUE_JOB_ARCHIVE_COMPLETED_AFTER_DAYS,
+        archiveFailedAfterDays: env.QUEUE_JOB_ARCHIVE_FAILED_AFTER_DAYS,
+      },
+      event: {
+        retryLimit: env.QUEUE_EVENT_RETRY_LIMIT,
+        concurrency: env.QUEUE_EVENT_CONCURRENCY,
+      },
     },
     jwt: {
       access: {
@@ -106,7 +122,7 @@ export function buildAppConfig(env: EnvironmentVariables): AppConfig {
       refreshTokenRotation: env.AUTH_REFRESH_TOKEN_ROTATION,
     },
     cors: {
-      origins: env.CORS_ORIGIN.split(',')
+      origins: env.CORS_ORIGINS.split(',')
         .map((s) => s.trim())
         .filter(Boolean),
       credentials: env.CORS_CREDENTIALS,
@@ -126,24 +142,6 @@ export function buildAppConfig(env: EnvironmentVariables): AppConfig {
       allowedMimeTypes: env.UPLOAD_ALLOWED_MIME_TYPES.split(',')
         .map((s) => s.trim())
         .filter(Boolean),
-    },
-    redis: {
-      url: env.REDIS_URL,
-    },
-    queue: {
-      eventBus: {
-        attempts: env.QUEUE_EVENT_BUS_ATTEMPTS,
-        removeOnComplete: env.QUEUE_EVENT_BUS_REMOVE_ON_COMPLETE,
-        removeOnFail: env.QUEUE_EVENT_BUS_REMOVE_ON_FAIL,
-        concurrency: env.QUEUE_EVENT_BUS_CONCURRENCY,
-      },
-      job: {
-        attempts: env.QUEUE_JOB_ATTEMPTS,
-        backoffDelayMs: env.QUEUE_JOB_BACKOFF_DELAY_MS,
-        removeOnComplete: env.QUEUE_JOB_REMOVE_ON_COMPLETE,
-        removeOnFail: env.QUEUE_JOB_REMOVE_ON_FAIL,
-        concurrency: env.QUEUE_JOB_CONCURRENCY,
-      },
     },
   };
 }

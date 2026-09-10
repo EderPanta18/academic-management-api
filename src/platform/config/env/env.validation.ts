@@ -16,7 +16,7 @@ import { EnvironmentVariables, LogLevel, NodeEnvironment } from './env.types';
 
 export const NODE_ENV_VALUES = ['development', 'test', 'production'] as const;
 
-export const LOG_LEVEL_VALUES = ['debug', 'info', 'warn', 'error', 'fatal'] as const;
+export const LOG_LEVEL_VALUES = ['debug', 'info', 'warn', 'error'] as const;
 
 class EnvironmentVariablesClass {
   @IsIn(NODE_ENV_VALUES)
@@ -51,9 +51,61 @@ class EnvironmentVariablesClass {
   @IsNotEmpty()
   DATABASE_URL!: string;
 
+  @IsString()
+  @IsNotEmpty()
+  DIRECT_DATABASE_URL!: string;
+
   @Transform(({ value }) => value === true || value === 'true')
   @IsBoolean()
   DATABASE_LOG_QUERIES!: boolean;
+
+  @IsString()
+  @IsNotEmpty()
+  QUEUE_SCHEMA!: string;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  QUEUE_WORKER_CONCURRENCY!: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  QUEUE_JOB_RETRY_LIMIT!: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  QUEUE_JOB_RETRY_DELAY_MS!: number;
+
+  @Transform(({ value }) => value === true || value === 'true')
+  @IsBoolean()
+  QUEUE_JOB_RETRY_BACKOFF!: boolean;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  QUEUE_JOB_EXPIRE_IN_MINUTES!: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  QUEUE_JOB_ARCHIVE_COMPLETED_AFTER_DAYS!: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  QUEUE_JOB_ARCHIVE_FAILED_AFTER_DAYS!: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  QUEUE_EVENT_RETRY_LIMIT!: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  QUEUE_EVENT_CONCURRENCY!: number;
 
   @IsString()
   @IsNotEmpty()
@@ -89,7 +141,7 @@ class EnvironmentVariablesClass {
 
   @IsString()
   @IsNotEmpty()
-  CORS_ORIGIN!: string;
+  CORS_ORIGINS!: string;
 
   @Transform(({ value }) => value === true || value === 'true')
   @IsBoolean()
@@ -127,55 +179,6 @@ class EnvironmentVariablesClass {
   @IsString()
   @IsNotEmpty()
   UPLOAD_ALLOWED_MIME_TYPES!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  REDIS_URL!: string;
-
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  QUEUE_EVENT_BUS_ATTEMPTS!: number;
-
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  QUEUE_EVENT_BUS_REMOVE_ON_COMPLETE!: number;
-
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  QUEUE_EVENT_BUS_REMOVE_ON_FAIL!: number;
-
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  QUEUE_EVENT_BUS_CONCURRENCY!: number;
-
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  QUEUE_JOB_ATTEMPTS!: number;
-
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  QUEUE_JOB_BACKOFF_DELAY_MS!: number;
-
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  QUEUE_JOB_REMOVE_ON_COMPLETE!: number;
-
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  QUEUE_JOB_REMOVE_ON_FAIL!: number;
-
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  QUEUE_JOB_CONCURRENCY!: number;
 }
 
 function formatValidationErrors(errors: ValidationError[]): string {
@@ -209,7 +212,18 @@ export function validateEnvironment(rawConfig: Record<string, unknown>): Environ
     API_PREFIX: validated.API_PREFIX,
     LOG_LEVEL: validated.LOG_LEVEL,
     DATABASE_URL: validated.DATABASE_URL,
+    DIRECT_DATABASE_URL: validated.DIRECT_DATABASE_URL,
     DATABASE_LOG_QUERIES: validated.DATABASE_LOG_QUERIES,
+    QUEUE_SCHEMA: validated.QUEUE_SCHEMA,
+    QUEUE_WORKER_CONCURRENCY: validated.QUEUE_WORKER_CONCURRENCY,
+    QUEUE_JOB_RETRY_LIMIT: validated.QUEUE_JOB_RETRY_LIMIT,
+    QUEUE_JOB_RETRY_DELAY_MS: validated.QUEUE_JOB_RETRY_DELAY_MS,
+    QUEUE_JOB_RETRY_BACKOFF: validated.QUEUE_JOB_RETRY_BACKOFF,
+    QUEUE_JOB_EXPIRE_IN_MINUTES: validated.QUEUE_JOB_EXPIRE_IN_MINUTES,
+    QUEUE_JOB_ARCHIVE_COMPLETED_AFTER_DAYS: validated.QUEUE_JOB_ARCHIVE_COMPLETED_AFTER_DAYS,
+    QUEUE_JOB_ARCHIVE_FAILED_AFTER_DAYS: validated.QUEUE_JOB_ARCHIVE_FAILED_AFTER_DAYS,
+    QUEUE_EVENT_RETRY_LIMIT: validated.QUEUE_EVENT_RETRY_LIMIT,
+    QUEUE_EVENT_CONCURRENCY: validated.QUEUE_EVENT_CONCURRENCY,
     JWT_ACCESS_NAME: validated.JWT_ACCESS_NAME,
     JWT_ACCESS_SECRET: validated.JWT_ACCESS_SECRET,
     JWT_ACCESS_EXPIRES_IN: validated.JWT_ACCESS_EXPIRES_IN,
@@ -218,7 +232,7 @@ export function validateEnvironment(rawConfig: Record<string, unknown>): Environ
     JWT_REFRESH_EXPIRES_IN: validated.JWT_REFRESH_EXPIRES_IN,
     AUTH_SINGLE_SESSION: validated.AUTH_SINGLE_SESSION,
     AUTH_REFRESH_TOKEN_ROTATION: validated.AUTH_REFRESH_TOKEN_ROTATION,
-    CORS_ORIGIN: validated.CORS_ORIGIN,
+    CORS_ORIGINS: validated.CORS_ORIGINS,
     CORS_CREDENTIALS: validated.CORS_CREDENTIALS,
     OPENAPI_ENABLED: validated.OPENAPI_ENABLED,
     OPENAPI_PATH: validated.OPENAPI_PATH,
@@ -228,15 +242,5 @@ export function validateEnvironment(rawConfig: Record<string, unknown>): Environ
     ADMIN_LAST_NAME: validated.ADMIN_LAST_NAME,
     UPLOAD_MAX_FILE_SIZE: validated.UPLOAD_MAX_FILE_SIZE,
     UPLOAD_ALLOWED_MIME_TYPES: validated.UPLOAD_ALLOWED_MIME_TYPES,
-    REDIS_URL: validated.REDIS_URL,
-    QUEUE_EVENT_BUS_ATTEMPTS: validated.QUEUE_EVENT_BUS_ATTEMPTS,
-    QUEUE_EVENT_BUS_REMOVE_ON_COMPLETE: validated.QUEUE_EVENT_BUS_REMOVE_ON_COMPLETE,
-    QUEUE_EVENT_BUS_REMOVE_ON_FAIL: validated.QUEUE_EVENT_BUS_REMOVE_ON_FAIL,
-    QUEUE_EVENT_BUS_CONCURRENCY: validated.QUEUE_EVENT_BUS_CONCURRENCY,
-    QUEUE_JOB_ATTEMPTS: validated.QUEUE_JOB_ATTEMPTS,
-    QUEUE_JOB_BACKOFF_DELAY_MS: validated.QUEUE_JOB_BACKOFF_DELAY_MS,
-    QUEUE_JOB_REMOVE_ON_COMPLETE: validated.QUEUE_JOB_REMOVE_ON_COMPLETE,
-    QUEUE_JOB_REMOVE_ON_FAIL: validated.QUEUE_JOB_REMOVE_ON_FAIL,
-    QUEUE_JOB_CONCURRENCY: validated.QUEUE_JOB_CONCURRENCY,
   };
 }

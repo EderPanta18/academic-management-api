@@ -2,7 +2,7 @@
 
 export type NodeEnvironment = 'development' | 'test' | 'production';
 
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'fatal';
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 export type EnvironmentVariables = {
   // General
@@ -20,7 +20,22 @@ export type EnvironmentVariables = {
 
   // Database
   DATABASE_URL: string;
+  DIRECT_DATABASE_URL: string;
   DATABASE_LOG_QUERIES: boolean;
+
+  // Queue (PgBoss sobre PostgreSQL)
+  QUEUE_SCHEMA: string;
+  QUEUE_WORKER_CONCURRENCY: number;
+
+  QUEUE_JOB_RETRY_LIMIT: number;
+  QUEUE_JOB_RETRY_DELAY_MS: number;
+  QUEUE_JOB_RETRY_BACKOFF: boolean;
+  QUEUE_JOB_EXPIRE_IN_MINUTES: number;
+  QUEUE_JOB_ARCHIVE_COMPLETED_AFTER_DAYS: number;
+  QUEUE_JOB_ARCHIVE_FAILED_AFTER_DAYS: number;
+
+  QUEUE_EVENT_RETRY_LIMIT: number;
+  QUEUE_EVENT_CONCURRENCY: number;
 
   // JWT
   JWT_ACCESS_NAME: string;
@@ -36,7 +51,7 @@ export type EnvironmentVariables = {
   AUTH_REFRESH_TOKEN_ROTATION: boolean;
 
   // CORS
-  CORS_ORIGIN: string;
+  CORS_ORIGINS: string;
   CORS_CREDENTIALS: boolean;
 
   // OpenAPI
@@ -52,19 +67,4 @@ export type EnvironmentVariables = {
   // Upload
   UPLOAD_MAX_FILE_SIZE: number;
   UPLOAD_ALLOWED_MIME_TYPES: string;
-
-  // Redis
-  REDIS_URL: string;
-
-  // Queue
-  QUEUE_EVENT_BUS_ATTEMPTS: number;
-  QUEUE_EVENT_BUS_REMOVE_ON_COMPLETE: number;
-  QUEUE_EVENT_BUS_REMOVE_ON_FAIL: number;
-  QUEUE_EVENT_BUS_CONCURRENCY: number;
-
-  QUEUE_JOB_ATTEMPTS: number;
-  QUEUE_JOB_BACKOFF_DELAY_MS: number;
-  QUEUE_JOB_REMOVE_ON_COMPLETE: number;
-  QUEUE_JOB_REMOVE_ON_FAIL: number;
-  QUEUE_JOB_CONCURRENCY: number;
 };

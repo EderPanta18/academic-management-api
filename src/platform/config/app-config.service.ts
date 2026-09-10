@@ -17,6 +17,10 @@ export class AppConfigService {
     return this.configService.get('database', { infer: true });
   }
 
+  get queue() {
+    return this.configService.get('queue', { infer: true });
+  }
+
   get jwt() {
     return this.configService.get('jwt', { infer: true });
   }
@@ -43,14 +47,6 @@ export class AppConfigService {
 
   get log() {
     return this.configService.get('log', { infer: true });
-  }
-
-  get redis() {
-    return this.configService.get('redis', { infer: true });
-  }
-
-  get queue() {
-    return this.configService.get('queue', { infer: true });
   }
 
   // Getters directos para propiedades anidadas
