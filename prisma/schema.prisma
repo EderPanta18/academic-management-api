@@ -78,13 +78,13 @@ model DocumentType {
   code        String   @unique @db.VarChar(50)
   name        String   @unique @db.VarChar(100)
   description String?  @db.Text
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   deletedAt   DateTime?
 
   persons     Person[]
 
-  @@index([deletedAt])
   @@map("document_types")
 }
 
@@ -97,6 +97,7 @@ model Person {
   email          String?   @db.VarChar(255)
   phone          String?   @db.VarChar(30)
   birthDate      DateTime? @db.Date
+
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
@@ -121,6 +122,7 @@ model Student {
   institutionalEmail String?        @unique @db.VarChar(255)
   admissionPeriod    String?        @db.VarChar(50)
   status             StudentStatus
+
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
   deletedAt          DateTime?
@@ -145,6 +147,7 @@ model Professor {
   department         String?         @db.VarChar(100)
   specialty          String?         @db.VarChar(100)
   status             ProfessorStatus
+
   createdAt          DateTime        @default(now())
   updatedAt          DateTime        @updatedAt
   deletedAt          DateTime?
@@ -161,6 +164,7 @@ model AcademicProgram {
   code         String       @unique @db.VarChar(50)
   name         String       @unique @db.VarChar(150)
   academicUnit String?      @db.VarChar(150)
+
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   deletedAt    DateTime?
@@ -177,13 +181,13 @@ model CourseCategory {
   code        String   @unique @db.VarChar(50)
   name        String   @unique @db.VarChar(100)
   description String?  @db.Text
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   deletedAt   DateTime?
 
   courses     Course[]
 
-  @@index([deletedAt])
   @@map("course_categories")
 }
 
@@ -196,6 +200,7 @@ model Course {
   description      String?        @db.Text
   credits          Int
   hours            Int?
+
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   deletedAt        DateTime?
@@ -219,6 +224,7 @@ model AcademicPeriod {
   enrollmentStartDate DateTime?            @db.Date
   enrollmentEndDate   DateTime?            @db.Date
   status              AcademicPeriodStatus
+
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   deletedAt           DateTime?
@@ -239,6 +245,7 @@ model CourseOffering {
   maxCapacity       Int
   availableCapacity Int?
   status            CourseOfferingStatus
+
   createdAt         DateTime             @default(now())
   updatedAt         DateTime             @updatedAt
   deletedAt         DateTime?
@@ -265,6 +272,7 @@ model Enrollment {
   enrolledAt         DateTime
   registeredByUserId String?           @db.Uuid
   statusReason       String?           @db.Text
+
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
   deletedAt          DateTime?
@@ -289,6 +297,7 @@ model EnrollmentStatusLog {
   newStatus       EnrollmentStatus
   reason          String?          @db.Text
   changedByUserId String?          @db.Uuid
+
   createdAt       DateTime         @default(now())
 
   enrollment      Enrollment       @relation(fields: [enrollmentId], references: [id])
@@ -305,6 +314,7 @@ model User {
   passwordHash         String            @db.Text
   status               UserStatus
   lastLoginAt          DateTime?
+
   createdAt            DateTime          @default(now())
   updatedAt            DateTime          @updatedAt
   deletedAt            DateTime?
@@ -329,6 +339,7 @@ model Role {
   name             String           @unique @db.VarChar(100)
   description      String?          @db.Text
   isSystem         Boolean          @default(false)
+
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
   deletedAt        DateTime?
@@ -336,7 +347,6 @@ model Role {
   userRoles        UserRole[]
   rolePermissions  RolePermission[]
 
-  @@index([deletedAt])
   @@map("roles")
 }
 
@@ -347,13 +357,13 @@ model Permission {
   description      String?          @db.Text
   module           String           @db.VarChar(100)
   isSystem         Boolean          @default(false)
+
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
   deletedAt        DateTime?
 
   rolePermissions  RolePermission[]
 
-  @@index([deletedAt])
   @@map("permissions")
 }
 
@@ -361,6 +371,7 @@ model UserRole {
   userId            String    @db.Uuid
   roleId            String    @db.Uuid
   assignedByUserId  String?   @db.Uuid
+
   assignedAt        DateTime  @default(now())
 
   user              User      @relation(fields: [userId], references: [id])
@@ -376,6 +387,7 @@ model RolePermission {
   roleId            String    @db.Uuid
   permissionId      String    @db.Uuid
   assignedByUserId  String?   @db.Uuid
+
   assignedAt        DateTime  @default(now())
 
   role              Role      @relation(fields: [roleId], references: [id])
@@ -396,6 +408,7 @@ model UserSession {
   ipAddress        String?       @db.VarChar(64)
   userAgent        String?       @db.Text
   status           SessionStatus
+
   createdAt        DateTime      @default(now())
   expiresAt        DateTime
   revokedAt        DateTime?
@@ -419,6 +432,7 @@ model AuditLog {
   metadata      Json?
   ipAddress     String?   @db.VarChar(64)
   userAgent     String?   @db.Text
+
   createdAt     DateTime  @default(now())
 
   actorUser     User?     @relation("ActorAuditLogs", fields: [actorUserId], references: [id])
@@ -443,6 +457,7 @@ model StudentImport {
   duplicatedRows  Int
   observedRows    Int
   createdByUserId String?        @db.Uuid
+
   createdAt       DateTime       @default(now())
   startedAt       DateTime?
   finishedAt      DateTime?
@@ -467,6 +482,7 @@ model StudentImportRow {
   fieldErrors      Json?
   createdStudentId String?         @db.Uuid
   updatedStudentId String?         @db.Uuid
+
   createdAt        DateTime        @default(now())
 
   studentImport    StudentImport   @relation(fields: [studentImportId], references: [id])
