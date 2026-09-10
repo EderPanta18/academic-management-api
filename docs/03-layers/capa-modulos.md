@@ -2,7 +2,7 @@
 
 La capa `modules` contiene las capacidades funcionales del sistema.
 
-En este proyecto, los módulos representan partes del dominio académico, acceso, seguridad funcional, administración y soporte. No se limita a entidades académicas.
+En este proyecto, los módulos representan partes del dominio académico, identidad, acceso, seguridad funcional, administración y soporte. No se limita a entidades académicas.
 
 La idea no es agrupar archivos por tipo global, sino por responsabilidad funcional. Por eso no se recomienda tener carpetas raíz como `controllers`, `services`, `repositories` o `dtos` para todo el sistema. Cada módulo debe conservar cerca lo que le pertenece.
 
@@ -30,19 +30,19 @@ Aquí deben vivir:
 - Mappers del módulo.
 ```
 
-El proceso de inscripción se entiende desde esta capa, pero también las capacidades de acceso se modelan como módulos funcionales.
+El proceso de inscripción se entiende desde esta capa, pero también las capacidades de identidad y acceso se modelan como módulos funcionales.
 
 ```txt
+identity
 students
 academic-programs
 courses
 academic-periods
 course-offerings
 enrollments
-auth
 users
-roles
-permissions
+authorization
+audit
 reports
 ```
 
@@ -52,11 +52,7 @@ Para el alcance actual, una estructura posible es:
 
 ```txt
 src/modules/
-├── auth/
-├── users/
-├── roles/
-├── permissions/
-├── persons/
+├── identity/
 ├── students/
 ├── professors/
 ├── academic-programs/
@@ -64,24 +60,31 @@ src/modules/
 ├── academic-periods/
 ├── course-offerings/
 ├── enrollments/
-├── reports/
-└── catalogs/
+├── users/
+├── authorization/
+├── audit/
+└── reports/
 ```
 
 La diferencia conceptual es:
 
 ```txt
-students, professors, courses, enrollments
+identity
+= identidad personal base y tipos de documento
+
+students, professors, academic-programs, courses, academic-periods, course-offerings, enrollments
 = módulos del dominio académico
 
-auth, users, roles, permissions
+users, authorization
 = módulos funcionales de acceso y seguridad
 
-reports, catalogs
+audit, reports
 = módulos de soporte funcional
 ```
 
-No todos los módulos necesitan la misma complejidad. Un módulo con muchas reglas, como `enrollments`, puede tener estructura más completa. Un módulo simple, como `catalogs`, puede mantenerse más ligero.
+No todos los módulos necesitan la misma complejidad. Un módulo con muchas reglas, como `enrollments`, puede tener estructura más completa. Un módulo simple, como `professors` o `academic-programs`, puede mantenerse más ligero.
+
+Los catálogos no forman un módulo por defecto. Cada catálogo vive dentro del módulo que lo usa: `document_types` en `identity`, `course_categories` en `courses`. Si un catálogo llega a ser compartido por varios módulos, puede evaluarse extraerlo a un módulo propio de catálogos compartidos.
 
 ## Estructura interna sugerida
 
@@ -126,7 +129,10 @@ El dominio no debe depender de:
 - DTOs.
 - Controladores.
 - Repositorios concretos.
+- Contratos de cola o eventos.
 ```
+
+El dominio no conoce mecanismos de ejecución. Si una decisión de negocio debe diferirse, quien decide es la aplicación; el dominio no encola ni publica.
 
 ## `application`
 
@@ -149,6 +155,8 @@ Puede incluir:
 Esta capa coordina reglas, entidades y dependencias, pero no implementa detalles técnicos directamente.
 
 Un caso de uso no debería consultar Prisma de forma directa. Debe hacerlo mediante un puerto de salida implementado por infraestructura.
+
+Cuando un caso de uso identifica trabajo que no debería resolverse dentro de la petición HTTP, puede encolar un job o publicar un evento a través de los contratos de `core`. El caso de uso conserva la decisión; el worker solo ejecuta lo decidido. El módulo nunca invoca un worker directamente.
 
 ## `infrastructure`
 
@@ -190,22 +198,18 @@ En NestJS, normalmente incluye:
 
 La presentación no debe contener reglas de negocio. Su función es adaptar HTTP hacia la aplicación.
 
+La presentación no ejecuta trabajo intensivo. Si un caso de uso necesita diferirse, la presentación solo recibe la respuesta del caso de uso, que puede incluir un identificador de job si corresponde.
+
 ## Módulos de acceso y seguridad
 
 Los módulos de acceso viven en `modules` porque tienen datos, casos de uso y reglas funcionales propias.
 
 ```txt
-auth
-= login, logout, refresh token, sesiones y revocación de accesos
-
 users
-= cuentas de usuario, estado y credenciales
+= cuentas de usuario, credenciales, sesiones, login, logout y refresh token
 
-roles
-= roles del sistema y asignación de roles a usuarios
-
-permissions
-= permisos y asignación de permisos a roles
+authorization
+= roles, permisos y asignación entre usuarios, roles y permisos
 ```
 
 La parte técnica de seguridad no pertenece a estos módulos, sino a `platform/security`.
@@ -217,16 +221,16 @@ platform/security
 
 ## Sesiones de usuario
 
-Las sesiones pertenecen funcionalmente al módulo `auth`.
+Las sesiones pertenecen funcionalmente al módulo `users`.
 
 ```txt
-auth
+users
 → user_sessions
 ```
 
-El módulo `auth` controla cuándo se crea una sesión, cuándo se revoca, cuándo se renueva y si se permiten una o varias sesiones activas por usuario.
+El módulo `users` controla cuándo se crea una sesión, cuándo se revoca, cuándo se renueva y si se permiten una o varias sesiones activas por usuario. También administra las cuentas y credenciales, que son parte del mismo flujo de autenticación.
 
-`platform/security` puede validar técnicamente un token, pero la regla funcional de sesión pertenece a `auth`.
+`platform/security` puede validar técnicamente un token, pero la regla funcional de sesión pertenece a `users`.
 
 ## Flujo de escritura
 
@@ -245,6 +249,8 @@ Controller
 ```
 
 El controlador no decide reglas. El caso de uso coordina. El dominio protege invariantes. La infraestructura persiste.
+
+Si el caso de uso decide diferir trabajo, puede encolar un job a través del contrato de `JobQueue` antes de finalizar. El encolado se hace dentro de la misma transacción que persiste el cambio cuando la implementación lo permite.
 
 ## Flujo de lectura
 
@@ -273,7 +279,7 @@ Evitar:
 ```txt
 enrollments importa students/infrastructure
 enrollments importa students/domain/entities
-auth importa repositorios internos de roles
+users importa repositorios internos de authorization
 reports modifica enrollments
 course-offerings usa repositorios internos de professors
 ```
@@ -284,10 +290,27 @@ Preferir:
 enrollments → students/application/ports/in
 enrollments → course-offerings/application/ports/in
 course-offerings → professors/application/ports/in
-auth → users/application/ports/in
-auth → roles o permissions mediante capacidades públicas
+users → authorization/application/ports/in
 reports → queries públicas o puertos de lectura
 ```
+
+## Workers y módulos
+
+Los workers no son módulos. Son procesos asíncronos que consumen jobs y eventos desde fuera del flujo HTTP.
+
+Un worker no importa detalles internos de un módulo. Consume casos de uso, servicios o contratos públicos del módulo dueño.
+
+```txt
+worker
+→ consume un caso de uso de students
+→ students valida, persiste y decide
+```
+
+Un worker no debe contener reglas de negocio ni consultar tablas directamente. Toda decisión vive en el módulo.
+
+Los módulos no dependen de workers. La dependencia va en una sola dirección: los workers consumen módulos.
+
+Si un módulo necesita diferir trabajo, encola un job o publica un evento a través de los contratos de `core`. El módulo no sabe quién consume ese trabajo.
 
 ## Reglas por módulo
 
@@ -296,6 +319,9 @@ Cada módulo debe ser dueño de sus reglas principales.
 Ejemplos:
 
 ```txt
+identity
+= identidad personal y tipos de documento
+
 students
 = estado académico del estudiante, importación de estudiantes
 
@@ -308,17 +334,14 @@ enrollments
 academic-periods
 = fechas y estado del periodo académico
 
-auth
-= sesiones y flujo de autenticación
+courses
+= catálogo de cursos y categorías de curso
 
 users
-= cuentas y estado del usuario
+= cuentas, credenciales, sesiones y flujo de autenticación
 
-roles
-= roles y asignación de roles
-
-permissions
-= permisos y asignación de permisos a roles
+authorization
+= roles, permisos y asignación entre usuarios, roles y permisos
 
 reports
 = consultas resumidas sin modificar datos
@@ -330,7 +353,7 @@ La regla general es que quien es dueño del dato principal debe ser dueño de la
 
 No todos los módulos necesitan una estructura completa.
 
-Un módulo de catálogo o una capacidad muy simple puede empezar con menos archivos. Si luego crece en reglas, puede adoptar una estructura más completa sin afectar a los demás módulos.
+Un módulo con pocas reglas puede empezar con menos archivos. Si luego crece en reglas, puede adoptar una estructura más completa sin afectar a los demás módulos.
 
 La arquitectura permite crecimiento progresivo.
 
@@ -348,9 +371,12 @@ No pertenecen directamente a `modules`:
 - Guards técnicos reutilizables.
 - Estrategias JWT.
 - Hashing técnico de contraseñas.
+- Procesadores de jobs.
+- Handlers de eventos.
+- Entrypoints de workers.
 ```
 
-Esos elementos pertenecen a `platform`.
+Esos elementos pertenecen a `platform` o a `workers`.
 
 ## Crecimiento esperado
 

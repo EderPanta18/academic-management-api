@@ -56,18 +56,17 @@ El endpoint no necesita saber si el usuario es `SECRETARY`. Solo necesita saber 
 La autorización se distribuye entre módulos funcionales y soporte técnico.
 
 ```txt
-modules/roles
-= administración de roles
-
-modules/permissions
-= administración de permisos
+modules/authorization
+= administración de roles, permisos y asignación entre usuarios, roles y permisos
 
 modules/users
-= asignación de roles a usuarios, si se decide manejarlo desde usuarios o roles
+= autenticación, cuentas, credenciales y sesiones
 
 platform/security
 = guards, decorators y verificación técnica en requests
 ```
+
+Roles, permisos y sus relaciones viven en el mismo módulo porque comparten reglas, datos y operaciones. No se separan en módulos distintos.
 
 ## Guards
 
@@ -237,18 +236,20 @@ Ejemplo de autorización fallida:
 
 ```json
 {
-  "success": false,
-  "statusCode": 403,
-  "timestamp": "2026-06-14T10:30:00.000Z",
-  "path": "/api/v1/enrollments",
-  "error": {
-    "key": "FORBIDDEN",
-    "code": "AUTH_002",
-    "message": "No tienes permisos para realizar esta acción.",
-    "domain": "AUTH"
-  }
+    "success": false,
+    "statusCode": 403,
+    "timestamp": "2026-06-14T10:30:00.000Z",
+    "path": "/api/v1/enrollments",
+    "error": {
+        "key": "FORBIDDEN",
+        "code": "AUTH_002",
+        "message": "No tienes permisos para realizar esta acción.",
+        "domain": "AUTH"
+    }
 }
 ```
+
+El `domain: AUTH` sigue siendo válido porque describe el área funcional del error, no el nombre del módulo.
 
 ## Rutas administrativas
 

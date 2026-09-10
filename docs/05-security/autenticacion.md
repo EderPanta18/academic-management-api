@@ -31,7 +31,7 @@ La sesión debe quedar registrada para poder controlar accesos activos, cerrar s
 La autenticación pertenece al módulo funcional:
 
 ```txt
-modules/auth
+modules/users
 ```
 
 Este módulo se encarga de:
@@ -46,6 +46,8 @@ Este módulo se encarga de:
 - Control de sesiones activas por usuario.
 ```
 
+Las sesiones y las credenciales comparten el mismo ciclo de vida, por eso viven en el mismo módulo. No se separan en módulos distintos.
+
 El soporte técnico relacionado con JWT, hashing, guards, estrategias o extracción de tokens pertenece a:
 
 ```txt
@@ -54,7 +56,7 @@ platform/security
 
 ## Usuarios y credenciales
 
-Las cuentas del sistema pertenecen a:
+Las cuentas del sistema también pertenecen a:
 
 ```txt
 modules/users
@@ -99,24 +101,26 @@ POST /api/v1/auth/login
 → emitir refresh token si aplica
 ```
 
+Las rutas pueden exponerse bajo `/auth` aunque el módulo dueño sea `users`. La ruta es parte del contrato HTTP, no de la organización interna del código.
+
 Respuesta esperada:
 
 ```json
 {
-  "success": true,
-  "statusCode": 200,
-  "timestamp": "2026-06-14T10:30:00.000Z",
-  "path": "/api/v1/auth/login",
-  "data": {
-    "accessToken": "access-token",
-    "refreshToken": "refresh-token",
-    "expiresIn": 900,
-    "user": {
-      "id": "user-001",
-      "email": "admin@example.com",
-      "roles": ["ADMIN"]
+    "success": true,
+    "statusCode": 200,
+    "timestamp": "2026-06-14T10:30:00.000Z",
+    "path": "/api/v1/auth/login",
+    "data": {
+        "accessToken": "access-token",
+        "refreshToken": "refresh-token",
+        "expiresIn": 900,
+        "user": {
+            "id": "user-001",
+            "email": "admin@example.com",
+            "roles": ["ADMIN"]
+        }
     }
-  }
 }
 ```
 
@@ -146,14 +150,10 @@ Ejemplo conceptual:
 
 ```json
 {
-  "sub": "user-001",
-  "sessionId": "session-001",
-  "roles": ["SECRETARY"],
-  "permissions": [
-    "students.read",
-    "students.create",
-    "enrollments.create"
-  ]
+    "sub": "user-001",
+    "sessionId": "session-001",
+    "roles": ["SECRETARY"],
+    "permissions": ["students.read", "students.create", "enrollments.create"]
 }
 ```
 
@@ -174,6 +174,8 @@ permissions
 ```
 
 No deben incluirse datos sensibles, datos personales innecesarios ni información académica que pueda cambiar con frecuencia.
+
+Los roles y permisos que aparecen en el token provienen del módulo `authorization`. El módulo `users` los consulta al emitir el token, pero no los administra.
 
 ## Sesiones de usuario
 
@@ -262,13 +264,13 @@ Respuesta posible:
 
 ```json
 {
-  "success": true,
-  "statusCode": 200,
-  "timestamp": "2026-06-14T10:30:00.000Z",
-  "path": "/api/v1/auth/logout",
-  "data": {
-    "message": "Sesión cerrada correctamente."
-  }
+    "success": true,
+    "statusCode": 200,
+    "timestamp": "2026-06-14T10:30:00.000Z",
+    "path": "/api/v1/auth/logout",
+    "data": {
+        "message": "Sesión cerrada correctamente."
+    }
 }
 ```
 
@@ -302,16 +304,16 @@ Ejemplo:
 
 ```json
 {
-  "success": false,
-  "statusCode": 401,
-  "timestamp": "2026-06-14T10:30:00.000Z",
-  "path": "/api/v1/students",
-  "error": {
-    "key": "UNAUTHORIZED",
-    "code": "AUTH_001",
-    "message": "No se pudo autenticar la solicitud.",
-    "domain": "AUTH"
-  }
+    "success": false,
+    "statusCode": 401,
+    "timestamp": "2026-06-14T10:30:00.000Z",
+    "path": "/api/v1/students",
+    "error": {
+        "key": "UNAUTHORIZED",
+        "code": "AUTH_001",
+        "message": "No se pudo autenticar la solicitud.",
+        "domain": "AUTH"
+    }
 }
 ```
 
@@ -326,19 +328,18 @@ Casos comunes:
 - Refresh token inválido.
 ```
 
+El `domain: AUTH` sigue siendo válido porque describe el área funcional del error, no el nombre del módulo.
+
 ## Separación de responsabilidades
 
 La autenticación no debe mezclarse con reglas académicas.
 
 ```txt
-auth
-= autenticar, crear sesión, renovar tokens, cerrar sesión
-
 users
-= administrar cuentas y estado del usuario
+= autenticar, crear sesión, renovar tokens, cerrar sesión, administrar cuentas y credenciales
 
-roles / permissions
-= definir acceso y permisos
+authorization
+= definir roles, permisos y asignación entre usuarios, roles y permisos
 
 platform/security
 = JWT, hashing, guards, decorators y estrategias técnicas

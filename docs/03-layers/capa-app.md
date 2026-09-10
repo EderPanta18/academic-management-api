@@ -6,12 +6,14 @@ En un proyecto NestJS, esta capa se encarga de organizar cómo se levanta la apl
 
 No contiene reglas de negocio ni detalles de persistencia. Su función es componer el sistema.
 
+Esta capa compone la API. Los workers tienen su propio entrypoint y su propia composición, porque son procesos independientes que no exponen endpoints.
+
 ## Responsabilidad principal
 
 La responsabilidad de `app` es responder a esta pregunta:
 
 ```txt
-¿Cómo se ensambla y arranca la aplicación?
+¿Cómo se ensambla y arranca la API?
 ```
 
 Por eso, aquí pueden ubicarse archivos relacionados con:
@@ -44,7 +46,9 @@ main.ts
 → modules
 ```
 
-`main.ts` inicia el proceso. `app` define cómo se compone la aplicación. `platform` aporta infraestructura técnica. `modules` aporta negocio.
+`main.ts` inicia el proceso de la API. `app` define cómo se compone. `platform` aporta infraestructura técnica. `modules` aporta negocio.
+
+Los workers no pasan por `app`. Tienen su propio entrypoint en `src/workers/main.ts` y su propia composición.
 
 ## Qué puede contener
 
@@ -119,6 +123,8 @@ No deberían vivir en `app`:
 - Reglas de inscripción.
 - Reglas de cupos.
 - Configuración de base de datos concreta.
+- Procesadores de jobs o handlers de eventos.
+- Entrypoints de workers.
 ```
 
 Si un archivo representa negocio, debe ir en `modules`.
@@ -128,6 +134,8 @@ Si representa infraestructura técnica, debe ir en `platform`.
 Si representa base estable transversal, debe ir en `core`.
 
 Si representa soporte reutilizable ligero, debe ir en `shared`.
+
+Si es un proceso asíncrono que consume jobs o eventos, debe ir en `workers`.
 
 ## Dependencias permitidas
 
@@ -143,11 +151,14 @@ Si representa soporte reutilizable ligero, debe ir en `shared`.
 Las demás capas no deberían depender de `app`.
 
 ```txt
-modules → app   no
-platform → app  no
-core → app      no
-shared → app    no
+modules  → app   no
+platform → app   no
+core     → app   no
+shared   → app   no
+workers  → app   no
 ```
+
+Los workers no dependen de `app` porque tienen su propio entrypoint y su propia composición. La API y los workers son procesos paralelos, no jerárquicos.
 
 ## Crecimiento esperado
 
@@ -157,12 +168,14 @@ Ese crecimiento no debería obligar a modificar reglas internas de los módulos.
 
 Cuando se agregue un nuevo módulo académico, el cambio esperado en `app` debería ser principalmente de registro o importación, no de lógica.
 
+Cuando se agregue un nuevo worker, el cambio esperado debería ocurrir en `workers/`, no en `app/`.
+
 ## Criterio de uso
 
 Antes de colocar algo en `app`, conviene preguntar:
 
 ```txt
-¿Este archivo existe para arrancar o componer la aplicación?
+¿Este archivo existe para arrancar o componer la API?
 ```
 
 Si la respuesta es no, probablemente pertenece a otra capa.

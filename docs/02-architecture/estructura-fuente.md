@@ -81,6 +81,7 @@ src/
 ├── core/
 ├── modules/
 ├── platform/
+├── workers/
 └── shared/
 ```
 
@@ -144,21 +145,19 @@ Restricciones:
 - No depender de HTTP.
 ```
 
+Los contratos de capacidades transversales que no dependen de tecnología viven aquí. Por ejemplo, el contrato de `JobQueue` y el de `EventBus`, que describen cómo encolar trabajo y cómo publicar eventos internos sin asumir una implementación concreta.
+
 ## `modules/`
 
 `modules/` contiene capacidades funcionales del sistema.
 
-No se limita únicamente a módulos académicos. También puede contener módulos de acceso, seguridad funcional, administración y soporte.
+No se limita únicamente a módulos académicos. También puede contener módulos de identidad, acceso, autorización, auditoría y soporte.
 
 Estructura de alto nivel esperada:
 
 ```txt
 src/modules/
-├── auth/
-├── users/
-├── roles/
-├── permissions/
-├── persons/
+├── identity/
 ├── students/
 ├── professors/
 ├── academic-programs/
@@ -166,8 +165,10 @@ src/modules/
 ├── academic-periods/
 ├── course-offerings/
 ├── enrollments/
-├── reports/
-└── catalogs/
+├── users/
+├── authorization/
+├── audit/
+└── reports/
 ```
 
 Los módulos pueden ajustarse según avance el sistema, pero deben responder a una capacidad funcional clara y no solo a nombres de tablas.
@@ -175,15 +176,20 @@ Los módulos pueden ajustarse según avance el sistema, pero deben responder a u
 La diferencia conceptual es:
 
 ```txt
-students, professors, courses, enrollments
+identity
+= identidad personal base y tipos de documento
+
+students, professors, academic-programs, courses, academic-periods, course-offerings, enrollments
 = módulos del dominio académico
 
-auth, users, roles, permissions
+users, authorization
 = módulos funcionales de acceso y seguridad
 
-reports, catalogs
+audit, reports
 = módulos de soporte funcional
 ```
+
+Los catálogos no forman un módulo por defecto. Cada catálogo vive dentro del módulo que lo usa: `document_types` en `identity`, `course_categories` en `courses`. Si un catálogo llega a ser compartido por varios módulos, puede evaluarse extraerlo a un módulo propio de catálogos compartidos.
 
 ## Estructura interna sugerida de un módulo
 
@@ -230,6 +236,7 @@ src/platform/
 ├── http/
 ├── files/
 ├── security/
+├── queue/
 ├── audit/
 └── logging/
 ```
@@ -252,6 +259,9 @@ files
 security
 = soporte técnico de autenticación y autorización
 
+queue
+= implementación concreta de la cola de jobs y el bus de eventos
+
 audit
 = infraestructura transversal de auditoría
 
@@ -259,7 +269,39 @@ logging
 = registro técnico de eventos
 ```
 
-`platform` no debe contener reglas académicas ni reglas funcionales de roles o permisos.
+`platform` no debe contener reglas académicas ni reglas funcionales de identidad, acceso o autorización.
+
+La infraestructura de auditoría puede vivir aquí, pero su consulta administrativa y sus contratos funcionales pertenecen al módulo `audit`.
+
+`platform/queue` implementa los contratos definidos en `core`. La tecnología concreta de la cola y del bus de eventos es un detalle reemplazable; los módulos no deberían conocerla.
+
+## `workers/`
+
+`workers/` contiene procesos autónomos que consumen jobs y eventos fuera del flujo HTTP.
+
+Estructura posible:
+
+```txt
+src/workers/
+├── main.ts
+├── jobs/
+└── events/
+```
+
+Uso esperado:
+
+```txt
+main.ts
+= entrypoint del proceso de workers
+
+jobs
+= registro de procesadores de jobs
+
+events
+= registro de handlers de eventos
+```
+
+Los workers no exponen endpoints, no contienen reglas de negocio y no forman parte del arranque de la API. Delegan la lógica real en casos de uso y servicios de los módulos, usando los contratos de `core` y las implementaciones de `platform/queue`.
 
 ## `shared/`
 
@@ -346,6 +388,9 @@ Para ubicar un archivo nuevo:
 ¿Depende de tecnología o integra herramientas externas?
 → src/platform/
 
+¿Es un proceso asíncrono que consume jobs o eventos?
+→ src/workers/
+
 ¿Es reutilizable, simple y transversal?
 → src/shared/
 
@@ -376,6 +421,7 @@ project-root/
 │   ├── core/
 │   ├── modules/
 │   ├── platform/
+│   ├── workers/
 │   └── shared/
 ├── test/
 ├── biome.json

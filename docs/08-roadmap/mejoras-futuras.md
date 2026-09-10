@@ -143,26 +143,23 @@ Casos que justificarían un módulo transversal:
 - Historial común.
 - Reintentos.
 - Validación por etapas.
-- Procesamiento asíncrono.
 ```
 
 En ese caso, `imports` coordinaría el proceso, pero cada módulo dueño seguiría validando sus reglas.
 
-## Importaciones asíncronas
+## Progreso y notificación de importaciones
 
-Para archivos grandes puede implementarse procesamiento en segundo plano.
+La primera versión ya procesa importaciones de forma asíncrona a través de workers. El cliente recibe un `jobId` y consulta el estado.
 
-Opciones:
+Mejoras futuras sobre ese flujo:
 
 ```txt
-- Cola de trabajos.
-- Estado de procesamiento.
-- Progreso por porcentaje.
-- Notificación al terminar.
-- Descarga de errores.
+- Progreso por porcentaje durante el procesamiento.
+- Notificación al terminar, si el sistema incorpora notificaciones.
+- Cancelación de un job en curso.
+- Reintento manual de una importación fallida.
+- Reprocesamiento de filas observadas.
 ```
-
-La primera versión puede procesar archivos pequeños de forma síncrona.
 
 ## Exportación de errores
 
@@ -324,7 +321,7 @@ websocket
 
 ## Auditoría avanzada
 
-La primera versión puede registrar eventos en `audit_logs`.
+La primera versión ya cuenta con el módulo `audit` para consulta administrativa y con `platform/audit` para el registro técnico.
 
 Mejoras futuras:
 
@@ -397,6 +394,23 @@ Opciones:
 
 Esto no es obligatorio para una primera versión académica, pero ayuda en producción.
 
+## Procesamiento asíncrono avanzado
+
+La primera versión usa PgBoss sobre PostgreSQL para la cola de jobs y el bus de eventos.
+
+Mejoras futuras posibles:
+
+```txt
+- Colas separadas por tipo de job.
+- Priorización dinámica.
+- Jobs programados con expresión cron.
+- Dead letter queue para jobs que agotan reintentos.
+- Panel de monitoreo de jobs y eventos.
+- Métricas de throughput y latencia por cola.
+```
+
+Estas mejoras se justifican solo si el volumen o la criticidad de los procesos asíncronos crece.
+
 ## Calidad y pruebas
 
 Mejoras futuras:
@@ -406,6 +420,7 @@ Mejoras futuras:
 - Tests de permisos por endpoint.
 - Tests de importación con archivos reales de ejemplo.
 - Tests de concurrencia para cupos.
+- Tests de procesamiento asíncrono.
 - Pipeline CI.
 - Validación automática de migraciones.
 ```
@@ -423,6 +438,7 @@ El backend puede sostener futuras pantallas como:
 - Gestión de ofertas.
 - Registro de inscripciones.
 - Historial de importaciones.
+- Consulta de jobs en curso.
 - Reportes.
 - Administración de usuarios, roles y permisos.
 ```
@@ -471,7 +487,7 @@ Las mejoras futuras permiten proyectar crecimiento sin inflar la primera versió
 
 ```txt
 Primera versión
-= flujo académico esencial y seguridad base
+= flujo académico esencial, seguridad base y procesamiento asíncrono con PgBoss
 
 Futuro
 = integraciones, automatización, experiencia avanzada y operación productiva

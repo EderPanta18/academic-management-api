@@ -21,27 +21,31 @@ Permiso
 
 Este enfoque es más flexible que validar únicamente por rol, porque permite crear nuevos roles o modificar responsabilidades sin cambiar la protección de cada endpoint.
 
-## Módulos responsables
+## Módulo responsable
 
-Los roles y permisos se manejan como módulos funcionales.
+Los roles y permisos se manejan en un único módulo funcional.
 
 ```txt
-modules/roles
-modules/permissions
+modules/authorization
 ```
 
-Están al mismo nivel que otros módulos porque `modules/` agrupa capacidades funcionales de la aplicación, no solo capacidades académicas.
+Roles, permisos y sus relaciones viven juntos porque comparten reglas, datos y operaciones. No se separan en módulos distintos.
+
+Está al mismo nivel que otros módulos porque `modules/` agrupa capacidades funcionales de la aplicación, no solo capacidades académicas.
 
 La diferencia es conceptual:
 
 ```txt
-students, courses, enrollments
+identity
+= identidad personal base y tipos de documento
+
+students, professors, academic-programs, courses, academic-periods, course-offerings, enrollments
 = módulos del dominio académico
 
-auth, users, roles, permissions
-= módulos funcionales de seguridad y acceso
+users, authorization
+= módulos funcionales de acceso y seguridad
 
-reports, catalogs
+audit, reports
 = módulos de soporte funcional
 ```
 
@@ -79,9 +83,10 @@ roles
 - code
 - name
 - description
-- status
+- is_system
 - created_at
 - updated_at
+- deleted_at
 ```
 
 Ejemplos:
@@ -93,6 +98,10 @@ ACADEMIC_COORDINATOR
 PROFESSOR
 REPORT_VIEWER
 ```
+
+Los roles no tienen un enum de estado. Su vigencia se representa con baja lógica. Un rol dado de baja no se asigna a nuevos usuarios, pero se conserva para no romper la información histórica.
+
+El campo `is_system` identifica los roles base del sistema. Un rol con `is_system = true` no debería poder darse de baja desde operaciones comunes.
 
 ## Tabla `permissions`
 
@@ -107,8 +116,10 @@ permissions
 - name
 - description
 - module
+- is_system
 - created_at
 - updated_at
+- deleted_at
 ```
 
 Ejemplos:
@@ -132,6 +143,8 @@ reports.read
 ```
 
 Sí conviene tener una tabla `permissions`, porque permite consultar, asignar, documentar y administrar permisos sin dejarlos completamente quemados en código.
+
+Los permisos base del sistema se marcan con `is_system = true`. Un permiso base no debería eliminarse libremente, porque el código lo usa para proteger endpoints.
 
 ## Tabla `user_roles`
 
@@ -175,7 +188,6 @@ Ejemplos:
 students.read
 students.create
 students.update
-students.delete
 students.import
 
 professors.read
@@ -292,7 +304,7 @@ El seed puede crear:
 - Usuario administrador inicial si aplica.
 ```
 
-No es necesario tener una pantalla administrativa completa desde la primera versión, pero la base de datos debe permitir crecer hacia esa gestión.
+Los permisos y roles base se marcan con `is_system = true`. No es necesario tener una pantalla administrativa completa desde la primera versión, pero la base de datos debe permitir crecer hacia esa gestión.
 
 ## Protección de endpoints
 
@@ -316,7 +328,7 @@ Operaciones posibles para roles:
 - Crear rol.
 - Listar roles.
 - Actualizar rol.
-- Activar o desactivar rol.
+- Dar de baja roles no sistema.
 - Asignar permisos a rol.
 - Quitar permisos de rol.
 ```
@@ -330,6 +342,8 @@ Operaciones posibles para permisos:
 ```
 
 La creación libre de permisos desde API puede restringirse si los permisos base se manejan por seed, para evitar inconsistencias con permisos que el código no reconoce.
+
+Dar de baja un rol es una baja lógica. No hay restauración. Un rol dado de baja no se asigna a nuevos usuarios, pero se conserva para no romper la información histórica.
 
 ## Criterio general
 

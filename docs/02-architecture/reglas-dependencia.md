@@ -12,7 +12,7 @@ La regla principal es:
 El negocio no debe depender de la infraestructura.
 ```
 
-Esto significa que las reglas de inscripción, cupos, estados o duplicidad no deben depender directamente de Prisma, NestJS, HTTP, Swagger o parsers de archivos.
+Esto significa que las reglas de inscripción, cupos, estados o duplicidad no deben depender directamente de Prisma, NestJS, HTTP, Swagger, parsers de archivos ni mecanismos de cola o eventos.
 
 ## Dirección general
 
@@ -25,7 +25,7 @@ main.ts
 → core / shared
 ```
 
-Y para infraestructura:
+Para infraestructura:
 
 ```txt
 app
@@ -36,6 +36,16 @@ modules/infrastructure
 
 platform
 → core / shared
+```
+
+Para procesamiento asíncrono:
+
+```txt
+workers
+→ core (contratos)
+→ modules (casos de uso y servicios)
+→ platform (implementaciones de cola y bus)
+→ shared
 ```
 
 ## Dependencias permitidas
@@ -59,10 +69,15 @@ modules/infrastructure → modules/domain
 platform → core
 platform → shared
 
+workers → core
+workers → modules
+workers → platform
+workers → shared
+
 shared → core
 ```
 
-Estas relaciones mantienen el centro del sistema independiente de detalles externos.
+Estas relaciones mantienen el centro del sistema independiente de detalles externos y permiten que el procesamiento asíncrono consuma contratos y casos de uso sin acoplarse a detalles internos.
 
 ## Dependencias no permitidas
 
@@ -80,11 +95,16 @@ shared → platform
 platform → modules
 
 modules → app
+modules → workers
 modules/domain → infrastructure
 modules/domain → presentation
 modules/domain → Prisma
 modules/domain → NestJS
 modules/domain → HTTP
+
+workers → app
+workers → modules/domain
+workers → modules/infrastructure
 ```
 
 Si aparece una dependencia de este tipo, probablemente una responsabilidad está ubicada en el lugar incorrecto.
@@ -111,8 +131,11 @@ No debe depender de:
 - Swagger.
 - Módulos funcionales.
 - Platform.
+- Workers.
 - Shared si eso genera ciclos o acoplamiento innecesario.
 ```
+
+Los contratos de capacidades transversales que no dependen de tecnología viven aquí: por ejemplo, el contrato de `JobQueue` y el de `EventBus`. No describen reglas de negocio ni detalles de infraestructura; solo la mecánica general de encolar trabajo y publicar eventos internos.
 
 ## Reglas para `modules`
 
@@ -125,6 +148,7 @@ Un módulo puede depender de:
 - shared.
 - Sus propias carpetas internas.
 - Contratos públicos de otros módulos, si son necesarios.
+- Contratos transversales de core, como JobQueue o EventBus, cuando necesite delegar trabajo o anunciar hechos.
 ```
 
 Debe evitar:
@@ -132,9 +156,13 @@ Debe evitar:
 ```txt
 - Importar detalles internos de otro módulo.
 - Depender de app.
+- Depender de workers.
 - Usar Prisma directamente fuera de infrastructure.
 - Colocar reglas académicas en presentation.
+- Ejecutar trabajo intensivo dentro del flujo HTTP.
 ```
+
+Cuando un caso de uso identifica trabajo que no debería resolverse dentro de la petición, puede encolar un job o publicar un evento a través de los contratos de `core`. El caso de uso conserva la decisión; el worker solo ejecuta lo decidido. El módulo nunca invoca un worker directamente ni conoce su existencia.
 
 ## Reglas internas de un módulo
 
@@ -155,7 +183,7 @@ El dominio no debe depender de presentación ni infraestructura.
 
 ```txt
 domain
-= no conoce controladores, DTOs HTTP ni repositorios concretos
+= no conoce controladores, DTOs HTTP, repositorios concretos, colas ni buses de eventos
 ```
 
 La aplicación puede definir puertos o contratos para lo que necesita.
@@ -163,6 +191,7 @@ La aplicación puede definir puertos o contratos para lo que necesita.
 ```txt
 application
 = coordina casos, usa contratos y reglas
+= puede encolar jobs o publicar eventos a través de contratos de core
 ```
 
 La infraestructura implementa esos contratos.
@@ -201,6 +230,34 @@ enrollments usa un contrato o servicio de auditoría para registrar una acción
 
 La plataforma ofrece capacidades, pero no debe conocer reglas académicas.
 
+`platform/queue` implementa los contratos de `JobQueue` y `EventBus` definidos en `core`. La tecnología concreta de la cola y del bus es un detalle reemplazable; ni los módulos ni los workers deberían conocerla.
+
+## Reglas para `workers`
+
+`workers` contiene procesos asíncronos que operan fuera del flujo HTTP.
+
+Un worker puede depender de:
+
+```txt
+- core, para usar los contratos de JobQueue y EventBus.
+- modules, para usar casos de uso, servicios y contratos públicos de los módulos.
+- platform, para acceder a las implementaciones concretas de cola y bus.
+- shared, para utilidades ligeras.
+```
+
+Debe evitar:
+
+```txt
+- Depender de app.
+- Importar módulos/domain directamente.
+- Importar módulos/infrastructure directamente.
+- Contener reglas de negocio propias.
+- Consultar tablas ajenas sin pasar por un contrato del módulo dueño.
+- Exponer endpoints HTTP.
+```
+
+Un worker se limita a conectar la cola o el bus con el módulo dueño del proceso. Toda decisión de negocio se delega al caso de uso o servicio correspondiente. El worker no decide, solo consume.
+
 ## Reglas para `shared`
 
 `shared` debe mantenerse simple.
@@ -217,6 +274,7 @@ Debe evitar depender de:
 ```txt
 - modules.
 - platform.
+- workers.
 - app.
 - Prisma.
 - NestJS, salvo que se trate de elementos compartidos claramente de presentación.
@@ -245,7 +303,7 @@ Preferir:
 - Composición desde app.
 ```
 
-La regla práctica es que un módulo puede pedir información a otro, pero no debería meterse en su implementación.
+La regla práctica es que un módulo puede pedir información a otro, pero no debería meterse en su implementación. Los workers siguen la misma regla frente a los módulos: consumen contratos públicos, no detalles internos.
 
 ## Casos comunes
 
@@ -289,6 +347,20 @@ students
 
 La lectura del archivo es técnica. La validación del estudiante es de negocio.
 
+### Importación necesita procesarse en segundo plano
+
+Si la importación es intensiva, el caso de uso de `students` puede encolar un job a través del contrato de `JobQueue`.
+
+```txt
+students/application
+→ encola job "student-import.process"
+→ worker consume el job
+→ worker invoca el caso de uso de students
+→ students valida, persiste y decide
+```
+
+El worker no accede directamente a la tabla de estudiantes ni aplica sus propias reglas. Solo conecta la cola con el caso de uso.
+
 ## Evitar ciclos
 
 Los ciclos de dependencia vuelven difícil mantener el sistema.
@@ -302,6 +374,15 @@ enrollments → students
 
 Si ambos módulos necesitan colaborar, se debe extraer un contrato o definir una dependencia en una sola dirección.
 
+Otro ciclo problemático:
+
+```txt
+modules → workers
+workers → modules
+```
+
+Este ciclo se evita porque los módulos nunca dependen de workers. La dependencia va en una sola dirección: los workers consumen módulos.
+
 ## Regla de revisión
 
 Antes de aceptar una dependencia nueva, conviene preguntar:
@@ -312,6 +393,7 @@ Antes de aceptar una dependencia nueva, conviene preguntar:
 ¿Esta dependencia hará más difícil probar la regla de negocio?
 ¿La regla académica queda atada a una herramienta?
 ¿El módulo importado debería exponer un contrato público?
+¿Esta dependencia pertenece al flujo HTTP o al flujo asíncrono?
 ```
 
 Si la dependencia no se puede explicar con claridad, probablemente debe revisarse.

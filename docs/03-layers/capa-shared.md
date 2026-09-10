@@ -128,6 +128,9 @@ No deberían vivir en `shared`:
 - Configuración de entorno.
 - Parsers de archivos.
 - Formatos globales HTTP aplicados por infraestructura.
+- Procesadores de jobs.
+- Handlers de eventos.
+- Entrypoints de workers.
 ```
 
 El hecho de que algo se use en más de un lugar no significa automáticamente que deba ir a `shared`.
@@ -174,6 +177,22 @@ shared/utils
 = utilidad simple sin dominio
 ```
 
+## Diferencia con `workers`
+
+`workers` contiene procesos asíncronos.
+
+`shared` no debe contener lógica de consumo de jobs ni de eventos.
+
+```txt
+workers/jobs
+= procesadores que consumen trabajos
+
+shared/utils
+= utilidad simple sin dominio
+```
+
+Un worker puede usar `shared` para utilidades ligeras, igual que cualquier otro consumidor. Pero las piezas de `shared` no deben asumir que están siendo usadas desde un worker.
+
 ## Dependencias permitidas
 
 `shared` puede depender de:
@@ -190,6 +209,7 @@ Debe evitar depender de:
 - modules
 - platform
 - app
+- workers
 - Prisma
 - NestJS cuando implique infraestructura global
 ```

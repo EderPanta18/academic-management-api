@@ -31,17 +31,19 @@ No es necesario auditar cada lectura normal en la primera versión, porque puede
 
 ## Ubicación
 
-La auditoría puede dividirse en dos niveles:
+La auditoría se divide en dos piezas con responsabilidades distintas:
 
 ```txt
 platform/audit
-= infraestructura para registrar eventos auditables
+= infraestructura técnica para registrar eventos auditables
 
 modules/audit
-= consulta administrativa de auditoría, si se decide exponerla por API
+= consulta administrativa y contratos funcionales de auditoría
 ```
 
-Para una primera versión, puede bastar con `platform/audit`.
+El registro técnico transversal vive en `platform/audit`. La exposición administrativa, filtros y contratos de consulta viven en `modules/audit`.
+
+Los demás módulos no escriben directamente en la tabla de auditoría. Publican un evento auditable y la infraestructura de auditoría lo persiste.
 
 ## Tabla conceptual
 
@@ -96,22 +98,24 @@ created_at
 = fecha del evento
 ```
 
+Es una tabla de solo inserción. No tiene `updated_at` ni `deleted_at`. Los eventos de auditoría no se modifican ni se eliminan desde operaciones comunes.
+
 ## Evento de auditoría
 
 Ejemplo conceptual:
 
 ```json
 {
-  "actorUserId": "user-001",
-  "action": "ENROLLMENT_CANCELLED",
-  "resourceType": "ENROLLMENT",
-  "resourceId": "enrollment-001",
-  "module": "ENROLLMENT",
-  "description": "Inscripción cancelada.",
-  "metadata": {
-    "reason": "Solicitud del estudiante"
-  },
-  "timestamp": "2026-06-14T10:30:00.000Z"
+    "actorUserId": "user-001",
+    "action": "ENROLLMENT_CANCELLED",
+    "resourceType": "ENROLLMENT",
+    "resourceId": "enrollment-001",
+    "module": "ENROLLMENT",
+    "description": "Inscripción cancelada.",
+    "metadata": {
+        "reason": "Solicitud del estudiante"
+    },
+    "timestamp": "2026-06-14T10:30:00.000Z"
 }
 ```
 
@@ -119,7 +123,7 @@ La metadata debe ser controlada. No debe almacenar contraseñas, tokens, datos s
 
 ## Acciones auditables
 
-Acciones de autenticación:
+Acciones de autenticación y sesión:
 
 ```txt
 - Login exitoso, si se considera necesario.
@@ -129,7 +133,7 @@ Acciones de autenticación:
 - Refresh token rechazado.
 ```
 
-Acciones de usuarios y acceso:
+Acciones de cuentas y acceso:
 
 ```txt
 - Creación de usuario.
@@ -186,11 +190,11 @@ Auditoría:
 - Debe mantenerse más estable y consultable.
 ```
 
-## Relación con casos de uso
+## Registro síncrono y registro asíncrono
 
-La auditoría debe registrarse después de acciones relevantes.
+La auditoría puede registrarse de dos formas.
 
-Ejemplo:
+Registro directo desde el caso de uso:
 
 ```txt
 CancelEnrollmentUseCase
@@ -199,7 +203,42 @@ CancelEnrollmentUseCase
 → registra evento ENROLLMENT_CANCELLED
 ```
 
+El caso de uso llama a la infraestructura de auditoría dentro del mismo flujo, cuando la acción debe quedar registrada antes de responder.
+
+Registro diferido vía bus de eventos:
+
+```txt
+CancelEnrollmentUseCase
+→ cancela inscripción
+→ guarda cambios
+→ publica evento ENROLLMENT_CANCELLED
+
+worker de auditoría
+→ consume el evento
+→ persiste el registro auditable
+```
+
+El caso de uso publica un evento interno y un worker de auditoría lo consume y lo persiste. Esta opción mantiene el flujo HTTP más liviano y encaja bien cuando la auditoría no necesita ser bloqueante.
+
+La decisión depende de la acción. Las acciones críticas pueden requerir registro directo; las acciones secundarias pueden registrarse de forma diferida.
+
+## Relación con casos de uso
+
+La auditoría se registra después de acciones relevantes. En ningún caso la auditoría decide si una acción puede ejecutarse.
+
+Ejemplo:
+
+```txt
+CancelEnrollmentUseCase
+→ valida la cancelación
+→ cancela la inscripción
+→ guarda cambios
+→ registra o publica el evento de auditoría
+```
+
 El servicio de auditoría no debe decidir si la inscripción puede cancelarse. Esa regla pertenece al módulo de inscripciones.
+
+La auditoría no reemplaza las reglas de negocio. Solo conserva evidencia sobre acciones relevantes.
 
 ## Actor de la acción
 
@@ -210,6 +249,7 @@ El actor puede venir de:
 ```txt
 - Usuario autenticado.
 - Proceso interno.
+- Worker.
 - Seed o script.
 - Importación masiva.
 ```
@@ -232,7 +272,7 @@ Ejemplos:
 - Cancelar inscripción.
 - Cambiar estado de inscripción.
 - Cancelar oferta.
-- Desactivar usuario.
+- Dar de baja un usuario.
 - Reducir cupo.
 ```
 
@@ -257,7 +297,7 @@ Si se requiere eliminación por política de retención, debe manejarse como pro
 
 ## Consulta de auditoría
 
-Si se expone un módulo de consulta, debe protegerse con permisos.
+La consulta administrativa pertenece al módulo `audit` y debe protegerse con permisos.
 
 Ejemplos:
 
@@ -280,6 +320,8 @@ createdTo
 
 Respuesta esperada: paginada, usando el formato estándar de la API.
 
+`platform/audit` no expone endpoints. Solo ofrece el mecanismo técnico de registro. La consulta administrativa y los filtros viven en `modules/audit`.
+
 ## Criterio general
 
 La auditoría debe enfocarse en acciones que cambian el sistema o afectan seguridad.
@@ -290,4 +332,5 @@ La auditoría debe enfocarse en acciones que cambian el sistema o afectan seguri
 - No reemplazar logs técnicos.
 - No decidir reglas de negocio.
 - Mantener trazabilidad de usuario, acción, recurso y fecha.
+- Poder registrarse de forma directa o diferida según la acción.
 ```

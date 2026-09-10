@@ -52,7 +52,7 @@ Ejemplos:
 
 ```txt
 Cursos con mayor demanda.
-Cursos sin ofertas activas.
+Cursos sin ofertas registradas.
 Cursos ofertados por periodo académico.
 Cursos con más estudiantes inscritos.
 Cursos relacionados con programas académicos específicos.
@@ -205,6 +205,7 @@ Una oferta completa debe calcularse según cupo máximo e inscripciones activas.
 Un estudiante suspendido debe aparecer con su estado correspondiente.
 Una importación debe diferenciar registros aceptados y registros con error.
 Los reportes deben evitar mezclar datos de periodos distintos sin indicarlo.
+Los reportes deben excluir registros dados de baja lógica cuando el reporte refleje información operativa.
 ```
 
 ## Reportes fuera del alcance inicial

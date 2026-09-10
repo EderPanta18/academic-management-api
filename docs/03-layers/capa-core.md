@@ -2,7 +2,7 @@
 
 La capa `core` contiene los elementos más estables y transversales del sistema.
 
-Su contenido no pertenece a un módulo funcional específico y tampoco representa infraestructura técnica. Debe mantenerse independiente de NestJS, Prisma, HTTP, Swagger, archivos, base de datos o proveedores externos.
+Su contenido no pertenece a un módulo funcional específico y tampoco representa infraestructura técnica. Debe mantenerse independiente de NestJS, Prisma, HTTP, Swagger, archivos, base de datos, colas o proveedores externos.
 
 `core` debe ser pequeño, estable y difícil de cambiar.
 
@@ -70,11 +70,23 @@ La forma HTTP de recibir paginación, como query params o DTOs de entrada, perte
 
 ## Contratos fundamentales
 
-`core/contracts` puede contener contratos realmente transversales.
+`core/contracts` contiene contratos realmente transversales.
 
 Deben ser contratos que tengan sentido para varias partes del sistema y que no pertenezcan a un módulo específico.
 
-Los contratos propios de un módulo deben quedarse dentro de ese módulo.
+Ejemplos:
+
+```txt
+JobQueue
+= contrato para encolar unidades de trabajo
+
+EventBus
+= contrato para publicar y suscribirse a eventos internos
+```
+
+Estos contratos describen mecánica general sin depender de tecnología. La implementación concreta vive en `platform`, pero los módulos y los workers dependen solo del contrato.
+
+Los contratos propios de un módulo deben quedarse dentro de ese módulo. Por ejemplo, un `StudentFinder` pertenece a `students`, no a `core`.
 
 ## Tipos y value objects generales
 
@@ -110,6 +122,8 @@ No deben vivir en `core`:
 - Servicios Prisma.
 - Decoradores Swagger.
 - Parsers de archivos.
+- Procesadores de jobs.
+- Handlers de eventos.
 ```
 
 `core` no debe convertirse en una carpeta global para colocar lo que se repite.
@@ -122,16 +136,18 @@ No deben vivir en `core`:
 core → app       no
 core → modules   no
 core → platform  no
+core → workers   no
 core → shared    evitar
 ```
 
 Las demás capas pueden usar `core`.
 
 ```txt
-modules → core
+modules  → core
 platform → core
-shared → core
-app → core
+shared   → core
+app      → core
+workers  → core
 ```
 
 ## Diferencia con `modules`
@@ -148,7 +164,13 @@ Si una regla tiene dueño funcional, debe vivir en su módulo, aunque otro módu
 
 `core` no debe depender de tecnología.
 
-Si un archivo necesita NestJS, Prisma, HTTP, variables de entorno o archivos externos, no pertenece a `core`.
+Si un archivo necesita NestJS, Prisma, HTTP, variables de entorno, archivos externos o una librería de colas concreta, no pertenece a `core`.
+
+## Diferencia con `workers`
+
+`workers` contiene procesos asíncronos que consumen jobs y eventos.
+
+`core` contiene los contratos que esos workers usan, pero no los ejecuta ni los implementa. Los workers dependen de `core`, no al revés.
 
 ## Diferencia con `shared`
 
@@ -156,13 +178,15 @@ Si un archivo necesita NestJS, Prisma, HTTP, variables de entorno o archivos ext
 
 `core` contiene piezas más fundamentales.
 
-Una utilidad simple de texto no suele pertenecer a `core`. Un contrato transversal o una excepción base sí puede pertenecer a `core`.
+Una utilidad simple de texto no suele pertenecer a `core`. Un contrato transversal como `JobQueue` o una excepción base sí puede pertenecer a `core`.
 
 ## Crecimiento esperado
 
 `core` debe crecer lentamente.
 
 Agregar demasiadas piezas a `core` puede volverlo una capa ambigua. Cada nuevo elemento debe justificar que es estable, transversal y libre de tecnología.
+
+Los contratos de capacidades transversales son candidatos naturales a `core`: `JobQueue` y `EventBus` son ejemplos, y podrían sumarse otros si el sistema incorpora nuevas capacidades que no dependan de tecnología y sean consumidas por varias capas.
 
 ## Criterio de uso
 

@@ -120,7 +120,7 @@ Información considerada:
 - Código.
 - Nombre.
 - Unidad académica asociada.
-- Estado.
+- Estado del registro.
 ```
 
 Los programas académicos ayudan a mantener coherencia entre estudiantes, cursos e inscripciones.
@@ -139,7 +139,7 @@ Información considerada:
 - Programa académico relacionado.
 - Categoría o área académica.
 - Créditos u horas.
-- Estado.
+- Estado del registro.
 ```
 
 Los cursos sirven como base para crear ofertas en periodos académicos.

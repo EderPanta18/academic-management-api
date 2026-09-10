@@ -80,7 +80,7 @@ deleted_at
 
 Un registro con `deleted_at` distinto de `null` se considera eliminado lógicamente.
 
-La baja lógica permite conservar relaciones históricas, evitar pérdida definitiva de información y mantener trazabilidad del proceso.
+La baja lógica permite conservar relaciones históricas, evitar pérdida definitiva de información y mantener trazabilidad del proceso. No hay restauración: un registro dado de baja no vuelve al estado operativo.
 
 No todas las tablas necesitan `deleted_at`. Las tablas de historial, auditoría y detalle de importación pueden tratarse como registros de solo inserción.
 
@@ -124,7 +124,7 @@ Usar enum cuando:
 - El valor participa directamente en reglas internas.
 ```
 
-Ejemplos:
+Enums definidos:
 
 ```txt
 student_status
@@ -158,17 +158,19 @@ Roles, permisos y sesiones no son catálogos simples. Tienen relaciones, reglas 
 
 Si un catálogo tiene CRUD o es administrable por el sistema, su `id` también debe generarse desde backend o desde el proceso de seed. La base de datos no debe asignarle un UUID automáticamente.
 
+No todos los recursos usan enum de estado. Recursos como `persons`, `academic_programs`, `courses`, `course_categories`, `roles` y `permissions` no tienen enum de estado. Su vigencia se representa con baja lógica (`deleted_at`). Un registro dado de baja no se usa para nuevas relaciones, pero se conserva para no romper la información histórica.
+
 ## Grupos del modelo
 
-| Grupo | Tablas principales |
-| --- | --- |
-| Identidad personal | `document_types`, `persons` |
-| Actores académicos | `students`, `professors` |
-| Estructura académica | `academic_programs`, `course_categories`, `courses`, `academic_periods` |
-| Oferta e inscripción | `course_offerings`, `enrollments`, `enrollment_status_logs` |
-| Acceso y seguridad | `users`, `roles`, `permissions`, `user_roles`, `role_permissions`, `user_sessions` |
-| Auditoría | `audit_logs` |
-| Soporte de importación | `student_imports`, `student_import_rows` |
+| Grupo                  | Tablas principales                                                                 |
+| ---------------------- | ---------------------------------------------------------------------------------- |
+| Identidad personal     | `document_types`, `persons`                                                        |
+| Actores académicos     | `students`, `professors`                                                           |
+| Estructura académica   | `academic_programs`, `course_categories`, `courses`, `academic_periods`            |
+| Oferta e inscripción   | `course_offerings`, `enrollments`, `enrollment_status_logs`                        |
+| Acceso y seguridad     | `users`, `roles`, `permissions`, `user_roles`, `role_permissions`, `user_sessions` |
+| Auditoría              | `audit_logs`                                                                       |
+| Soporte de importación | `student_imports`, `student_import_rows`                                           |
 
 ## Identidad personal
 
@@ -178,15 +180,15 @@ Representa tipos de documento de identidad.
 
 Se modela como tabla catálogo porque sus valores pueden variar según país, institución o necesidad administrativa.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador. |
-| `code` | texto corto | único, requerido | Código del tipo de documento. |
-| `name` | texto | único, requerido | Nombre visible. |
-| `description` | texto | opcional | Descripción. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `updated_at` | fecha-hora | requerido | Fecha de actualización. |
-| `deleted_at` | fecha-hora | opcional | Baja lógica. |
+| Campo         | Tipo lógico | Restricciones    | Descripción                   |
+| ------------- | ----------- | ---------------- | ----------------------------- |
+| `id`          | UUID        | PK               | Identificador.                |
+| `code`        | texto corto | único, requerido | Código del tipo de documento. |
+| `name`        | texto       | único, requerido | Nombre visible.               |
+| `description` | texto       | opcional         | Descripción.                  |
+| `created_at`  | fecha-hora  | requerido        | Fecha de creación.            |
+| `updated_at`  | fecha-hora  | requerido        | Fecha de actualización.       |
+| `deleted_at`  | fecha-hora  | opcional         | Baja lógica.                  |
 
 Ejemplos:
 
@@ -202,25 +204,25 @@ Representa los datos personales comunes.
 
 No representa una cuenta de acceso ni un perfil académico por sí misma.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador de la persona. |
-| `document_type_id` | UUID | FK, requerido | Tipo de documento. |
-| `document_number` | texto corto | requerido | Número de documento. |
-| `first_name` | texto | requerido | Nombres. |
-| `last_name` | texto | requerido | Apellidos. |
-| `email` | texto | opcional | Correo de contacto. |
-| `phone` | texto corto | opcional | Teléfono. |
-| `birth_date` | fecha | opcional | Fecha de nacimiento. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `updated_at` | fecha-hora | requerido | Fecha de actualización. |
-| `deleted_at` | fecha-hora | opcional | Baja lógica. |
+| Campo              | Tipo lógico | Restricciones | Descripción                  |
+| ------------------ | ----------- | ------------- | ---------------------------- |
+| `id`               | UUID        | PK            | Identificador de la persona. |
+| `document_type_id` | UUID        | FK, requerido | Tipo de documento.           |
+| `document_number`  | texto corto | requerido     | Número de documento.         |
+| `first_name`       | texto       | requerido     | Nombres.                     |
+| `last_name`        | texto       | requerido     | Apellidos.                   |
+| `email`            | texto       | opcional      | Correo de contacto.          |
+| `phone`            | texto corto | opcional      | Teléfono.                    |
+| `birth_date`       | fecha       | opcional      | Fecha de nacimiento.         |
+| `created_at`       | fecha-hora  | requerido     | Fecha de creación.           |
+| `updated_at`       | fecha-hora  | requerido     | Fecha de actualización.      |
+| `deleted_at`       | fecha-hora  | opcional      | Baja lógica.                 |
 
 Restricciones:
 
 ```txt
 - `document_type_id` + `document_number` debe ser único para registros activos.
-- `email` puede ser único si la institución lo exige.
+- `email` es único cuando exista.
 ```
 
 Relaciones:
@@ -245,18 +247,18 @@ Notas:
 
 Representa a un estudiante.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador del estudiante. |
-| `person_id` | UUID | FK, único, requerido | Persona asociada. |
-| `academic_program_id` | UUID | FK, requerido | Programa académico. |
-| `code` | texto corto | único, requerido | Código institucional del estudiante. |
-| `institutional_email` | texto | único, opcional | Correo institucional. |
-| `admission_period` | texto corto | opcional | Periodo o año de admisión. |
-| `status` | enum | requerido | Estado académico. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `updated_at` | fecha-hora | requerido | Fecha de actualización. |
-| `deleted_at` | fecha-hora | opcional | Baja lógica. |
+| Campo                 | Tipo lógico | Restricciones        | Descripción                          |
+| --------------------- | ----------- | -------------------- | ------------------------------------ |
+| `id`                  | UUID        | PK                   | Identificador del estudiante.        |
+| `person_id`           | UUID        | FK, único, requerido | Persona asociada.                    |
+| `academic_program_id` | UUID        | FK, requerido        | Programa académico.                  |
+| `code`                | texto corto | único, requerido     | Código institucional del estudiante. |
+| `institutional_email` | texto       | único, opcional      | Correo institucional.                |
+| `admission_period`    | texto corto | opcional             | Periodo o año de admisión.           |
+| `status`              | enum        | requerido            | Estado académico.                    |
+| `created_at`          | fecha-hora  | requerido            | Fecha de creación.                   |
+| `updated_at`          | fecha-hora  | requerido            | Fecha de actualización.              |
+| `deleted_at`          | fecha-hora  | opcional             | Baja lógica.                         |
 
 Enum sugerido:
 
@@ -289,18 +291,18 @@ Reglas relacionadas:
 
 Representa a un docente.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador del docente. |
-| `person_id` | UUID | FK, único, requerido | Persona asociada. |
-| `code` | texto corto | único, requerido | Código institucional del docente. |
-| `institutional_email` | texto | único, opcional | Correo institucional. |
-| `department` | texto | opcional | Unidad, departamento o área académica. |
-| `specialty` | texto | opcional | Especialidad. |
-| `status` | enum | requerido | Estado operativo. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `updated_at` | fecha-hora | requerido | Fecha de actualización. |
-| `deleted_at` | fecha-hora | opcional | Baja lógica. |
+| Campo                 | Tipo lógico | Restricciones        | Descripción                            |
+| --------------------- | ----------- | -------------------- | -------------------------------------- |
+| `id`                  | UUID        | PK                   | Identificador del docente.             |
+| `person_id`           | UUID        | FK, único, requerido | Persona asociada.                      |
+| `code`                | texto corto | único, requerido     | Código institucional del docente.      |
+| `institutional_email` | texto       | único, opcional      | Correo institucional.                  |
+| `department`          | texto       | opcional             | Unidad, departamento o área académica. |
+| `specialty`           | texto       | opcional             | Especialidad.                          |
+| `status`              | enum        | requerido            | Estado operativo.                      |
+| `created_at`          | fecha-hora  | requerido            | Fecha de creación.                     |
+| `updated_at`          | fecha-hora  | requerido            | Fecha de actualización.                |
+| `deleted_at`          | fecha-hora  | opcional             | Baja lógica.                           |
 
 Enum sugerido:
 
@@ -332,15 +334,15 @@ Representa un programa académico.
 
 Se usa este nombre en lugar de carrera para mantener el modelo general.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador. |
-| `code` | texto corto | único, requerido | Código del programa. |
-| `name` | texto | único, requerido | Nombre del programa. |
-| `academic_unit` | texto | opcional | Unidad académica asociada. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `updated_at` | fecha-hora | requerido | Fecha de actualización. |
-| `deleted_at` | fecha-hora | opcional | Baja lógica. |
+| Campo           | Tipo lógico | Restricciones    | Descripción                |
+| --------------- | ----------- | ---------------- | -------------------------- |
+| `id`            | UUID        | PK               | Identificador.             |
+| `code`          | texto corto | único, requerido | Código del programa.       |
+| `name`          | texto       | único, requerido | Nombre del programa.       |
+| `academic_unit` | texto       | opcional         | Unidad académica asociada. |
+| `created_at`    | fecha-hora  | requerido        | Fecha de creación.         |
+| `updated_at`    | fecha-hora  | requerido        | Fecha de actualización.    |
+| `deleted_at`    | fecha-hora  | opcional         | Baja lógica.               |
 
 Relaciones:
 
@@ -355,15 +357,15 @@ Representa una clasificación de curso.
 
 Se modela como tabla catálogo porque sus valores pueden variar según la institución.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador. |
-| `code` | texto corto | único, requerido | Código de categoría. |
-| `name` | texto | único, requerido | Nombre de categoría. |
-| `description` | texto | opcional | Descripción. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `updated_at` | fecha-hora | requerido | Fecha de actualización. |
-| `deleted_at` | fecha-hora | opcional | Baja lógica. |
+| Campo         | Tipo lógico | Restricciones    | Descripción             |
+| ------------- | ----------- | ---------------- | ----------------------- |
+| `id`          | UUID        | PK               | Identificador.          |
+| `code`        | texto corto | único, requerido | Código de categoría.    |
+| `name`        | texto       | único, requerido | Nombre de categoría.    |
+| `description` | texto       | opcional         | Descripción.            |
+| `created_at`  | fecha-hora  | requerido        | Fecha de creación.      |
+| `updated_at`  | fecha-hora  | requerido        | Fecha de actualización. |
+| `deleted_at`  | fecha-hora  | opcional         | Baja lógica.            |
 
 Ejemplos:
 
@@ -380,26 +382,24 @@ Representa una unidad académica del catálogo.
 
 No representa un dictado específico. El dictado concreto se modela con `course_offerings`.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador. |
-| `academic_program_id` | UUID | FK, requerido | Programa académico. |
-| `course_category_id` | UUID | FK, opcional | Categoría. |
-| `code` | texto corto | requerido | Código del curso. |
-| `name` | texto | requerido | Nombre del curso. |
-| `description` | texto | opcional | Descripción. |
-| `credits` | entero | requerido | Créditos. |
-| `hours` | entero | opcional | Horas académicas. |
-| `status` | enum | requerido | Estado. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `updated_at` | fecha-hora | requerido | Fecha de actualización. |
-| `deleted_at` | fecha-hora | opcional | Baja lógica. |
+| Campo                 | Tipo lógico | Restricciones | Descripción             |
+| --------------------- | ----------- | ------------- | ----------------------- |
+| `id`                  | UUID        | PK            | Identificador.          |
+| `academic_program_id` | UUID        | FK, requerido | Programa académico.     |
+| `course_category_id`  | UUID        | FK, opcional  | Categoría.              |
+| `code`                | texto corto | requerido     | Código del curso.       |
+| `name`                | texto       | requerido     | Nombre del curso.       |
+| `description`         | texto       | opcional      | Descripción.            |
+| `credits`             | entero      | requerido     | Créditos.               |
+| `hours`               | entero      | opcional      | Horas académicas.       |
+| `created_at`          | fecha-hora  | requerido     | Fecha de creación.      |
+| `updated_at`          | fecha-hora  | requerido     | Fecha de actualización. |
+| `deleted_at`          | fecha-hora  | opcional      | Baja lógica.            |
 
 Restricciones:
 
 ```txt
-- `code` debe ser único si el código es institucionalmente global.
-- Alternativamente, `academic_program_id` + `code` debe ser único si el código solo es único por programa.
+- `academic_program_id` + `code` debe ser único. El código del curso es único dentro de su programa académico.
 - `credits` debe ser mayor que cero.
 ```
 
@@ -415,19 +415,19 @@ courses 1:N course_offerings
 
 Representa un periodo académico.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador. |
-| `code` | texto corto | único, requerido | Código del periodo. |
-| `name` | texto | requerido | Nombre del periodo. |
-| `start_date` | fecha | requerido | Fecha de inicio. |
-| `end_date` | fecha | requerido | Fecha de cierre. |
-| `enrollment_start_date` | fecha | opcional | Inicio de inscripciones. |
-| `enrollment_end_date` | fecha | opcional | Fin de inscripciones. |
-| `status` | enum | requerido | Estado del periodo. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `updated_at` | fecha-hora | requerido | Fecha de actualización. |
-| `deleted_at` | fecha-hora | opcional | Baja lógica. |
+| Campo                   | Tipo lógico | Restricciones    | Descripción              |
+| ----------------------- | ----------- | ---------------- | ------------------------ |
+| `id`                    | UUID        | PK               | Identificador.           |
+| `code`                  | texto corto | único, requerido | Código del periodo.      |
+| `name`                  | texto       | requerido        | Nombre del periodo.      |
+| `start_date`            | fecha       | requerido        | Fecha de inicio.         |
+| `end_date`              | fecha       | requerido        | Fecha de cierre.         |
+| `enrollment_start_date` | fecha       | opcional         | Inicio de inscripciones. |
+| `enrollment_end_date`   | fecha       | opcional         | Fin de inscripciones.    |
+| `status`                | enum        | requerido        | Estado del periodo.      |
+| `created_at`            | fecha-hora  | requerido        | Fecha de creación.       |
+| `updated_at`            | fecha-hora  | requerido        | Fecha de actualización.  |
+| `deleted_at`            | fecha-hora  | opcional         | Baja lógica.             |
 
 Enum sugerido:
 
@@ -460,19 +460,19 @@ academic_periods 1:N course_offerings
 
 Representa una instancia concreta de un curso dentro de un periodo.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador. |
-| `course_id` | UUID | FK, requerido | Curso asociado. |
-| `academic_period_id` | UUID | FK, requerido | Periodo académico. |
-| `professor_id` | UUID | FK, opcional | Docente asignado. |
-| `section` | texto corto | requerido | Sección. |
-| `max_capacity` | entero | requerido | Cupo máximo. |
-| `available_capacity` | entero | opcional | Cupo disponible si se decide persistirlo. |
-| `status` | enum | requerido | Estado de la oferta. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `updated_at` | fecha-hora | requerido | Fecha de actualización. |
-| `deleted_at` | fecha-hora | opcional | Baja lógica. |
+| Campo                | Tipo lógico | Restricciones | Descripción                               |
+| -------------------- | ----------- | ------------- | ----------------------------------------- |
+| `id`                 | UUID        | PK            | Identificador.                            |
+| `course_id`          | UUID        | FK, requerido | Curso asociado.                           |
+| `academic_period_id` | UUID        | FK, requerido | Periodo académico.                        |
+| `professor_id`       | UUID        | FK, opcional  | Docente asignado.                         |
+| `section`            | texto corto | requerido     | Sección.                                  |
+| `max_capacity`       | entero      | requerido     | Cupo máximo.                              |
+| `available_capacity` | entero      | opcional      | Cupo disponible si se decide persistirlo. |
+| `status`             | enum        | requerido     | Estado de la oferta.                      |
+| `created_at`         | fecha-hora  | requerido     | Fecha de creación.                        |
+| `updated_at`         | fecha-hora  | requerido     | Fecha de actualización.                   |
+| `deleted_at`         | fecha-hora  | opcional      | Baja lógica.                              |
 
 Enum sugerido:
 
@@ -527,18 +527,18 @@ Si se persiste, debe cuidarse la consistencia con transacciones para evitar cupo
 
 Representa la inscripción de un estudiante en una oferta de curso.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador. |
-| `student_id` | UUID | FK, requerido | Estudiante. |
-| `course_offering_id` | UUID | FK, requerido | Oferta. |
-| `status` | enum | requerido | Estado actual. |
-| `enrolled_at` | fecha-hora | requerido | Fecha de inscripción. |
-| `registered_by_user_id` | UUID | FK, opcional | Usuario responsable. |
-| `status_reason` | texto | opcional | Motivo del estado actual cuando aplique. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `updated_at` | fecha-hora | requerido | Fecha de actualización. |
-| `deleted_at` | fecha-hora | opcional | Baja lógica. |
+| Campo                   | Tipo lógico | Restricciones | Descripción                              |
+| ----------------------- | ----------- | ------------- | ---------------------------------------- |
+| `id`                    | UUID        | PK            | Identificador.                           |
+| `student_id`            | UUID        | FK, requerido | Estudiante.                              |
+| `course_offering_id`    | UUID        | FK, requerido | Oferta.                                  |
+| `status`                | enum        | requerido     | Estado actual.                           |
+| `enrolled_at`           | fecha-hora  | requerido     | Fecha de inscripción.                    |
+| `registered_by_user_id` | UUID        | FK, opcional  | Usuario responsable.                     |
+| `status_reason`         | texto       | opcional      | Motivo del estado actual cuando aplique. |
+| `created_at`            | fecha-hora  | requerido     | Fecha de creación.                       |
+| `updated_at`            | fecha-hora  | requerido     | Fecha de actualización.                  |
+| `deleted_at`            | fecha-hora  | opcional      | Baja lógica.                             |
 
 Enum sugerido:
 
@@ -578,15 +578,15 @@ Registra cambios de estado de una inscripción.
 
 Es una tabla histórica de solo inserción.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador. |
-| `enrollment_id` | UUID | FK, requerido | Inscripción. |
-| `previous_status` | enum | opcional | Estado anterior. |
-| `new_status` | enum | requerido | Nuevo estado. |
-| `reason` | texto | opcional | Motivo del cambio. |
-| `changed_by_user_id` | UUID | FK, opcional | Usuario responsable. |
-| `created_at` | fecha-hora | requerido | Fecha del evento. |
+| Campo                | Tipo lógico | Restricciones | Descripción          |
+| -------------------- | ----------- | ------------- | -------------------- |
+| `id`                 | UUID        | PK            | Identificador.       |
+| `enrollment_id`      | UUID        | FK, requerido | Inscripción.         |
+| `previous_status`    | enum        | opcional      | Estado anterior.     |
+| `new_status`         | enum        | requerido     | Nuevo estado.        |
+| `reason`             | texto       | opcional      | Motivo del cambio.   |
+| `changed_by_user_id` | UUID        | FK, opcional  | Usuario responsable. |
+| `created_at`         | fecha-hora  | requerido     | Fecha del evento.    |
 
 No requiere `updated_at` ni `deleted_at`, porque representa eventos históricos.
 
@@ -605,17 +605,17 @@ Representa una cuenta de acceso al sistema.
 
 No equivale necesariamente a una persona académica. Puede estar vinculada a `persons`, pero no es obligatorio en todos los casos.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador. |
-| `person_id` | UUID | FK, opcional, único | Persona asociada. |
-| `email` | texto | único, requerido | Correo de acceso. |
-| `password_hash` | texto | requerido | Hash de contraseña. |
-| `status` | enum | requerido | Estado del usuario. |
-| `last_login_at` | fecha-hora | opcional | Último inicio de sesión. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `updated_at` | fecha-hora | requerido | Fecha de actualización. |
-| `deleted_at` | fecha-hora | opcional | Baja lógica. |
+| Campo           | Tipo lógico | Restricciones       | Descripción              |
+| --------------- | ----------- | ------------------- | ------------------------ |
+| `id`            | UUID        | PK                  | Identificador.           |
+| `person_id`     | UUID        | FK, opcional, único | Persona asociada.        |
+| `email`         | texto       | único, requerido    | Correo de acceso.        |
+| `password_hash` | texto       | requerido           | Hash de contraseña.      |
+| `status`        | enum        | requerido           | Estado del usuario.      |
+| `last_login_at` | fecha-hora  | opcional            | Último inicio de sesión. |
+| `created_at`    | fecha-hora  | requerido           | Fecha de creación.       |
+| `updated_at`    | fecha-hora  | requerido           | Fecha de actualización.  |
+| `deleted_at`    | fecha-hora  | opcional            | Baja lógica.             |
 
 Enum sugerido:
 
@@ -642,17 +642,16 @@ La contraseña nunca debe guardarse en texto plano.
 
 Representa una agrupación de responsabilidades.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador. |
-| `code` | texto corto | único, requerido | Código del rol. |
-| `name` | texto | único, requerido | Nombre visible. |
-| `description` | texto | opcional | Descripción. |
-| `is_system` | booleano | requerido | Indica si es rol base del sistema. |
-| `status` | enum | requerido | Estado. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `updated_at` | fecha-hora | requerido | Fecha de actualización. |
-| `deleted_at` | fecha-hora | opcional | Baja lógica. |
+| Campo         | Tipo lógico | Restricciones    | Descripción                        |
+| ------------- | ----------- | ---------------- | ---------------------------------- |
+| `id`          | UUID        | PK               | Identificador.                     |
+| `code`        | texto corto | único, requerido | Código del rol.                    |
+| `name`        | texto       | único, requerido | Nombre visible.                    |
+| `description` | texto       | opcional         | Descripción.                       |
+| `is_system`   | booleano    | requerido        | Indica si es rol base del sistema. |
+| `created_at`  | fecha-hora  | requerido        | Fecha de creación.                 |
+| `updated_at`  | fecha-hora  | requerido        | Fecha de actualización.            |
+| `deleted_at`  | fecha-hora  | opcional         | Baja lógica.                       |
 
 Ejemplos:
 
@@ -664,21 +663,23 @@ PROFESSOR
 REPORT_VIEWER
 ```
 
+Los roles no tienen un enum de estado. Su vigencia se representa con baja lógica. Un rol dado de baja no se asigna a nuevos usuarios, pero se conserva para no romper la información histórica. Los roles con `is_system = true` no deberían darse de baja desde operaciones comunes.
+
 ## `permissions`
 
 Representa una acción permitida dentro del sistema.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador. |
-| `code` | texto | único, requerido | Código del permiso. |
-| `name` | texto | requerido | Nombre visible. |
-| `description` | texto | opcional | Descripción. |
-| `module` | texto corto | requerido | Módulo o capacidad asociada. |
-| `is_system` | booleano | requerido | Indica si es permiso base del sistema. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `updated_at` | fecha-hora | requerido | Fecha de actualización. |
-| `deleted_at` | fecha-hora | opcional | Baja lógica. |
+| Campo         | Tipo lógico | Restricciones    | Descripción                            |
+| ------------- | ----------- | ---------------- | -------------------------------------- |
+| `id`          | UUID        | PK               | Identificador.                         |
+| `code`        | texto       | único, requerido | Código del permiso.                    |
+| `name`        | texto       | requerido        | Nombre visible.                        |
+| `description` | texto       | opcional         | Descripción.                           |
+| `module`      | texto corto | requerido        | Módulo o capacidad asociada.           |
+| `is_system`   | booleano    | requerido        | Indica si es permiso base del sistema. |
+| `created_at`  | fecha-hora  | requerido        | Fecha de creación.                     |
+| `updated_at`  | fecha-hora  | requerido        | Fecha de actualización.                |
+| `deleted_at`  | fecha-hora  | opcional         | Baja lógica.                           |
 
 Convención de `code`:
 
@@ -697,18 +698,18 @@ enrollments.create
 roles.assign-permissions
 ```
 
-Los permisos no deben ser excesivamente granulares en la primera versión.
+Los permisos no deben ser excesivamente granulares en la primera versión. Los permisos con `is_system = true` no deberían eliminarse libremente, porque el código los usa para proteger endpoints.
 
 ## `user_roles`
 
 Tabla intermedia entre usuarios y roles.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `user_id` | UUID | PK compuesta, FK | Usuario. |
-| `role_id` | UUID | PK compuesta, FK | Rol. |
-| `assigned_by_user_id` | UUID | FK, opcional | Usuario que asignó. |
-| `assigned_at` | fecha-hora | requerido | Fecha de asignación. |
+| Campo                 | Tipo lógico | Restricciones    | Descripción          |
+| --------------------- | ----------- | ---------------- | -------------------- |
+| `user_id`             | UUID        | PK compuesta, FK | Usuario.             |
+| `role_id`             | UUID        | PK compuesta, FK | Rol.                 |
+| `assigned_by_user_id` | UUID        | FK, opcional     | Usuario que asignó.  |
+| `assigned_at`         | fecha-hora  | requerido        | Fecha de asignación. |
 
 Restricciones:
 
@@ -720,12 +721,12 @@ Restricciones:
 
 Tabla intermedia entre roles y permisos.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `role_id` | UUID | PK compuesta, FK | Rol. |
-| `permission_id` | UUID | PK compuesta, FK | Permiso. |
-| `assigned_by_user_id` | UUID | FK, opcional | Usuario que asignó. |
-| `assigned_at` | fecha-hora | requerido | Fecha de asignación. |
+| Campo                 | Tipo lógico | Restricciones    | Descripción          |
+| --------------------- | ----------- | ---------------- | -------------------- |
+| `role_id`             | UUID        | PK compuesta, FK | Rol.                 |
+| `permission_id`       | UUID        | PK compuesta, FK | Permiso.             |
+| `assigned_by_user_id` | UUID        | FK, opcional     | Usuario que asignó.  |
+| `assigned_at`         | fecha-hora  | requerido        | Fecha de asignación. |
 
 Restricciones:
 
@@ -739,20 +740,20 @@ Representa una sesión de usuario.
 
 Permite controlar sesiones activas, cerrar sesión, revocar accesos y limitar una o varias sesiones por usuario.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador de sesión. |
-| `user_id` | UUID | FK, requerido | Usuario. |
-| `refresh_token_hash` | texto | opcional | Hash del refresh token. |
-| `access_token_jti` | texto | opcional, único | Identificador del access token si se usa. |
-| `device_name` | texto | opcional | Nombre del dispositivo. |
-| `ip_address` | texto | opcional | IP de origen. |
-| `user_agent` | texto | opcional | Cliente o navegador. |
-| `status` | enum | requerido | Estado de la sesión. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `expires_at` | fecha-hora | requerido | Fecha de expiración. |
-| `revoked_at` | fecha-hora | opcional | Fecha de revocación. |
-| `last_used_at` | fecha-hora | opcional | Último uso. |
+| Campo                | Tipo lógico | Restricciones   | Descripción                               |
+| -------------------- | ----------- | --------------- | ----------------------------------------- |
+| `id`                 | UUID        | PK              | Identificador de sesión.                  |
+| `user_id`            | UUID        | FK, requerido   | Usuario.                                  |
+| `refresh_token_hash` | texto       | opcional        | Hash del refresh token.                   |
+| `access_token_jti`   | texto       | opcional, único | Identificador del access token si se usa. |
+| `device_name`        | texto       | opcional        | Nombre del dispositivo.                   |
+| `ip_address`         | texto       | opcional        | IP de origen.                             |
+| `user_agent`         | texto       | opcional        | Cliente o navegador.                      |
+| `status`             | enum        | requerido       | Estado de la sesión.                      |
+| `created_at`         | fecha-hora  | requerido       | Fecha de creación.                        |
+| `expires_at`         | fecha-hora  | requerido       | Fecha de expiración.                      |
+| `revoked_at`         | fecha-hora  | opcional        | Fecha de revocación.                      |
+| `last_used_at`       | fecha-hora  | opcional        | Último uso.                               |
 
 Enum sugerido:
 
@@ -779,19 +780,19 @@ Registra acciones relevantes del sistema.
 
 Es una tabla histórica de solo inserción.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador. |
-| `actor_user_id` | UUID | FK, opcional | Usuario responsable. |
-| `action` | texto corto | requerido | Acción realizada. |
-| `resource_type` | texto corto | requerido | Tipo de recurso afectado. |
-| `resource_id` | UUID/texto | opcional | Identificador del recurso. |
-| `module` | texto corto | opcional | Módulo relacionado. |
-| `description` | texto | opcional | Descripción breve. |
-| `metadata` | JSON | opcional | Datos adicionales controlados. |
-| `ip_address` | texto | opcional | IP del actor. |
-| `user_agent` | texto | opcional | Cliente del actor. |
-| `created_at` | fecha-hora | requerido | Fecha del evento. |
+| Campo           | Tipo lógico | Restricciones | Descripción                    |
+| --------------- | ----------- | ------------- | ------------------------------ |
+| `id`            | UUID        | PK            | Identificador.                 |
+| `actor_user_id` | UUID        | FK, opcional  | Usuario responsable.           |
+| `action`        | texto corto | requerido     | Acción realizada.              |
+| `resource_type` | texto corto | requerido     | Tipo de recurso afectado.      |
+| `resource_id`   | UUID/texto  | opcional      | Identificador del recurso.     |
+| `module`        | texto corto | opcional      | Módulo relacionado.            |
+| `description`   | texto       | opcional      | Descripción breve.             |
+| `metadata`      | JSON        | opcional      | Datos adicionales controlados. |
+| `ip_address`    | texto       | opcional      | IP del actor.                  |
+| `user_agent`    | texto       | opcional      | Cliente del actor.             |
+| `created_at`    | fecha-hora  | requerido     | Fecha del evento.              |
 
 No requiere `updated_at` ni `deleted_at`.
 
@@ -823,23 +824,23 @@ No se crea una tabla genérica `imports` mientras la importación solo pertenezc
 
 Representa el resumen general de una importación de estudiantes.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador. |
-| `file_name` | texto | requerido | Nombre del archivo. |
-| `file_size` | entero | opcional | Tamaño del archivo en bytes. |
-| `file_mime_type` | texto | opcional | Tipo MIME del archivo. |
-| `status` | enum | requerido | Estado del proceso. |
-| `total_rows` | entero | requerido | Total de filas detectadas. |
-| `processed_rows` | entero | requerido | Filas procesadas. |
-| `accepted_rows` | entero | requerido | Filas aceptadas. |
-| `rejected_rows` | entero | requerido | Filas rechazadas. |
-| `duplicated_rows` | entero | requerido | Filas duplicadas. |
-| `observed_rows` | entero | requerido | Filas observadas. |
-| `created_by_user_id` | UUID | FK, opcional | Usuario responsable. |
-| `created_at` | fecha-hora | requerido | Fecha de creación. |
-| `started_at` | fecha-hora | opcional | Fecha de inicio de procesamiento. |
-| `finished_at` | fecha-hora | opcional | Fecha de finalización. |
+| Campo                | Tipo lógico | Restricciones | Descripción                       |
+| -------------------- | ----------- | ------------- | --------------------------------- |
+| `id`                 | UUID        | PK            | Identificador.                    |
+| `file_name`          | texto       | requerido     | Nombre del archivo.               |
+| `file_size`          | entero      | opcional      | Tamaño del archivo en bytes.      |
+| `file_mime_type`     | texto       | opcional      | Tipo MIME del archivo.            |
+| `status`             | enum        | requerido     | Estado del proceso.               |
+| `total_rows`         | entero      | requerido     | Total de filas detectadas.        |
+| `processed_rows`     | entero      | requerido     | Filas procesadas.                 |
+| `accepted_rows`      | entero      | requerido     | Filas aceptadas.                  |
+| `rejected_rows`      | entero      | requerido     | Filas rechazadas.                 |
+| `duplicated_rows`    | entero      | requerido     | Filas duplicadas.                 |
+| `observed_rows`      | entero      | requerido     | Filas observadas.                 |
+| `created_by_user_id` | UUID        | FK, opcional  | Usuario responsable.              |
+| `created_at`         | fecha-hora  | requerido     | Fecha de creación.                |
+| `started_at`         | fecha-hora  | opcional      | Fecha de inicio de procesamiento. |
+| `finished_at`        | fecha-hora  | opcional      | Fecha de finalización.            |
 
 Enum sugerido:
 
@@ -864,25 +865,26 @@ Notas:
 ```txt
 - Permite saber quién importó, cuándo, qué archivo se procesó y cuál fue el resultado.
 - No reemplaza a la auditoría; la complementa con detalle operativo del proceso.
+- El procesamiento puede ejecutarse de forma asíncrona a través de un job.
 ```
 
 ## `student_import_rows`
 
 Representa el resultado individual de cada fila procesada en una importación de estudiantes.
 
-| Campo | Tipo lógico | Restricciones | Descripción |
-| --- | --- | --- | --- |
-| `id` | UUID | PK | Identificador. |
-| `student_import_id` | UUID | FK, requerido | Importación asociada. |
-| `row_number` | entero | requerido | Número de fila dentro del archivo. |
-| `raw_data` | JSON | requerido | Datos originales de la fila. |
-| `normalized_data` | JSON | opcional | Datos normalizados antes de aplicar reglas. |
-| `status` | enum | requerido | Resultado de la fila. |
-| `error_summary` | texto | opcional | Resumen de error u observación. |
-| `field_errors` | JSON | opcional | Errores por campo. |
-| `created_student_id` | UUID | FK, opcional | Estudiante creado si aplica. |
-| `updated_student_id` | UUID | FK, opcional | Estudiante actualizado si aplica. |
-| `created_at` | fecha-hora | requerido | Fecha de registro. |
+| Campo                | Tipo lógico | Restricciones | Descripción                                 |
+| -------------------- | ----------- | ------------- | ------------------------------------------- |
+| `id`                 | UUID        | PK            | Identificador.                              |
+| `student_import_id`  | UUID        | FK, requerido | Importación asociada.                       |
+| `row_number`         | entero      | requerido     | Número de fila dentro del archivo.          |
+| `raw_data`           | JSON        | requerido     | Datos originales de la fila.                |
+| `normalized_data`    | JSON        | opcional      | Datos normalizados antes de aplicar reglas. |
+| `status`             | enum        | requerido     | Resultado de la fila.                       |
+| `error_summary`      | texto       | opcional      | Resumen de error u observación.             |
+| `field_errors`       | JSON        | opcional      | Errores por campo.                          |
+| `created_student_id` | UUID        | FK, opcional  | Estudiante creado si aplica.                |
+| `updated_student_id` | UUID        | FK, opcional  | Estudiante actualizado si aplica.           |
+| `created_at`         | fecha-hora  | requerido     | Fecha de registro.                          |
 
 Enum sugerido:
 
@@ -969,16 +971,18 @@ professors.person_id
 professors.institutional_email cuando exista
 academic_programs.code
 academic_programs.name
-courses.code o academic_program_id + code
+courses.academic_program_id + courses.code
 course_categories.code
 academic_periods.code
 course_offerings.course_id + academic_period_id + section
 enrollments.student_id + course_offering_id según regla de vigencia
 users.email
 roles.code
+roles.name
 permissions.code
 user_roles.user_id + role_id
 role_permissions.role_id + permission_id
+user_sessions.access_token_jti cuando exista
 student_import_rows.student_import_id + row_number
 ```
 
@@ -994,6 +998,7 @@ Restricciones de aplicación:
 - No permitir acción sin permiso requerido.
 - No aceptar una fila de importación si sus datos mínimos son inválidos.
 - No crear estudiante duplicado por documento o código institucional.
+- No usar un registro dado de baja para nuevas relaciones.
 ```
 
 ## Datos derivados
@@ -1024,20 +1029,28 @@ Además de claves primarias y foráneas, conviene indexar campos de consulta fre
 
 ```txt
 persons.document_number
+persons.deleted_at
 students.code
 students.academic_program_id
 students.status
-professors.code
-academic_programs.code
+students.deleted_at
+professors.deleted_at
+academic_programs.deleted_at
 courses.code
+courses.deleted_at
+academic_periods.status
+academic_periods.deleted_at
 course_offerings.academic_period_id
 course_offerings.course_id
 course_offerings.professor_id
 course_offerings.status
+course_offerings.deleted_at
 enrollments.student_id
 enrollments.course_offering_id
 enrollments.status
+enrollments.deleted_at
 users.email
+users.deleted_at
 user_sessions.user_id
 user_sessions.status
 audit_logs.actor_user_id

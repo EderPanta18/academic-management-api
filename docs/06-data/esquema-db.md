@@ -63,6 +63,8 @@ deleted_at
 
 Las tablas históricas o de solo inserción usan `created_at`, pero no necesariamente `updated_at` ni `deleted_at`.
 
+No todos los recursos tienen un enum de estado. Cuando un recurso no tiene un estado interno propio, su vigencia se representa con `deleted_at`. Un registro con `deleted_at` distinto de `null` se considera dado de baja y no se usa para nuevas relaciones, pero se conserva para no romper la información histórica.
+
 ## Generación de identificadores
 
 Los UUID se generan desde el backend o desde el proceso de seed antes de insertar registros.
@@ -114,7 +116,7 @@ document_types
 course_categories
 ```
 
-Estas tablas permiten activar, desactivar, describir o ampliar valores sin tocar enums internos.
+Estas tablas permiten activar, desactivar, describir o ampliar valores sin tocar enums internos. Su vigencia se representa con `deleted_at`.
 
 ## Identidad personal
 
@@ -135,6 +137,8 @@ code único
 name único
 ```
 
+Incluye `deleted_at` para baja lógica.
+
 ## `persons`
 
 Registra datos personales comunes.
@@ -151,9 +155,10 @@ Restricciones principales:
 
 ```txt
 document_type_id + document_number único
+email único cuando exista
 ```
 
-La persona no representa una cuenta de acceso ni un rol académico por sí misma.
+La persona no representa una cuenta de acceso ni un rol académico por sí misma. Su vigencia se representa con `deleted_at`.
 
 ## Actores académicos
 
@@ -177,7 +182,7 @@ code único
 institutional_email único cuando exista
 ```
 
-El estado del estudiante se modela con `student_status`.
+El estado del estudiante se modela con `student_status`. Además, la tabla incluye `deleted_at` para baja lógica.
 
 ## `professors`
 
@@ -198,7 +203,7 @@ code único
 institutional_email único cuando exista
 ```
 
-El estado del docente se modela con `professor_status`.
+El estado del docente se modela con `professor_status`. Además, la tabla incluye `deleted_at` para baja lógica.
 
 ## Estructura académica
 
@@ -220,6 +225,8 @@ code único
 name único
 ```
 
+No tiene enum de estado. Su vigencia se representa con `deleted_at`.
+
 ## `course_categories`
 
 Representa categorías administrables de curso.
@@ -229,6 +236,15 @@ Relación principal:
 ```txt
 course_categories 1:N courses
 ```
+
+Restricciones principales:
+
+```txt
+code único
+name único
+```
+
+Su vigencia se representa con `deleted_at`.
 
 ## `courses`
 
@@ -245,12 +261,11 @@ courses 1:N course_offerings
 Restricciones principales:
 
 ```txt
-code único
+academic_program_id + code único
 credits > 0
-hours > 0 cuando exista
 ```
 
-Si la institución decide que el código de curso solo es único por programa, puede reemplazarse la unicidad global de `code` por `academic_program_id + code`.
+No tiene enum de estado. Su vigencia se representa con `deleted_at`. El código del curso es único dentro de su programa académico, no de forma global.
 
 ## `academic_periods`
 
@@ -270,7 +285,7 @@ end_date >= start_date
 enrollment_end_date >= enrollment_start_date cuando existan
 ```
 
-El estado se modela con `academic_period_status`.
+El estado se modela con `academic_period_status`. Además, la tabla incluye `deleted_at` para baja lógica.
 
 ## Oferta e inscripción
 
@@ -297,6 +312,8 @@ available_capacity >= 0 cuando exista
 
 El cupo disponible puede calcularse desde inscripciones activas o persistirse de forma transaccional. El DDL incluye `available_capacity` como campo opcional.
 
+El estado se modela con `course_offering_status`. Además, la tabla incluye `deleted_at` para baja lógica.
+
 ## `enrollments`
 
 Representa la inscripción de un estudiante en una oferta de curso.
@@ -317,6 +334,8 @@ student_id + course_offering_id único
 ```
 
 La regla de si se permite una nueva inscripción después de una cancelación depende de la política institucional. El DDL usa una unicidad directa para evitar duplicidad estricta en la misma oferta.
+
+El estado se modela con `enrollment_status`. Además, la tabla incluye `deleted_at` para baja lógica.
 
 ## `enrollment_status_logs`
 
@@ -357,7 +376,7 @@ email único
 person_id único cuando exista
 ```
 
-Las contraseñas se guardan como hash.
+Las contraseñas se guardan como hash. El estado se modela con `user_status`. Además, la tabla incluye `deleted_at` para baja lógica.
 
 ## `roles`
 
@@ -376,6 +395,8 @@ Restricciones principales:
 code único
 name único
 ```
+
+No tiene enum de estado. Su vigencia se representa con `deleted_at`. El campo `is_system` identifica los roles base del sistema, que no deberían darse de baja desde operaciones comunes.
 
 ## `permissions`
 
@@ -406,6 +427,8 @@ students.import
 enrollments.create
 roles.assign-permissions
 ```
+
+No tiene enum de estado. Su vigencia se representa con `deleted_at`. El campo `is_system` identifica los permisos base del sistema, que el código usa para proteger endpoints.
 
 ## `user_roles`
 
@@ -442,6 +465,8 @@ Restricciones principales:
 ```txt
 access_token_jti único cuando exista
 ```
+
+El estado se modela con `session_status`.
 
 Si la política exige una sola sesión activa por usuario, el DDL incluye un índice único parcial:
 
@@ -486,7 +511,7 @@ student_imports N:1 users
 student_imports 1:N student_import_rows
 ```
 
-Permite saber qué archivo se importó, quién lo hizo, cuándo ocurrió y cuál fue el resultado.
+Permite saber qué archivo se importó, quién lo hizo, cuándo ocurrió y cuál fue el resultado. El estado se modela con `import_status`.
 
 ## `student_import_rows`
 
@@ -499,7 +524,7 @@ student_import_rows N:1 student_imports
 student_import_rows N:1 students opcional
 ```
 
-Permite revisar datos originales, datos normalizados, errores por campo y resultado de cada fila.
+Permite revisar datos originales, datos normalizados, errores por campo y resultado de cada fila. El estado se modela con `import_row_status`.
 
 ## Índices
 
@@ -508,11 +533,21 @@ El DDL define índices para campos de consulta frecuente.
 Ejemplos:
 
 ```txt
+persons.document_number
+persons.deleted_at
 students.code
 students.status
+students.deleted_at
+professors.deleted_at
+academic_programs.deleted_at
+courses.deleted_at
+academic_periods.deleted_at
 course_offerings.status
+course_offerings.deleted_at
 enrollments.student_id
+enrollments.deleted_at
 users.email
+users.deleted_at
 user_sessions.status
 audit_logs.created_at
 student_import_rows.status

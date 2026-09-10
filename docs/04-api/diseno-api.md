@@ -22,10 +22,11 @@ inscripciones
 usuarios
 roles
 reportes
-catálogos
 ```
 
 Cada recurso debe exponer operaciones claras y alineadas con su responsabilidad.
+
+Los recursos no equivalen uno a uno con los módulos. Un módulo puede exponer varios recursos, y un recurso puede depender de varios módulos. Por ejemplo, la gestión de roles y permisos pertenece al módulo `authorization`, pero se expone como recursos propios bajo `/roles` y `/permissions`. La identidad personal pertenece al módulo `identity` y se expone como recurso `/persons`.
 
 ## Prefijo de API
 
@@ -130,6 +131,38 @@ POST  /api/v1/students/import
 
 Estas rutas son aceptables cuando expresan acciones del negocio y no solo cambios genéricos de campos.
 
+Reabrir una oferta cerrada es un cambio de estado del ciclo de vida de la oferta. No es lo mismo que restaurar un registro dado de baja. La baja lógica es terminal y no se expone como operación de API.
+
+## Operaciones asíncronas
+
+Algunas operaciones no se resuelven dentro de la petición HTTP porque son intensivas o dependen de procesos largos. En esos casos, la API puede aceptar la solicitud, encolar un job y devolver un identificador para consultar el estado.
+
+Ejemplo:
+
+```txt
+POST /api/v1/students/import
+→ responde 202 Accepted
+→ data: { "jobId": "job-001", "status": "PENDING" }
+```
+
+El cliente puede consultar el estado del job en un endpoint asociado.
+
+```txt
+GET /api/v1/students/imports/:jobId
+```
+
+Reglas:
+
+```txt
+- La operación se valida superficialmente antes de encolar.
+- La respuesta usa 202 Accepted para indicar que el trabajo quedó pendiente.
+- El cliente recibe un identificador para consultar el estado.
+- El procesamiento real ocurre en un worker fuera del flujo HTTP.
+- El job puede finalizar con éxito o con error; ambos casos son consultables.
+```
+
+No todas las operaciones deben ser asíncronas. Solo aquellas que no pueden resolverse de forma rápida y confiable dentro de la petición.
+
 ## Recursos anidados
 
 Los recursos anidados deben usarse con moderación.
@@ -211,10 +244,10 @@ Ejemplo:
 
 ```json
 {
-  "code": "STU-001",
-  "personId": "person-001",
-  "academicProgramId": "program-001",
-  "admissionYear": 2026
+    "code": "STU-001",
+    "personId": "person-001",
+    "academicProgramId": "program-001",
+    "admissionYear": 2026
 }
 ```
 
@@ -230,11 +263,11 @@ Todas las respuestas deben seguir un formato uniforme.
 
 ```json
 {
-  "success": true,
-  "statusCode": 200,
-  "timestamp": "2026-06-14T10:30:00.000Z",
-  "path": "/api/v1/students/123",
-  "data": {}
+    "success": true,
+    "statusCode": 200,
+    "timestamp": "2026-06-14T10:30:00.000Z",
+    "path": "/api/v1/students/123",
+    "data": {}
 }
 ```
 
@@ -242,16 +275,16 @@ Error:
 
 ```json
 {
-  "success": false,
-  "statusCode": 409,
-  "timestamp": "2026-06-14T10:30:00.000Z",
-  "path": "/api/v1/enrollments",
-  "error": {
-    "key": "STUDENT_ALREADY_ENROLLED",
-    "code": "ENR_001",
-    "message": "El estudiante ya tiene una inscripción activa en esta oferta.",
-    "domain": "ENROLLMENT"
-  }
+    "success": false,
+    "statusCode": 409,
+    "timestamp": "2026-06-14T10:30:00.000Z",
+    "path": "/api/v1/enrollments",
+    "error": {
+        "key": "STUDENT_ALREADY_ENROLLED",
+        "code": "ENR_001",
+        "message": "El estudiante ya tiene una inscripción activa en esta oferta.",
+        "domain": "ENROLLMENT"
+    }
 }
 ```
 
@@ -267,6 +300,9 @@ Los códigos HTTP deben usarse de forma coherente.
 
 201
 = recurso creado
+
+202
+= solicitud aceptada para procesamiento asíncrono
 
 400
 = solicitud inválida o campos incorrectos
@@ -301,6 +337,8 @@ Periodo cerrado.
 Cupo máximo menor que inscritos activos.
 ```
 
+Para operaciones que se encolan y se procesan de forma asíncrona, se usa `202 Accepted`.
+
 ## Separación entre HTTP y negocio
 
 La API HTTP es una forma de entrada y salida. No debe definir el negocio.
@@ -321,7 +359,11 @@ No deben:
 - Calcular cupos.
 - Consultar Prisma directamente.
 - Cambiar estados sin pasar por aplicación o dominio.
+- Ejecutar trabajo intensivo dentro de la petición.
+- Consumir jobs o eventos directamente.
 ```
+
+Si una operación requiere procesamiento diferido, el caso de uso encola un job y el controlador devuelve la respuesta correspondiente. El worker que procesa ese job no forma parte de la API.
 
 ## Consistencia entre módulos
 
@@ -336,6 +378,7 @@ Cada módulo puede tener endpoints propios, pero todos deben respetar las mismas
 - Paginación uniforme.
 - Filtros explícitos por query params.
 - Búsqueda global solo cuando el módulo la defina.
+- Operaciones asíncronas con 202 Accepted y jobId consultable.
 ```
 
 Esto permite que el backend se sienta como una sola API y no como varias APIs distintas por módulo.

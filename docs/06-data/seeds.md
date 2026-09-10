@@ -21,7 +21,6 @@ Los seeds deben ser repetibles, seguros e idempotentes.
 
 Idempotente significa que se pueden ejecutar varias veces sin crear duplicados.
 
-
 ## Generación de identificadores
 
 Los seeds deben generar los UUID desde la aplicación o desde el propio proceso de seed.
@@ -118,11 +117,11 @@ document_types
 
 Datos sugeridos:
 
-| code | name |
-| --- | --- |
-| `DNI` | Documento Nacional de Identidad |
-| `CE` | Carné de Extranjería |
-| `PASSPORT` | Pasaporte |
+| code       | name                            |
+| ---------- | ------------------------------- |
+| `DNI`      | Documento Nacional de Identidad |
+| `CE`       | Carné de Extranjería            |
+| `PASSPORT` | Pasaporte                       |
 
 Estos valores pueden ajustarse según la institución o país.
 
@@ -155,13 +154,13 @@ roles
 
 Roles sugeridos:
 
-| code | name | Descripción |
-| --- | --- | --- |
-| `ADMIN` | Administrador | Acceso completo al sistema. |
+| code                   | name                   | Descripción                                                          |
+| ---------------------- | ---------------------- | -------------------------------------------------------------------- |
+| `ADMIN`                | Administrador          | Acceso completo al sistema.                                          |
 | `ACADEMIC_COORDINATOR` | Coordinación académica | Gestiona estructura académica, periodos, cursos, ofertas y reportes. |
-| `SECRETARY` | Secretaría académica | Gestiona estudiantes, importaciones e inscripciones. |
-| `PROFESSOR` | Docente | Consulta información académica relacionada. |
-| `REPORT_VIEWER` | Consulta académica | Consulta reportes. |
+| `SECRETARY`            | Secretaría académica   | Gestiona estudiantes, importaciones e inscripciones.                 |
+| `PROFESSOR`            | Docente                | Consulta información académica relacionada.                          |
+| `REPORT_VIEWER`        | Consulta académica     | Consulta reportes.                                                   |
 
 Campos recomendados:
 
@@ -169,7 +168,7 @@ Campos recomendados:
 is_system = true
 ```
 
-Los roles base no deberían eliminarse físicamente.
+Los roles base no deberían darse de baja desde operaciones comunes. La baja lógica es terminal y no hay restauración.
 
 ## Permisos base
 
@@ -187,122 +186,130 @@ recurso.accion
 
 Los permisos base deben coincidir con los endpoints protegidos documentados en la API y con los guards del sistema.
 
+Campos recomendados:
+
+```txt
+is_system = true
+```
+
+Los permisos base no deberían eliminarse libremente, porque el código los usa para proteger endpoints.
+
 ## Permisos de usuarios
 
-| code | module | Descripción |
-| --- | --- | --- |
-| `users.read` | users | Consultar usuarios. |
-| `users.create` | users | Crear usuarios. |
-| `users.update` | users | Actualizar usuarios. |
-| `users.disable` | users | Desactivar usuarios. |
-| `users.assign-roles` | users | Asignar roles a usuarios. |
+| code                 | module | Descripción               |
+| -------------------- | ------ | ------------------------- |
+| `users.read`         | users  | Consultar usuarios.       |
+| `users.create`       | users  | Crear usuarios.           |
+| `users.update`       | users  | Actualizar usuarios.      |
+| `users.disable`      | users  | Dar de baja usuarios.     |
+| `users.assign-roles` | users  | Asignar roles a usuarios. |
 
 ## Permisos de roles y permisos
 
-| code | module | Descripción |
-| --- | --- | --- |
-| `roles.read` | roles | Consultar roles. |
-| `roles.create` | roles | Crear roles. |
-| `roles.update` | roles | Actualizar roles. |
-| `roles.disable` | roles | Desactivar roles. |
-| `roles.assign-permissions` | roles | Asignar permisos a roles. |
-| `permissions.read` | permissions | Consultar permisos. |
-| `permissions.assign` | permissions | Asignar permisos. |
+| code                       | module        | Descripción                   |
+| -------------------------- | ------------- | ----------------------------- |
+| `roles.read`               | authorization | Consultar roles.              |
+| `roles.create`             | authorization | Crear roles.                  |
+| `roles.update`             | authorization | Actualizar roles.             |
+| `roles.disable`            | authorization | Dar de baja roles no sistema. |
+| `roles.assign-permissions` | authorization | Asignar permisos a roles.     |
+| `permissions.read`         | authorization | Consultar permisos.           |
+| `permissions.assign`       | authorization | Asignar permisos a roles.     |
 
-## Permisos de personas
+## Permisos de identidad
 
-| code | module | Descripción |
-| --- | --- | --- |
-| `persons.read` | persons | Consultar personas. |
-| `persons.create` | persons | Crear personas. |
-| `persons.update` | persons | Actualizar personas. |
+| code             | module   | Descripción          |
+| ---------------- | -------- | -------------------- |
+| `persons.read`   | identity | Consultar personas.  |
+| `persons.create` | identity | Crear personas.      |
+| `persons.update` | identity | Actualizar personas. |
 
 ## Permisos de estudiantes
 
-| code | module | Descripción |
-| --- | --- | --- |
-| `students.read` | students | Consultar estudiantes. |
-| `students.create` | students | Crear estudiantes. |
-| `students.update` | students | Actualizar estudiantes. |
-| `students.disable` | students | Desactivar estudiantes. |
-| `students.import` | students | Importar estudiantes. |
-| `students.imports.read` | students | Consultar importaciones de estudiantes. |
+| code                         | module   | Descripción                                  |
+| ---------------------------- | -------- | -------------------------------------------- |
+| `students.read`              | students | Consultar estudiantes.                       |
+| `students.create`            | students | Crear estudiantes.                           |
+| `students.update`            | students | Actualizar estudiantes.                      |
+| `students.disable`           | students | Dar de baja estudiantes.                     |
+| `students.import`            | students | Importar estudiantes.                        |
+| `students.imports.read`      | students | Consultar importaciones de estudiantes.      |
 | `students.imports.rows.read` | students | Consultar detalle por fila de importaciones. |
 
 Los permisos de consulta de importación permiten revisar historial y errores minuciosos sin dar permiso para ejecutar nuevas importaciones.
 
 ## Permisos de docentes
 
-| code | module | Descripción |
-| --- | --- | --- |
-| `professors.read` | professors | Consultar docentes. |
-| `professors.create` | professors | Crear docentes. |
-| `professors.update` | professors | Actualizar docentes. |
-| `professors.disable` | professors | Desactivar docentes. |
+| code                 | module     | Descripción           |
+| -------------------- | ---------- | --------------------- |
+| `professors.read`    | professors | Consultar docentes.   |
+| `professors.create`  | professors | Crear docentes.       |
+| `professors.update`  | professors | Actualizar docentes.  |
+| `professors.disable` | professors | Dar de baja docentes. |
 
 ## Permisos de programas académicos
 
-| code | module | Descripción |
-| --- | --- | --- |
-| `academic-programs.read` | academic-programs | Consultar programas académicos. |
-| `academic-programs.create` | academic-programs | Crear programas académicos. |
-| `academic-programs.update` | academic-programs | Actualizar programas académicos. |
-| `academic-programs.disable` | academic-programs | Desactivar programas académicos. |
+| code                        | module            | Descripción                       |
+| --------------------------- | ----------------- | --------------------------------- |
+| `academic-programs.read`    | academic-programs | Consultar programas académicos.   |
+| `academic-programs.create`  | academic-programs | Crear programas académicos.       |
+| `academic-programs.update`  | academic-programs | Actualizar programas académicos.  |
+| `academic-programs.disable` | academic-programs | Dar de baja programas académicos. |
 
 ## Permisos de cursos
 
-| code | module | Descripción |
-| --- | --- | --- |
-| `courses.read` | courses | Consultar cursos. |
-| `courses.create` | courses | Crear cursos. |
-| `courses.update` | courses | Actualizar cursos. |
-| `courses.disable` | courses | Desactivar cursos. |
+| code              | module  | Descripción         |
+| ----------------- | ------- | ------------------- |
+| `courses.read`    | courses | Consultar cursos.   |
+| `courses.create`  | courses | Crear cursos.       |
+| `courses.update`  | courses | Actualizar cursos.  |
+| `courses.disable` | courses | Dar de baja cursos. |
 
 ## Permisos de periodos académicos
 
-| code | module | Descripción |
-| --- | --- | --- |
-| `academic-periods.read` | academic-periods | Consultar periodos. |
-| `academic-periods.create` | academic-periods | Crear periodos. |
+| code                      | module           | Descripción          |
+| ------------------------- | ---------------- | -------------------- |
+| `academic-periods.read`   | academic-periods | Consultar periodos.  |
+| `academic-periods.create` | academic-periods | Crear periodos.      |
 | `academic-periods.update` | academic-periods | Actualizar periodos. |
-| `academic-periods.close` | academic-periods | Cerrar periodos. |
-| `academic-periods.cancel` | academic-periods | Cancelar periodos. |
+| `academic-periods.close`  | academic-periods | Cerrar periodos.     |
+| `academic-periods.cancel` | academic-periods | Cancelar periodos.   |
 
 ## Permisos de ofertas de curso
 
-| code | module | Descripción |
-| --- | --- | --- |
-| `course-offerings.read` | course-offerings | Consultar ofertas. |
-| `course-offerings.create` | course-offerings | Crear ofertas. |
-| `course-offerings.update` | course-offerings | Actualizar ofertas. |
-| `course-offerings.close` | course-offerings | Cerrar ofertas. |
-| `course-offerings.reopen` | course-offerings | Reabrir ofertas. |
-| `course-offerings.cancel` | course-offerings | Cancelar ofertas. |
+| code                        | module           | Descripción                |
+| --------------------------- | ---------------- | -------------------------- |
+| `course-offerings.read`     | course-offerings | Consultar ofertas.         |
+| `course-offerings.create`   | course-offerings | Crear ofertas.             |
+| `course-offerings.update`   | course-offerings | Actualizar ofertas.        |
+| `course-offerings.close`    | course-offerings | Cerrar ofertas.            |
+| `course-offerings.reopen`   | course-offerings | Reabrir ofertas.           |
+| `course-offerings.cancel`   | course-offerings | Cancelar ofertas.          |
 | `course-offerings.read-own` | course-offerings | Consultar ofertas propias. |
 
 ## Permisos de inscripciones
 
-| code | module | Descripción |
-| --- | --- | --- |
-| `enrollments.read` | enrollments | Consultar inscripciones. |
-| `enrollments.create` | enrollments | Registrar inscripciones. |
-| `enrollments.cancel` | enrollments | Cancelar inscripciones. |
-| `enrollments.change-status` | enrollments | Cambiar estado de inscripción. |
-| `enrollments.read-own` | enrollments | Consultar inscripciones relacionadas al usuario. |
+| code                        | module      | Descripción                                      |
+| --------------------------- | ----------- | ------------------------------------------------ |
+| `enrollments.read`          | enrollments | Consultar inscripciones.                         |
+| `enrollments.create`        | enrollments | Registrar inscripciones.                         |
+| `enrollments.cancel`        | enrollments | Cancelar inscripciones.                          |
+| `enrollments.change-status` | enrollments | Cambiar estado de inscripción.                   |
+| `enrollments.read-own`      | enrollments | Consultar inscripciones relacionadas al usuario. |
 
 ## Permisos de reportes
 
-| code | module | Descripción |
-| --- | --- | --- |
-| `reports.read` | reports | Consultar reportes. |
+| code             | module  | Descripción                         |
+| ---------------- | ------- | ----------------------------------- |
+| `reports.read`   | reports | Consultar reportes.                 |
 | `reports.export` | reports | Exportar reportes si se implementa. |
 
 ## Permisos de auditoría
 
-| code | module | Descripción |
-| --- | --- | --- |
-| `audit.read` | audit | Consultar auditoría. |
-| `audit.read-sensitive` | audit | Consultar eventos sensibles si aplica. |
+| code                   | module | Descripción                            |
+| ---------------------- | ------ | -------------------------------------- |
+| `audit.read`           | audit  | Consultar auditoría.                   |
+| `audit.read-sensitive` | audit  | Consultar eventos sensibles si aplica. |
 
 ## Asignación inicial de permisos por rol
 
@@ -555,11 +562,11 @@ courses
 
 Ejemplos:
 
-| code | name | credits | category |
-| --- | --- | --- | --- |
-| `CS-101` | Fundamentos de Programación | 4 | SPECIALTY |
-| `DB-201` | Base de Datos | 4 | SPECIALTY |
-| `SE-301` | Ingeniería de Software | 4 | SPECIALTY |
+| code     | name                        | credits | category  |
+| -------- | --------------------------- | ------- | --------- |
+| `CS-101` | Fundamentos de Programación | 4       | SPECIALTY |
+| `DB-201` | Base de Datos               | 4       | SPECIALTY |
+| `SE-301` | Ingeniería de Software      | 4       | SPECIALTY |
 
 ## Periodo académico de desarrollo
 
@@ -571,9 +578,9 @@ academic_periods
 
 Ejemplo:
 
-| code | name | status |
-| --- | --- | --- |
-| `2026-I` | Periodo académico 2026-I | OPEN |
+| code     | name                     | status |
+| -------- | ------------------------ | ------ |
+| `2026-I` | Periodo académico 2026-I | OPEN   |
 
 Fechas sugeridas solo para desarrollo:
 

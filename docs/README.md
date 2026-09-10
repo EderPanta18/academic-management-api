@@ -6,6 +6,16 @@ El objetivo es mantener una referencia clara del producto, la arquitectura, las 
 
 La documentación está organizada por tema para que cada archivo tenga un propósito específico y no mezcle decisiones de producto con detalles técnicos o de operación.
 
+## Naturaleza de esta documentación
+
+Esta documentación es una **guía de referencia**, no una especificación rígida.
+
+Sirve para explicar el problema, ordenar decisiones, dejar claro qué se espera del sistema y por qué se organiza de cierta manera. Su función es orientar el desarrollo y mantener coherencia entre las partes del proyecto.
+
+Durante la implementación, algunos detalles pueden desarrollarse ligeramente distintos a lo que dice un archivo. Eso es esperado y no invalida el documento. Los nombres exactos de archivos, la estructura de carpetas, los scripts, los comandos o la ubicación precisa de una pieza pueden ajustarse si el caso lo justifica y la decisión se mantiene coherente con la arquitectura general.
+
+La documentación debe actualizarse cuando cambia una decisión importante, no cada vez que un detalle menor se implementa de forma distinta.
+
 ## Estructura
 
 ```txt
@@ -66,10 +76,11 @@ capa-app.md
 capa-core.md
 capa-modulos.md
 capa-platform.md
+capa-workers.md
 capa-shared.md
 ```
 
-Usar esta sección para decidir dónde debe ir una clase, servicio, contrato, helper, módulo o integración técnica.
+Usar esta sección para decidir dónde debe ir una clase, servicio, contrato, helper, módulo, integración técnica o proceso asíncrono.
 
 ## 04-api
 
@@ -149,7 +160,7 @@ Usar esta sección para diferenciar lo que pertenece a la primera versión de lo
 
 ## Criterios de mantenimiento
 
-La documentación debe mantenerse alineada con el código y con las decisiones del proyecto.
+La documentación debe mantenerse alineada con el código y con las decisiones del proyecto, sin volverse un freno para el desarrollo.
 
 Criterios:
 
@@ -160,6 +171,8 @@ Criterios:
 - Mantener nombres de archivos claros y relativamente cortos.
 - Preferir decisiones explícitas antes que reglas ambiguas.
 - Actualizar documentación cuando cambie una decisión importante.
+- No actualizar documentación por detalles menores que no cambian el sentido.
+- Cuando la implementación difiera ligeramente de lo documentado, priorizar el sentido y no la literalidad.
 ```
 
 ## Nombres de archivos
@@ -189,12 +202,14 @@ Para entender el sistema desde cero:
 2. 01-product/alcance-sistema.md
 3. 01-product/vision-dominio.md
 4. 02-architecture/arquitectura-backend.md
-5. 02-architecture/estructura-fuente.md
-6. 03-layers/capa-modulos.md
-7. 04-api/diseno-api.md
-8. 05-security/autenticacion.md
-9. 06-data/modelado-datos.md
-10. 08-roadmap/plan-implementacion.md
+5. 02-architecture/arquitectura-fuente.md
+6. 02-architecture/estructura-fuente.md
+7. 03-layers/capa-modulos.md
+8. 03-layers/capa-workers.md
+9. 04-api/diseno-api.md
+10. 05-security/autenticacion.md
+11. 06-data/modelado-datos.md
+12. 08-roadmap/plan-implementacion.md
 ```
 
 Para implementar un módulo nuevo:
@@ -207,6 +222,14 @@ Para implementar un módulo nuevo:
 5. Revisar seguridad y permisos.
 6. Revisar modelo de datos.
 7. Ubicar el módulo en el plan de implementación.
+```
+
+Si el módulo diferirá trabajo a workers, conviene revisar también:
+
+```txt
+1. 02-architecture/reglas-dependencia.md
+2. 03-layers/capa-workers.md
+3. 03-layers/capa-platform.md
 ```
 
 ## Criterio general
@@ -238,3 +261,5 @@ Operación
 Roadmap
 = en qué orden avanzar
 ```
+
+La documentación orienta, pero no reemplaza el juicio técnico durante la implementación. Cuando el código y la documentación entren en conflicto, conviene decidir cuál refleja mejor la intención actual y actualizar el otro.

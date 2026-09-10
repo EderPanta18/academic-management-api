@@ -2,7 +2,7 @@
 
 La capa `platform` contiene infraestructura técnica global.
 
-En un proyecto NestJS, esta capa agrupa los mecanismos que permiten que la aplicación funcione: configuración, base de datos, HTTP global, Swagger, archivos, seguridad técnica, auditoría, logging, cache o integraciones externas.
+En un proyecto NestJS, esta capa agrupa los mecanismos que permiten que la aplicación funcione: configuración, base de datos, HTTP global, Swagger, archivos, seguridad técnica, auditoría, cola de jobs, bus de eventos, logging, cache o integraciones externas.
 
 `platform` no contiene reglas de negocio académico ni reglas funcionales de acceso. Su papel es ofrecer capacidades técnicas al resto de la aplicación.
 
@@ -35,9 +35,9 @@ src/platform/
 ├── files/
 ├── security/
 ├── audit/
+├── queue/
 ├── logging/
 ├── cache/
-├── queue/
 ├── storage/
 ├── integrations/
 └── index.ts
@@ -58,6 +58,7 @@ Puede incluir:
 - Configuración JWT.
 - Configuración CORS.
 - Configuración Swagger.
+- Configuración de la cola de jobs y del bus de eventos.
 - Configuración general de runtime.
 ```
 
@@ -143,22 +144,16 @@ Puede incluir:
 - Utilidades relacionadas con tokens.
 ```
 
-`platform/security` no administra usuarios, roles, permisos ni sesiones como reglas funcionales.
+`platform/security` no administra cuentas, roles, permisos ni sesiones como reglas funcionales.
 
 Responsabilidades funcionales:
 
 ```txt
-modules/auth
-= login, logout, refresh token y sesiones
-
 modules/users
-= cuentas y estado del usuario
+= cuentas, credenciales, sesiones, login, logout y refresh token
 
-modules/roles
-= roles y asignación de roles
-
-modules/permissions
-= permisos y asignación de permisos
+modules/authorization
+= roles, permisos y asignación entre usuarios, roles y permisos
 ```
 
 Responsabilidades técnicas:
@@ -197,7 +192,32 @@ Ejemplo incorrecto:
 platform/audit decide si una inscripción se puede cancelar
 ```
 
-Si se requieren endpoints para consultar auditoría, puede existir un módulo funcional de consulta. La infraestructura transversal de registro puede mantenerse en `platform/audit`.
+`platform/audit` ofrece el mecanismo técnico para registrar eventos auditables. La consulta administrativa y los contratos funcionales de auditoría pertenecen al módulo `audit`.
+
+## `queue`
+
+Contiene la implementación concreta de la cola de jobs y del bus de eventos.
+
+En este proyecto se apoya en **PgBoss**, una librería que usa PostgreSQL como backend. Esto permite reutilizar la misma base de datos del sistema sin agregar infraestructura adicional.
+
+```txt
+platform/queue
+= implementación concreta de JobQueue y EventBus
+```
+
+`platform/queue` implementa los contratos definidos en `core`:
+
+```txt
+core/contracts/job-queue
+= contrato JobQueue
+
+core/contracts/event-bus
+= contrato EventBus
+```
+
+La tecnología concreta es un detalle reemplazable. Los módulos y los workers dependen solo de los contratos, no de PgBoss.
+
+`platform/queue` no decide qué trabajo se encola ni qué eventos se publican. Solo ofrece el mecanismo.
 
 ## `logging`
 
@@ -213,16 +233,13 @@ Puede incluir:
 
 Logging no es lo mismo que auditoría funcional. El log ayuda a diagnosticar problemas técnicos. La auditoría ayuda a reconstruir acciones importantes del sistema.
 
-## `cache`, `queue`, `storage` e `integrations`
+## `cache`, `storage` e `integrations`
 
 Estas carpetas pueden aparecer si el sistema las necesita.
 
 ```txt
 cache
 = almacenamiento temporal
-
-queue
-= trabajos asíncronos
 
 storage
 = almacenamiento de archivos
@@ -245,9 +262,13 @@ No deberían vivir en `platform`:
 - Estados académicos como lógica funcional.
 - Reglas de programas académicos.
 - Repositorios globales de negocio.
+- Administración de cuentas.
 - Administración de roles.
 - Administración de permisos.
 - Flujo funcional de sesiones de usuario.
+- Procesadores de jobs.
+- Handlers de eventos.
+- Entrypoints de workers.
 ```
 
 Si algo decide una regla del proceso académico o de acceso funcional, pertenece a `modules`.
@@ -262,13 +283,15 @@ Si algo decide una regla del proceso académico o de acceso funcional, pertenece
 - librerías técnicas
 - NestJS
 - Prisma
+- PgBoss
 - proveedores externos
 ```
 
-`platform` no debe depender de módulos funcionales.
+`platform` no debe depender de módulos funcionales ni de workers.
 
 ```txt
 platform → modules  no
+platform → workers  no
 ```
 
 Los módulos pueden usar `platform` desde su infraestructura.
@@ -277,20 +300,26 @@ Los módulos pueden usar `platform` desde su infraestructura.
 modules/*/infrastructure → platform
 ```
 
+Los workers también pueden usar `platform` para acceder a las implementaciones concretas de cola y bus.
+
+```txt
+workers → platform
+```
+
 ## Crecimiento esperado
 
 `platform` puede crecer cuando aparecen nuevas necesidades técnicas.
 
 Ese crecimiento no debería obligar a cambiar reglas de negocio.
 
-Por ejemplo, cambiar la forma de leer archivos no debería cambiar la regla que valida si un estudiante importado es válido. Cambiar Prisma no debería cambiar la regla que impide superar el cupo de una oferta. Cambiar la estrategia JWT no debería cambiar la regla funcional de roles y permisos.
+Por ejemplo, cambiar la forma de leer archivos no debería cambiar la regla que valida si un estudiante importado es válido. Cambiar Prisma no debería cambiar la regla que impide superar el cupo de una oferta. Cambiar la estrategia JWT no debería cambiar la regla funcional de roles y permisos. Cambiar la librería de colas no debería cambiar la lógica de los casos de uso que encolan trabajos.
 
 ## Criterio de uso
 
 Antes de colocar algo en `platform`, conviene preguntar:
 
 ```txt
-¿Esto depende de tecnología, framework, entorno, base de datos, HTTP, archivos o servicios externos?
+¿Esto depende de tecnología, framework, entorno, base de datos, HTTP, archivos, colas o servicios externos?
 ```
 
 Si la respuesta es sí, probablemente pertenece a `platform`.

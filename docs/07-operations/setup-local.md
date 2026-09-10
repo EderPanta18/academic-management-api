@@ -24,6 +24,8 @@ Herramientas recomendadas:
 - Cliente HTTP para probar endpoints si no se usa Swagger.
 ```
 
+No se requiere Redis ni un servicio externo de colas. La cola de jobs y el bus de eventos usan la misma base de datos PostgreSQL a través de PgBoss.
+
 ## Flujo general
 
 El flujo local esperado es:
@@ -35,8 +37,9 @@ El flujo local esperado es:
 4. Crear base de datos local.
 5. Ejecutar migraciones.
 6. Ejecutar seeds base.
-7. Levantar el backend.
-8. Verificar health check y documentación API.
+7. Levantar la API.
+8. Levantar los workers.
+9. Verificar health check y documentación API.
 ```
 
 ## Clonar repositorio
@@ -86,6 +89,10 @@ JWT_REFRESH_SECRET
 CORS_ORIGIN
 ADMIN_EMAIL
 ADMIN_PASSWORD
+PGBOSS_SCHEMA
+PGBOSS_JOBS_RETRY_LIMIT
+PGBOSS_JOBS_RETRY_DELAY
+PGBOSS_JOBS_WORKER_CONCURRENCY
 ```
 
 El archivo `.env` no debe subirse al repositorio.
@@ -110,6 +117,8 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/academic_backend_dev
 
 El usuario y contraseña dependen de la instalación local de PostgreSQL.
 
+PgBoss crea su propio esquema dentro de esa misma base. Por defecto usa un esquema llamado `pgboss` y lo inicializa la primera vez que arranca. No hace falta crear nada manualmente ni levantar un segundo servicio.
+
 ## Ejecutar migraciones
 
 El proyecto debe crear la estructura de base de datos mediante migraciones.
@@ -131,6 +140,8 @@ pnpm migrate:dev
 ```
 
 El criterio importante es que la estructura local debe quedar sincronizada con el schema definido.
+
+Las migraciones crean las tablas del sistema. El esquema de PgBoss no forma parte de las migraciones: lo crea la propia librería cuando la cola arranca por primera vez.
 
 ## Ejecutar seeds
 
@@ -160,7 +171,7 @@ Los seeds deben crear:
 
 En desarrollo también pueden crear datos académicos de ejemplo si el proyecto lo define.
 
-## Levantar backend
+## Levantar la API
 
 Comando conceptual:
 
@@ -170,11 +181,29 @@ pnpm start:dev
 
 O un script equivalente definido por el proyecto.
 
-El backend debe iniciar leyendo variables de entorno, conectando a PostgreSQL y exponiendo la API HTTP.
+La API debe iniciar leyendo variables de entorno, conectando a PostgreSQL y exponiendo la API HTTP.
+
+La API no procesa jobs ni eventos dentro del flujo HTTP. Solo encola trabajo a través de los contratos definidos en `core` y, cuando corresponde, publica eventos internos.
+
+## Levantar los workers
+
+Los workers son un proceso independiente de la API. Se arrancan por separado.
+
+Comando conceptual:
+
+```bash
+pnpm workers:dev
+```
+
+O un script equivalente definido por el proyecto.
+
+Los workers consumen jobs y eventos desde la misma base de datos PostgreSQL. Se conectan a la cola a través de las implementaciones de `platform/queue` y delegan la lógica en los casos de uso de los módulos.
+
+La API y los workers pueden ejecutarse en la misma máquina en desarrollo, pero son procesos distintos. Detener uno no detiene al otro.
 
 ## Verificar ejecución
 
-Primero validar que la aplicación responde.
+Primero validar que la API responde.
 
 Endpoint esperado:
 
@@ -195,6 +224,8 @@ o la ruta definida en:
 ```txt
 OPENAPI_PATH
 ```
+
+Para validar que los workers están funcionando, puede revisarse el log de arranque del proceso de workers. Debe indicar que se registraron los procesadores de jobs y los handlers de eventos, y que la suscripción a la cola quedó activa.
 
 ## Usuario inicial
 
@@ -229,16 +260,20 @@ El flujo básico para probar seguridad es:
 
 ## Importación de estudiantes
 
-Si el módulo de importación está implementado, la prueba local debe considerar:
+Si el módulo de importación está implementado, la prueba local debe considerar el flujo completo, que puede ser asíncrono:
 
 ```txt
-- Archivo válido.
-- Archivo con filas rechazadas.
-- Consulta del resumen en student_imports.
-- Consulta del detalle en student_import_rows.
+1. Enviar archivo al endpoint de importación.
+2. Recibir jobId como respuesta 202 Accepted.
+3. Consultar el estado del job en el endpoint de importaciones.
+4. Verificar que el worker procesó el archivo.
+5. Consultar el resumen en student_imports.
+6. Consultar el detalle en student_import_rows.
 ```
 
-La lectura técnica del archivo corresponde a `platform/files`, pero las reglas de importación pertenecen a `students`.
+La lectura técnica del archivo corresponde a `platform/files`. Las reglas de importación pertenecen a `students`. El procesamiento se ejecuta en un worker fuera del flujo HTTP.
+
+Si los workers no están levantados, el job queda encolado y pendiente, pero no se procesa. Esto es útil para pruebas controladas, pero en un entorno funcional los workers deben estar activos.
 
 ## Problemas frecuentes
 
@@ -262,6 +297,7 @@ Revisar:
 - Los nombres coinciden con los esperados.
 - No hay comillas mal cerradas.
 - Los secretos JWT están definidos.
+- Las variables de PgBoss están definidas o se aceptan sus valores por defecto.
 ```
 
 ### Swagger no aparece
@@ -273,7 +309,7 @@ OPENAPI_ENABLED=true
 OPENAPI_PATH=/docs
 ```
 
-También validar que el backend esté ejecutándose en el puerto correcto.
+También validar que la API esté ejecutándose en el puerto correcto.
 
 ### Login falla
 
@@ -298,6 +334,29 @@ Revisar:
 - No hay cambios manuales incompatibles en la base.
 ```
 
+### Los jobs no se procesan
+
+Revisar:
+
+```txt
+- El proceso de workers está levantado.
+- Los workers se conectan a la misma base de datos que la API.
+- El esquema de PgBoss existe en la base.
+- Las variables de configuración de la cola son correctas.
+- No hay errores en el log del worker.
+```
+
+### Los workers no arrancan
+
+Revisar:
+
+```txt
+- Las dependencias están instaladas.
+- El archivo .env está cargado en el proceso de workers.
+- El comando de arranque de workers existe en package.json.
+- No hay conflicto con otro proceso escuchando en el mismo puerto si los workers exponen health.
+```
+
 ## Reinicio local de base de datos
 
 En desarrollo puede ser útil reiniciar la base.
@@ -314,18 +373,22 @@ O script equivalente:
 pnpm db:reset
 ```
 
-Esto puede eliminar datos locales. No debe ejecutarse contra producción.
+Esto puede eliminar datos locales. También elimina el esquema de PgBoss, porque vive en la misma base. Al volver a arrancar los workers, PgBoss lo recrea.
+
+No debe ejecutarse contra producción.
 
 ## Criterios de trabajo local
 
 Antes de abrir un pull request, conviene validar:
 
 ```txt
-- El backend levanta correctamente.
+- La API levanta correctamente.
+- Los workers levantan correctamente.
 - La base local migra sin errores.
 - Los seeds base se ejecutan correctamente.
 - El login interno funciona.
 - El health check responde.
+- Los jobs encolados se procesan.
 - No se subieron archivos .env.
 ```
 
@@ -337,8 +400,8 @@ Esta carpeta se mantiene mínima para evitar documentación frágil.
 
 ```txt
 07-operations/
-├── environment-variables.md
-└── local-setup.md
+├── variables-entorno.md
+└── setup-local.md
 ```
 
 Otros documentos como estrategia de pruebas, checks de calidad o setup avanzado de base de datos pueden agregarse cuando los scripts y flujos estén más estables.
@@ -352,7 +415,8 @@ Variables correctas
 + base de datos disponible
 + migraciones aplicadas
 + seeds ejecutados
-+ backend iniciado
++ API iniciada
++ workers iniciados
 = entorno local funcional
 ```
 

@@ -72,7 +72,7 @@ Datos comunes:
 Código del programa
 Nombre
 Unidad académica asociada
-Estado
+Estado del registro
 ```
 
 El programa académico ayuda a mantener coherencia entre estudiantes, cursos e inscripciones.
@@ -91,7 +91,7 @@ Nombre
 Programa académico relacionado
 Categoría o área académica
 Créditos u horas
-Estado
+Estado del registro
 ```
 
 Por ejemplo, “Base de Datos” puede existir como curso del catálogo, pero solo se convierte en una opción inscribible cuando se crea una oferta de curso para un periodo académico.
@@ -238,17 +238,14 @@ Ejemplos de catálogos:
 
 ```txt
 Tipos de documento
-Estados de estudiante
-Estados de docente
-Estados de inscripción
 Categorías de curso
-Estados de oferta
-Estados de periodo académico
 ```
 
-Un catálogo debe usarse para datos relativamente estables, no para procesos que tienen reglas importantes.
+Un catálogo debe usarse para datos relativamente estables, que pueden administrarse y crecer con el tiempo, pero que no participan directamente en las reglas internas del proceso.
 
-Roles, permisos y sesiones no se consideran catálogos porque tienen reglas, relaciones y operaciones propias.
+Los estados del sistema (estado de estudiante, estado de docente, estado de periodo, estado de oferta, estado de inscripción, estado de usuario, estado de sesión) no se manejan como catálogos. Son enums internos porque representan valores pequeños y estables que forman parte del comportamiento del sistema.
+
+Roles, permisos y sesiones tampoco se consideran catálogos porque tienen reglas, relaciones y operaciones propias.
 
 ## Reporte
 

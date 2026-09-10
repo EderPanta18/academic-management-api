@@ -89,13 +89,13 @@ Algunas condiciones importantes son:
 La oferta existe.
 La oferta pertenece a un periodo válido.
 La oferta está abierta.
-El curso está activo.
+El curso está vigente y no fue dado de baja.
 El periodo permite inscripciones.
 Existe cupo disponible.
 La cantidad de inscritos activos no supera el cupo máximo.
 ```
 
-Esta revisión evita que se registren inscripciones sobre cursos cerrados, periodos incorrectos, ofertas canceladas o grupos sin capacidad disponible.
+Esta revisión evita que se registren inscripciones sobre cursos dados de baja, periodos incorrectos, ofertas canceladas o grupos sin capacidad disponible.
 
 ## Revisión del estudiante
 

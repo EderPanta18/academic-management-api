@@ -18,21 +18,21 @@ La respuesta debe usar el formato paginado estándar:
 
 ```json
 {
-  "success": true,
-  "statusCode": 200,
-  "timestamp": "2026-06-14T10:30:00.000Z",
-  "path": "/api/v1/students?page=1&limit=20",
-  "data": {
-    "items": [],
-    "meta": {
-      "page": 1,
-      "limit": 20,
-      "totalItems": 0,
-      "totalPages": 0,
-      "hasNextPage": false,
-      "hasPreviousPage": false
+    "success": true,
+    "statusCode": 200,
+    "timestamp": "2026-06-14T10:30:00.000Z",
+    "path": "/api/v1/students?page=1&limit=20",
+    "data": {
+        "items": [],
+        "meta": {
+            "page": 1,
+            "limit": 20,
+            "totalItems": 0,
+            "totalPages": 0,
+            "hasNextPage": false,
+            "hasPreviousPage": false
+        }
     }
-  }
 }
 ```
 
@@ -78,12 +78,12 @@ La metadata debe ir dentro de `data.meta`.
 
 ```json
 {
-  "page": 1,
-  "limit": 20,
-  "totalItems": 120,
-  "totalPages": 6,
-  "hasNextPage": true,
-  "hasPreviousPage": false
+    "page": 1,
+    "limit": 20,
+    "totalItems": 120,
+    "totalPages": 6,
+    "hasNextPage": true,
+    "hasPreviousPage": false
 }
 ```
 
@@ -115,14 +115,14 @@ Los elementos de la página deben ir dentro de `data.items`.
 
 ```json
 {
-  "items": [
-    {
-      "id": "student-001",
-      "code": "STU-001",
-      "fullName": "Eder Panta",
-      "status": "ACTIVE"
-    }
-  ]
+    "items": [
+        {
+            "id": "student-001",
+            "code": "STU-001",
+            "fullName": "Eder Panta",
+            "status": "ACTIVE"
+        }
+    ]
 }
 ```
 
@@ -151,7 +151,7 @@ Para cursos:
 GET /api/v1/courses?code=CS-101
 GET /api/v1/courses?name=base
 GET /api/v1/courses?academicProgramId=program-001
-GET /api/v1/courses?status=ACTIVE
+GET /api/v1/courses?courseCategoryId=category-001
 ```
 
 Para ofertas de curso:
@@ -268,7 +268,7 @@ GET /api/v1/enrollments?enrolledFrom=2026-01-01&enrolledTo=2026-01-31
 
 ## Filtros por estado
 
-Los estados deben enviarse como valores claros.
+Los estados deben enviarse como valores claros, y solo aplican a los recursos que tienen un enum de estado definido.
 
 Ejemplo:
 
@@ -276,7 +276,10 @@ Ejemplo:
 GET /api/v1/students?status=ACTIVE
 GET /api/v1/course-offerings?status=OPEN
 GET /api/v1/enrollments?status=ENROLLED
+GET /api/v1/users?status=ACTIVE
 ```
+
+No todos los recursos tienen estado. Recursos como personas, programas académicos, cursos, categorías de curso y roles no tienen un enum de estado. Su vigencia se representa con baja lógica. Los filtros de estos recursos no usan `status`.
 
 Los valores permitidos deben documentarse en OpenAPI.
 
@@ -320,21 +323,21 @@ Si un query param es inválido, se debe responder con error de validación.
 
 ```json
 {
-  "success": false,
-  "statusCode": 400,
-  "timestamp": "2026-06-14T10:30:00.000Z",
-  "path": "/api/v1/students?page=0",
-  "error": {
-    "key": "VALIDATION_ERROR",
-    "code": "VAL_001",
-    "message": "La solicitud contiene campos inválidos.",
-    "fieldErrors": [
-      {
-        "field": "page",
-        "message": "La página debe ser mayor o igual a 1."
-      }
-    ]
-  }
+    "success": false,
+    "statusCode": 400,
+    "timestamp": "2026-06-14T10:30:00.000Z",
+    "path": "/api/v1/students?page=0",
+    "error": {
+        "key": "VALIDATION_ERROR",
+        "code": "VAL_001",
+        "message": "La solicitud contiene campos inválidos.",
+        "fieldErrors": [
+            {
+                "field": "page",
+                "message": "La página debe ser mayor o igual a 1."
+            }
+        ]
+    }
 }
 ```
 
@@ -346,21 +349,21 @@ Respuesta esperada:
 
 ```json
 {
-  "success": true,
-  "statusCode": 200,
-  "timestamp": "2026-06-14T10:30:00.000Z",
-  "path": "/api/v1/students?page=1&limit=20",
-  "data": {
-    "items": [],
-    "meta": {
-      "page": 1,
-      "limit": 20,
-      "totalItems": 0,
-      "totalPages": 0,
-      "hasNextPage": false,
-      "hasPreviousPage": false
+    "success": true,
+    "statusCode": 200,
+    "timestamp": "2026-06-14T10:30:00.000Z",
+    "path": "/api/v1/students?page=1&limit=20",
+    "data": {
+        "items": [],
+        "meta": {
+            "page": 1,
+            "limit": 20,
+            "totalItems": 0,
+            "totalPages": 0,
+            "hasNextPage": false,
+            "hasPreviousPage": false
+        }
     }
-  }
 }
 ```
 
@@ -377,6 +380,7 @@ academicProgramId
 studentId
 professorId
 courseId
+courseCategoryId
 academicPeriodId
 courseOfferingId
 ```
@@ -397,7 +401,7 @@ Y según el módulo:
 ```txt
 filtros específicos por campo
 filtros por relación
-filtros por estado
+filtros por estado, solo si el recurso tiene enum de estado
 rangos de fecha
 sortBy
 sortOrder

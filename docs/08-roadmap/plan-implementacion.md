@@ -10,6 +10,8 @@ El sistema debe construirse desde las capacidades base hacia los procesos acadé
 
 ```txt
 Base técnica
+→ Base de datos
+→ Procesamiento asíncrono
 → Seguridad
 → Datos maestros
 → Estructura académica
@@ -34,6 +36,7 @@ La implementación debe seguir estos criterios:
 - Validar reglas de negocio en application/domain, no en controladores.
 - Persistir información operativa importante.
 - Mantener seguridad desde el inicio, no al final.
+- Diferir trabajo intensivo fuera del flujo HTTP desde etapas tempranas.
 ```
 
 ## Fase 1: Base del proyecto
@@ -54,6 +57,7 @@ Incluye:
 - Swagger/OpenAPI base.
 - Formato de respuesta base.
 - Manejo global de errores.
+- Estructura inicial de src/workers.
 ```
 
 Resultado esperado:
@@ -97,7 +101,39 @@ Resultado esperado:
 La base de datos puede migrarse y poblarse con datos mínimos para operar seguridad y usuarios.
 ```
 
-## Fase 3: Seguridad base
+## Fase 3: Procesamiento asíncrono base
+
+Objetivo: dejar operativa la cola de jobs y el bus de eventos sobre PostgreSQL.
+
+Incluye:
+
+```txt
+- Contratos JobQueue y EventBus en core.
+- Implementación de PgBoss en platform/queue.
+- Configuración del esquema de PgBoss en PostgreSQL.
+- Variables de entorno de la cola.
+- Entrypoint de workers en src/workers.
+- Registro de procesadores y handlers.
+- Conexión de workers a la misma base de datos.
+```
+
+Resultado esperado:
+
+```txt
+La API puede encolar jobs y publicar eventos. Los workers arrancan como proceso independiente, consumen jobs y eventos, y delegan la lógica en los módulos.
+```
+
+No incluye todavía:
+
+```txt
+- Colas separadas por tipo de job.
+- Priorización dinámica.
+- Jobs programados con expresión cron.
+- Dead letter queue.
+- Panel de monitoreo.
+```
+
+## Fase 4: Seguridad base
 
 Objetivo: implementar autenticación y autorización interna.
 
@@ -119,10 +155,8 @@ Incluye:
 Módulos involucrados:
 
 ```txt
-auth
 users
-roles
-permissions
+authorization
 platform/security
 ```
 
@@ -141,7 +175,7 @@ No incluye todavía:
 - Autenticación multifactor.
 ```
 
-## Fase 4: Usuarios, roles y permisos
+## Fase 5: Usuarios y autorización
 
 Objetivo: administrar el acceso funcional del sistema.
 
@@ -150,7 +184,7 @@ Incluye:
 ```txt
 - Crear usuarios.
 - Consultar usuarios.
-- Activar/desactivar usuarios.
+- Activar o dar de baja usuarios.
 - Asignar roles a usuarios.
 - Consultar roles.
 - Crear o administrar roles si aplica.
@@ -178,7 +212,7 @@ Resultado esperado:
 El sistema puede controlar qué acciones puede realizar cada usuario.
 ```
 
-## Fase 5: Catálogos base
+## Fase 6: Catálogos base
 
 Objetivo: tener datos de referencia necesarios para registrar información académica.
 
@@ -194,6 +228,9 @@ Criterio:
 ```txt
 Los catálogos tienen tabla porque pueden variar o administrarse.
 Los estados pequeños y estables se mantienen como enums.
+
+document_types vive en identity.
+course_categories vive en courses.
 ```
 
 Resultado esperado:
@@ -202,7 +239,7 @@ Resultado esperado:
 El sistema cuenta con valores base para registrar personas y clasificar cursos.
 ```
 
-## Fase 6: Personas
+## Fase 7: Identidad personal
 
 Objetivo: registrar identidad personal común.
 
@@ -214,12 +251,13 @@ Incluye:
 - Actualizar persona.
 - Validar documento único.
 - Validar tipo de documento.
+- Dar de baja persona cuando corresponda.
 ```
 
 Módulo:
 
 ```txt
-persons
+identity
 ```
 
 Resultado esperado:
@@ -228,7 +266,7 @@ Resultado esperado:
 El sistema puede registrar datos personales reutilizables por estudiantes, docentes y usuarios.
 ```
 
-## Fase 7: Programas académicos
+## Fase 8: Programas académicos
 
 Objetivo: registrar estructura académica inicial.
 
@@ -238,7 +276,7 @@ Incluye:
 - Crear programa académico.
 - Consultar programas.
 - Actualizar programa.
-- Activar/desactivar programa.
+- Dar de baja programa cuando corresponda.
 - Validar código único.
 ```
 
@@ -254,7 +292,7 @@ Resultado esperado:
 El sistema puede asociar estudiantes y cursos a un programa académico.
 ```
 
-## Fase 8: Estudiantes
+## Fase 9: Estudiantes
 
 Objetivo: registrar y administrar estudiantes.
 
@@ -264,7 +302,8 @@ Incluye:
 - Crear estudiante.
 - Consultar estudiantes.
 - Actualizar estudiante.
-- Activar/desactivar estudiante.
+- Cambiar estado académico.
+- Dar de baja estudiante cuando corresponda.
 - Vincular estudiante con persona.
 - Vincular estudiante con programa académico.
 - Validar código institucional único.
@@ -283,7 +322,7 @@ Resultado esperado:
 El sistema puede registrar estudiantes válidos para procesos académicos posteriores.
 ```
 
-## Fase 9: Docentes
+## Fase 10: Docentes
 
 Objetivo: registrar docentes que pueden ser asignados a ofertas de curso.
 
@@ -293,7 +332,8 @@ Incluye:
 - Crear docente.
 - Consultar docentes.
 - Actualizar docente.
-- Activar/desactivar docente.
+- Cambiar estado operativo.
+- Dar de baja docente cuando corresponda.
 - Vincular docente con persona.
 - Validar código institucional único.
 ```
@@ -310,7 +350,7 @@ Resultado esperado:
 El sistema puede asociar docentes a ofertas de curso.
 ```
 
-## Fase 10: Cursos
+## Fase 11: Cursos
 
 Objetivo: registrar cursos del catálogo académico.
 
@@ -320,11 +360,11 @@ Incluye:
 - Crear curso.
 - Consultar cursos.
 - Actualizar curso.
-- Activar/desactivar curso.
+- Dar de baja curso cuando corresponda.
 - Asociar curso a programa académico.
 - Asociar curso a categoría.
 - Validar créditos.
-- Validar código único.
+- Validar código único dentro del programa.
 ```
 
 Módulo:
@@ -339,7 +379,7 @@ Resultado esperado:
 El sistema puede crear ofertas a partir de cursos existentes.
 ```
 
-## Fase 11: Periodos académicos
+## Fase 12: Periodos académicos
 
 Objetivo: definir los periodos donde se dictan ofertas e inscripciones.
 
@@ -368,7 +408,7 @@ Resultado esperado:
 El sistema puede controlar cuándo se pueden abrir ofertas e inscribir estudiantes.
 ```
 
-## Fase 12: Ofertas de curso
+## Fase 13: Ofertas de curso
 
 Objetivo: publicar cursos disponibles en un periodo académico.
 
@@ -383,8 +423,9 @@ Incluye:
 - Definir cupo.
 - Abrir oferta.
 - Cerrar oferta.
+- Reabrir oferta.
 - Cancelar oferta.
-- Validar curso activo.
+- Validar curso vigente.
 - Validar periodo válido.
 - Validar docente activo si existe.
 ```
@@ -401,7 +442,7 @@ Resultado esperado:
 El sistema puede ofrecer cursos concretos para inscripción.
 ```
 
-## Fase 13: Inscripciones
+## Fase 14: Inscripciones
 
 Objetivo: registrar estudiantes en ofertas de curso.
 
@@ -413,7 +454,7 @@ Incluye:
 - Cancelar inscripción.
 - Cambiar estado.
 - Registrar historial de cambios.
-- Validar estudiante activo.
+- Validar estudiante habilitado.
 - Validar oferta abierta.
 - Validar periodo vigente.
 - Validar cupo disponible.
@@ -433,23 +474,26 @@ Resultado esperado:
 El sistema puede ejecutar el flujo académico principal de inscripción con reglas de negocio.
 ```
 
-## Fase 14: Importación de estudiantes
+## Fase 15: Importación de estudiantes
 
-Objetivo: permitir carga masiva de estudiantes.
+Objetivo: permitir carga masiva de estudiantes con procesamiento asíncrono.
 
 Incluye:
 
 ```txt
-- Recibir archivo.
-- Leer archivo desde platform/files.
-- Validar estructura.
-- Validar filas.
-- Detectar duplicados.
-- Crear estudiantes válidos.
-- Persistir resumen de importación.
-- Persistir detalle por fila.
-- Consultar historial de importaciones.
-- Consultar errores por fila.
+- Endpoint que recibe archivo y responde 202 Accepted con jobId.
+- Lectura técnica del archivo desde platform/files.
+- Encolado de job a través del contrato JobQueue.
+- Worker que consume el job.
+- Validación de estructura.
+- Validación de filas.
+- Detección de duplicados.
+- Creación de estudiantes válidos.
+- Persistencia de resumen de importación.
+- Persistencia de detalle por fila.
+- Endpoint de consulta de estado del job.
+- Consulta de historial de importaciones.
+- Consulta de errores por fila.
 ```
 
 Módulo dueño:
@@ -462,6 +506,8 @@ Soporte técnico:
 
 ```txt
 platform/files
+platform/queue
+workers
 ```
 
 Tablas:
@@ -474,7 +520,7 @@ student_import_rows
 Resultado esperado:
 
 ```txt
-El sistema puede importar estudiantes y conservar evidencia detallada del resultado.
+El sistema puede importar estudiantes de forma asíncrona, conservar evidencia detallada del resultado y permitir que el cliente consulte el estado del job.
 ```
 
 No crear todavía:
@@ -485,7 +531,7 @@ modules/imports
 
 Ese módulo solo tendría sentido si varias entidades requieren importaciones comunes.
 
-## Fase 15: Reportes básicos
+## Fase 16: Reportes básicos
 
 Objetivo: entregar consultas académicas útiles sin convertir reportes en módulo de escritura.
 
@@ -518,9 +564,9 @@ Resultado esperado:
 El sistema puede mostrar información consolidada para seguimiento académico.
 ```
 
-## Fase 16: Auditoría
+## Fase 17: Auditoría
 
-Objetivo: registrar acciones relevantes del sistema.
+Objetivo: registrar y consultar acciones relevantes del sistema.
 
 Incluye desde etapas tempranas:
 
@@ -536,24 +582,26 @@ Incluye desde etapas tempranas:
 - Creación o cancelación de inscripciones.
 ```
 
-Primera versión:
+Registro técnico:
 
 ```txt
 platform/audit
-= registrar eventos
+= infraestructura para registrar eventos auditables
 ```
 
-Versión posterior si se requiere consulta:
+Consulta administrativa:
 
 ```txt
 modules/audit
-= consultar eventos por API
+= consulta de eventos auditables por API
 ```
+
+La auditoría puede registrarse de forma directa desde el caso de uso o de forma diferida a través del bus de eventos y un worker de auditoría.
 
 Resultado esperado:
 
 ```txt
-El sistema conserva trazabilidad de acciones críticas.
+El sistema conserva trazabilidad de acciones críticas y permite consultarla desde la API.
 ```
 
 ## Orden resumido
@@ -561,28 +609,31 @@ El sistema conserva trazabilidad de acciones críticas.
 ```txt
 1. Base técnica.
 2. Base de datos.
-3. Seguridad.
-4. Usuarios, roles y permisos.
-5. Catálogos.
-6. Personas.
-7. Programas académicos.
-8. Estudiantes.
-9. Docentes.
-10. Cursos.
-11. Periodos académicos.
-12. Ofertas de curso.
-13. Inscripciones.
-14. Importación de estudiantes.
-15. Reportes.
-16. Auditoría consultable si aplica.
+3. Procesamiento asíncrono base.
+4. Seguridad.
+5. Usuarios y autorización.
+6. Catálogos.
+7. Identidad personal.
+8. Programas académicos.
+9. Estudiantes.
+10. Docentes.
+11. Cursos.
+12. Periodos académicos.
+13. Ofertas de curso.
+14. Inscripciones.
+15. Importación de estudiantes.
+16. Reportes.
+17. Auditoría.
 ```
 
 ## Dependencias principales
 
 ```txt
-students depende de persons y academic-programs.
+identity es usado por students, professors y users.
 
-professors depende de persons.
+students depende de identity y academic-programs.
+
+professors depende de identity.
 
 courses depende de academic-programs y course-categories.
 
@@ -590,11 +641,15 @@ course-offerings depende de courses, academic-periods y professors.
 
 enrollments depende de students, course-offerings y users.
 
-student imports depende de students, persons, academic-programs y users.
+student imports depende de students, identity, academic-programs, users y la cola de jobs.
 
-auth depende de users, roles, permissions y user_sessions.
+users depende de la cola de jobs para auditoría diferida y procesos asíncronos.
+
+authorization depende de users.
 
 reports depende de datos académicos ya implementados.
+
+audit consume eventos de todos los módulos.
 ```
 
 ## Criterio general
@@ -603,10 +658,11 @@ El plan debe guiar el orden de construcción sin bloquear ajustes del proyecto.
 
 ```txt
 Primero estabilidad técnica.
+Luego base de datos y procesamiento asíncrono.
 Luego seguridad.
 Luego datos base.
 Luego proceso académico.
-Luego reportes y mejoras.
+Luego reportes y auditoría consultable.
 ```
 
 Este orden reduce retrabajo y mantiene el crecimiento del sistema alineado con sus dependencias reales.

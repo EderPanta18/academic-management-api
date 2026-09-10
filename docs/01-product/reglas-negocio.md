@@ -65,7 +65,7 @@ Reglas principales:
 - Un programa académico debe tener código o identificador único.
 - Un estudiante debe pertenecer a un programa académico válido.
 - Un curso puede estar relacionado con un programa académico.
-- Un programa académico inactivo no debería recibir nuevos estudiantes ni nuevas relaciones académicas si la institución lo restringe.
+- Un programa académico dado de baja no debería recibir nuevos estudiantes ni nuevas relaciones académicas si la institución lo restringe.
 - Si la institución exige compatibilidad académica, el estudiante solo debería inscribirse en ofertas relacionadas con su programa académico.
 ```
 
@@ -78,12 +78,12 @@ Un curso representa una unidad académica del catálogo.
 Reglas principales:
 
 ```txt
-- Un curso debe tener código único.
+- Un curso debe tener código único dentro de su programa académico.
 - Un curso debe existir antes de crear una oferta de curso.
-- Un curso inactivo no debería usarse para crear nuevas ofertas.
+- Un curso dado de baja no debería usarse para crear nuevas ofertas.
 - El curso del catálogo no debe confundirse con una oferta disponible en un periodo.
 - Un curso puede pertenecer a un programa académico o a una categoría académica.
-- Si un curso deja de estar vigente, las ofertas futuras deberían restringirse, pero las ofertas históricas deben poder consultarse.
+- Si un curso es dado de baja, las ofertas futuras deberían restringirse, pero las ofertas históricas deben poder consultarse.
 ```
 
 Esta separación es importante: el curso define la materia; la oferta define cuándo y bajo qué condiciones se dicta.
@@ -196,6 +196,8 @@ Reglas generales:
 - Una sesión revocada o expirada no debe permitir consumir rutas protegidas.
 ```
 
+Los registros que no manejan un estado explícito, como personas, programas académicos, cursos, categorías y roles, usan baja lógica cuando dejan de estar operativos. Un registro dado de baja no debería usarse para crear nuevas relaciones, pero debe conservarse para no romper la información histórica.
+
 ## Reglas sobre importación de estudiantes
 
 La importación ayuda a cargar información desde archivos externos.
@@ -264,7 +266,7 @@ Reglas principales:
 - Un rol debe tener código único.
 - Un rol puede agrupar varios permisos.
 - Un rol puede asignarse a uno o más usuarios.
-- Un rol inactivo no debería asignarse a nuevos usuarios.
+- Un rol dado de baja no debería asignarse a nuevos usuarios.
 - Los cambios de roles deben conservar trazabilidad.
 - La administración de roles debe estar protegida por permisos.
 ```

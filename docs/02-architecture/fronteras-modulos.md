@@ -14,9 +14,9 @@ Ejemplos:
 students
 course-offerings
 enrollments
-auth
-roles
-permissions
+users
+authorization
+audit
 ```
 
 Cada módulo debe ser dueño de sus reglas, datos principales, contratos y forma de exposición.
@@ -29,14 +29,10 @@ La frontera de un módulo existe para responder una pregunta:
 
 ## Módulos principales
 
-Para el alcance actual, los módulos funcionales pueden ser:
+Para el alcance actual, los módulos funcionales son:
 
 ```txt
-auth
-users
-roles
-permissions
-persons
+identity
 students
 professors
 academic-programs
@@ -44,11 +40,17 @@ courses
 academic-periods
 course-offerings
 enrollments
+users
+authorization
+audit
 reports
-catalogs
 ```
 
-No todos tienen el mismo peso. Algunos son módulos de negocio académico fuerte; otros son módulos de acceso, soporte o consulta.
+No todos tienen el mismo peso. Algunos son módulos de negocio académico fuerte; otros son módulos de identidad, acceso, soporte o consulta.
+
+`catalogs` no forma parte de los módulos iniciales. Un catálogo vive dentro del módulo que lo usa. Si en el futuro un catálogo necesita ser compartido por varios módulos, puede evaluarse extraerlo a un módulo propio de catálogos compartidos.
+
+Los workers no son módulos. Son procesos asíncronos que consumen contratos públicos de los módulos, pero no pertenecen a ninguno de ellos.
 
 ## Módulos de negocio académico
 
@@ -76,29 +78,21 @@ students no debería crear inscripciones por su cuenta.
 
 ## Módulos de acceso y seguridad funcional
 
-Son módulos funcionales que controlan identidad, cuentas, roles y permisos.
+Son módulos funcionales que controlan cuentas, sesiones, roles y permisos.
 
 ```txt
-auth
 users
-roles
-permissions
+authorization
 ```
 
 Responsabilidades:
 
 ```txt
-auth
-= login, logout, refresh token, sesiones y revocación de accesos
-
 users
-= cuentas de usuario, estado del usuario y credenciales
+= cuentas de usuario, credenciales, sesiones, login, logout y refresh token
 
-roles
-= roles del sistema y asignación de roles a usuarios
-
-permissions
-= permisos disponibles y asignación de permisos a roles
+authorization
+= roles, permisos y asignación entre usuarios, roles y permisos
 ```
 
 Estos módulos están dentro de `modules/` porque tienen datos, casos de uso, reglas y endpoints propios.
@@ -112,53 +106,40 @@ platform/security
 
 ## Módulos de soporte funcional
 
-Son módulos que apoyan el proceso, pero no siempre representan el centro de la inscripción.
+Son módulos que apoyan el proceso, pero no representan el centro de la inscripción.
 
 ```txt
-persons
+identity
+audit
 reports
-catalogs
 ```
 
-`persons` sostiene información común. `reports` consulta información resumida. `catalogs` agrupa datos de referencia.
+`identity` sostiene la identidad personal común. `audit` expone la consulta administrativa de eventos auditables. `reports` consulta información resumida.
 
-## `catalogs`
+## Catálogos
 
-`catalogs` debe usarse solo para datos de referencia simples.
+Los catálogos son datos de referencia que clasifican o validan información: tipos de documento, categorías de curso y valores similares.
 
-Ejemplos:
-
-```txt
-Tipos de documento
-Estados de estudiante
-Estados de docente
-Estados de inscripción
-Estados de periodo
-Estados de oferta
-Categorías de curso
-```
-
-No deberían ir en `catalogs`:
+No forman un módulo por defecto. Cada catálogo pertenece al módulo que lo usa como parte de sus reglas.
 
 ```txt
-Estudiantes
-Docentes
-Programas académicos
-Cursos
-Periodos académicos
-Ofertas
-Inscripciones
-Roles
-Permisos
-Sesiones de usuario
+identity
+= dueño de document_types
+
+courses
+= dueño de course_categories
 ```
 
 La regla práctica es:
 
 ```txt
-Si solo llena opciones o clasifica datos, puede ir en catalogs.
-Si tiene proceso, reglas fuertes, relaciones importantes o endpoints propios, debe tener módulo propio.
+Si un catálogo lo usa un solo módulo, vive dentro de ese módulo.
+Si varios módulos dependen del mismo catálogo, puede extraerse a un módulo de catálogos compartidos.
 ```
+
+Mientras un catálogo tenga un solo dueño funcional, no conviene separarlo. Extraerlo antes de tiempo genera un módulo artificial sin reglas propias.
+
+Los estados del sistema (estado de estudiante, estado de docente, estado de periodo, estado de oferta, estado de inscripción, estado de usuario, estado de sesión) no son catálogos. Son enums internos porque representan valores pequeños y estables que forman parte del comportamiento del sistema.
 
 ## Importación
 
@@ -186,21 +167,17 @@ Si en el futuro se importan muchas entidades y se necesita historial centralizad
 
 La auditoría no debe decidir reglas académicas ni reglas de acceso.
 
-Debe tratarse como una capacidad transversal.
+Se separa en dos piezas con responsabilidades distintas:
 
 ```txt
 platform/audit
-= registrar eventos auditables
-```
+= infraestructura técnica para registrar eventos auditables
 
-Si en el futuro se exponen endpoints para consultar auditoría, puede existir un módulo funcional de consulta:
-
-```txt
 modules/audit
-= consulta administrativa de eventos auditables
+= consulta administrativa y contratos funcionales de auditoría
 ```
 
-Pero el registro técnico transversal puede mantenerse en `platform/audit`.
+El registro técnico transversal vive en `platform/audit`. La exposición administrativa, filtros y contratos de consulta viven en `modules/audit`.
 
 Ejemplo correcto:
 
@@ -217,10 +194,10 @@ audit decide si una inscripción puede cancelarse
 
 ## Sesiones de usuario
 
-Las sesiones pertenecen funcionalmente a `auth`.
+Las sesiones pertenecen funcionalmente a `users`.
 
 ```txt
-modules/auth
+modules/users
 = creación, renovación y revocación de sesiones
 ```
 
@@ -230,7 +207,7 @@ La tabla conceptual puede ser:
 user_sessions
 ```
 
-Aunque usa JWT y soporte técnico de seguridad, la sesión representa un acceso autenticado del usuario. Por eso su regla funcional pertenece a `auth`.
+Aunque usa JWT y soporte técnico de seguridad, la sesión representa un acceso autenticado del usuario. Por eso su regla funcional pertenece a `users`, que también administra cuentas y credenciales.
 
 `platform/security` aporta herramientas técnicas para validar tokens o extraer el usuario autenticado, pero no administra las sesiones como capacidad funcional.
 
@@ -243,7 +220,7 @@ Evitar:
 ```txt
 enrollments importa repositories internos de students
 course-offerings importa infraestructura interna de professors
-auth modifica roles directamente sin pasar por una capacidad del módulo dueño
+users modifica roles directamente sin pasar por una capacidad del módulo dueño
 reports modifica datos de enrollments
 ```
 
@@ -258,11 +235,45 @@ Preferir:
 
 La colaboración debe ocurrir mediante capacidades claras.
 
-## Ejemplo: `auth`
+## Workers y fronteras
 
-`auth` debe encargarse de:
+Los workers son procesos asíncronos que se ejecutan fuera del flujo HTTP y consumen jobs y eventos. No son módulos, pero interactúan con ellos y deben respetar las mismas fronteras.
+
+Reglas:
 
 ```txt
+- Un worker no importa detalles internos de un módulo.
+- Un worker consume contratos públicos, casos de uso o servicios expuestos por el módulo dueño.
+- Un worker no contiene reglas de negocio; delega en el módulo correspondiente.
+- Un worker encola y publica a través de los contratos de Job Queue y Event Bus definidos en core.
+- Ningún módulo depende de workers. La dependencia va en una sola dirección: workers consumen módulos.
+```
+
+Ejemplo correcto:
+
+```txt
+worker de importación
+→ consume el caso de uso de importación de students
+→ students valida, persiste y decide
+```
+
+Ejemplo incorrecto:
+
+```txt
+worker de importación
+→ consulta directamente la tabla students
+→ aplica sus propias reglas de validación
+```
+
+Los módulos no saben que existen workers. Solo exponen capacidades y, cuando corresponde, encolan jobs o publican eventos a través de los contratos de `core`. El worker es un consumidor más, igual que un controlador HTTP, pero con un punto de entrada distinto.
+
+## Ejemplo: `users`
+
+`users` debe encargarse de:
+
+```txt
+- Crear y administrar cuentas de usuario.
+- Administrar credenciales.
 - Login.
 - Logout.
 - Refresh token.
@@ -274,40 +285,24 @@ La colaboración debe ocurrir mediante capacidades claras.
 No debe encargarse de:
 
 ```txt
-- Crear roles.
-- Crear permisos.
+- Crear roles o permisos.
 - Administrar estudiantes.
 - Definir reglas académicas.
+- Definir políticas de autorización fina.
 ```
 
-Puede consultar usuario, roles y permisos mediante capacidades de los módulos dueños.
+Puede consultar roles y permisos mediante capacidades del módulo `authorization`.
 
-## Ejemplo: `roles`
+## Ejemplo: `authorization`
 
-`roles` debe encargarse de:
+`authorization` debe encargarse de:
 
 ```txt
 - Crear roles.
 - Listar roles.
 - Actualizar roles.
-- Activar o desactivar roles.
-- Asignar roles a usuarios si esa responsabilidad se define ahí.
-```
-
-No debe encargarse de:
-
-```txt
-- Emitir tokens.
-- Validar contraseñas.
-- Registrar inscripciones.
-- Decidir reglas académicas.
-```
-
-## Ejemplo: `permissions`
-
-`permissions` debe encargarse de:
-
-```txt
+- Dar de baja roles no sistema.
+- Asignar roles a usuarios.
 - Listar permisos.
 - Agrupar permisos por módulo.
 - Asignar permisos a roles.
@@ -317,10 +312,14 @@ No debe encargarse de:
 No debe encargarse de:
 
 ```txt
+- Emitir tokens.
+- Validar contraseñas.
+- Crear sesiones.
 - Ejecutar guards.
 - Validar JWT.
 - Hash de contraseñas.
-- Crear sesiones.
+- Registrar inscripciones.
+- Decidir reglas académicas.
 ```
 
 ## Ejemplo: `enrollments`
@@ -345,7 +344,7 @@ Pero no debe adueñarse de:
 - Crear cursos.
 - Crear periodos académicos.
 - Crear docentes.
-- Definir catálogos globales.
+- Definir catálogos compartidos.
 - Administrar permisos.
 ```
 
@@ -412,12 +411,14 @@ StudentEligibilityChecker
 CourseOfferingAvailabilityChecker
 ProfessorFinder
 AcademicProgramFinder
+PersonFinder
 UserFinder
 UserCredentialsValidator
+SessionValidator
 RolePermissionResolver
 ```
 
-Esto evita que otros módulos importen repositorios, entidades internas o detalles de persistencia.
+Esto evita que otros módulos importen repositorios, entidades internas o detalles de persistencia. Los workers también consumen esta frontera pública cuando necesitan datos o decisiones de un módulo.
 
 ## Regla de ownership
 
@@ -426,6 +427,9 @@ Cada dato importante debe tener un dueño funcional.
 Ejemplos:
 
 ```txt
+identity
+= dueño de la identidad personal y de los tipos de documento
+
 students
 = dueño del estado académico del estudiante
 
@@ -438,20 +442,20 @@ enrollments
 academic-periods
 = dueño de fechas y estado del periodo
 
+courses
+= dueño del catálogo de cursos y de las categorías de curso
+
 users
-= dueño de cuentas y estado de usuario
+= dueño de cuentas, credenciales, sesiones y flujo de autenticación
 
-auth
-= dueño de sesiones y flujo de autenticación
-
-roles
-= dueño de roles
-
-permissions
-= dueño de permisos
+authorization
+= dueño de roles y permisos
 
 platform/audit
-= dueño del registro transversal de eventos
+= infraestructura técnica de registro de eventos
+
+modules/audit
+= consulta administrativa de auditoría
 ```
 
 Cuando un módulo necesita información de otro, debe solicitarla, no modificarla directamente.
@@ -468,7 +472,9 @@ Una frontera probablemente está rota si ocurre alguno de estos casos:
 - Un módulo técnico decide reglas de negocio.
 - Reports modifica datos.
 - Audit decide procesos académicos.
-- Platform/security administra roles o permisos como negocio.
+- Platform/security administra cuentas, roles o permisos como negocio.
+- Un worker contiene reglas de negocio o consulta tablas ajenas directamente.
+- Un módulo depende de un worker para funcionar.
 ```
 
 Cuando aparezcan estas señales, conviene revisar si falta un contrato o si una responsabilidad está en el módulo incorrecto.

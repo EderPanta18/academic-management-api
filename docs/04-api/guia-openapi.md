@@ -21,6 +21,7 @@ Debe incluir:
 - Esquemas de paginación.
 - Autenticación cuando aplique.
 - Permisos requeridos cuando la ruta sea protegida.
+- Operaciones asíncronas cuando aplique.
 ```
 
 No debe usarse para documentar reglas internas de arquitectura ni detalles de implementación.
@@ -32,11 +33,7 @@ Los endpoints deben agruparse por módulo o capacidad funcional.
 Ejemplos:
 
 ```txt
-Auth
-Users
-Roles
-Permissions
-Persons
+Identity
 Students
 Professors
 Academic Programs
@@ -44,11 +41,13 @@ Courses
 Academic Periods
 Course Offerings
 Enrollments
+Users
+Authorization
+Audit
 Reports
-Catalogs
 ```
 
-Los tags deben ayudar a navegar la documentación.
+Los tags deben ayudar a navegar la documentación. El tag agrupa por capacidad, no necesariamente por módulo. Los endpoints de autenticación pertenecen al módulo `users`, pero pueden exponerse bajo un tag `Auth` si ayuda a la lectura, o mantenerse bajo `Users`. Lo importante es que el consumidor encuentre los endpoints rápidamente.
 
 ## Summaries
 
@@ -66,6 +65,7 @@ Cancelar inscripción
 Listar permisos
 Asignar permisos a rol
 Cerrar sesión
+Consultar estado de importación
 ```
 
 El summary no debe ser demasiado largo.
@@ -101,6 +101,7 @@ courseOfferingId
 academicPeriodId
 roleId
 permissionId
+jobId
 ```
 
 ## Query params
@@ -137,8 +138,8 @@ Ejemplo:
 
 ```json
 {
-  "studentId": "student-001",
-  "courseOfferingId": "offering-001"
+    "studentId": "student-001",
+    "courseOfferingId": "offering-001"
 }
 ```
 
@@ -154,10 +155,10 @@ Ejemplo:
 
 ```json
 {
-  "id": "student-001",
-  "code": "STU-001",
-  "fullName": "Eder Panta",
-  "status": "ACTIVE"
+    "id": "student-001",
+    "code": "STU-001",
+    "fullName": "Eder Panta",
+    "status": "ACTIVE"
 }
 ```
 
@@ -171,15 +172,15 @@ Ejemplo:
 
 ```json
 {
-  "success": true,
-  "statusCode": 200,
-  "timestamp": "2026-06-14T10:30:00.000Z",
-  "path": "/api/v1/students/student-001",
-  "data": {
-    "id": "student-001",
-    "code": "STU-001",
-    "status": "ACTIVE"
-  }
+    "success": true,
+    "statusCode": 200,
+    "timestamp": "2026-06-14T10:30:00.000Z",
+    "path": "/api/v1/students/student-001",
+    "data": {
+        "id": "student-001",
+        "code": "STU-001",
+        "status": "ACTIVE"
+    }
 }
 ```
 
@@ -193,25 +194,85 @@ Ejemplo:
 
 ```json
 {
-  "success": true,
-  "statusCode": 200,
-  "timestamp": "2026-06-14T10:30:00.000Z",
-  "path": "/api/v1/students?page=1&limit=20",
-  "data": {
-    "items": [],
-    "meta": {
-      "page": 1,
-      "limit": 20,
-      "totalItems": 0,
-      "totalPages": 0,
-      "hasNextPage": false,
-      "hasPreviousPage": false
+    "success": true,
+    "statusCode": 200,
+    "timestamp": "2026-06-14T10:30:00.000Z",
+    "path": "/api/v1/students?page=1&limit=20",
+    "data": {
+        "items": [],
+        "meta": {
+            "page": 1,
+            "limit": 20,
+            "totalItems": 0,
+            "totalPages": 0,
+            "hasNextPage": false,
+            "hasPreviousPage": false
+        }
     }
-  }
 }
 ```
 
 El schema paginado puede ser genérico, pero debe permitir indicar el tipo de item.
+
+## Respuestas asíncronas
+
+Los endpoints que encolan trabajo y responden sin esperar el resultado deben documentarse con `202 Accepted`.
+
+Ejemplo:
+
+```json
+{
+    "success": true,
+    "statusCode": 202,
+    "timestamp": "2026-06-14T10:30:00.000Z",
+    "path": "/api/v1/students/import",
+    "data": {
+        "jobId": "job-001",
+        "status": "PENDING",
+        "message": "La importación fue encolada y será procesada en segundo plano."
+    }
+}
+```
+
+La documentación debe indicar:
+
+```txt
+- Que la operación es asíncrona.
+- Que el cliente recibe un jobId.
+- Qué endpoint permite consultar el estado.
+- Qué estados puede devolver el job.
+- Si la operación publica eventos o no.
+```
+
+El endpoint de consulta de estado también debe documentarse.
+
+Ejemplo:
+
+```txt
+GET /api/v1/students/imports/:jobId
+```
+
+Respuesta esperada:
+
+```json
+{
+    "success": true,
+    "statusCode": 200,
+    "timestamp": "2026-06-14T10:30:00.000Z",
+    "path": "/api/v1/students/imports/job-001",
+    "data": {
+        "jobId": "job-001",
+        "status": "COMPLETED_WITH_ERRORS",
+        "totalRows": 100,
+        "acceptedRows": 95,
+        "rejectedRows": 5,
+        "startedAt": "2026-06-14T10:28:00.000Z",
+        "finishedAt": "2026-06-14T10:30:00.000Z"
+    }
+}
+```
+
+No se debe documentar el worker ni la cola como parte del contrato HTTP. Lo único que el cliente ve es el `jobId` y el estado consultable.
 
 ## Respuestas de error
 
@@ -228,20 +289,22 @@ Como mínimo:
 500 Internal Server Error
 ```
 
+Para operaciones asíncronas puede ser útil documentar errores de encolado, aunque el procesamiento posterior se reporte por estado del job.
+
 Ejemplo de error:
 
 ```json
 {
-  "success": false,
-  "statusCode": 409,
-  "timestamp": "2026-06-14T10:30:00.000Z",
-  "path": "/api/v1/enrollments",
-  "error": {
-    "key": "COURSE_OFFERING_HAS_NO_SEATS",
-    "code": "ENR_004",
-    "message": "La oferta de curso no tiene cupos disponibles.",
-    "domain": "ENROLLMENT"
-  }
+    "success": false,
+    "statusCode": 409,
+    "timestamp": "2026-06-14T10:30:00.000Z",
+    "path": "/api/v1/enrollments",
+    "error": {
+        "key": "COURSE_OFFERING_HAS_NO_SEATS",
+        "code": "ENR_004",
+        "message": "La oferta de curso no tiene cupos disponibles.",
+        "domain": "ENROLLMENT"
+    }
 }
 ```
 
@@ -281,6 +344,8 @@ Esto permite que quien consume la documentación entienda no solo que necesita a
 
 La documentación no reemplaza al guard de permisos. Solo debe reflejar el contrato real de acceso.
 
+Los permisos no cambian según el nombre del módulo. Un permiso como `roles.assign-permissions` sigue siendo válido aunque roles y permisos vivan en el módulo `authorization`.
+
 ## Sesiones
 
 Las rutas relacionadas con autenticación deben documentar su relación con sesiones.
@@ -298,6 +363,8 @@ POST /api/v1/auth/refresh
 = renueva el access token si la sesión sigue activa
 ```
 
+Aunque el módulo que administra cuentas, credenciales y sesiones es `users`, las rutas de autenticación pueden exponerse bajo `/auth` por claridad. La documentación debe indicar la capacidad real y no confundir al consumidor con la organización interna del código.
+
 Los detalles sensibles del token o del hash no deben exponerse en OpenAPI.
 
 ## Consistencia entre documentación y ejecución
@@ -313,6 +380,8 @@ Evitar:
 - Documentar DTOs internos como si fueran respuestas públicas.
 - Documentar rutas protegidas sin indicar autenticación.
 - Documentar permisos que el endpoint no valida realmente.
+- Documentar operaciones asíncronas como si fueran síncronas.
+- Documentar el worker o la cola como parte del contrato HTTP.
 ```
 
 ## OpenAPI y módulos
@@ -322,6 +391,8 @@ Cada módulo puede tener decoradores o helpers propios para documentar sus endpo
 Los decoradores reutilizables pueden vivir en `shared` si son simples y no dependen de un módulo específico.
 
 La configuración global de Swagger debe vivir en infraestructura HTTP, dentro de `platform`.
+
+Los workers no se documentan en OpenAPI. No exponen endpoints. Su existencia se refleja indirectamente a través de las respuestas `202 Accepted` y los endpoints de consulta de estado.
 
 ## Ejemplos
 
@@ -335,6 +406,7 @@ Es especialmente útil para:
 - Logout.
 - Crear estudiante.
 - Importar estudiantes.
+- Consultar estado de importación.
 - Crear oferta de curso.
 - Registrar inscripción.
 - Cancelar inscripción.
@@ -357,6 +429,8 @@ Qué errores puede generar.
 Si requiere autenticación.
 Qué permisos requiere.
 Cómo se pagina o filtra.
+Si la operación es síncrona o asíncrona.
+Cómo se consulta el estado si es asíncrona.
 ```
 
 Si un endpoint no permite entender eso desde Swagger, la documentación está incompleta.

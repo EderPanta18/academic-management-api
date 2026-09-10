@@ -54,12 +54,12 @@ $$;
 
 CREATE TABLE IF NOT EXISTS document_types (
   id UUID PRIMARY KEY,
-  code VARCHAR(30) NOT NULL,
-  name VARCHAR(120) NOT NULL,
+  code VARCHAR(50) NOT NULL,
+  name VARCHAR(100) NOT NULL,
   description TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMP(3),
 
   CONSTRAINT uq_document_types_code UNIQUE (code),
   CONSTRAINT uq_document_types_name UNIQUE (name)
@@ -68,21 +68,22 @@ CREATE TABLE IF NOT EXISTS document_types (
 CREATE TABLE IF NOT EXISTS persons (
   id UUID PRIMARY KEY,
   document_type_id UUID NOT NULL,
-  document_number VARCHAR(30) NOT NULL,
-  first_name VARCHAR(120) NOT NULL,
-  last_name VARCHAR(120) NOT NULL,
-  email VARCHAR(180),
+  document_number VARCHAR(50) NOT NULL,
+  first_name VARCHAR(100) NOT NULL,
+  last_name VARCHAR(100) NOT NULL,
+  email VARCHAR(255),
   phone VARCHAR(30),
   birth_date DATE,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMP(3),
 
   CONSTRAINT fk_persons_document_type
     FOREIGN KEY (document_type_id)
     REFERENCES document_types (id),
 
-  CONSTRAINT uq_persons_document UNIQUE (document_type_id, document_number)
+  CONSTRAINT uq_persons_document UNIQUE (document_type_id, document_number),
+  CONSTRAINT uq_persons_email UNIQUE (email)
 );
 
 CREATE INDEX IF NOT EXISTS ix_persons_document_number
@@ -97,25 +98,28 @@ CREATE INDEX IF NOT EXISTS ix_persons_deleted_at
 
 CREATE TABLE IF NOT EXISTS academic_programs (
   id UUID PRIMARY KEY,
-  code VARCHAR(40) NOT NULL,
-  name VARCHAR(180) NOT NULL,
-  academic_unit VARCHAR(180),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
+  code VARCHAR(50) NOT NULL,
+  name VARCHAR(150) NOT NULL,
+  academic_unit VARCHAR(150),
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMP(3),
 
   CONSTRAINT uq_academic_programs_code UNIQUE (code),
   CONSTRAINT uq_academic_programs_name UNIQUE (name)
 );
 
+CREATE INDEX IF NOT EXISTS ix_academic_programs_deleted_at
+  ON academic_programs (deleted_at);
+
 CREATE TABLE IF NOT EXISTS course_categories (
   id UUID PRIMARY KEY,
-  code VARCHAR(40) NOT NULL,
-  name VARCHAR(160) NOT NULL,
+  code VARCHAR(50) NOT NULL,
+  name VARCHAR(100) NOT NULL,
   description TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMP(3),
 
   CONSTRAINT uq_course_categories_code UNIQUE (code),
   CONSTRAINT uq_course_categories_name UNIQUE (name)
@@ -125,14 +129,14 @@ CREATE TABLE IF NOT EXISTS courses (
   id UUID PRIMARY KEY,
   academic_program_id UUID NOT NULL,
   course_category_id UUID,
-  code VARCHAR(40) NOT NULL,
-  name VARCHAR(180) NOT NULL,
+  code VARCHAR(50) NOT NULL,
+  name VARCHAR(150) NOT NULL,
   description TEXT,
   credits INTEGER NOT NULL,
   hours INTEGER,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMP(3),
 
   CONSTRAINT fk_courses_academic_program
     FOREIGN KEY (academic_program_id)
@@ -142,29 +146,28 @@ CREATE TABLE IF NOT EXISTS courses (
     FOREIGN KEY (course_category_id)
     REFERENCES course_categories (id),
 
-  CONSTRAINT uq_courses_code UNIQUE (code),
-  CONSTRAINT ck_courses_credits_positive CHECK (credits > 0),
-  CONSTRAINT ck_courses_hours_positive CHECK (hours IS NULL OR hours > 0)
+  CONSTRAINT uq_courses_academic_program_code UNIQUE (academic_program_id, code),
+  CONSTRAINT ck_courses_credits_positive CHECK (credits > 0)
 );
 
-CREATE INDEX IF NOT EXISTS ix_courses_academic_program_id
-  ON courses (academic_program_id);
+CREATE INDEX IF NOT EXISTS ix_courses_code
+  ON courses (code);
 
-CREATE INDEX IF NOT EXISTS ix_courses_course_category_id
-  ON courses (course_category_id);
+CREATE INDEX IF NOT EXISTS ix_courses_deleted_at
+  ON courses (deleted_at);
 
 CREATE TABLE IF NOT EXISTS academic_periods (
   id UUID PRIMARY KEY,
-  code VARCHAR(40) NOT NULL,
-  name VARCHAR(160) NOT NULL,
+  code VARCHAR(50) NOT NULL,
+  name VARCHAR(150) NOT NULL,
   start_date DATE NOT NULL,
   end_date DATE NOT NULL,
   enrollment_start_date DATE,
   enrollment_end_date DATE,
   status academic_period_status NOT NULL DEFAULT 'PLANNED',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMP(3),
 
   CONSTRAINT uq_academic_periods_code UNIQUE (code),
   CONSTRAINT ck_academic_periods_dates CHECK (end_date >= start_date),
@@ -179,6 +182,9 @@ CREATE TABLE IF NOT EXISTS academic_periods (
 CREATE INDEX IF NOT EXISTS ix_academic_periods_status
   ON academic_periods (status);
 
+CREATE INDEX IF NOT EXISTS ix_academic_periods_deleted_at
+  ON academic_periods (deleted_at);
+
 -- ============================================================
 -- Academic actors
 -- ============================================================
@@ -187,13 +193,13 @@ CREATE TABLE IF NOT EXISTS students (
   id UUID PRIMARY KEY,
   person_id UUID NOT NULL,
   academic_program_id UUID NOT NULL,
-  code VARCHAR(40) NOT NULL,
-  institutional_email VARCHAR(180),
-  admission_period VARCHAR(40),
+  code VARCHAR(50) NOT NULL,
+  institutional_email VARCHAR(255),
+  admission_period VARCHAR(50),
   status student_status NOT NULL DEFAULT 'ACTIVE',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMP(3),
 
   CONSTRAINT fk_students_person
     FOREIGN KEY (person_id)
@@ -214,17 +220,20 @@ CREATE INDEX IF NOT EXISTS ix_students_academic_program_id
 CREATE INDEX IF NOT EXISTS ix_students_status
   ON students (status);
 
+CREATE INDEX IF NOT EXISTS ix_students_deleted_at
+  ON students (deleted_at);
+
 CREATE TABLE IF NOT EXISTS professors (
   id UUID PRIMARY KEY,
   person_id UUID NOT NULL,
-  code VARCHAR(40) NOT NULL,
-  institutional_email VARCHAR(180),
-  department VARCHAR(180),
-  specialty VARCHAR(180),
+  code VARCHAR(50) NOT NULL,
+  institutional_email VARCHAR(255),
+  department VARCHAR(100),
+  specialty VARCHAR(100),
   status professor_status NOT NULL DEFAULT 'ACTIVE',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMP(3),
 
   CONSTRAINT fk_professors_person
     FOREIGN KEY (person_id)
@@ -235,8 +244,8 @@ CREATE TABLE IF NOT EXISTS professors (
   CONSTRAINT uq_professors_institutional_email UNIQUE (institutional_email)
 );
 
-CREATE INDEX IF NOT EXISTS ix_professors_status
-  ON professors (status);
+CREATE INDEX IF NOT EXISTS ix_professors_deleted_at
+  ON professors (deleted_at);
 
 -- ============================================================
 -- Access and security
@@ -245,13 +254,13 @@ CREATE INDEX IF NOT EXISTS ix_professors_status
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY,
   person_id UUID,
-  email VARCHAR(180) NOT NULL,
+  email VARCHAR(255) NOT NULL,
   password_hash TEXT NOT NULL,
   status user_status NOT NULL DEFAULT 'ACTIVE',
-  last_login_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
+  last_login_at TIMESTAMP(3),
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMP(3),
 
   CONSTRAINT fk_users_person
     FOREIGN KEY (person_id)
@@ -261,18 +270,18 @@ CREATE TABLE IF NOT EXISTS users (
   CONSTRAINT uq_users_email UNIQUE (email)
 );
 
-CREATE INDEX IF NOT EXISTS ix_users_status
-  ON users (status);
+CREATE INDEX IF NOT EXISTS ix_users_deleted_at
+  ON users (deleted_at);
 
 CREATE TABLE IF NOT EXISTS roles (
   id UUID PRIMARY KEY,
-  code VARCHAR(60) NOT NULL,
-  name VARCHAR(120) NOT NULL,
+  code VARCHAR(100) NOT NULL,
+  name VARCHAR(100) NOT NULL,
   description TEXT,
   is_system BOOLEAN NOT NULL DEFAULT FALSE,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMP(3),
 
   CONSTRAINT uq_roles_code UNIQUE (code),
   CONSTRAINT uq_roles_name UNIQUE (name)
@@ -280,26 +289,23 @@ CREATE TABLE IF NOT EXISTS roles (
 
 CREATE TABLE IF NOT EXISTS permissions (
   id UUID PRIMARY KEY,
-  code VARCHAR(120) NOT NULL,
-  name VARCHAR(160) NOT NULL,
+  code VARCHAR(150) NOT NULL,
+  name VARCHAR(150) NOT NULL,
   description TEXT,
-  module VARCHAR(80) NOT NULL,
+  module VARCHAR(100) NOT NULL,
   is_system BOOLEAN NOT NULL DEFAULT FALSE,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMP(3),
 
   CONSTRAINT uq_permissions_code UNIQUE (code)
 );
-
-CREATE INDEX IF NOT EXISTS ix_permissions_module
-  ON permissions (module);
 
 CREATE TABLE IF NOT EXISTS user_roles (
   user_id UUID NOT NULL,
   role_id UUID NOT NULL,
   assigned_by_user_id UUID,
-  assigned_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  assigned_at TIMESTAMP(3) NOT NULL DEFAULT now(),
 
   CONSTRAINT pk_user_roles PRIMARY KEY (user_id, role_id),
 
@@ -325,7 +331,7 @@ CREATE TABLE IF NOT EXISTS role_permissions (
   role_id UUID NOT NULL,
   permission_id UUID NOT NULL,
   assigned_by_user_id UUID,
-  assigned_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  assigned_at TIMESTAMP(3) NOT NULL DEFAULT now(),
 
   CONSTRAINT pk_role_permissions PRIMARY KEY (role_id, permission_id),
 
@@ -351,15 +357,15 @@ CREATE TABLE IF NOT EXISTS user_sessions (
   id UUID PRIMARY KEY,
   user_id UUID NOT NULL,
   refresh_token_hash TEXT,
-  access_token_jti VARCHAR(160),
-  device_name VARCHAR(160),
-  ip_address VARCHAR(80),
+  access_token_jti VARCHAR(255),
+  device_name VARCHAR(255),
+  ip_address VARCHAR(64),
   user_agent TEXT,
   status session_status NOT NULL DEFAULT 'ACTIVE',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  expires_at TIMESTAMPTZ NOT NULL,
-  revoked_at TIMESTAMPTZ,
-  last_used_at TIMESTAMPTZ,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  expires_at TIMESTAMP(3) NOT NULL,
+  revoked_at TIMESTAMP(3),
+  last_used_at TIMESTAMP(3),
 
   CONSTRAINT fk_user_sessions_user
     FOREIGN KEY (user_id)
@@ -389,13 +395,13 @@ CREATE TABLE IF NOT EXISTS course_offerings (
   course_id UUID NOT NULL,
   academic_period_id UUID NOT NULL,
   professor_id UUID,
-  section VARCHAR(30) NOT NULL,
+  section VARCHAR(20) NOT NULL,
   max_capacity INTEGER NOT NULL,
   available_capacity INTEGER,
   status course_offering_status NOT NULL DEFAULT 'DRAFT',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMP(3),
 
   CONSTRAINT fk_course_offerings_course
     FOREIGN KEY (course_id)
@@ -431,17 +437,20 @@ CREATE INDEX IF NOT EXISTS ix_course_offerings_professor_id
 CREATE INDEX IF NOT EXISTS ix_course_offerings_status
   ON course_offerings (status);
 
+CREATE INDEX IF NOT EXISTS ix_course_offerings_deleted_at
+  ON course_offerings (deleted_at);
+
 CREATE TABLE IF NOT EXISTS enrollments (
   id UUID PRIMARY KEY,
   student_id UUID NOT NULL,
   course_offering_id UUID NOT NULL,
   status enrollment_status NOT NULL DEFAULT 'ENROLLED',
-  enrolled_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  enrolled_at TIMESTAMP(3) NOT NULL DEFAULT now(),
   registered_by_user_id UUID,
   status_reason TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMP(3),
 
   CONSTRAINT fk_enrollments_student
     FOREIGN KEY (student_id)
@@ -468,6 +477,9 @@ CREATE INDEX IF NOT EXISTS ix_enrollments_course_offering_id
 CREATE INDEX IF NOT EXISTS ix_enrollments_status
   ON enrollments (status);
 
+CREATE INDEX IF NOT EXISTS ix_enrollments_deleted_at
+  ON enrollments (deleted_at);
+
 CREATE TABLE IF NOT EXISTS enrollment_status_logs (
   id UUID PRIMARY KEY,
   enrollment_id UUID NOT NULL,
@@ -475,7 +487,7 @@ CREATE TABLE IF NOT EXISTS enrollment_status_logs (
   new_status enrollment_status NOT NULL,
   reason TEXT,
   changed_by_user_id UUID,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
 
   CONSTRAINT fk_enrollment_status_logs_enrollment
     FOREIGN KEY (enrollment_id)
@@ -490,9 +502,6 @@ CREATE TABLE IF NOT EXISTS enrollment_status_logs (
 CREATE INDEX IF NOT EXISTS ix_enrollment_status_logs_enrollment_id
   ON enrollment_status_logs (enrollment_id);
 
-CREATE INDEX IF NOT EXISTS ix_enrollment_status_logs_created_at
-  ON enrollment_status_logs (created_at);
-
 -- ============================================================
 -- Audit
 -- ============================================================
@@ -500,15 +509,15 @@ CREATE INDEX IF NOT EXISTS ix_enrollment_status_logs_created_at
 CREATE TABLE IF NOT EXISTS audit_logs (
   id UUID PRIMARY KEY,
   actor_user_id UUID,
-  action VARCHAR(120) NOT NULL,
-  resource_type VARCHAR(120) NOT NULL,
-  resource_id VARCHAR(120),
-  module VARCHAR(80),
+  action VARCHAR(100) NOT NULL,
+  resource_type VARCHAR(100) NOT NULL,
+  resource_id VARCHAR(100),
+  module VARCHAR(100),
   description TEXT,
   metadata JSONB,
-  ip_address VARCHAR(80),
+  ip_address VARCHAR(64),
   user_agent TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
 
   CONSTRAINT fk_audit_logs_actor_user
     FOREIGN KEY (actor_user_id)
@@ -518,11 +527,11 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 CREATE INDEX IF NOT EXISTS ix_audit_logs_actor_user_id
   ON audit_logs (actor_user_id);
 
-CREATE INDEX IF NOT EXISTS ix_audit_logs_resource
-  ON audit_logs (resource_type, resource_id);
+CREATE INDEX IF NOT EXISTS ix_audit_logs_resource_type
+  ON audit_logs (resource_type);
 
-CREATE INDEX IF NOT EXISTS ix_audit_logs_module
-  ON audit_logs (module);
+CREATE INDEX IF NOT EXISTS ix_audit_logs_resource_id
+  ON audit_logs (resource_id);
 
 CREATE INDEX IF NOT EXISTS ix_audit_logs_created_at
   ON audit_logs (created_at);
@@ -534,8 +543,8 @@ CREATE INDEX IF NOT EXISTS ix_audit_logs_created_at
 CREATE TABLE IF NOT EXISTS student_imports (
   id UUID PRIMARY KEY,
   file_name VARCHAR(255) NOT NULL,
-  file_size BIGINT,
-  file_mime_type VARCHAR(120),
+  file_size INTEGER,
+  file_mime_type VARCHAR(150),
   status import_status NOT NULL DEFAULT 'PENDING',
   total_rows INTEGER NOT NULL DEFAULT 0,
   processed_rows INTEGER NOT NULL DEFAULT 0,
@@ -544,9 +553,9 @@ CREATE TABLE IF NOT EXISTS student_imports (
   duplicated_rows INTEGER NOT NULL DEFAULT 0,
   observed_rows INTEGER NOT NULL DEFAULT 0,
   created_by_user_id UUID,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  started_at TIMESTAMPTZ,
-  finished_at TIMESTAMPTZ,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
+  started_at TIMESTAMP(3),
+  finished_at TIMESTAMP(3),
 
   CONSTRAINT fk_student_imports_created_by_user
     FOREIGN KEY (created_by_user_id)
@@ -586,7 +595,7 @@ CREATE TABLE IF NOT EXISTS student_import_rows (
   field_errors JSONB,
   created_student_id UUID,
   updated_student_id UUID,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_at TIMESTAMP(3) NOT NULL DEFAULT now(),
 
   CONSTRAINT fk_student_import_rows_student_import
     FOREIGN KEY (student_import_id)
@@ -616,6 +625,3 @@ CREATE INDEX IF NOT EXISTS ix_student_import_rows_status
 
 CREATE INDEX IF NOT EXISTS ix_student_import_rows_created_student_id
   ON student_import_rows (created_student_id);
-
-CREATE INDEX IF NOT EXISTS ix_student_import_rows_updated_student_id
-  ON student_import_rows (updated_student_id);
