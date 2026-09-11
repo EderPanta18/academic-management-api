@@ -1,2 +1,2 @@
-export * from './identity-relation.errors';
-export * from './identity-uniqueness.errors';
+export * from './person-relation.errors';
+export * from './person-uniqueness.errors';

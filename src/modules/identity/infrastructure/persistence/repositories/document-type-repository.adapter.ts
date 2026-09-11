@@ -10,6 +10,7 @@ export class DocumentTypeRepository implements IDocumentTypeRepository {
     const count = await this.prisma.documentType.count({
       where: {
         id,
+        deletedAt: null,
       },
     });
 

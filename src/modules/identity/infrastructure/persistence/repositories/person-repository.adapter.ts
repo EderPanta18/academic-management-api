@@ -16,6 +16,7 @@ export class PersonRepository implements IPersonRepository {
       where: {
         documentTypeId,
         documentNumber,
+        deletedAt: null,
       },
     });
 
@@ -26,6 +27,7 @@ export class PersonRepository implements IPersonRepository {
     const count = await this.prisma.person.count({
       where: {
         email,
+        deletedAt: null,
       },
     });
 
@@ -36,20 +38,10 @@ export class PersonRepository implements IPersonRepository {
     const count = await this.prisma.person.count({
       where: {
         phone,
+        deletedAt: null,
       },
     });
 
     return count > 0;
-  }
-
-  async isDeleted(id: string): Promise<boolean> {
-    const record = await this.prisma.person.findUnique({
-      where: { id },
-      select: {
-        deletedAt: true,
-      },
-    });
-
-    return !!record?.deletedAt;
   }
 }

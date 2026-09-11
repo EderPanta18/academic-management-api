@@ -6,6 +6,4 @@ export interface IPersonRepository {
   existsByEmail(email: string): Promise<boolean>;
 
   existsByPhone(phone: string): Promise<boolean>;
-
-  isDeleted(id: string): Promise<boolean>;
 }
