@@ -25,7 +25,7 @@ export class PersonCreationValidator implements IPersonCreationValidator {
   ) {}
 
   async validate(input: PersonUniquenessCheckInput): Promise<void> {
-    const documentTypeExists = await this.documentTypeRepository.existsById(input.documentTypeId);
+    const documentTypeExists = await this.documentTypeRepository.exists(input.documentTypeId);
 
     if (!documentTypeExists) throw new PersonDocumentTypeNotFoundException(input.documentTypeId);
 

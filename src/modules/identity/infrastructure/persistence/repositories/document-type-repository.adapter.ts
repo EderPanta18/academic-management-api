@@ -6,7 +6,7 @@ import { PrismaService } from '@platform/database';
 export class DocumentTypeRepository implements IDocumentTypeRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async existsById(id: string): Promise<boolean> {
+  async exists(id: string): Promise<boolean> {
     const count = await this.prisma.documentType.count({
       where: {
         id,
