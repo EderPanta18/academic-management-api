@@ -9,8 +9,6 @@ export type CreatePaginationProps = {
 };
 
 export class PaginationVO {
-  private static readonly VALIDATION_ERROR_MESSAGE = 'Los parámetros de paginación no son válidos.';
-
   readonly page: number;
   readonly limit: number;
 
@@ -49,7 +47,7 @@ export class PaginationVO {
       });
 
     if (errors.length > 0)
-      throw new ValidationException(PaginationVO.VALIDATION_ERROR_MESSAGE, errors);
+      throw new ValidationException('Los parámetros de paginación no son válidos.', errors);
   }
 
   get offset(): number {

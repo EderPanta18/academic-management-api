@@ -2,6 +2,6 @@
 
 export const ID_GENERATOR_TOKEN = Symbol('ID_GENERATOR');
 
-export interface IdGenerator {
+export interface IIdGenerator {
   generate(): string;
 }

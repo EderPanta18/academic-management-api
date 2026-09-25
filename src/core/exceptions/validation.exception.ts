@@ -10,8 +10,9 @@ export type FieldError = {
 export class ValidationException extends AppException {
   readonly kind = 'VALIDATION';
   readonly statusCode = 400;
-  readonly errorKey = 'VALIDATION_ERROR';
-  readonly errorCode = 'VAL_001';
+  readonly errorKey: string = 'VALIDATION_ERROR';
+  readonly errorCode: string = 'VAL_001';
+
   readonly fieldErrors: FieldError[];
 
   constructor(message: string, fieldErrors: FieldError[] = [], cause?: unknown) {
