@@ -57,7 +57,7 @@ enum SessionStatus {
   EXPIRED
 }
 
-enum ImportStatus {
+enum StudentImportStatus {
   PENDING
   PROCESSING
   COMPLETED
@@ -65,7 +65,7 @@ enum ImportStatus {
   FAILED
 }
 
-enum ImportRowStatus {
+enum StudentImportRowStatus {
   ACCEPTED
   REJECTED
   DUPLICATED
@@ -447,9 +447,10 @@ model AuditLog {
 model StudentImport {
   id              String         @id @default(uuid()) @db.Uuid
   fileName        String         @db.VarChar(255)
+  fileContent     Bytes          @db.ByteA
   fileSize        Int?
   fileMimeType    String?        @db.VarChar(150)
-  status          ImportStatus
+  status          StudentImportStatus
   totalRows       Int
   processedRows   Int
   acceptedRows    Int
@@ -458,9 +459,10 @@ model StudentImport {
   observedRows    Int
   createdByUserId String?        @db.Uuid
 
-  createdAt       DateTime       @default(now())
   startedAt       DateTime?
   finishedAt      DateTime?
+
+  createdAt       DateTime       @default(now())
 
   createdByUser   User?          @relation("CreatedStudentImports", fields: [createdByUserId], references: [id])
   rows            StudentImportRow[]
@@ -477,7 +479,7 @@ model StudentImportRow {
   rowNumber        Int
   rawData          Json
   normalizedData   Json?
-  status           ImportRowStatus
+  status           StudentImportRowStatus
   errorSummary     String?         @db.Text
   fieldErrors      Json?
   createdStudentId String?         @db.Uuid

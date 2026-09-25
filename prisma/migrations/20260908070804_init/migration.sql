@@ -20,10 +20,10 @@ CREATE TYPE "UserStatus" AS ENUM ('ACTIVE', 'INACTIVE', 'BLOCKED');
 CREATE TYPE "SessionStatus" AS ENUM ('ACTIVE', 'REVOKED', 'EXPIRED');
 
 -- CreateEnum
-CREATE TYPE "ImportStatus" AS ENUM ('PENDING', 'PROCESSING', 'COMPLETED', 'COMPLETED_WITH_ERRORS', 'FAILED');
+CREATE TYPE "StudentImportStatus" AS ENUM ('PENDING', 'PROCESSING', 'COMPLETED', 'COMPLETED_WITH_ERRORS', 'FAILED');
 
 -- CreateEnum
-CREATE TYPE "ImportRowStatus" AS ENUM ('ACCEPTED', 'REJECTED', 'DUPLICATED', 'OBSERVED', 'UPDATED');
+CREATE TYPE "StudentImportRowStatus" AS ENUM ('ACCEPTED', 'REJECTED', 'DUPLICATED', 'OBSERVED', 'UPDATED');
 
 -- CreateTable
 CREATE TABLE "document_types" (
@@ -294,7 +294,7 @@ CREATE TABLE "student_imports" (
     "fileName" VARCHAR(255) NOT NULL,
     "fileSize" INTEGER,
     "fileMimeType" VARCHAR(150),
-    "status" "ImportStatus" NOT NULL,
+    "status" "StudentImportStatus" NOT NULL,
     "totalRows" INTEGER NOT NULL,
     "processedRows" INTEGER NOT NULL,
     "acceptedRows" INTEGER NOT NULL,
@@ -316,7 +316,7 @@ CREATE TABLE "student_import_rows" (
     "rowNumber" INTEGER NOT NULL,
     "rawData" JSONB NOT NULL,
     "normalizedData" JSONB,
-    "status" "ImportRowStatus" NOT NULL,
+    "status" "StudentImportRowStatus" NOT NULL,
     "errorSummary" TEXT,
     "fieldErrors" JSONB,
     "createdStudentId" UUID,
