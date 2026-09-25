@@ -1,7 +1,7 @@
 // platform/http/http-setup.ts
 
 import type { INestApplication } from '@nestjs/common';
-import { AppConfigService } from '@platform/config';
+import { AppConfigService } from '../config';
 import { type SwaggerTag, setupSwagger } from './swagger';
 
 export type HttpSetupOptions = {

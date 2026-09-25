@@ -65,42 +65,37 @@ class EnvironmentVariablesClass {
 
   @Type(() => Number)
   @IsInt()
-  @Min(1)
-  QUEUE_WORKER_CONCURRENCY!: number;
+  @Min(0)
+  QUEUE_RETRY_LIMIT!: number;
 
   @Type(() => Number)
   @IsInt()
   @Min(0)
-  QUEUE_JOB_RETRY_LIMIT!: number;
-
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  QUEUE_JOB_RETRY_DELAY_MS!: number;
+  QUEUE_RETRY_DELAY_MS!: number;
 
   @Transform(({ value }) => value === true || value === 'true')
   @IsBoolean()
-  QUEUE_JOB_RETRY_BACKOFF!: boolean;
+  QUEUE_RETRY_BACKOFF!: boolean;
 
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  QUEUE_JOB_EXPIRE_IN_MINUTES!: number;
+  QUEUE_EXPIRE_IN_MINUTES!: number;
 
   @Type(() => Number)
   @IsInt()
   @Min(0)
-  QUEUE_JOB_ARCHIVE_COMPLETED_AFTER_DAYS!: number;
+  QUEUE_ARCHIVE_COMPLETED_AFTER_DAYS!: number;
 
   @Type(() => Number)
   @IsInt()
   @Min(0)
-  QUEUE_JOB_ARCHIVE_FAILED_AFTER_DAYS!: number;
+  QUEUE_ARCHIVE_FAILED_AFTER_DAYS!: number;
 
   @Type(() => Number)
   @IsInt()
-  @Min(0)
-  QUEUE_EVENT_RETRY_LIMIT!: number;
+  @Min(1)
+  QUEUE_JOB_CONCURRENCY!: number;
 
   @Type(() => Number)
   @IsInt()
@@ -170,15 +165,6 @@ class EnvironmentVariablesClass {
   @IsString()
   @IsNotEmpty()
   ADMIN_LAST_NAME!: string;
-
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  UPLOAD_MAX_FILE_SIZE!: number;
-
-  @IsString()
-  @IsNotEmpty()
-  UPLOAD_ALLOWED_MIME_TYPES!: string;
 }
 
 function formatValidationErrors(errors: ValidationError[]): string {
@@ -205,42 +191,48 @@ export function validateEnvironment(rawConfig: Record<string, unknown>): Environ
 
   return {
     NODE_ENV: validated.NODE_ENV,
+
     APP_PORT: validated.APP_PORT,
     APP_NAME: validated.APP_NAME,
     APP_DESCRIPTION: validated.APP_DESCRIPTION,
     APP_VERSION: validated.APP_VERSION,
     API_PREFIX: validated.API_PREFIX,
+
     LOG_LEVEL: validated.LOG_LEVEL,
+
     DATABASE_URL: validated.DATABASE_URL,
     DIRECT_DATABASE_URL: validated.DIRECT_DATABASE_URL,
     DATABASE_LOG_QUERIES: validated.DATABASE_LOG_QUERIES,
+
     QUEUE_SCHEMA: validated.QUEUE_SCHEMA,
-    QUEUE_WORKER_CONCURRENCY: validated.QUEUE_WORKER_CONCURRENCY,
-    QUEUE_JOB_RETRY_LIMIT: validated.QUEUE_JOB_RETRY_LIMIT,
-    QUEUE_JOB_RETRY_DELAY_MS: validated.QUEUE_JOB_RETRY_DELAY_MS,
-    QUEUE_JOB_RETRY_BACKOFF: validated.QUEUE_JOB_RETRY_BACKOFF,
-    QUEUE_JOB_EXPIRE_IN_MINUTES: validated.QUEUE_JOB_EXPIRE_IN_MINUTES,
-    QUEUE_JOB_ARCHIVE_COMPLETED_AFTER_DAYS: validated.QUEUE_JOB_ARCHIVE_COMPLETED_AFTER_DAYS,
-    QUEUE_JOB_ARCHIVE_FAILED_AFTER_DAYS: validated.QUEUE_JOB_ARCHIVE_FAILED_AFTER_DAYS,
-    QUEUE_EVENT_RETRY_LIMIT: validated.QUEUE_EVENT_RETRY_LIMIT,
+    QUEUE_RETRY_LIMIT: validated.QUEUE_RETRY_LIMIT,
+    QUEUE_RETRY_DELAY_MS: validated.QUEUE_RETRY_DELAY_MS,
+    QUEUE_RETRY_BACKOFF: validated.QUEUE_RETRY_BACKOFF,
+    QUEUE_EXPIRE_IN_MINUTES: validated.QUEUE_EXPIRE_IN_MINUTES,
+    QUEUE_ARCHIVE_COMPLETED_AFTER_DAYS: validated.QUEUE_ARCHIVE_COMPLETED_AFTER_DAYS,
+    QUEUE_ARCHIVE_FAILED_AFTER_DAYS: validated.QUEUE_ARCHIVE_FAILED_AFTER_DAYS,
+    QUEUE_JOB_CONCURRENCY: validated.QUEUE_JOB_CONCURRENCY,
     QUEUE_EVENT_CONCURRENCY: validated.QUEUE_EVENT_CONCURRENCY,
+
     JWT_ACCESS_NAME: validated.JWT_ACCESS_NAME,
     JWT_ACCESS_SECRET: validated.JWT_ACCESS_SECRET,
     JWT_ACCESS_EXPIRES_IN: validated.JWT_ACCESS_EXPIRES_IN,
     JWT_REFRESH_NAME: validated.JWT_REFRESH_NAME,
     JWT_REFRESH_SECRET: validated.JWT_REFRESH_SECRET,
     JWT_REFRESH_EXPIRES_IN: validated.JWT_REFRESH_EXPIRES_IN,
+
     AUTH_SINGLE_SESSION: validated.AUTH_SINGLE_SESSION,
     AUTH_REFRESH_TOKEN_ROTATION: validated.AUTH_REFRESH_TOKEN_ROTATION,
+
     CORS_ORIGINS: validated.CORS_ORIGINS,
     CORS_CREDENTIALS: validated.CORS_CREDENTIALS,
+
     OPENAPI_ENABLED: validated.OPENAPI_ENABLED,
     OPENAPI_PATH: validated.OPENAPI_PATH,
+
     ADMIN_EMAIL: validated.ADMIN_EMAIL,
     ADMIN_PASSWORD: validated.ADMIN_PASSWORD,
     ADMIN_FIRST_NAME: validated.ADMIN_FIRST_NAME,
     ADMIN_LAST_NAME: validated.ADMIN_LAST_NAME,
-    UPLOAD_MAX_FILE_SIZE: validated.UPLOAD_MAX_FILE_SIZE,
-    UPLOAD_ALLOWED_MIME_TYPES: validated.UPLOAD_ALLOWED_MIME_TYPES,
   };
 }

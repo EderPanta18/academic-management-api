@@ -21,17 +21,16 @@ export type AppConfig = {
   };
   queue: {
     schema: string;
-    workerConcurrency: number;
+    retryLimit: number;
+    retryDelayMs: number;
+    retryBackoff: boolean;
+    expireInMinutes: number;
+    archiveCompletedAfterDays: number;
+    archiveFailedAfterDays: number;
     job: {
-      retryLimit: number;
-      retryDelayMs: number;
-      retryBackoff: boolean;
-      expireInMinutes: number;
-      archiveCompletedAfterDays: number;
-      archiveFailedAfterDays: number;
+      concurrency: number;
     };
     event: {
-      retryLimit: number;
       concurrency: number;
     };
   };
@@ -65,10 +64,6 @@ export type AppConfig = {
     firstName: string;
     lastName: string;
   };
-  upload: {
-    maxFileSize: number;
-    allowedMimeTypes: string[];
-  };
 };
 
 export function buildAppConfig(env: EnvironmentVariables): AppConfig {
@@ -91,17 +86,16 @@ export function buildAppConfig(env: EnvironmentVariables): AppConfig {
     },
     queue: {
       schema: env.QUEUE_SCHEMA,
-      workerConcurrency: env.QUEUE_WORKER_CONCURRENCY,
+      retryLimit: env.QUEUE_RETRY_LIMIT,
+      retryDelayMs: env.QUEUE_RETRY_DELAY_MS,
+      retryBackoff: env.QUEUE_RETRY_BACKOFF,
+      expireInMinutes: env.QUEUE_EXPIRE_IN_MINUTES,
+      archiveCompletedAfterDays: env.QUEUE_ARCHIVE_COMPLETED_AFTER_DAYS,
+      archiveFailedAfterDays: env.QUEUE_ARCHIVE_FAILED_AFTER_DAYS,
       job: {
-        retryLimit: env.QUEUE_JOB_RETRY_LIMIT,
-        retryDelayMs: env.QUEUE_JOB_RETRY_DELAY_MS,
-        retryBackoff: env.QUEUE_JOB_RETRY_BACKOFF,
-        expireInMinutes: env.QUEUE_JOB_EXPIRE_IN_MINUTES,
-        archiveCompletedAfterDays: env.QUEUE_JOB_ARCHIVE_COMPLETED_AFTER_DAYS,
-        archiveFailedAfterDays: env.QUEUE_JOB_ARCHIVE_FAILED_AFTER_DAYS,
+        concurrency: env.QUEUE_JOB_CONCURRENCY,
       },
       event: {
-        retryLimit: env.QUEUE_EVENT_RETRY_LIMIT,
         concurrency: env.QUEUE_EVENT_CONCURRENCY,
       },
     },
@@ -136,12 +130,6 @@ export function buildAppConfig(env: EnvironmentVariables): AppConfig {
       password: env.ADMIN_PASSWORD,
       firstName: env.ADMIN_FIRST_NAME,
       lastName: env.ADMIN_LAST_NAME,
-    },
-    upload: {
-      maxFileSize: env.UPLOAD_MAX_FILE_SIZE,
-      allowedMimeTypes: env.UPLOAD_ALLOWED_MIME_TYPES.split(',')
-        .map((s) => s.trim())
-        .filter(Boolean),
     },
   };
 }

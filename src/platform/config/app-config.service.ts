@@ -41,10 +41,6 @@ export class AppConfigService {
     return this.configService.get('admin', { infer: true });
   }
 
-  get upload() {
-    return this.configService.get('upload', { infer: true });
-  }
-
   get log() {
     return this.configService.get('log', { infer: true });
   }

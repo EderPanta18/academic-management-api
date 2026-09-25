@@ -25,16 +25,15 @@ export type EnvironmentVariables = {
 
   // Queue (PgBoss sobre PostgreSQL)
   QUEUE_SCHEMA: string;
-  QUEUE_WORKER_CONCURRENCY: number;
 
-  QUEUE_JOB_RETRY_LIMIT: number;
-  QUEUE_JOB_RETRY_DELAY_MS: number;
-  QUEUE_JOB_RETRY_BACKOFF: boolean;
-  QUEUE_JOB_EXPIRE_IN_MINUTES: number;
-  QUEUE_JOB_ARCHIVE_COMPLETED_AFTER_DAYS: number;
-  QUEUE_JOB_ARCHIVE_FAILED_AFTER_DAYS: number;
+  QUEUE_RETRY_LIMIT: number;
+  QUEUE_RETRY_DELAY_MS: number;
+  QUEUE_RETRY_BACKOFF: boolean;
+  QUEUE_EXPIRE_IN_MINUTES: number;
+  QUEUE_ARCHIVE_COMPLETED_AFTER_DAYS: number;
+  QUEUE_ARCHIVE_FAILED_AFTER_DAYS: number;
 
-  QUEUE_EVENT_RETRY_LIMIT: number;
+  QUEUE_JOB_CONCURRENCY: number;
   QUEUE_EVENT_CONCURRENCY: number;
 
   // JWT
@@ -63,8 +62,4 @@ export type EnvironmentVariables = {
   ADMIN_PASSWORD: string;
   ADMIN_FIRST_NAME: string;
   ADMIN_LAST_NAME: string;
-
-  // Upload
-  UPLOAD_MAX_FILE_SIZE: number;
-  UPLOAD_ALLOWED_MIME_TYPES: string;
 };
