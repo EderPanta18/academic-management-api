@@ -8,6 +8,6 @@ export class PersonDocumentTypeNotFoundException extends PersonException {
   readonly errorCode = 'PER_RELATION_001';
 
   constructor(documentTypeId: string) {
-    super(`Tipo de documento con id "${documentTypeId}" no se encontró.`);
+    super(`No se encontró un tipo de documento con el id "${documentTypeId}".`);
   }
 }

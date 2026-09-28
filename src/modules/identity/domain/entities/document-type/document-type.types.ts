@@ -1,13 +1,13 @@
-export interface DocumentTypeProps {
+export type DocumentTypeProps = {
   id: string;
   code: string;
   name: string;
   description: string | null;
-}
+};
 
-export interface CreateDocumentTypeProps {
+export type CreateDocumentTypeProps = {
   id: string;
   code: string;
   name: string;
   description?: string | null;
-}
+};

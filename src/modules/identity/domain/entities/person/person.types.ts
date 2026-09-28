@@ -1,4 +1,4 @@
-export interface PersonProps {
+export type PersonProps = {
   id: string;
   documentTypeId: string;
   documentNumber: string;
@@ -7,9 +7,9 @@ export interface PersonProps {
   email: string;
   phone: string | null;
   birthDate: Date | null;
-}
+};
 
-export interface CreatePersonProps {
+export type CreatePersonProps = {
   id: string;
   documentTypeId: string;
   documentNumber: string;
@@ -18,4 +18,4 @@ export interface CreatePersonProps {
   email: string;
   phone?: string | null;
   birthDate?: Date | null;
-}
+};
