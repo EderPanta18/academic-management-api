@@ -1,13 +1,13 @@
-export interface AcademicProgramProps {
+export type AcademicProgramProps = {
   id: string;
   code: string;
   name: string;
   academicUnit: string | null;
-}
+};
 
-export interface CreateAcademicProgramProps {
+export type CreateAcademicProgramProps = {
   id: string;
   code: string;
   name: string;
   academicUnit?: string | null;
-}
+};
