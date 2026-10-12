@@ -1,20 +1,21 @@
-// modules/students/domain/entities/student/student.types.ts
-
-import { StudentStatus } from '@students/domain/constants';
+import type { StudentStatus } from '@students/domain/enums';
 
 export interface StudentProps {
-  id: number;
-  careerId: number;
+  id: string;
+  personId: string;
+  academicProgramId: string;
   code: string;
   institutionalEmail: string | null;
-  enrollmentDate: Date;
+  admissionPeriod: string | null;
   status: StudentStatus;
 }
 
 export interface CreateStudentProps {
-  careerId: number;
+  id: string;
+  personId: string;
+  academicProgramId: string;
   code: string;
-  enrollmentDate: Date;
   institutionalEmail?: string | null;
-  status?: StudentStatus | null;
+  admissionPeriod?: string | null;
+  status?: StudentStatus;
 }

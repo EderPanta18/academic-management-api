@@ -1,42 +1,38 @@
-// modules/students/domain/entities/student/student.entity.ts
-
-import { StudentStatus } from '@students/domain/constants';
+import { StudentStatus } from '@students/domain/enums';
 import type { CreateStudentProps, StudentProps } from './student.types';
 
-interface StudentInternalProps {
-  id?: number;
-  careerId: number;
-  code: string;
-  institutionalEmail?: string | null;
-  enrollmentDate: Date;
-  status?: StudentStatus | null;
-}
-
 export class Student {
-  readonly id?: number;
-  readonly careerId: number;
+  readonly id: string;
+  readonly personId: string;
+  readonly academicProgramId: string;
   readonly code: string;
   readonly institutionalEmail: string | null;
-  readonly enrollmentDate: Date;
+  readonly admissionPeriod: string | null;
   readonly status: StudentStatus;
 
-  private constructor(props: StudentInternalProps) {
+  private constructor(props: StudentProps) {
     this.id = props.id;
-    this.careerId = props.careerId;
+    this.personId = props.personId;
+    this.academicProgramId = props.academicProgramId;
     this.code = props.code;
-    this.institutionalEmail = props.institutionalEmail ?? null;
-    this.enrollmentDate = props.enrollmentDate;
-    this.status = props.status ?? StudentStatus.ACTIVE;
+    this.institutionalEmail = props.institutionalEmail;
+    this.admissionPeriod = props.admissionPeriod;
+    this.status = props.status;
 
     Object.freeze(this);
   }
 
-  static create(props: CreateStudentProps): Student {
+  static reconstitute(props: StudentProps): Student {
     return new Student(props);
   }
 
-  static reconstitute(props: StudentProps): Student {
-    return new Student(props);
+  static create(props: CreateStudentProps): Student {
+    return new Student({
+      ...props,
+      institutionalEmail: props.institutionalEmail ?? null,
+      admissionPeriod: props.admissionPeriod ?? null,
+      status: props.status ?? StudentStatus.ACTIVE,
+    });
   }
 
   canEnroll(): boolean {
@@ -47,11 +43,15 @@ export class Student {
     return this.status === StudentStatus.ACTIVE;
   }
 
-  isGraduated(): boolean {
-    return this.status === StudentStatus.GRADUATED;
-  }
-
   isSuspended(): boolean {
     return this.status === StudentStatus.SUSPENDED;
+  }
+
+  isWithdrawn(): boolean {
+    return this.status === StudentStatus.WITHDRAWN;
+  }
+
+  isGraduated(): boolean {
+    return this.status === StudentStatus.GRADUATED;
   }
 }
