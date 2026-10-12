@@ -1,21 +1,21 @@
 // modules/students/application/ports/out/student-repository.port.ts
 
-import type { PersonData } from '@persons/application/contracts';
-import { Student } from '@students/domain/entities';
+import type { PersonCreationData } from '@identity';
+import type { Student } from '@students/domain/entities';
 
-export const STUDENT_REPOSITORY_PORT = Symbol('STUDENT_REPOSITORY_PORT');
+export const STUDENT_REPOSITORY_TOKEN = Symbol('STUDENT_REPOSITORY');
 
-export type StudentSaveData = {
+export type StudentCreationData = {
   student: Student;
-  personData: PersonData;
+  personData: PersonCreationData;
 };
 
 export interface IStudentRepository {
-  save(data: StudentSaveData): Promise<Student>;
+  create(input: StudentCreationData): Promise<Student>;
+
+  exists(id: string): Promise<boolean>;
 
   existsByCode(code: string): Promise<boolean>;
 
   existsByInstitutionalEmail(email: string): Promise<boolean>;
-
-  delete(id: number): Promise<void>;
 }

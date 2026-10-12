@@ -1,3 +1,4 @@
 // modules/students/application/queries/index.ts
 
-export { ListStudentsQuery } from './list-students.query';
+export * from './student.queries';
+export * from './student-import.queries';

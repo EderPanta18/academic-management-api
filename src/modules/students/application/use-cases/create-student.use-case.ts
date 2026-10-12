@@ -1,71 +1,88 @@
-// modules/students/application/use-cases/create-student.use-case.ts
-
-import { CAREER_FINDER_PORT, type ICareerFinder } from '@careers/application/ports/in';
-import { EntityNotFoundException } from '@core/exceptions';
+import {
+  ACADEMIC_PROGRAM_CHECKER_TOKEN,
+  type IAcademicProgramChecker,
+} from '@academic-programs/application/ports/in';
+import { ID_GENERATOR_TOKEN, type IIdGenerator } from '@core/contracts';
+import { type IPersonCreationValidator, PERSON_CREATION_VALIDATOR_TOKEN } from '@identity';
 import { Inject, Injectable } from '@nestjs/common';
 import {
-  type IPersonCreationValidator,
-  PERSON_CREATION_VALIDATOR_PORT,
-} from '@persons/application/ports/in';
-import { type IStudentRepository, STUDENT_REPOSITORY_PORT } from '@students/application/ports/out';
-import { Student } from '@students/domain/entities';
-import {
+  StudentAcademicProgramNotFoundException,
   StudentCodeAlreadyExistsException,
-  StudentEmailAlreadyExistsException,
-} from '@students/domain/exceptions';
-import { CreateStudentCommand } from '../commands';
+  StudentInstitutionalEmailAlreadyExistsException,
+} from '@students/application/exceptions';
+import { type IStudentRepository, STUDENT_REPOSITORY_TOKEN } from '@students/application/ports/out';
+import { Student } from '@students/domain/entities';
+import type { CreateStudentCommand } from '../commands';
 
 @Injectable()
 export class CreateStudentUseCase {
   constructor(
-    @Inject(CAREER_FINDER_PORT)
-    private readonly careerFinder: ICareerFinder,
+    @Inject(ACADEMIC_PROGRAM_CHECKER_TOKEN)
+    private readonly academicProgramChecker: IAcademicProgramChecker,
 
-    @Inject(PERSON_CREATION_VALIDATOR_PORT)
+    @Inject(PERSON_CREATION_VALIDATOR_TOKEN)
     private readonly personCreationValidator: IPersonCreationValidator,
 
-    @Inject(STUDENT_REPOSITORY_PORT)
+    @Inject(ID_GENERATOR_TOKEN)
+    private readonly idGenerator: IIdGenerator,
+
+    @Inject(STUDENT_REPOSITORY_TOKEN)
     private readonly studentRepository: IStudentRepository,
   ) {}
 
   async execute(command: CreateStudentCommand): Promise<Student> {
-    const careerExists = await this.careerFinder.exists(command.careerId);
+    const academicProgramExists = await this.academicProgramChecker.exists(
+      command.academicProgramId,
+    );
 
-    if (!careerExists) throw new EntityNotFoundException('Career', command.careerId);
+    if (!academicProgramExists)
+      throw new StudentAcademicProgramNotFoundException(command.academicProgramId);
 
-    const codeExists = await this.studentRepository.existsByCode(command.code);
+    const codeAlreadyExists = await this.studentRepository.existsByCode(command.code);
 
-    if (codeExists) throw new StudentCodeAlreadyExistsException(command.code);
+    if (codeAlreadyExists) throw new StudentCodeAlreadyExistsException(command.code);
 
     if (command.institutionalEmail) {
-      const institutionalEmailExists = await this.studentRepository.existsByInstitutionalEmail(
+      const emailAlreadyExists = await this.studentRepository.existsByInstitutionalEmail(
         command.institutionalEmail,
       );
 
-      if (institutionalEmailExists)
-        throw new StudentEmailAlreadyExistsException(command.institutionalEmail);
+      if (emailAlreadyExists)
+        throw new StudentInstitutionalEmailAlreadyExistsException(command.institutionalEmail);
     }
 
-    const personData = await this.personCreationValidator.validate({
-      dni: command.dni,
-      firstName: command.firstName,
-      lastName: command.lastName,
+    await this.personCreationValidator.validate({
+      documentTypeId: command.documentTypeId,
+      documentNumber: command.documentNumber,
       email: command.email,
       phone: command.phone,
-      birthDate: command.birthDate,
     });
 
+    const studentId = this.idGenerator.generate();
+    const personId = this.idGenerator.generate();
+
     const student = Student.create({
-      careerId: command.careerId,
+      id: studentId,
+      personId,
+      academicProgramId: command.academicProgramId,
       code: command.code,
-      enrollmentDate: command.enrollmentDate,
       institutionalEmail: command.institutionalEmail,
+      admissionPeriod: command.admissionPeriod,
       status: command.status,
     });
 
-    return this.studentRepository.save({
+    return await this.studentRepository.create({
       student,
-      personData,
+      personData: {
+        id: personId,
+        documentTypeId: command.documentTypeId,
+        documentNumber: command.documentNumber,
+        firstName: command.firstName,
+        lastName: command.lastName,
+        email: command.email,
+        phone: command.phone,
+        birthDate: command.birthDate,
+      },
     });
   }
 }
