@@ -4,7 +4,7 @@ export type PersonProps = {
   documentNumber: string;
   firstName: string;
   lastName: string;
-  email: string;
+  email: string | null;
   phone: string | null;
   birthDate: Date | null;
 };
@@ -15,7 +15,7 @@ export type CreatePersonProps = {
   documentNumber: string;
   firstName: string;
   lastName: string;
-  email: string;
-  phone?: string | null;
-  birthDate?: Date | null;
+  email: string | null;
+  phone: string | null;
+  birthDate: Date | null;
 };

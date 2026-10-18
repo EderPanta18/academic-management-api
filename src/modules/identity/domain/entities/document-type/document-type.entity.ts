@@ -20,9 +20,6 @@ export class DocumentType {
   }
 
   static create(props: CreateDocumentTypeProps): DocumentType {
-    return new DocumentType({
-      ...props,
-      description: props.description ?? null,
-    });
+    return new DocumentType(props);
   }
 }

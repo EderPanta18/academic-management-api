@@ -6,7 +6,7 @@ export class Person {
   readonly documentNumber: string;
   readonly firstName: string;
   readonly lastName: string;
-  readonly email: string;
+  readonly email: string | null;
   readonly phone: string | null;
   readonly birthDate: Date | null;
 
@@ -28,10 +28,6 @@ export class Person {
   }
 
   static create(props: CreatePersonProps): Person {
-    return new Person({
-      ...props,
-      phone: props.phone ?? null,
-      birthDate: props.birthDate ?? null,
-    });
+    return new Person(props);
   }
 }

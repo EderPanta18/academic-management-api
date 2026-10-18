@@ -37,9 +37,11 @@ export class PersonCreationValidator implements IPersonCreationValidator {
     if (documentAlreadyExists)
       throw new PersonDocumentAlreadyExistsException(input.documentTypeId, input.documentNumber);
 
-    const emailAlreadyExists = await this.personRepository.existsByEmail(input.email);
+    if (input.email) {
+      const emailAlreadyExists = await this.personRepository.existsByEmail(input.email);
 
-    if (emailAlreadyExists) throw new PersonEmailAlreadyExistsException(input.email);
+      if (emailAlreadyExists) throw new PersonEmailAlreadyExistsException(input.email);
+    }
 
     if (input.phone) {
       const phoneAlreadyExists = await this.personRepository.existsByPhone(input.phone);

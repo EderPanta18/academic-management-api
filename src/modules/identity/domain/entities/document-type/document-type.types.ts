@@ -9,5 +9,5 @@ export type CreateDocumentTypeProps = {
   id: string;
   code: string;
   name: string;
-  description?: string | null;
+  description: string | null;
 };
