@@ -65,14 +65,6 @@ enum StudentImportStatus {
   FAILED
 }
 
-enum StudentImportRowStatus {
-  ACCEPTED
-  REJECTED
-  DUPLICATED
-  OBSERVED
-  UPDATED
-}
-
 model DocumentType {
   id          String   @id @default(uuid()) @db.Uuid
   code        String   @unique @db.VarChar(50)
@@ -130,8 +122,6 @@ model Student {
   person             Person         @relation(fields: [personId], references: [id])
   academicProgram    AcademicProgram @relation(fields: [academicProgramId], references: [id])
   enrollments        Enrollment[]
-  createdImportRows  StudentImportRow[] @relation("CreatedStudentImportRows")
-  updatedImportRows  StudentImportRow[] @relation("UpdatedStudentImportRows")
 
   @@index([academicProgramId])
   @@index([status])
@@ -447,9 +437,12 @@ model AuditLog {
 model StudentImport {
   id              String         @id @default(uuid()) @db.Uuid
   fileName        String         @db.VarChar(255)
+  fileExtension   String         @db.VarChar(10)
+  fileHash        String         @db.VarChar(64)
   fileContent     Bytes          @db.ByteA
   fileSize        Int?
   fileMimeType    String?        @db.VarChar(150)
+
   status          StudentImportStatus
   totalRows       Int
   processedRows   Int
@@ -457,43 +450,21 @@ model StudentImport {
   rejectedRows    Int
   duplicatedRows  Int
   observedRows    Int
-  createdByUserId String?        @db.Uuid
+  errors          Json?          @db.JsonB
+  failureReason   String?        @db.Text
 
+  createdByUserId String         @db.Uuid
   startedAt       DateTime?
   finishedAt      DateTime?
 
   createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 
-  createdByUser   User?          @relation("CreatedStudentImports", fields: [createdByUserId], references: [id])
-  rows            StudentImportRow[]
+  createdByUser   User           @relation("CreatedStudentImports", fields: [createdByUserId], references: [id])
 
+  @@unique([createdByUserId, fileHash])
   @@index([createdByUserId])
   @@index([status])
   @@index([createdAt])
   @@map("student_imports")
-}
-
-model StudentImportRow {
-  id               String          @id @default(uuid()) @db.Uuid
-  studentImportId  String          @db.Uuid
-  rowNumber        Int
-  rawData          Json
-  normalizedData   Json?
-  status           StudentImportRowStatus
-  errorSummary     String?         @db.Text
-  fieldErrors      Json?
-  createdStudentId String?         @db.Uuid
-  updatedStudentId String?         @db.Uuid
-
-  createdAt        DateTime        @default(now())
-
-  studentImport    StudentImport   @relation(fields: [studentImportId], references: [id])
-  createdStudent   Student?        @relation("CreatedStudentImportRows", fields: [createdStudentId], references: [id])
-  updatedStudent   Student?        @relation("UpdatedStudentImportRows", fields: [updatedStudentId], references: [id])
-
-  @@unique([studentImportId, rowNumber])
-  @@index([studentImportId])
-  @@index([status])
-  @@index([createdStudentId])
-  @@map("student_import_rows")
 }
