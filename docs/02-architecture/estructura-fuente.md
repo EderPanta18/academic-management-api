@@ -77,6 +77,7 @@ La estructura principal recomendada dentro de `src` es:
 ```txt
 src/
 ├── main.ts
+├── worker.ts
 ├── app/
 ├── core/
 ├── modules/
@@ -103,6 +104,23 @@ Uso esperado:
 
 No debe contener lógica funcional ni configuración extensa.
 
+## `worker.ts`
+
+`worker.ts` es el punto de entrada del proceso de workers.
+
+Debe mantenerse pequeño y delegar la configuración de arranque.
+
+Uso esperado:
+
+```txt
+- Crear el contexto de NestJS en modo aplicación, sin HTTP.
+- Registrar los procesadores de jobs y handlers de eventos a través de `workers/`.
+- Iniciar la suscripción a la cola y al bus de eventos.
+- Mantener el proceso activo mientras el sistema está en ejecución.
+```
+
+No debe contener lógica funcional ni reglas de negocio. La API y los workers se ejecutan como procesos independientes.
+
 ## `app/`
 
 `app/` contiene la composición principal de la aplicación.
@@ -118,6 +136,8 @@ src/app/
 ```
 
 No debe contener controladores de negocio, repositorios, entidades ni casos de aplicación.
+
+Los workers no pasan por `app/`. Tienen su propio entrypoint en `worker.ts` y su propia composición en `workers/`.
 
 ## `core/`
 
@@ -201,7 +221,9 @@ module-name/
 ├── domain/
 ├── application/
 ├── infrastructure/
-├── presentation/
+├── entrypoints/
+│   ├── http/
+│   └── queue/
 └── index.ts
 ```
 
@@ -217,9 +239,21 @@ application
 infrastructure
 = adaptadores técnicos, repositorios concretos, queries y mappers de persistencia
 
-presentation
-= controladores, DTOs, validaciones HTTP, decoradores y mappers HTTP
+entrypoints
+= puntos de entrada del módulo
 ```
+
+Los entrypoints separan los distintos medios por los que el módulo es invocado:
+
+```txt
+entrypoints/http
+= controladores, DTOs, validaciones HTTP, decoradores y mappers HTTP
+
+entrypoints/queue
+= procesadores de jobs o handlers de eventos que reciben payloads de la cola
+```
+
+Los procesadores de `entrypoints/queue` no contienen reglas de negocio. Delegan la lógica en casos de uso o servicios del mismo módulo.
 
 No todos los módulos deben tener todas las carpetas desde el inicio. Si el módulo es simple, puede empezar con menos estructura y crecer cuando tenga más reglas o responsabilidades.
 
@@ -277,31 +311,29 @@ La infraestructura de auditoría puede vivir aquí, pero su consulta administrat
 
 ## `workers/`
 
-`workers/` contiene procesos autónomos que consumen jobs y eventos fuera del flujo HTTP.
+`workers/` contiene la orquestación del proceso asíncrono que consume jobs y eventos fuera del flujo HTTP.
 
 Estructura posible:
 
 ```txt
 src/workers/
-├── main.ts
-├── jobs/
-└── events/
+├── register-jobs.ts
+└── index.ts
 ```
 
 Uso esperado:
 
 ```txt
-main.ts
-= entrypoint del proceso de workers
+register-jobs.ts
+= conecta los procesadores de jobs y handlers de eventos expuestos por los módulos con las implementaciones de cola y bus de eventos de `platform/queue`
 
-jobs
-= registro de procesadores de jobs
-
-events
-= registro de handlers de eventos
+index.ts
+= agrupa y expone lo necesario para que `worker.ts` arranque la orquestación
 ```
 
 Los workers no exponen endpoints, no contienen reglas de negocio y no forman parte del arranque de la API. Delegan la lógica real en casos de uso y servicios de los módulos, usando los contratos de `core` y las implementaciones de `platform/queue`.
+
+Los procesadores y handlers concretos viven en `modules/<module>/entrypoints/queue/`. `workers/` solo los registra.
 
 ## `shared/`
 
@@ -376,7 +408,13 @@ Los documentos de producto explican el problema y el dominio. Los documentos té
 Para ubicar un archivo nuevo:
 
 ```txt
-¿Arranca o compone la aplicación?
+¿Arranca la API?
+→ src/main.ts
+
+¿Arranca el proceso de workers?
+→ src/worker.ts
+
+¿Compone la aplicación HTTP?
 → src/app/
 
 ¿Es base estable y sin tecnología concreta?
@@ -385,10 +423,16 @@ Para ubicar un archivo nuevo:
 ¿Pertenece a una capacidad funcional del sistema?
 → src/modules/
 
+¿Es un punto de entrada HTTP del módulo?
+→ src/modules/<module>/entrypoints/http/
+
+¿Es un procesador de jobs o handler de eventos del módulo?
+→ src/modules/<module>/entrypoints/queue/
+
 ¿Depende de tecnología o integra herramientas externas?
 → src/platform/
 
-¿Es un proceso asíncrono que consume jobs o eventos?
+¿Es la orquestación del proceso asíncrono?
 → src/workers/
 
 ¿Es reutilizable, simple y transversal?
@@ -417,11 +461,14 @@ project-root/
 ├── scripts/
 ├── src/
 │   ├── main.ts
+│   ├── worker.ts
 │   ├── app/
 │   ├── core/
 │   ├── modules/
 │   ├── platform/
 │   ├── workers/
+│   │   ├── register-jobs.ts
+│   │   └── index.ts
 │   └── shared/
 ├── test/
 ├── biome.json

@@ -54,7 +54,6 @@ Criterios aplicados:
 - Separar rol de permiso.
 - Separar sesión de usuario.
 - Separar auditoría de tablas operativas.
-- Separar resumen de importación y detalle por fila.
 - Usar tablas intermedias para relaciones N:M.
 - Usar enums cuando el conjunto de valores es pequeño y estable.
 - Usar catálogos cuando los valores pueden crecer o administrarse.
@@ -82,7 +81,38 @@ Un registro con `deleted_at` distinto de `null` se considera eliminado lógicame
 
 La baja lógica permite conservar relaciones históricas, evitar pérdida definitiva de información y mantener trazabilidad del proceso. No hay restauración: un registro dado de baja no vuelve al estado operativo.
 
-No todas las tablas necesitan `deleted_at`. Las tablas de historial, auditoría y detalle de importación pueden tratarse como registros de solo inserción.
+No todas las tablas necesitan `deleted_at`. Las tablas de historial y auditoría pueden tratarse como registros de solo inserción.
+
+## Unicidad parcial sobre registros activos
+
+Las tablas que manejan baja lógica no pueden tratar la unicidad de forma global. Si una fila se da de baja, debe poder crearse otra con el mismo valor sin chocar con la anterior.
+
+Por eso, en todas las tablas que tienen `deleted_at`, las restricciones únicas se definen como índices únicos parciales con la condición:
+
+```sql
+WHERE deleted_at IS NULL
+```
+
+Esto significa que:
+
+```txt
+- La unicidad solo aplica entre registros activos.
+- Un registro dado de baja no cuenta para la restricción única.
+- Se puede crear otro registro con el mismo `code`, `email`, `document_number` u otra clave única, siempre que el anterior esté dado de baja.
+- Los registros históricos quedan preservados y siguen siendo consultables.
+```
+
+Ejemplos:
+
+```txt
+Un estudiante con `code = STU-001` dado de baja no impide crear un nuevo estudiante activo con `code = STU-001`.
+Una persona con `document_number = 12345678` dada de baja no impide registrar una nueva persona activa con el mismo documento.
+Un curso dado de baja no impide crear otro curso activo con el mismo `code` dentro del mismo programa académico.
+```
+
+Este criterio aplica a todas las restricciones únicas sobre tablas que tengan `deleted_at`. Las tablas que no manejan baja lógica (historial, auditoría, sesiones, importaciones) mantienen su unicidad de forma global.
+
+En PostgreSQL, esto se implementa con `CREATE UNIQUE INDEX ... WHERE deleted_at IS NULL`. En Prisma, como el schema no expresa índices parciales de forma nativa, esta restricción se agrega mediante migraciones SQL manuales.
 
 ## Identificadores
 
@@ -134,8 +164,7 @@ course_offering_status
 enrollment_status
 user_status
 session_status
-import_status
-import_row_status
+student_import_status
 ```
 
 Usar tabla catálogo cuando:
@@ -170,7 +199,7 @@ No todos los recursos usan enum de estado. Recursos como `persons`, `academic_pr
 | Oferta e inscripción   | `course_offerings`, `enrollments`, `enrollment_status_logs`                        |
 | Acceso y seguridad     | `users`, `roles`, `permissions`, `user_roles`, `role_permissions`, `user_sessions` |
 | Auditoría              | `audit_logs`                                                                       |
-| Soporte de importación | `student_imports`, `student_import_rows`                                           |
+| Soporte de importación | `student_imports`                                                                  |
 
 ## Identidad personal
 
@@ -189,6 +218,8 @@ Se modela como tabla catálogo porque sus valores pueden variar según país, in
 | `created_at`  | fecha-hora  | requerido        | Fecha de creación.            |
 | `updated_at`  | fecha-hora  | requerido        | Fecha de actualización.       |
 | `deleted_at`  | fecha-hora  | opcional         | Baja lógica.                  |
+
+La unicidad de `code` y `name` aplica solo entre registros activos (`deleted_at IS NULL`).
 
 Ejemplos:
 
@@ -221,8 +252,8 @@ No representa una cuenta de acceso ni un perfil académico por sí misma.
 Restricciones:
 
 ```txt
-- `document_type_id` + `document_number` debe ser único para registros activos.
-- `email` es único cuando exista.
+- `document_type_id` + `document_number` debe ser único entre registros activos.
+- `email` es único entre registros activos, cuando exista.
 ```
 
 Relaciones:
@@ -271,12 +302,19 @@ student_status:
 - GRADUATED
 ```
 
+Restricciones:
+
+```txt
+- `code` es único entre registros activos.
+- `person_id` es único entre registros activos.
+- `institutional_email` es único entre registros activos, cuando exista.
+```
+
 Relaciones:
 
 ```txt
 students N:1 academic_programs
 students 1:N enrollments
-student_import_rows N:1 students opcional
 ```
 
 Reglas relacionadas:
@@ -284,7 +322,7 @@ Reglas relacionadas:
 ```txt
 - Un estudiante activo puede inscribirse si cumple las demás condiciones.
 - Un estudiante suspendido, retirado o egresado no debería inscribirse si la institución lo restringe.
-- No debe duplicarse por código institucional.
+- No debe duplicarse por código institucional entre registros activos.
 ```
 
 ## `professors`
@@ -311,6 +349,14 @@ professor_status:
 - ACTIVE
 - INACTIVE
 - ON_LEAVE
+```
+
+Restricciones:
+
+```txt
+- `code` es único entre registros activos.
+- `person_id` es único entre registros activos.
+- `institutional_email` es único entre registros activos, cuando exista.
 ```
 
 Relaciones:
@@ -344,6 +390,13 @@ Se usa este nombre en lugar de carrera para mantener el modelo general.
 | `updated_at`    | fecha-hora  | requerido        | Fecha de actualización.    |
 | `deleted_at`    | fecha-hora  | opcional         | Baja lógica.               |
 
+Restricciones:
+
+```txt
+- `code` es único entre registros activos.
+- `name` es único entre registros activos.
+```
+
 Relaciones:
 
 ```txt
@@ -366,6 +419,13 @@ Se modela como tabla catálogo porque sus valores pueden variar según la instit
 | `created_at`  | fecha-hora  | requerido        | Fecha de creación.      |
 | `updated_at`  | fecha-hora  | requerido        | Fecha de actualización. |
 | `deleted_at`  | fecha-hora  | opcional         | Baja lógica.            |
+
+Restricciones:
+
+```txt
+- `code` es único entre registros activos.
+- `name` es único entre registros activos.
+```
 
 Ejemplos:
 
@@ -399,7 +459,7 @@ No representa un dictado específico. El dictado concreto se modela con `course_
 Restricciones:
 
 ```txt
-- `academic_program_id` + `code` debe ser único. El código del curso es único dentro de su programa académico.
+- `academic_program_id` + `code` debe ser único entre registros activos.
 - `credits` debe ser mayor que cero.
 ```
 
@@ -443,6 +503,7 @@ academic_period_status:
 Restricciones:
 
 ```txt
+- `code` es único entre registros activos.
 - `end_date` no debe ser anterior a `start_date`.
 - Las fechas de inscripción deben estar dentro de un rango válido.
 - Un periodo cerrado o cancelado no debe recibir nuevas inscripciones.
@@ -488,7 +549,7 @@ course_offering_status:
 Restricciones:
 
 ```txt
-- `course_id` + `academic_period_id` + `section` debe ser único para registros activos.
+- `course_id` + `academic_period_id` + `section` debe ser único entre registros activos.
 - `max_capacity` debe ser mayor que cero.
 - `available_capacity` no debe ser negativo si se persiste.
 - Una oferta abierta puede recibir inscripciones si cumple reglas de cupo y periodo.
@@ -534,7 +595,7 @@ Representa la inscripción de un estudiante en una oferta de curso.
 | `course_offering_id`    | UUID        | FK, requerido | Oferta.                                  |
 | `status`                | enum        | requerido     | Estado actual.                           |
 | `enrolled_at`           | fecha-hora  | requerido     | Fecha de inscripción.                    |
-| `registered_by_user_id` | UUID        | FK, opcional  | Usuario responsable.                     |
+| `registered_by_user_id` | UUID        | FK, requerido | Usuario responsable.                     |
 | `status_reason`         | texto       | opcional      | Motivo del estado actual cuando aplique. |
 | `created_at`            | fecha-hora  | requerido     | Fecha de creación.                       |
 | `updated_at`            | fecha-hora  | requerido     | Fecha de actualización.                  |
@@ -555,7 +616,7 @@ enrollment_status:
 Restricciones:
 
 ```txt
-- `student_id` + `course_offering_id` debe ser único para inscripciones vigentes según regla institucional.
+- `student_id` + `course_offering_id` debe ser único entre inscripciones activas.
 - La oferta debe estar abierta.
 - El periodo debe permitir inscripción.
 - El estudiante debe estar habilitado.
@@ -585,7 +646,7 @@ Es una tabla histórica de solo inserción.
 | `previous_status`    | enum        | opcional      | Estado anterior.     |
 | `new_status`         | enum        | requerido     | Nuevo estado.        |
 | `reason`             | texto       | opcional      | Motivo del cambio.   |
-| `changed_by_user_id` | UUID        | FK, opcional  | Usuario responsable. |
+| `changed_by_user_id` | UUID        | FK, requerido | Usuario responsable. |
 | `created_at`         | fecha-hora  | requerido     | Fecha del evento.    |
 
 No requiere `updated_at` ni `deleted_at`, porque representa eventos históricos.
@@ -626,6 +687,13 @@ user_status:
 - BLOCKED
 ```
 
+Restricciones:
+
+```txt
+- `email` es único entre registros activos.
+- `person_id` es único entre registros activos, cuando exista.
+```
+
 Relaciones:
 
 ```txt
@@ -652,6 +720,13 @@ Representa una agrupación de responsabilidades.
 | `created_at`  | fecha-hora  | requerido        | Fecha de creación.                 |
 | `updated_at`  | fecha-hora  | requerido        | Fecha de actualización.            |
 | `deleted_at`  | fecha-hora  | opcional         | Baja lógica.                       |
+
+Restricciones:
+
+```txt
+- `code` es único entre registros activos.
+- `name` es único entre registros activos.
+```
 
 Ejemplos:
 
@@ -680,6 +755,12 @@ Representa una acción permitida dentro del sistema.
 | `created_at`  | fecha-hora  | requerido        | Fecha de creación.                     |
 | `updated_at`  | fecha-hora  | requerido        | Fecha de actualización.                |
 | `deleted_at`  | fecha-hora  | opcional         | Baja lógica.                           |
+
+Restricciones:
+
+```txt
+- `code` es único entre registros activos.
+```
 
 Convención de `code`:
 
@@ -717,6 +798,8 @@ Restricciones:
 - `user_id` + `role_id` debe ser único.
 ```
 
+Esta tabla no maneja baja lógica, por lo que la unicidad es global.
+
 ## `role_permissions`
 
 Tabla intermedia entre roles y permisos.
@@ -733,6 +816,8 @@ Restricciones:
 ```txt
 - `role_id` + `permission_id` debe ser único.
 ```
+
+Esta tabla no maneja baja lógica, por lo que la unicidad es global.
 
 ## `user_sessions`
 
@@ -770,7 +855,10 @@ Restricciones:
 - Una sesión revocada o expirada no debe permitir acceso.
 - Si la política es una sola sesión, solo debe existir una sesión ACTIVE por usuario.
 - El refresh token debe almacenarse como hash.
+- `access_token_jti` es único cuando exista.
 ```
+
+Las sesiones no manejan baja lógica, por lo que su unicidad es global.
 
 ## Auditoría
 
@@ -812,40 +900,45 @@ platform/files
 = lee técnicamente CSV/XLSX
 
 student_imports
-= resumen de la importación
-
-student_import_rows
-= detalle por fila de la importación
+= resumen y resultado de la importación
 ```
 
 No se crea una tabla genérica `imports` mientras la importación solo pertenezca a estudiantes. Si en el futuro varias entidades requieren importación común, puede evaluarse una capacidad transversal.
 
+El detalle por fila no se persiste en una tabla relacional. Los errores se guardan en un campo `errors` de tipo `JSONB` dentro de `student_imports`, junto con el progreso y el resultado del proceso. Esta decisión evita insertar una fila por cada registro procesado en una tabla adicional, lo cual es costoso cuando se importan archivos con miles de filas.
+
 ## `student_imports`
 
-Representa el resumen general de una importación de estudiantes.
+Representa el resumen y resultado de una importación de estudiantes.
 
-| Campo                | Tipo lógico | Restricciones | Descripción                       |
-| -------------------- | ----------- | ------------- | --------------------------------- |
-| `id`                 | UUID        | PK            | Identificador.                    |
-| `file_name`          | texto       | requerido     | Nombre del archivo.               |
-| `file_size`          | entero      | opcional      | Tamaño del archivo en bytes.      |
-| `file_mime_type`     | texto       | opcional      | Tipo MIME del archivo.            |
-| `status`             | enum        | requerido     | Estado del proceso.               |
-| `total_rows`         | entero      | requerido     | Total de filas detectadas.        |
-| `processed_rows`     | entero      | requerido     | Filas procesadas.                 |
-| `accepted_rows`      | entero      | requerido     | Filas aceptadas.                  |
-| `rejected_rows`      | entero      | requerido     | Filas rechazadas.                 |
-| `duplicated_rows`    | entero      | requerido     | Filas duplicadas.                 |
-| `observed_rows`      | entero      | requerido     | Filas observadas.                 |
-| `created_by_user_id` | UUID        | FK, opcional  | Usuario responsable.              |
-| `created_at`         | fecha-hora  | requerido     | Fecha de creación.                |
-| `started_at`         | fecha-hora  | opcional      | Fecha de inicio de procesamiento. |
-| `finished_at`        | fecha-hora  | opcional      | Fecha de finalización.            |
+| Campo                | Tipo lógico | Restricciones | Descripción                                               |
+| -------------------- | ----------- | ------------- | --------------------------------------------------------- |
+| `id`                 | UUID        | PK            | Identificador.                                            |
+| `file_name`          | texto       | requerido     | Nombre del archivo.                                       |
+| `file_extension`     | texto corto | requerido     | Extensión del archivo (`csv`, `xlsx`).                    |
+| `file_hash`          | texto corto | requerido     | Hash SHA-256 del archivo para detectar duplicados.        |
+| `file_content`       | binario     | requerido     | Contenido del archivo almacenado en la base.              |
+| `file_size`          | entero      | opcional      | Tamaño del archivo en bytes.                              |
+| `file_mime_type`     | texto       | opcional      | Tipo MIME del archivo.                                    |
+| `status`             | enum        | requerido     | Estado del proceso.                                       |
+| `total_rows`         | entero      | requerido     | Total de filas detectadas.                                |
+| `processed_rows`     | entero      | requerido     | Filas procesadas.                                         |
+| `accepted_rows`      | entero      | requerido     | Filas aceptadas.                                          |
+| `rejected_rows`      | entero      | requerido     | Filas rechazadas.                                         |
+| `duplicated_rows`    | entero      | requerido     | Filas duplicadas.                                         |
+| `observed_rows`      | entero      | requerido     | Filas observadas.                                         |
+| `errors`             | JSON        | opcional      | Lista de errores por fila: `{ row, reasons[] }`.          |
+| `failure_reason`     | texto       | opcional      | Motivo de error catastrófico, por ejemplo caída de la BD. |
+| `created_by_user_id` | UUID        | FK, requerido | Usuario responsable.                                      |
+| `started_at`         | fecha-hora  | opcional      | Fecha de inicio de procesamiento.                         |
+| `finished_at`        | fecha-hora  | opcional      | Fecha de finalización.                                    |
+| `created_at`         | fecha-hora  | requerido     | Fecha de creación.                                        |
+| `updated_at`         | fecha-hora  | requerido     | Fecha de actualización.                                   |
 
 Enum sugerido:
 
 ```txt
-import_status:
+student_import_status:
 - PENDING
 - PROCESSING
 - COMPLETED
@@ -853,70 +946,30 @@ import_status:
 - FAILED
 ```
 
+Restricciones:
+
+```txt
+- `created_by_user_id` + `file_hash` debe ser único. Un mismo usuario no puede subir dos veces el mismo archivo.
+```
+
+Esta tabla no maneja baja lógica, por lo que la unicidad es global.
+
 Relaciones:
 
 ```txt
 student_imports N:1 users
-student_imports 1:N student_import_rows
 ```
 
 Notas:
 
 ```txt
 - Permite saber quién importó, cuándo, qué archivo se procesó y cuál fue el resultado.
+- El campo `errors` guarda el detalle por fila en JSONB: arreglo de `{ row, reasons }`.
+- El campo `failure_reason` se usa para errores catastróficos, no para errores por fila.
+- `processed_rows` permite guardar checkpoints durante el procesamiento y reanudar sin reprocesar todo.
+- El estado no cambia a un valor final al guardar checkpoints, solo avanza el progreso.
 - No reemplaza a la auditoría; la complementa con detalle operativo del proceso.
 - El procesamiento puede ejecutarse de forma asíncrona a través de un job.
-```
-
-## `student_import_rows`
-
-Representa el resultado individual de cada fila procesada en una importación de estudiantes.
-
-| Campo                | Tipo lógico | Restricciones | Descripción                                 |
-| -------------------- | ----------- | ------------- | ------------------------------------------- |
-| `id`                 | UUID        | PK            | Identificador.                              |
-| `student_import_id`  | UUID        | FK, requerido | Importación asociada.                       |
-| `row_number`         | entero      | requerido     | Número de fila dentro del archivo.          |
-| `raw_data`           | JSON        | requerido     | Datos originales de la fila.                |
-| `normalized_data`    | JSON        | opcional      | Datos normalizados antes de aplicar reglas. |
-| `status`             | enum        | requerido     | Resultado de la fila.                       |
-| `error_summary`      | texto       | opcional      | Resumen de error u observación.             |
-| `field_errors`       | JSON        | opcional      | Errores por campo.                          |
-| `created_student_id` | UUID        | FK, opcional  | Estudiante creado si aplica.                |
-| `updated_student_id` | UUID        | FK, opcional  | Estudiante actualizado si aplica.           |
-| `created_at`         | fecha-hora  | requerido     | Fecha de registro.                          |
-
-Enum sugerido:
-
-```txt
-import_row_status:
-- ACCEPTED
-- REJECTED
-- DUPLICATED
-- OBSERVED
-- UPDATED
-```
-
-Restricciones:
-
-```txt
-- `student_import_id` + `row_number` debe ser único.
-```
-
-Relaciones:
-
-```txt
-student_import_rows N:1 student_imports
-student_import_rows N:1 students opcional
-```
-
-Notas:
-
-```txt
-- `raw_data` conserva la fila original de forma controlada.
-- `normalized_data` permite revisar cómo el sistema interpretó los datos.
-- `field_errors` permite consultar errores minuciosos después de procesar el archivo.
-- No deben guardarse datos sensibles innecesarios.
 ```
 
 ## Relaciones principales
@@ -952,17 +1005,17 @@ users 1:N user_sessions
 users 1:N audit_logs
 
 users 1:N student_imports
-student_imports 1:N student_import_rows
-students 1:N student_import_rows opcional
 ```
 
 ## Restricciones principales
 
-Restricciones de unicidad:
+Restricciones de unicidad entre registros activos (`deleted_at IS NULL`):
 
 ```txt
 document_types.code
+document_types.name
 persons.document_type_id + persons.document_number
+persons.email cuando exista
 students.code
 students.person_id
 students.institutional_email cuando exista
@@ -973,17 +1026,24 @@ academic_programs.code
 academic_programs.name
 courses.academic_program_id + courses.code
 course_categories.code
+course_categories.name
 academic_periods.code
 course_offerings.course_id + academic_period_id + section
-enrollments.student_id + course_offering_id según regla de vigencia
+enrollments.student_id + course_offering_id
 users.email
+users.person_id cuando exista
 roles.code
 roles.name
 permissions.code
+```
+
+Restricciones de unicidad global (tablas sin baja lógica):
+
+```txt
 user_roles.user_id + role_id
 role_permissions.role_id + permission_id
 user_sessions.access_token_jti cuando exista
-student_import_rows.student_import_id + row_number
+student_imports.created_by_user_id + file_hash
 ```
 
 Restricciones de aplicación:
@@ -996,9 +1056,11 @@ Restricciones de aplicación:
 - No reducir cupo máximo por debajo de inscripciones activas.
 - No permitir acceso con sesión revocada o expirada.
 - No permitir acción sin permiso requerido.
-- No aceptar una fila de importación si sus datos mínimos son inválidos.
-- No crear estudiante duplicado por documento o código institucional.
+- No crear estudiante duplicado por documento o código institucional entre registros activos.
 - No usar un registro dado de baja para nuevas relaciones.
+- No aceptar una importación si ya existe otra del mismo usuario con el mismo hash de archivo.
+- No procesar dos veces la misma fila dentro de una importación.
+- Si una importación falla, el worker puede reanudar desde `processed_rows` sin reprocesar las filas ya aceptadas.
 ```
 
 ## Datos derivados
@@ -1060,10 +1122,9 @@ audit_logs.created_at
 student_imports.created_by_user_id
 student_imports.status
 student_imports.created_at
-student_import_rows.student_import_id
-student_import_rows.status
-student_import_rows.created_student_id
 ```
+
+Los índices únicos parciales con `WHERE deleted_at IS NULL` también se consideran parte de los índices recomendados. Se declaran aparte porque combinan unicidad y filtro de vigencia.
 
 ## Orden lógico de creación de tablas
 
@@ -1090,7 +1151,6 @@ Orden sugerido para migraciones o comprensión del modelo:
 18. enrollment_status_logs.
 19. audit_logs.
 20. student_imports.
-21. student_import_rows.
 ```
 
 Este orden puede cambiar según dependencias exactas del schema, pero debe respetar claves foráneas.
@@ -1128,10 +1188,12 @@ Inscripción
 = vínculo entre estudiante y oferta
 
 Importación de estudiantes
-= proceso controlado de carga de estudiantes
+= proceso controlado de carga de estudiantes con resumen y errores en JSONB
 
 Auditoría
 = evidencia de acciones relevantes
 ```
+
+La unicidad sobre registros activos permite que un registro dado de baja no bloquee nuevas altas, manteniendo a la vez el historial completo del sistema.
 
 Esta separación permite que el sistema mantenga consistencia, trazabilidad y control sin duplicar información innecesaria.

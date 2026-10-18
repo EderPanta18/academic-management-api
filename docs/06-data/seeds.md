@@ -38,6 +38,18 @@ Criterios:
 
 Esto aplica también a catálogos base como `document_types` y `course_categories`, porque pueden tener CRUD o ser administrados desde el sistema.
 
+## Unicidad sobre registros activos
+
+Las tablas con baja lógica no tienen unicidad global. La unicidad se define como índice único parcial con la condición:
+
+```sql
+WHERE deleted_at IS NULL
+```
+
+Esto significa que un registro dado de baja no bloquea la creación de uno nuevo con el mismo `code`, `email` o `document_number`. Los seeds deben respetar este criterio: el upsert busca el registro activo y, si existe, lo reutiliza. Si no existe activo, lo crea.
+
+Los seeds que insertan datos base (catálogos, roles, permisos, usuario administrador) siempre trabajan con registros activos, por lo que el upsert por código sigue siendo válido.
+
 ## Criterio general
 
 Los datos semilla deben limitarse a información base.
@@ -226,17 +238,16 @@ Los permisos base no deberían eliminarse libremente, porque el código los usa 
 
 ## Permisos de estudiantes
 
-| code                         | module   | Descripción                                  |
-| ---------------------------- | -------- | -------------------------------------------- |
-| `students.read`              | students | Consultar estudiantes.                       |
-| `students.create`            | students | Crear estudiantes.                           |
-| `students.update`            | students | Actualizar estudiantes.                      |
-| `students.disable`           | students | Dar de baja estudiantes.                     |
-| `students.import`            | students | Importar estudiantes.                        |
-| `students.imports.read`      | students | Consultar importaciones de estudiantes.      |
-| `students.imports.rows.read` | students | Consultar detalle por fila de importaciones. |
+| code                    | module   | Descripción                             |
+| ----------------------- | -------- | --------------------------------------- |
+| `students.read`         | students | Consultar estudiantes.                  |
+| `students.create`       | students | Crear estudiantes.                      |
+| `students.update`       | students | Actualizar estudiantes.                 |
+| `students.disable`      | students | Dar de baja estudiantes.                |
+| `students.import`       | students | Importar estudiantes.                   |
+| `students.imports.read` | students | Consultar importaciones de estudiantes. |
 
-Los permisos de consulta de importación permiten revisar historial y errores minuciosos sin dar permiso para ejecutar nuevas importaciones.
+El permiso `students.imports.read` permite revisar el historial de importaciones y los errores almacenados en `student_imports` sin dar permiso para ejecutar nuevas importaciones.
 
 ## Permisos de docentes
 
@@ -376,7 +387,6 @@ students.create
 students.update
 students.import
 students.imports.read
-students.imports.rows.read
 
 academic-programs.read
 courses.read
@@ -479,16 +489,15 @@ En entorno de desarrollo puede generarse algún evento controlado solo si ayuda 
 
 No se deben sembrar importaciones en producción.
 
-Las tablas:
+La tabla:
 
 ```txt
 student_imports
-student_import_rows
 ```
 
-se llenan mediante operaciones reales de importación.
+se llena mediante operaciones reales de importación.
 
-En desarrollo puede sembrarse una importación de ejemplo solo si se necesita probar la consulta de historial y detalle por fila.
+En desarrollo puede sembrarse una importación de ejemplo solo si se necesita probar la consulta de historial y errores.
 
 Si se siembra, debe cumplir estas reglas:
 
@@ -496,8 +505,8 @@ Si se siembra, debe cumplir estas reglas:
 - Usar datos ficticios.
 - No simular una importación productiva.
 - Mantener pocas filas.
-- Indicar claramente estados aceptados, rechazados u observados.
-- No guardar datos sensibles innecesarios en raw_data.
+- Indicar claramente el resultado del proceso.
+- No guardar datos sensibles innecesarios.
 ```
 
 Ejemplo de importación de desarrollo:
@@ -505,31 +514,24 @@ Ejemplo de importación de desarrollo:
 ```txt
 student_imports
 - file_name: students-sample.xlsx
+- file_extension: xlsx
+- file_hash: <hash ficticio>
+- file_content: <contenido ficticio>
 - status: COMPLETED_WITH_ERRORS
 - total_rows: 5
 - accepted_rows: 3
 - rejected_rows: 1
 - observed_rows: 1
+- errors:
+    [
+      { row: 4, reasons: ["Documento inválido"] },
+      { row: 5, reasons: ["Programa académico no encontrado"] }
+    ]
 ```
 
-Ejemplo de filas:
+Los errores por fila se guardan en el campo `errors` como `JSONB`, no en una tabla relacional. Esto mantiene el seed simple y coherente con el modelo: una sola fila de `student_imports` con su resumen y sus errores controlados.
 
-```txt
-student_import_rows
-- row_number: 2
-- status: ACCEPTED
-- created_student_id: student-001
-
-student_import_rows
-- row_number: 4
-- status: REJECTED
-- error_summary: Documento inválido
-
-student_import_rows
-- row_number: 5
-- status: OBSERVED
-- error_summary: Programa académico no encontrado
-```
+El campo `failure_reason` se reserva para errores catastróficos (por ejemplo, caída de la base de datos durante el procesamiento) y no se usa para errores por fila.
 
 ## Datos académicos base para desarrollo
 
@@ -693,10 +695,12 @@ Criterios:
 
 ```txt
 - Usar upsert cuando sea posible.
-- Buscar por campos únicos.
+- Buscar por campos únicos entre registros activos.
 - No insertar sin verificar existencia.
 - Mantener códigos únicos estables.
 ```
+
+Como la unicidad se define sobre registros activos (`deleted_at IS NULL`), el upsert debe buscar el registro activo por su código o clave única. Si existe, se actualiza; si no existe, se crea. Un registro dado de baja no interfiere con el upsert.
 
 Ejemplo conceptual:
 
@@ -826,7 +830,7 @@ Datos académicos de desarrollo
 = apoyo para probar el flujo
 
 Importaciones de desarrollo
-= apoyo opcional para probar historial y detalle por fila
+= apoyo opcional para probar historial y errores por fila
 ```
 
 Un seed correcto no reemplaza reglas de negocio. Solo prepara los datos necesarios para que esas reglas puedan ejecutarse.

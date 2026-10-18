@@ -1,6 +1,6 @@
 # Capa workers
 
-La capa `workers` contiene los procesos asíncronos del backend.
+La capa `workers` contiene la orquestación de los procesos asíncronos del backend.
 
 Los workers se ejecutan en paralelo a la API, consumen jobs y eventos, y delegan la lógica real en los casos de uso y servicios de los módulos. No exponen endpoints, no contienen reglas de negocio y no forman parte del arranque de la aplicación HTTP.
 
@@ -11,29 +11,34 @@ Su existencia responde a una necesidad concreta: separar el trabajo interactivo 
 La responsabilidad de `workers` es responder a esta pregunta:
 
 ```txt
-¿Qué procesos se ejecutan fuera del flujo HTTP?
+¿Qué procesos se ejecutan fuera del flujo HTTP y cómo se conectan con la cola y el bus?
 ```
 
-Un worker no decide. Un worker consume. La decisión vive en el módulo dueño del proceso; el worker solo conecta la cola o el bus con esa decisión.
+Un worker no decide. Un worker consume. La decisión vive en el módulo dueño del proceso; `workers` solo conecta la cola o el bus con esa decisión.
 
 ## Ubicación
 
 ```txt
 src/
+├── worker.ts
 └── workers/
+    ├── register-jobs.ts
+    └── index.ts
 ```
+
+`src/worker.ts` es el entrypoint del proceso. `src/workers/` contiene la orquestación que registra los procesadores y handlers expuestos por los módulos.
 
 ## Relación con `main.ts`
 
 La API tiene su entrypoint en `src/main.ts`.
 
-Los workers tienen su propio entrypoint dentro de `src/workers/`. Son procesos independientes que se arrancan por separado.
+Los workers tienen su propio entrypoint en `src/worker.ts`, en la raíz de `src/`. Son procesos independientes que se arrancan por separado.
 
 ```txt
 src/main.ts
 = entrypoint de la API
 
-src/workers/main.ts
+src/worker.ts
 = entrypoint de los workers
 ```
 
@@ -44,16 +49,16 @@ Ambos procesos comparten el mismo código fuente, los mismos módulos, los mismo
 La estructura puede incluir:
 
 ```txt
-src/workers/
-├── main.ts
-├── jobs/
-├── events/
-└── index.ts
+src/
+├── worker.ts
+└── workers/
+    ├── register-jobs.ts
+    └── index.ts
 ```
 
-No todas las carpetas deben existir desde el inicio. Deben aparecer cuando el proyecto realmente las necesite.
+No todas las piezas deben existir desde el inicio. Deben aparecer cuando el proyecto realmente las necesite.
 
-## `main.ts`
+## `worker.ts`
 
 Es el punto de entrada del proceso de workers.
 
@@ -62,85 +67,47 @@ Debe mantenerse pequeño y delegar la configuración de arranque.
 Uso esperado:
 
 ```txt
-- Crear el contenedor de dependencias.
-- Registrar procesadores de jobs.
-- Registrar handlers de eventos.
+- Crear el contexto de NestJS en modo aplicación, sin HTTP.
+- Invocar la orquestación de `workers/`.
 - Iniciar la suscripción a la cola y al bus.
 - Mantener el proceso activo mientras el sistema está en ejecución.
 ```
 
 No debe contener lógica funcional ni reglas de negocio.
 
-## `jobs/`
+## `register-jobs.ts`
 
-Contiene los procesadores de jobs.
-
-Un procesador de jobs es una función que recibe un payload y ejecuta el caso de uso correspondiente del módulo dueño.
-
-Estructura posible:
-
-```txt
-src/workers/jobs/
-├── student-import.processor.ts
-├── report-generation.processor.ts
-└── index.ts
-```
+Contiene la orquestación que conecta los procesadores de jobs y handlers de eventos expuestos por los módulos con las implementaciones de cola y bus de `platform/queue`.
 
 Uso esperado:
 
 ```txt
-- Registrar el procesador con un nombre lógico de job.
-- Validar que el payload tenga la forma esperada.
-- Delegar la lógica en un caso de uso del módulo.
-- Devolver el resultado esperado por la cola.
+- Registrar cada procesador de jobs contra la cola.
+- Registrar cada handler de eventos contra el bus.
+- Asociar nombres lógicos de job o evento con los procesadores del módulo dueño.
+- Exponer la orquestación para que `worker.ts` arranque la suscripción.
 ```
 
-Un procesador no contiene reglas de negocio. No consulta tablas directamente. No decide si una operación es válida. Todo eso pertenece al módulo.
+Los procesadores y handlers concretos no viven en `workers/`. Viven en `modules/<module>/entrypoints/queue/`. `register-jobs.ts` solo los conecta.
 
 Ejemplo:
 
 ```txt
-student-import.processor.ts
-→ recibe el payload del job
-→ llama al caso de uso de importación de students
-→ students valida, persiste y decide
+modules/students/entrypoints/queue/student-import.processor.ts
+= procesador del job de importación de estudiantes
+
+workers/register-jobs.ts
+= registra ese procesador contra la cola
 ```
-
-## `events/`
-
-Contiene los handlers de eventos.
-
-Un handler de eventos es una función que reacciona a un hecho publicado por un módulo y delega la reacción en el caso de uso correspondiente.
-
-Estructura posible:
-
-```txt
-src/workers/events/
-├── enrollment-created.handler.ts
-├── user-session-revoked.handler.ts
-└── index.ts
-```
-
-Uso esperado:
-
-```txt
-- Registrar el handler con un nombre lógico de evento.
-- Validar que el payload tenga la forma esperada.
-- Delegar la lógica en un caso de uso o servicio del módulo.
-- Devolver el resultado esperado por el bus.
-```
-
-Un handler no contiene reglas de negocio. Si el evento requiere una reacción compleja, esa reacción vive en el módulo, no en el handler.
 
 ## Qué puede contener
 
 La capa `workers` puede contener:
 
 ```txt
-- Entrypoint de workers.
-- Registro de procesadores de jobs.
-- Registro de handlers de eventos.
-- Configuración de arranque específica del proceso.
+- Orquestación del registro de procesadores de jobs.
+- Orquestación del registro de handlers de eventos.
+- Configuración de arranque específica del proceso asíncrono.
 ```
 
 ## Qué no pertenece a `workers`
@@ -156,6 +123,8 @@ No deberían vivir en `workers`:
 - Controladores HTTP.
 - DTOs HTTP.
 - Mappers de presentación.
+- Procesadores de jobs concretos.
+- Handlers de eventos concretos.
 - Configuración global de la API.
 - Conexión global a base de datos.
 - Implementación concreta de la cola o el bus.
@@ -165,6 +134,8 @@ No deberían vivir en `workers`:
 Un worker no es un módulo ni una capa de negocio. Es un consumidor de capacidades ya definidas.
 
 Si algo decide una regla académica o de acceso funcional, pertenece a `modules`.
+
+Si algo es un procesador de jobs o un handler de eventos del módulo, pertenece a `modules/<module>/entrypoints/queue/`.
 
 Si algo implementa tecnología de cola o bus, pertenece a `platform/queue`.
 
@@ -189,7 +160,7 @@ Si algo representa la composición de la API, pertenece a `app`.
 - modules/infrastructure
 ```
 
-La dependencia con `modules` se hace a través de casos de uso, servicios o contratos públicos del módulo dueño, no de sus detalles internos.
+La dependencia con `modules` se hace a través de los procesadores y handlers expuestos en `entrypoints/queue/`, que a su vez consumen casos de uso, servicios o contratos públicos del módulo dueño, no de sus detalles internos.
 
 ## Relación con otras capas
 
@@ -209,12 +180,13 @@ Los workers no conocen la implementación concreta. Solo conocen el contrato.
 
 ### Con `modules`
 
-Los workers consumen casos de uso, servicios o contratos públicos de los módulos.
+Los workers conectan los procesadores y handlers de `modules/<module>/entrypoints/queue/` con la cola y el bus.
 
 ```txt
 worker
-→ consume un caso de uso de students
-→ students valida, persiste y decide
+→ consume un procesador de modules/<module>/entrypoints/queue
+→ el procesador llama a un caso de uso del módulo
+→ el módulo valida, persiste y decide
 ```
 
 Un worker no importa `modules/domain` ni `modules/infrastructure`. No consulta tablas directamente.
@@ -242,7 +214,7 @@ Los workers no dependen de `app`.
 workers → app   no
 ```
 
-La API y los workers son procesos paralelos, no jerárquicos. `app` compone la API; `workers` compone el proceso asíncrono.
+La API y los workers son procesos paralelos, no jerárquicos. `app` compone la API; `workers` compone la orquestación del proceso asíncrono.
 
 ## Cómo se relaciona un worker con un módulo
 
@@ -251,10 +223,10 @@ El patrón general es el siguiente:
 ```txt
 1. Un caso de uso de un módulo identifica trabajo diferible.
 2. El caso de uso encola un job o publica un evento a través de un contrato de core.
-3. El worker consume el job o el evento.
-4. El worker delega la lógica en el caso de uso o servicio del módulo.
+3. El procesador o handler del módulo (en modules/<module>/entrypoints/queue) recibe el payload.
+4. El procesador delega la lógica en el caso de uso o servicio del módulo.
 5. El módulo valida, persiste y decide.
-6. El worker finaliza el job o el evento.
+6. El procesador finaliza el job o el evento.
 ```
 
 El worker nunca reemplaza al módulo. Solo ejecuta, fuera del flujo HTTP, algo que el módulo ya decidió.
@@ -263,40 +235,44 @@ El worker nunca reemplaza al módulo. Solo ejecuta, fuera del flujo HTTP, algo q
 
 `platform/queue` implementa la mecánica de la cola y del bus.
 
-`workers` consume esa mecánica.
+`workers` orquesta el registro de los procesadores y handlers contra esa mecánica.
 
 ```txt
 platform/queue
 = implementación concreta de JobQueue y EventBus
 
 workers
-= procesos que consumen jobs y eventos
+= orquestación que registra procesadores y handlers
 ```
 
 El worker no implementa la cola. Solo se suscribe a ella.
 
 ## Diferencia con `modules`
 
-`modules` contiene reglas de negocio.
+`modules` contiene reglas de negocio y los procesadores concretos en `entrypoints/queue/`.
 
-`workers` no contiene reglas de negocio. Solo conecta la cola o el bus con el módulo que decide.
+`workers` no contiene reglas de negocio ni procesadores concretos. Solo orquesta el registro.
 
 ```txt
 modules/students
 = reglas de importación de estudiantes
 
-workers/jobs/student-import.processor.ts
-= conecta el job con el caso de uso de students
+modules/students/entrypoints/queue/student-import.processor.ts
+= procesador que recibe el payload y llama al caso de uso
+
+workers/register-jobs.ts
+= conecta ese procesador con la cola
 ```
 
 ## Crecimiento esperado
 
 `workers` puede crecer cuando aparecen nuevos procesos diferibles.
 
-Cada nuevo worker debería seguir el mismo criterio:
+Cada nuevo proceso debería seguir el mismo criterio:
 
 ```txt
-- Registrar un procesador o handler.
+- Crear el procesador o handler en modules/<module>/entrypoints/queue/.
+- Registrarlo en workers/register-jobs.ts.
 - Delegar la lógica en un módulo.
 - No contener reglas propias.
 - No depender de detalles internos de otros módulos.
@@ -309,10 +285,10 @@ Si un worker empieza a acumular lógica, probablemente esa lógica pertenece a u
 Antes de colocar algo en `workers`, conviene preguntar:
 
 ```txt
-¿Es un proceso que se ejecuta fuera del flujo HTTP?
-¿Consume un job o un evento?
-¿Delega la lógica en un módulo?
+¿Es parte de la orquestación del proceso asíncrono?
+¿Registra un procesador o handler ya definido en un módulo?
 ¿No contiene reglas de negocio propias?
+¿No contiene procesadores ni handlers concretos?
 ¿No depende de detalles internos de otros módulos?
 ```
 

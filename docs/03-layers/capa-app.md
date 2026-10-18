@@ -48,7 +48,7 @@ main.ts
 
 `main.ts` inicia el proceso de la API. `app` define cómo se compone. `platform` aporta infraestructura técnica. `modules` aporta negocio.
 
-Los workers no pasan por `app`. Tienen su propio entrypoint en `src/workers/main.ts` y su propia composición.
+Los workers no pasan por `app`. Tienen su propio entrypoint en `src/worker.ts` y su propia orquestación en `src/workers/`.
 
 ## Qué puede contener
 
@@ -124,7 +124,8 @@ No deberían vivir en `app`:
 - Reglas de cupos.
 - Configuración de base de datos concreta.
 - Procesadores de jobs o handlers de eventos.
-- Entrypoints de workers.
+- Orquestación del proceso asíncrono.
+- Entrypoint de workers.
 ```
 
 Si un archivo representa negocio, debe ir en `modules`.
@@ -135,7 +136,7 @@ Si representa base estable transversal, debe ir en `core`.
 
 Si representa soporte reutilizable ligero, debe ir en `shared`.
 
-Si es un proceso asíncrono que consume jobs o eventos, debe ir en `workers`.
+Si forma parte de la orquestación del proceso asíncrono, debe ir en `workers/` o en el `entrypoints/queue/` del módulo dueño del proceso.
 
 ## Dependencias permitidas
 
@@ -168,7 +169,7 @@ Ese crecimiento no debería obligar a modificar reglas internas de los módulos.
 
 Cuando se agregue un nuevo módulo académico, el cambio esperado en `app` debería ser principalmente de registro o importación, no de lógica.
 
-Cuando se agregue un nuevo worker, el cambio esperado debería ocurrir en `workers/`, no en `app/`.
+Cuando se agregue un nuevo proceso asíncrono, el cambio esperado debería ocurrir en el `entrypoints/queue/` del módulo dueño y en `workers/`, no en `app/`.
 
 ## Criterio de uso
 

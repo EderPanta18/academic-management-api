@@ -101,27 +101,26 @@ Los workers se ejecutan como proceso independiente de la API, comparten el mismo
 
 ### Configuración general
 
-| Variable                   | Requerida | Ejemplo  | Descripción                                                    |
-| -------------------------- | --------- | -------- | -------------------------------------------------------------- |
-| `QUEUE_SCHEMA`             | No        | `pgboss` | Esquema de PostgreSQL donde PgBoss guarda sus tablas internas. |
-| `QUEUE_WORKER_CONCURRENCY` | No        | `5`      | Cantidad de jobs que un worker puede procesar en paralelo.     |
+| Variable                | Requerida | Ejemplo  | Descripción                                                    |
+| ----------------------- | --------- | -------- | -------------------------------------------------------------- |
+| `QUEUE_SCHEMA`          | No        | `pgboss` | Esquema de PostgreSQL donde PgBoss guarda sus tablas internas. |
+| `QUEUE_JOB_CONCURRENCY` | No        | `5`      | Cantidad de jobs que un worker puede procesar en paralelo.     |
 
 ### Configuración de jobs
 
-| Variable                                 | Requerida | Ejemplo | Descripción                                                          |
-| ---------------------------------------- | --------- | ------- | -------------------------------------------------------------------- |
-| `QUEUE_JOB_RETRY_LIMIT`                  | No        | `3`     | Número máximo de reintentos por job.                                 |
-| `QUEUE_JOB_RETRY_DELAY_MS`               | No        | `1000`  | Delay base entre reintentos, en milisegundos.                        |
-| `QUEUE_JOB_RETRY_BACKOFF`                | No        | `true`  | Activa backoff exponencial entre reintentos.                         |
-| `QUEUE_JOB_EXPIRE_IN_MINUTES`            | No        | `15`    | Tiempo máximo de ejecución de un job antes de considerarlo expirado. |
-| `QUEUE_JOB_ARCHIVE_COMPLETED_AFTER_DAYS` | No        | `7`     | Días que se conservan los jobs completados antes de archivarse.      |
-| `QUEUE_JOB_ARCHIVE_FAILED_AFTER_DAYS`    | No        | `30`    | Días que se conservan los jobs fallidos antes de archivarse.         |
+| Variable                             | Requerida | Ejemplo | Descripción                                                          |
+| ------------------------------------ | --------- | ------- | -------------------------------------------------------------------- |
+| `QUEUE_RETRY_LIMIT`                  | No        | `3`     | Número máximo de reintentos por job.                                 |
+| `QUEUE_RETRY_DELAY_MS`               | No        | `1000`  | Delay base entre reintentos, en milisegundos.                        |
+| `QUEUE_RETRY_BACKOFF`                | No        | `true`  | Activa backoff exponencial entre reintentos.                         |
+| `QUEUE_EXPIRE_IN_MINUTES`            | No        | `15`    | Tiempo máximo de ejecución de un job antes de considerarlo expirado. |
+| `QUEUE_ARCHIVE_COMPLETED_AFTER_DAYS` | No        | `7`     | Días que se conservan los jobs completados antes de archivarse.      |
+| `QUEUE_ARCHIVE_FAILED_AFTER_DAYS`    | No        | `30`    | Días que se conservan los jobs fallidos antes de archivarse.         |
 
 ### Configuración de eventos
 
 | Variable                  | Requerida | Ejemplo | Descripción                                                   |
 | ------------------------- | --------- | ------- | ------------------------------------------------------------- |
-| `QUEUE_EVENT_RETRY_LIMIT` | No        | `3`     | Número máximo de reintentos por evento.                       |
 | `QUEUE_EVENT_CONCURRENCY` | No        | `5`     | Cantidad de eventos que un worker puede procesar en paralelo. |
 
 Los valores por defecto de PgBoss son razonables para desarrollo. En producción conviene ajustarlos según carga, latencia y política de retención.
@@ -163,7 +162,7 @@ AUTH_REFRESH_TOKEN_ROTATION=true
 
 | Variable           | Requerida | Ejemplo                                       | Descripción                                                   |
 | ------------------ | --------- | --------------------------------------------- | ------------------------------------------------------------- |
-| `CORS_ORIGINS`     | Sí        | `http://localhost:5173,http://127.0.0.1:5173` | Orígenes permitidos para consumir la API, separados por coma. |
+| `CORS_ORIGINS`     | Sí        | `http://localhost:5173,http://localhost:3000` | Orígenes permitidos para consumir la API, separados por coma. |
 | `CORS_CREDENTIALS` | No        | `true`                                        | Indica si se permiten credenciales en peticiones CORS.        |
 
 En desarrollo puede apuntar al frontend local.
@@ -192,19 +191,6 @@ El sistema puede crear un usuario administrador inicial mediante seed.
 
 `ADMIN_PASSWORD` nunca debe guardarse en texto plano dentro de la base de datos. El seed debe generar el hash antes de persistir.
 
-## Variables de archivos
-
-La importación de estudiantes puede requerir límites de archivo.
-
-| Variable                    | Requerida | Ejemplo                                                                      | Descripción                            |
-| --------------------------- | --------- | ---------------------------------------------------------------------------- | -------------------------------------- |
-| `UPLOAD_MAX_FILE_SIZE`      | No        | `5242880`                                                                    | Tamaño máximo permitido para archivos. |
-| `UPLOAD_ALLOWED_MIME_TYPES` | No        | `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv` | Tipos permitidos para importación.     |
-
-Estas variables pueden ajustarse cuando se implemente la importación de archivos.
-
-En producción conviene evitar logs excesivamente detallados.
-
 ## Ejemplo de `.env`
 
 ```env
@@ -222,21 +208,21 @@ DIRECT_DATABASE_URL="postgresql://postgres:postgres@localhost:5432/academic_back
 DATABASE_LOG_QUERIES=false
 
 QUEUE_SCHEMA="pgboss"
-QUEUE_WORKER_CONCURRENCY=5
 
-QUEUE_JOB_RETRY_LIMIT=3
-QUEUE_JOB_RETRY_DELAY_MS=1000
-QUEUE_JOB_RETRY_BACKOFF=true
-QUEUE_JOB_EXPIRE_IN_MINUTES=15
-QUEUE_JOB_ARCHIVE_COMPLETED_AFTER_DAYS=7
-QUEUE_JOB_ARCHIVE_FAILED_AFTER_DAYS=30
+QUEUE_RETRY_LIMIT=3
+QUEUE_RETRY_DELAY_MS=1000
+QUEUE_RETRY_BACKOFF=true
+QUEUE_EXPIRE_IN_MINUTES=15
+QUEUE_ARCHIVE_COMPLETED_AFTER_DAYS=7
+QUEUE_ARCHIVE_FAILED_AFTER_DAYS=30
 
-QUEUE_EVENT_RETRY_LIMIT=3
+QUEUE_JOB_CONCURRENCY=5
 QUEUE_EVENT_CONCURRENCY=5
 
 JWT_ACCESS_NAME="accessJwt"
 JWT_ACCESS_SECRET="change-me-access-secret"
 JWT_ACCESS_EXPIRES_IN="15m"
+
 JWT_REFRESH_NAME="refreshJwt"
 JWT_REFRESH_SECRET="change-me-refresh-secret"
 JWT_REFRESH_EXPIRES_IN="7d"
@@ -244,7 +230,7 @@ JWT_REFRESH_EXPIRES_IN="7d"
 AUTH_SINGLE_SESSION=true
 AUTH_REFRESH_TOKEN_ROTATION=true
 
-CORS_ORIGINS="http://localhost:5173,http://127.0.0.1:5173"
+CORS_ORIGINS="http://localhost:5173,http://localhost:3000"
 CORS_CREDENTIALS=true
 
 OPENAPI_ENABLED=true
@@ -254,9 +240,6 @@ ADMIN_EMAIL="admin@example.com"
 ADMIN_PASSWORD="change-me-admin-password"
 ADMIN_FIRST_NAME="Admin"
 ADMIN_LAST_NAME="System"
-
-UPLOAD_MAX_FILE_SIZE=5242880
-UPLOAD_ALLOWED_MIME_TYPES="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv"
 ```
 
 ## Variables que no deben subirse
@@ -303,9 +286,6 @@ OpenAPI
 
 Seeds
 = usuario administrador inicial
-
-Archivos
-= límites de importación
 
 Logs
 = nivel de salida

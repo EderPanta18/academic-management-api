@@ -25,7 +25,7 @@ Aquí deben vivir:
 - Entidades de dominio.
 - Puertos.
 - Adaptadores propios del módulo.
-- Controladores del módulo.
+- Entrypoints del módulo.
 - DTOs del módulo.
 - Mappers del módulo.
 ```
@@ -96,13 +96,15 @@ src/modules/<module>/
 ├── domain/
 ├── application/
 ├── infrastructure/
-├── presentation/
+├── entrypoints/
+│   ├── http/
+│   └── queue/
 └── index.ts
 ```
 
 En NestJS, `<module>.module.ts` integra controllers, providers, imports y exports del módulo.
 
-No todos los módulos necesitan todas las carpetas desde el inicio. La estructura debe acompañar la complejidad real del módulo.
+No todos los módulos necesitan todas las carpetas desde el inicio. La estructura debe acompañar la complejidad real del módulo. Un módulo que no expone nada por cola no necesita `entrypoints/queue/`.
 
 ## `domain`
 
@@ -179,9 +181,31 @@ modules/<module>/infrastructure
 → platform/database
 ```
 
-## `presentation`
+## `entrypoints`
 
-`presentation` contiene la entrada y salida HTTP del módulo.
+`entrypoints` contiene los puntos de entrada del módulo.
+
+Un módulo puede ser invocado por HTTP o por cola, y ambas formas viven aquí.
+
+Estructura interna posible:
+
+```txt
+entrypoints/
+├── http/
+│   ├── controllers/
+│   ├── dtos/
+│   ├── decorators/
+│   ├── mappers/
+│   └── interceptors/
+└── queue/
+    └── *.processor.ts / *.handler.ts
+```
+
+Los entrypoints no contienen reglas de negocio. Reciben la invocación, adaptan el payload y delegan en la aplicación.
+
+## `entrypoints/http`
+
+`entrypoints/http` contiene la entrada y salida HTTP del módulo.
 
 En NestJS, normalmente incluye:
 
@@ -196,9 +220,32 @@ En NestJS, normalmente incluye:
 - Constantes de rutas.
 ```
 
-La presentación no debe contener reglas de negocio. Su función es adaptar HTTP hacia la aplicación.
+La parte HTTP no debe contener reglas de negocio. Su función es adaptar HTTP hacia la aplicación.
 
-La presentación no ejecuta trabajo intensivo. Si un caso de uso necesita diferirse, la presentación solo recibe la respuesta del caso de uso, que puede incluir un identificador de job si corresponde.
+La parte HTTP no ejecuta trabajo intensivo. Si un caso de uso necesita diferirse, el entrypoint HTTP solo recibe la respuesta del caso de uso, que puede incluir un identificador de job si corresponde.
+
+## `entrypoints/queue`
+
+`entrypoints/queue` contiene los procesadores de jobs y handlers de eventos del módulo.
+
+Puede incluir:
+
+```txt
+- Procesadores de jobs.
+- Handlers de eventos.
+- Mappers de payload de cola.
+```
+
+Un procesador de jobs o un handler de eventos recibe un payload, lo adapta y delega la lógica en un caso de uso o servicio del mismo módulo. No consulta tablas directamente ni decide reglas de negocio.
+
+```txt
+entrypoints/queue/<module>.processor.ts
+→ recibe payload del job
+→ llama al caso de uso correspondiente
+→ el módulo valida, persiste y decide
+```
+
+El registro de estos procesadores y handlers contra la cola y el bus de eventos no vive en el módulo, sino en `workers/`. El módulo expone sus procesadores; `workers/register-jobs.ts` los conecta con `platform/queue`.
 
 ## Módulos de acceso y seguridad
 
@@ -237,7 +284,7 @@ El módulo `users` controla cuándo se crea una sesión, cuándo se revoca, cuá
 Una operación de escritura debería seguir una dirección similar:
 
 ```txt
-Controller
+Entrypoint HTTP (Controller)
 → Request DTO
 → Mapper
 → Command
@@ -257,7 +304,7 @@ Si el caso de uso decide diferir trabajo, puede encolar un job a través del con
 Una operación de lectura puede seguir este recorrido:
 
 ```txt
-Controller
+Entrypoint HTTP (Controller)
 → Query DTO
 → Mapper
 → Application Query
@@ -298,11 +345,12 @@ reports → queries públicas o puertos de lectura
 
 Los workers no son módulos. Son procesos asíncronos que consumen jobs y eventos desde fuera del flujo HTTP.
 
-Un worker no importa detalles internos de un módulo. Consume casos de uso, servicios o contratos públicos del módulo dueño.
+Un worker no importa detalles internos de un módulo. Consume casos de uso, servicios o contratos públicos del módulo dueño. Los procesadores y handlers concretos viven en `modules/<module>/entrypoints/queue/`; `workers/register-jobs.ts` solo los registra contra `platform/queue`.
 
 ```txt
 worker
-→ consume un caso de uso de students
+→ consume un procesador de modules/<module>/entrypoints/queue
+→ el procesador llama a un caso de uso de students
 → students valida, persiste y decide
 ```
 
@@ -371,12 +419,13 @@ No pertenecen directamente a `modules`:
 - Guards técnicos reutilizables.
 - Estrategias JWT.
 - Hashing técnico de contraseñas.
-- Procesadores de jobs.
-- Handlers de eventos.
-- Entrypoints de workers.
+- Orquestación de workers.
+- Entrypoint de workers.
 ```
 
 Esos elementos pertenecen a `platform` o a `workers`.
+
+Los procesadores de jobs y handlers de eventos sí pertenecen a `modules`, pero viven en `entrypoints/queue/`, no en `workers/`.
 
 ## Crecimiento esperado
 
@@ -405,4 +454,4 @@ Qué expone hacia otros módulos?
 Qué detalles debe mantener internos?
 ```
 
-Si esas respuestas no están claras, el módulo todavía no está bien delimitado.
+Si esas respuestas no están claras, el módulo todavía no está bien delimitado.`

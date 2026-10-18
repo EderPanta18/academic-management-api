@@ -86,13 +86,13 @@ APP_PORT
 DATABASE_URL
 JWT_ACCESS_SECRET
 JWT_REFRESH_SECRET
-CORS_ORIGIN
+CORS_ORIGINS
 ADMIN_EMAIL
 ADMIN_PASSWORD
-PGBOSS_SCHEMA
-PGBOSS_JOBS_RETRY_LIMIT
-PGBOSS_JOBS_RETRY_DELAY
-PGBOSS_JOBS_WORKER_CONCURRENCY
+QUEUE_SCHEMA
+QUEUE_JOB_RETRY_LIMIT
+QUEUE_JOB_RETRY_DELAY_MS
+QUEUE_WORKER_CONCURRENCY
 ```
 
 El archivo `.env` no debe subirse al repositorio.
@@ -143,6 +143,8 @@ El criterio importante es que la estructura local debe quedar sincronizada con e
 
 Las migraciones crean las tablas del sistema. El esquema de PgBoss no forma parte de las migraciones: lo crea la propia librería cuando la cola arranca por primera vez.
 
+Algunas restricciones del esquema son índices únicos parciales sobre registros activos (`WHERE deleted_at IS NULL`) o sobre sesiones activas. Esas restricciones se aplican mediante migraciones SQL manuales, porque Prisma no las expresa de forma nativa en el schema.
+
 ## Ejecutar seeds
 
 Después de migrar, ejecutar los datos base.
@@ -192,10 +194,14 @@ Los workers son un proceso independiente de la API. Se arrancan por separado.
 Comando conceptual:
 
 ```bash
-pnpm workers:dev
+pnpm start:worker:dev
 ```
 
-O un script equivalente definido por el proyecto.
+En producción:
+
+```bash
+pnpm start:worker:prod
+```
 
 Los workers consumen jobs y eventos desde la misma base de datos PostgreSQL. Se conectan a la cola a través de las implementaciones de `platform/queue` y delegan la lógica en los casos de uso de los módulos.
 
@@ -267,11 +273,12 @@ Si el módulo de importación está implementado, la prueba local debe considera
 2. Recibir jobId como respuesta 202 Accepted.
 3. Consultar el estado del job en el endpoint de importaciones.
 4. Verificar que el worker procesó el archivo.
-5. Consultar el resumen en student_imports.
-6. Consultar el detalle en student_import_rows.
+5. Consultar el resumen y los errores en student_imports.
 ```
 
 La lectura técnica del archivo corresponde a `platform/files`. Las reglas de importación pertenecen a `students`. El procesamiento se ejecuta en un worker fuera del flujo HTTP.
+
+El detalle por fila no se persiste en una tabla relacional. Los errores se guardan en el campo `errors` de tipo `JSONB` dentro de `student_imports`, junto con el progreso (`processed_rows`) y el resultado del proceso (`accepted_rows`, `rejected_rows`, `duplicated_rows`, `observed_rows`). Los errores catastróficos se registran en `failure_reason`.
 
 Si los workers no están levantados, el job queda encolado y pendiente, pero no se procesa. Esto es útil para pruebas controladas, pero en un entorno funcional los workers deben estar activos.
 
@@ -297,7 +304,7 @@ Revisar:
 - Los nombres coinciden con los esperados.
 - No hay comillas mal cerradas.
 - Los secretos JWT están definidos.
-- Las variables de PgBoss están definidas o se aceptan sus valores por defecto.
+- Las variables de la cola están definidas o se aceptan sus valores por defecto.
 ```
 
 ### Swagger no aparece
@@ -357,6 +364,16 @@ Revisar:
 - No hay conflicto con otro proceso escuchando en el mismo puerto si los workers exponen health.
 ```
 
+### El job de importación no avanza
+
+Revisar:
+
+```txt
+- El worker procesó el job pero falló a mitad de camino; revisar failure_reason y status en student_imports.
+- Si el worker se reinició, debe continuar desde processed_rows.
+- La clasificación de errores por fila depende del errorCode del AppException; revisar que la causa sea una de las soportadas.
+```
+
 ## Reinicio local de base de datos
 
 En desarrollo puede ser útil reiniciar la base.
@@ -393,18 +410,6 @@ Antes de abrir un pull request, conviene validar:
 ```
 
 Los comandos exactos pueden cambiar, pero el flujo debe mantenerse estable.
-
-## Estructura esperada de documentación operativa
-
-Esta carpeta se mantiene mínima para evitar documentación frágil.
-
-```txt
-07-operations/
-├── variables-entorno.md
-└── setup-local.md
-```
-
-Otros documentos como estrategia de pruebas, checks de calidad o setup avanzado de base de datos pueden agregarse cuando los scripts y flujos estén más estables.
 
 ## Criterio general
 
