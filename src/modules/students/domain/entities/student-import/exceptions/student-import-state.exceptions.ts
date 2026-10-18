@@ -1,4 +1,4 @@
-import type { StudentImportStatus } from '@students/domain/enums';
+import type { StudentImportStatus } from '@students/domain/entities';
 import { StudentImportException } from '@students/domain/exceptions';
 
 export class StudentImportNotPendingException extends StudentImportException {

@@ -1,5 +1,4 @@
-import { STUDENT_IMPORT } from '@students/domain/constants';
-import { StudentImportStatus } from '@students/domain/enums';
+import { StudentImportStatus } from '@students/domain/entities';
 import {
   StudentImportCannotFailException,
   StudentImportEmptyException,
@@ -7,8 +6,11 @@ import {
   StudentImportNotProcessingException,
   StudentImportTooManyRowsException,
 } from './exceptions';
+import { STUDENT_IMPORT } from './student-import.constants';
 import type {
   CreateStudentImportProps,
+  StudentImportError,
+  StudentImportProgress,
   StudentImportProps,
   StudentImportStats,
 } from './student-import.types';
@@ -16,6 +18,8 @@ import type {
 export class StudentImport {
   readonly id: string;
   readonly fileName: string;
+  readonly fileExtension: string;
+  readonly fileHash: string;
   readonly fileSize: number | null;
   readonly fileMimeType: string | null;
   readonly status: StudentImportStatus;
@@ -25,13 +29,17 @@ export class StudentImport {
   readonly rejectedRows: number;
   readonly duplicatedRows: number;
   readonly observedRows: number;
-  readonly createdByUserId: string | null;
+  readonly errors: StudentImportError[] | null;
+  readonly failureReason: string | null;
+  readonly createdByUserId: string;
   readonly startedAt: Date | null;
   readonly finishedAt: Date | null;
 
   private constructor(props: StudentImportProps) {
     this.id = props.id;
     this.fileName = props.fileName;
+    this.fileExtension = props.fileExtension;
+    this.fileHash = props.fileHash;
     this.fileSize = props.fileSize;
     this.fileMimeType = props.fileMimeType;
     this.status = props.status;
@@ -41,6 +49,8 @@ export class StudentImport {
     this.rejectedRows = props.rejectedRows;
     this.duplicatedRows = props.duplicatedRows;
     this.observedRows = props.observedRows;
+    this.errors = props.errors;
+    this.failureReason = props.failureReason;
     this.createdByUserId = props.createdByUserId;
     this.startedAt = props.startedAt;
     this.finishedAt = props.finishedAt;
@@ -61,6 +71,8 @@ export class StudentImport {
     return new StudentImport({
       id: props.id,
       fileName: props.fileName,
+      fileExtension: props.fileExtension,
+      fileHash: props.fileHash,
       fileSize: props.fileSize ?? null,
       fileMimeType: props.fileMimeType ?? null,
       status: StudentImportStatus.PENDING,
@@ -70,7 +82,9 @@ export class StudentImport {
       rejectedRows: 0,
       duplicatedRows: 0,
       observedRows: 0,
-      createdByUserId: props.createdByUserId ?? null,
+      errors: null,
+      failureReason: null,
+      createdByUserId: props.createdByUserId,
       startedAt: null,
       finishedAt: null,
     });
@@ -84,6 +98,21 @@ export class StudentImport {
       ...this,
       status: StudentImportStatus.PROCESSING,
       startedAt: new Date(),
+    });
+  }
+
+  withProgress(progress: StudentImportProgress): StudentImport {
+    if (this.status !== StudentImportStatus.PROCESSING)
+      throw new StudentImportNotProcessingException(this.id, this.status);
+
+    return new StudentImport({
+      ...this,
+      processedRows: progress.processedRows,
+      acceptedRows: progress.acceptedRows,
+      rejectedRows: progress.rejectedRows,
+      duplicatedRows: progress.duplicatedRows,
+      observedRows: progress.observedRows,
+      errors: progress.errors,
     });
   }
 
@@ -104,11 +133,12 @@ export class StudentImport {
       rejectedRows: stats.rejectedRows,
       duplicatedRows: stats.duplicatedRows,
       observedRows: stats.observedRows,
+      errors: stats.errors,
       finishedAt: new Date(),
     });
   }
 
-  markAsFailed(): StudentImport {
+  markAsFailed(reason: string): StudentImport {
     const canFail =
       this.status === StudentImportStatus.PENDING || this.status === StudentImportStatus.PROCESSING;
 
@@ -117,6 +147,7 @@ export class StudentImport {
     return new StudentImport({
       ...this,
       status: StudentImportStatus.FAILED,
+      failureReason: reason,
       finishedAt: new Date(),
     });
   }

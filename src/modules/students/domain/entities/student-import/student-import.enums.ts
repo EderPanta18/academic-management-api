@@ -5,11 +5,3 @@ export enum StudentImportStatus {
   COMPLETED_WITH_ERRORS = 'COMPLETED_WITH_ERRORS',
   FAILED = 'FAILED',
 }
-
-export enum StudentImportRowStatus {
-  ACCEPTED = 'ACCEPTED',
-  REJECTED = 'REJECTED',
-  DUPLICATED = 'DUPLICATED',
-  OBSERVED = 'OBSERVED',
-  UPDATED = 'UPDATED',
-}

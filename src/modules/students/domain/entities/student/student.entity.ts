@@ -1,4 +1,4 @@
-import { StudentStatus } from '@students/domain/enums';
+import { StudentStatus } from '@students/domain/entities';
 import type { CreateStudentProps, StudentProps } from './student.types';
 
 export class Student {
@@ -29,8 +29,6 @@ export class Student {
   static create(props: CreateStudentProps): Student {
     return new Student({
       ...props,
-      institutionalEmail: props.institutionalEmail ?? null,
-      admissionPeriod: props.admissionPeriod ?? null,
       status: props.status ?? StudentStatus.ACTIVE,
     });
   }

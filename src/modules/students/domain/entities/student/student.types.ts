@@ -1,4 +1,4 @@
-import type { StudentStatus } from '@students/domain/enums';
+import type { StudentStatus } from '@students/domain/entities';
 
 export interface StudentProps {
   id: string;
@@ -15,7 +15,7 @@ export interface CreateStudentProps {
   personId: string;
   academicProgramId: string;
   code: string;
-  institutionalEmail?: string | null;
-  admissionPeriod?: string | null;
-  status?: StudentStatus;
+  institutionalEmail: string | null;
+  admissionPeriod: string | null;
+  status: StudentStatus | null;
 }
