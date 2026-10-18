@@ -1,3 +1,4 @@
+import { PAGINATION_LIMIT, PAGINATION_PAGE } from '@core/pagination';
 import { applyDecorators, type Type } from '@nestjs/common';
 import { ApiExtraModels, ApiOkResponse, ApiQuery, getSchemaPath } from '@nestjs/swagger';
 
@@ -7,15 +8,17 @@ function ApiPaginationQueryParams(): MethodDecorator {
       name: 'page',
       required: false,
       type: Number,
-      example: 1,
-      description: 'Número de página',
+      description: 'Número de página.',
+      default: PAGINATION_PAGE.default,
+      example: PAGINATION_PAGE.default,
     }),
     ApiQuery({
       name: 'limit',
       required: false,
       type: Number,
-      example: 20,
-      description: 'Registros por página',
+      description: 'Registros por página.',
+      default: PAGINATION_LIMIT.default,
+      example: PAGINATION_LIMIT.default,
     }),
   );
 }
@@ -33,33 +36,33 @@ function ApiPaginatedResultSchema<T extends Type<unknown>>(model: T): MethodDeco
           properties: {
             page: {
               type: 'number',
+              description: 'Página actual.',
               example: 1,
-              description: 'Página actual',
             },
             limit: {
               type: 'number',
+              description: 'Registros por página.',
               example: 20,
-              description: 'Registros por página',
             },
             totalItems: {
               type: 'number',
+              description: 'Total de registros encontrados.',
               example: 50,
-              description: 'Total de registros encontrados',
             },
             totalPages: {
               type: 'number',
+              description: 'Total de páginas.',
               example: 3,
-              description: 'Total de páginas',
             },
             hasNextPage: {
               type: 'boolean',
+              description: 'Indica si existe una página siguiente.',
               example: true,
-              description: 'Indica si existe una página siguiente',
             },
             hasPreviousPage: {
               type: 'boolean',
+              description: 'Indica si existe una página anterior.',
               example: false,
-              description: 'Indica si existe una página anterior',
             },
           },
         },
