@@ -260,7 +260,7 @@ model Enrollment {
   courseOfferingId   String            @db.Uuid
   status             EnrollmentStatus
   enrolledAt         DateTime
-  registeredByUserId String?           @db.Uuid
+  registeredByUserId String            @db.Uuid
   statusReason       String?           @db.Text
 
   createdAt          DateTime          @default(now())
@@ -269,7 +269,7 @@ model Enrollment {
 
   student            Student           @relation(fields: [studentId], references: [id])
   courseOffering     CourseOffering    @relation(fields: [courseOfferingId], references: [id])
-  registeredByUser   User?             @relation("RegisteredEnrollments", fields: [registeredByUserId], references: [id])
+  registeredByUser   User              @relation("RegisteredEnrollments", fields: [registeredByUserId], references: [id])
   statusLogs         EnrollmentStatusLog[]
 
   @@unique([studentId, courseOfferingId])
@@ -286,12 +286,12 @@ model EnrollmentStatusLog {
   previousStatus  EnrollmentStatus?
   newStatus       EnrollmentStatus
   reason          String?          @db.Text
-  changedByUserId String?          @db.Uuid
+  changedByUserId String           @db.Uuid
 
   createdAt       DateTime         @default(now())
 
   enrollment      Enrollment       @relation(fields: [enrollmentId], references: [id])
-  changedByUser   User?            @relation("EnrollmentStatusChangedBy", fields: [changedByUserId], references: [id])
+  changedByUser   User             @relation("EnrollmentStatusChangedBy", fields: [changedByUserId], references: [id])
 
   @@index([enrollmentId])
   @@map("enrollment_status_logs")
