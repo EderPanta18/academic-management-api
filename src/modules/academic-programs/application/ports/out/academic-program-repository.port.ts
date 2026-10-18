@@ -5,6 +5,8 @@ export const ACADEMIC_PROGRAM_REPOSITORY_TOKEN = Symbol('ACADEMIC_PROGRAM_REPOSI
 export interface IAcademicProgramRepository {
   create(academicProgram: AcademicProgram): Promise<AcademicProgram>;
 
+  findByCode(code: string): Promise<AcademicProgram | null>;
+
   exists(id: string): Promise<boolean>;
 
   existsByCode(code: string): Promise<boolean>;

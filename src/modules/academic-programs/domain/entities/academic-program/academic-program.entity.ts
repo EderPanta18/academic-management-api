@@ -20,9 +20,6 @@ export class AcademicProgram {
   }
 
   static create(props: CreateAcademicProgramProps): AcademicProgram {
-    return new AcademicProgram({
-      ...props,
-      academicUnit: props.academicUnit ?? null,
-    });
+    return new AcademicProgram(props);
   }
 }

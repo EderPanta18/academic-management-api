@@ -1,4 +1,4 @@
-import { AcademicProgramException } from '@academic-programs/domain/exception';
+import { AcademicProgramException } from '@modules/academic-programs/domain/exceptions';
 
 export class AcademicProgramCodeAlreadyExistsException extends AcademicProgramException {
   readonly statusCode = 409;

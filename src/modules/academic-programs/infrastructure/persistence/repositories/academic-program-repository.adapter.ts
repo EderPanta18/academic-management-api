@@ -1,5 +1,5 @@
 import type { IAcademicProgramRepository } from '@academic-programs/application/ports/out';
-import type { AcademicProgram } from '@academic-programs/domain/entities';
+import { AcademicProgram } from '@academic-programs/domain/entities';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@platform/database';
 import { AcademicProgramRepositoryMapper } from './academic-program-repository.mapper';
@@ -16,6 +16,14 @@ export class AcademicProgramRepository implements IAcademicProgramRepository {
     });
 
     return AcademicProgramRepositoryMapper.toDomain(record);
+  }
+
+  async findByCode(code: string): Promise<AcademicProgram | null> {
+    const raw = await this.prisma.academicProgram.findFirst({
+      where: { code, deletedAt: null },
+    });
+
+    return raw ? AcademicProgramRepositoryMapper.toDomain(raw) : null;
   }
 
   async exists(id: string): Promise<boolean> {

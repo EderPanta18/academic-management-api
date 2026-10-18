@@ -9,5 +9,5 @@ export type CreateAcademicProgramProps = {
   id: string;
   code: string;
   name: string;
-  academicUnit?: string | null;
+  academicUnit: string | null;
 };
