@@ -2,7 +2,7 @@
 
 import type { PaginationVO } from '@core/pagination';
 import type { StudentReadModel } from '@students/application/read-models';
-import type { StudentStatus } from '@students/domain/enums';
+import type { StudentStatus } from '@students/domain/entities';
 
 export const STUDENT_QUERY_TOKEN = Symbol('STUDENT_QUERY');
 

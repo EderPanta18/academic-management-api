@@ -4,7 +4,6 @@ export {
   type IStudentImportQuery,
   STUDENT_IMPORT_QUERY_TOKEN,
   type StudentImportQueryFilters,
-  type StudentImportRowQueryFilters,
 } from './student-import-query.port';
 export {
   type IStudentImportRepository,
@@ -20,3 +19,8 @@ export {
   STUDENT_REPOSITORY_TOKEN,
   type StudentCreationData,
 } from './student-repository.port';
+
+export {
+  type IUserExistenceChecker,
+  USER_EXISTENCE_CHECKER_TOKEN,
+} from './user-existence-checker.port';

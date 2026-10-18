@@ -1,8 +1,8 @@
 import type { PaginationVO } from '@core/pagination';
 import { Inject, Injectable } from '@nestjs/common';
 import { type IStudentQuery, STUDENT_QUERY_TOKEN } from '@students/application/ports/out';
-import type { ListStudentsQuery } from '../queries';
-import type { StudentReadModel } from '../read-models';
+import type { ListStudentsQuery } from '@students/application/queries';
+import type { StudentReadModel } from '@students/application/read-models';
 
 @Injectable()
 export class ListStudentsUseCase {

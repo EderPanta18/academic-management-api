@@ -1,4 +1,4 @@
-import type { StudentStatus } from '@students/domain/enums';
+import type { StudentStatus } from '@students/domain/entities';
 
 export type StudentReadModel = {
   id: string;
@@ -9,11 +9,12 @@ export type StudentReadModel = {
   admissionPeriod: string | null;
   status: StudentStatus;
 
+  // Datos de persona
   documentTypeName: string;
   documentNumber: string;
   firstName: string;
   lastName: string;
-  email: string;
+  email: string | null;
   phone: string | null;
   birthDate: Date | null;
 };

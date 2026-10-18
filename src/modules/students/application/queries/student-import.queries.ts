@@ -1,10 +1,6 @@
-import type { StudentImportRowStatus, StudentImportStatus } from '@students/domain/enums';
+import type { StudentImportStatus } from '@students/domain/entities';
 
 export type ListStudentImportsQuery = {
   status?: StudentImportStatus;
   createdByUserId?: string;
-};
-
-export type ListStudentImportRowsQuery = {
-  status?: StudentImportRowStatus;
 };

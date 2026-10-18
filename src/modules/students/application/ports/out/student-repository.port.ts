@@ -13,6 +13,8 @@ export type StudentCreationData = {
 export interface IStudentRepository {
   create(input: StudentCreationData): Promise<Student>;
 
+  find(id: string): Promise<Student | null>;
+
   exists(id: string): Promise<boolean>;
 
   existsByCode(code: string): Promise<boolean>;

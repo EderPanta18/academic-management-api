@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { StudentNotFoundException } from '@students/application/exceptions';
 import { type IStudentQuery, STUDENT_QUERY_TOKEN } from '@students/application/ports/out';
-import type { StudentReadModel } from '../read-models';
+import type { StudentReadModel } from '@students/application/read-models';
 
 @Injectable()
 export class GetStudentByIdUseCase {

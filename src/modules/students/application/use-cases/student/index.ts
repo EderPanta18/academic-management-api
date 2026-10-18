@@ -1,0 +1,3 @@
+export { CreateStudentUseCase } from './create-student.use-case';
+export { GetStudentByIdUseCase } from './get-student-by-id.use-case';
+export { ListStudentsUseCase } from './list-students.use-case';

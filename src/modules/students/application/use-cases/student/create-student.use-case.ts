@@ -5,6 +5,7 @@ import {
 import { ID_GENERATOR_TOKEN, type IIdGenerator } from '@core/contracts';
 import { type IPersonCreationValidator, PERSON_CREATION_VALIDATOR_TOKEN } from '@identity';
 import { Inject, Injectable } from '@nestjs/common';
+import type { CreateStudentCommand } from '@students/application/commands';
 import {
   StudentAcademicProgramNotFoundException,
   StudentCodeAlreadyExistsException,
@@ -12,19 +13,18 @@ import {
 } from '@students/application/exceptions';
 import { type IStudentRepository, STUDENT_REPOSITORY_TOKEN } from '@students/application/ports/out';
 import { Student } from '@students/domain/entities';
-import type { CreateStudentCommand } from '../commands';
 
 @Injectable()
 export class CreateStudentUseCase {
   constructor(
+    @Inject(ID_GENERATOR_TOKEN)
+    private readonly idGenerator: IIdGenerator,
+
     @Inject(ACADEMIC_PROGRAM_CHECKER_TOKEN)
     private readonly academicProgramChecker: IAcademicProgramChecker,
 
     @Inject(PERSON_CREATION_VALIDATOR_TOKEN)
     private readonly personCreationValidator: IPersonCreationValidator,
-
-    @Inject(ID_GENERATOR_TOKEN)
-    private readonly idGenerator: IIdGenerator,
 
     @Inject(STUDENT_REPOSITORY_TOKEN)
     private readonly studentRepository: IStudentRepository,

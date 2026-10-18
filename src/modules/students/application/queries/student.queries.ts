@@ -1,4 +1,4 @@
-import type { StudentStatus } from '@students/domain/enums';
+import type { StudentStatus } from '@students/domain/entities';
 
 export type ListStudentsQuery = {
   academicProgramId?: string;

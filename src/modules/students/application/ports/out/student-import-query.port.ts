@@ -1,19 +1,12 @@
 import type { PaginationVO } from '@core/pagination';
-import type {
-  StudentImportReadModel,
-  StudentImportRowReadModel,
-} from '@students/application/read-models';
-import type { StudentImportRowStatus, StudentImportStatus } from '@students/domain/enums';
+import type { StudentImportReadModel } from '@students/application/read-models';
+import type { StudentImportStatus } from '@students/domain/entities';
 
 export const STUDENT_IMPORT_QUERY_TOKEN = Symbol('STUDENT_IMPORT_QUERY');
 
 export type StudentImportQueryFilters = {
   status?: StudentImportStatus;
   createdByUserId?: string;
-};
-
-export type StudentImportRowQueryFilters = {
-  status?: StudentImportRowStatus;
 };
 
 export interface IStudentImportQuery {
@@ -23,10 +16,4 @@ export interface IStudentImportQuery {
     pagination: PaginationVO,
     filters?: StudentImportQueryFilters,
   ): Promise<[StudentImportReadModel[], number]>;
-
-  findRowsByImportId(
-    importId: string,
-    pagination: PaginationVO,
-    filters?: StudentImportRowQueryFilters,
-  ): Promise<[StudentImportRowReadModel[], number]>;
 }
