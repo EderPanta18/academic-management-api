@@ -1,33 +1,39 @@
-// modules/professors/professors.module.ts
-
-import { DepartmentsModule } from '@departments';
+import { IdentityModule } from '@identity';
 import { Module } from '@nestjs/common';
-import { PersonsModule } from '@persons';
 import {
-  PROFESSOR_FINDER_PORT,
-  PROFESSOR_QUERY_PORT,
-  PROFESSOR_REPOSITORY_PORT,
+  PROFESSOR_CHECKER_TOKEN,
+  PROFESSOR_QUERY_TOKEN,
+  PROFESSOR_REPOSITORY_TOKEN,
 } from './application/ports';
+import { ProfessorChecker } from './application/services';
 import {
   CreateProfessorUseCase,
   GetProfessorByIdUseCase,
   ListProfessorsUseCase,
 } from './application/use-cases';
-import { ProfessorRepository } from './infrastructure/persistence';
-import { ProfessorsController } from './presentation/controllers';
+import { ProfessorsController } from './entrypoints/http';
+import { ProfessorQuery, ProfessorRepository } from './infrastructure/persistence';
 
 @Module({
-  imports: [PersonsModule, DepartmentsModule],
+  imports: [IdentityModule],
   providers: [
     CreateProfessorUseCase,
     GetProfessorByIdUseCase,
     ListProfessorsUseCase,
-    ProfessorRepository,
-    { provide: PROFESSOR_REPOSITORY_PORT, useExisting: ProfessorRepository },
-    { provide: PROFESSOR_QUERY_PORT, useExisting: ProfessorRepository },
-    { provide: PROFESSOR_FINDER_PORT, useExisting: ProfessorRepository },
+    {
+      provide: PROFESSOR_REPOSITORY_TOKEN,
+      useExisting: ProfessorRepository,
+    },
+    {
+      provide: PROFESSOR_QUERY_TOKEN,
+      useExisting: ProfessorQuery,
+    },
+    {
+      provide: PROFESSOR_CHECKER_TOKEN,
+      useClass: ProfessorChecker,
+    },
   ],
   controllers: [ProfessorsController],
-  exports: [PROFESSOR_FINDER_PORT],
+  exports: [PROFESSOR_CHECKER_TOKEN],
 })
 export class ProfessorsModule {}
