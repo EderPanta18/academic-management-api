@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@platform/database';
 import type { IStudentRepository, StudentCreationData } from '@students/application/ports/out';
-import { Student } from '@students/domain/entities';
+import type { Student } from '@students/domain/entities';
 import { StudentRepositoryMapper } from './student-repository.mapper';
 
 @Injectable()
