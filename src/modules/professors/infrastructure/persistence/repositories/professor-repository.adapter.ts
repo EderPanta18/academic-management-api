@@ -4,7 +4,7 @@ import type {
   IProfessorRepository,
   ProfessorCreationData,
 } from '@professors/application/ports/out';
-import { Professor } from '@professors/domain/entities';
+import type { Professor } from '@professors/domain/entities';
 import { ProfessorRepositoryMapper } from './professor-repository.mapper';
 
 @Injectable()
