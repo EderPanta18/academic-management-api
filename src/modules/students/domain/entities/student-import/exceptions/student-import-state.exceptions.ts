@@ -1,5 +1,5 @@
-import type { StudentImportStatus } from '@students/domain/entities';
 import { StudentImportException } from '@students/domain/exceptions';
+import type { StudentImportStatus } from '../student-import.enums';
 
 export class StudentImportNotPendingException extends StudentImportException {
   readonly statusCode = 409;
