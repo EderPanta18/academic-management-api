@@ -1,3 +1,2 @@
-// modules/courses/infrastructure/persistence/repositories/index.ts
-
+export { CourseCategoryRepository } from './course-category-repository.adapter';
 export { CourseRepository } from './course-repository.adapter';
