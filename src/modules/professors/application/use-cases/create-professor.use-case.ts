@@ -1,77 +1,73 @@
-// modules/professors/application/use-cases/create-professor.use-case.ts
-
-import { EntityNotFoundException } from '@core/exceptions';
-import { DEPARTMENT_FINDER_PORT, type IDepartmentFinder } from '@departments/application/ports/in';
+import { ID_GENERATOR_TOKEN, type IIdGenerator } from '@core/contracts';
+import { type IPersonCreationValidator, PERSON_CREATION_VALIDATOR_TOKEN } from '@identity';
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  type IPersonCreationValidator,
-  PERSON_CREATION_VALIDATOR_PORT,
-} from '@persons/application/ports/in';
-import {
-  type IProfessorRepository,
-  PROFESSOR_REPOSITORY_PORT,
-} from '@professors/application/ports/out';
 import { Professor } from '@professors/domain/entities';
+import type { CreateProfessorCommand } from '../commands';
 import {
   ProfessorCodeAlreadyExistsException,
-  ProfessorEmailAlreadyExistsException,
-} from '@professors/domain/exceptions';
-import { CreateProfessorCommand } from '../commands';
+  ProfessorInstitutionalEmailAlreadyExistsException,
+} from '../exceptions';
+import { type IProfessorRepository, PROFESSOR_REPOSITORY_TOKEN } from '../ports/out';
 
 @Injectable()
 export class CreateProfessorUseCase {
   constructor(
-    @Inject(DEPARTMENT_FINDER_PORT)
-    private readonly departmentFinder: IDepartmentFinder,
+    @Inject(ID_GENERATOR_TOKEN)
+    private readonly idGenerator: IIdGenerator,
 
-    @Inject(PERSON_CREATION_VALIDATOR_PORT)
+    @Inject(PERSON_CREATION_VALIDATOR_TOKEN)
     private readonly personCreationValidator: IPersonCreationValidator,
 
-    @Inject(PROFESSOR_REPOSITORY_PORT)
+    @Inject(PROFESSOR_REPOSITORY_TOKEN)
     private readonly professorRepository: IProfessorRepository,
   ) {}
 
   async execute(command: CreateProfessorCommand): Promise<Professor> {
-    if (command.departmentId) {
-      const exists = await this.departmentFinder.exists(command.departmentId);
+    const codeAlreadyExists = await this.professorRepository.existsByCode(command.code);
 
-      if (!exists) throw new EntityNotFoundException('Department', command.departmentId);
-    }
-
-    const codeExists = await this.professorRepository.existsByCode(command.code);
-
-    if (codeExists) throw new ProfessorCodeAlreadyExistsException(command.code);
+    if (codeAlreadyExists) throw new ProfessorCodeAlreadyExistsException(command.code);
 
     if (command.institutionalEmail) {
-      const institutionalEmailExists = await this.professorRepository.existsByInstitutionalEmail(
+      const emailAlreadyExists = await this.professorRepository.existsByInstitutionalEmail(
         command.institutionalEmail,
       );
 
-      if (institutionalEmailExists)
-        throw new ProfessorEmailAlreadyExistsException(command.institutionalEmail);
+      if (emailAlreadyExists)
+        throw new ProfessorInstitutionalEmailAlreadyExistsException(command.institutionalEmail);
     }
 
-    const personData = await this.personCreationValidator.validate({
-      dni: command.dni,
-      firstName: command.firstName,
-      lastName: command.lastName,
+    await this.personCreationValidator.validate({
+      documentTypeId: command.documentTypeId,
+      documentNumber: command.documentNumber,
       email: command.email,
       phone: command.phone,
-      birthDate: command.birthDate,
     });
 
+    const professorId = this.idGenerator.generate();
+    const personId = this.idGenerator.generate();
+
     const professor = Professor.create({
+      id: professorId,
+      personId,
       code: command.code,
-      departmentId: command.departmentId,
-      specialty: command.specialty,
       institutionalEmail: command.institutionalEmail,
-      hireDate: command.hireDate,
+      department: command.department,
+      specialty: command.specialty,
       status: command.status,
     });
 
-    return this.professorRepository.save({
+    return await this.professorRepository.create({
       professor,
-      personData,
+      personData: {
+        id: personId,
+        documentTypeId: command.documentTypeId,
+        documentNumber: command.documentNumber,
+        firstName: command.firstName,
+        lastName: command.lastName,
+        email: command.email,
+        phone: command.phone,
+        birthDate: command.birthDate,
+      },
     });
   }
 }

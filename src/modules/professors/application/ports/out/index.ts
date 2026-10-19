@@ -1,12 +1,10 @@
-// modules/professors/domain/ports/out/index.ts
-
 export {
-  type FindAllProfessorsFilters,
   type IProfessorQuery,
-  PROFESSOR_QUERY_PORT,
+  PROFESSOR_QUERY_TOKEN,
+  type ProfessorQueryFilters,
 } from './professor-query.port';
 export {
   type IProfessorRepository,
-  PROFESSOR_REPOSITORY_PORT,
-  type ProfessorSaveData,
+  PROFESSOR_REPOSITORY_TOKEN,
+  type ProfessorCreationData,
 } from './professor-repository.port';

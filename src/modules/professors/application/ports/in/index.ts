@@ -1,6 +1,1 @@
-// modules/professors/application/ports/in/index.ts
-
-export {
-  type IProfessorFinder,
-  PROFESSOR_FINDER_PORT,
-} from './professor-finder.port';
+export { type IProfessorChecker, PROFESSOR_CHECKER_TOKEN } from './professor-checker.port';

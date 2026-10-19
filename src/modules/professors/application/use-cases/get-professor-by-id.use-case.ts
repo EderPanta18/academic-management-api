@@ -1,22 +1,20 @@
-// modules/professors/application/use-cases/get-professor-by-id.use-case.ts
-
 import { Inject, Injectable } from '@nestjs/common';
-import { type IProfessorQuery, PROFESSOR_QUERY_PORT } from '@professors/application/ports/out';
-import { ProfessorNotFoundException } from '@professors/domain/exceptions';
-import type { ProfessorView } from '../read-models';
+import { ProfessorNotFoundException } from '../exceptions';
+import { type IProfessorQuery, PROFESSOR_QUERY_TOKEN } from '../ports/out';
+import type { ProfessorReadModel } from '../read-models';
 
 @Injectable()
 export class GetProfessorByIdUseCase {
   constructor(
-    @Inject(PROFESSOR_QUERY_PORT)
+    @Inject(PROFESSOR_QUERY_TOKEN)
     private readonly professorQuery: IProfessorQuery,
   ) {}
 
-  async execute(id: number): Promise<ProfessorView> {
-    const view = await this.professorQuery.findById(id);
+  async execute(id: string): Promise<ProfessorReadModel> {
+    const professor = await this.professorQuery.find(id);
 
-    if (!view) throw new ProfessorNotFoundException(id);
+    if (!professor) throw new ProfessorNotFoundException(id);
 
-    return view;
+    return professor;
   }
 }

@@ -1,19 +1,20 @@
-// modules/professors/application/ports/out/professor-query.port.ts
+import type { PaginationVO } from '@core/pagination';
+import type { ProfessorReadModel } from '@professors/application/read-models';
+import type { ProfessorStatus } from '@professors/domain/entities';
 
-import { PaginationVO } from '@core/pagination';
-import type { ProfessorView } from '@professors/application/read-models';
+export const PROFESSOR_QUERY_TOKEN = Symbol('PROFESSOR_QUERY');
 
-export const PROFESSOR_QUERY_PORT = Symbol('PROFESSOR_QUERY_PORT');
-
-export interface FindAllProfessorsFilters {
-  departmentId?: number;
-}
+export type ProfessorQueryFilters = {
+  department?: string;
+  status?: ProfessorStatus;
+  search?: string;
+};
 
 export interface IProfessorQuery {
-  findById(id: number): Promise<ProfessorView | null>;
+  find(id: string): Promise<ProfessorReadModel | null>;
 
   findAll(
     pagination: PaginationVO,
-    filters?: FindAllProfessorsFilters,
-  ): Promise<[ProfessorView[], number]>;
+    filters?: ProfessorQueryFilters,
+  ): Promise<[ProfessorReadModel[], number]>;
 }
