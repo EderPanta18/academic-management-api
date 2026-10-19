@@ -5,7 +5,7 @@ export class StudentImportFileAlreadyExistsException extends StudentException {
   readonly errorKey = 'STUDENT_IMPORT_FILE_ALREADY_EXISTS';
   readonly errorCode = 'STI_UNIQUENESS_001';
 
-  constructor(fileName: string, userId: string) {
+  constructor(userId: string, fileName: string) {
     super(
       `Ya existe una importación registrada con el archivo "${fileName}" para el usuario con id "${userId}".`,
     );

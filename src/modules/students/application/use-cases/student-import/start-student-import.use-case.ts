@@ -60,7 +60,7 @@ export class StartStudentImportUseCase {
     );
 
     if (fileAlreadyExists)
-      throw new StudentImportFileAlreadyExistsException(command.fileName, command.createdByUserId);
+      throw new StudentImportFileAlreadyExistsException(command.createdByUserId, command.fileName);
 
     const importId = this.idGenerator.generate();
 
