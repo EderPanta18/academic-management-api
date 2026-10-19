@@ -1,56 +1,71 @@
-// modules/courses/application/use-cases/create-course.use-case.ts
-
-import { CAREER_FINDER_PORT, type ICareerFinder } from '@careers/application/ports/in';
-import { EntityNotFoundException } from '@core/exceptions';
-import {
-  COURSE_CATEGORY_FINDER_PORT,
-  type ICourseCategoryFinder,
-} from '@course-categories/application/ports/in';
-import { COURSE_REPOSITORY_PORT, type ICourseRepository } from '@courses/application/ports/out';
+import { ACADEMIC_PROGRAM_CHECKER_TOKEN, type IAcademicProgramChecker } from '@academic-programs';
+import { ID_GENERATOR_TOKEN, type IIdGenerator } from '@core/contracts';
 import { Course } from '@courses/domain/entities';
-import { CourseDuplicateNameException } from '@courses/domain/exceptions';
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateCourseCommand } from '../commands';
+import type { CreateCourseCommand } from '../commands';
+import {
+  CourseAcademicProgramNotFoundException,
+  CourseCategoryNotFoundException,
+  CourseCodeAlreadyExistsException,
+} from '../exceptions';
+import {
+  COURSE_CATEGORY_REPOSITORY_TOKEN,
+  COURSE_REPOSITORY_TOKEN,
+  type ICourseCategoryRepository,
+  type ICourseRepository,
+} from '../ports/out';
 
 @Injectable()
 export class CreateCourseUseCase {
   constructor(
-    @Inject(CAREER_FINDER_PORT)
-    private readonly careerFinder: ICareerFinder,
+    @Inject(ID_GENERATOR_TOKEN)
+    private readonly idGenerator: IIdGenerator,
 
-    @Inject(COURSE_CATEGORY_FINDER_PORT)
-    private readonly categoryFinder: ICourseCategoryFinder,
+    @Inject(ACADEMIC_PROGRAM_CHECKER_TOKEN)
+    private readonly academicProgramChecker: IAcademicProgramChecker,
 
-    @Inject(COURSE_REPOSITORY_PORT)
+    @Inject(COURSE_CATEGORY_REPOSITORY_TOKEN)
+    private readonly courseCategoryRepository: ICourseCategoryRepository,
+
+    @Inject(COURSE_REPOSITORY_TOKEN)
     private readonly courseRepository: ICourseRepository,
   ) {}
 
   async execute(command: CreateCourseCommand): Promise<Course> {
-    const careerExists = await this.careerFinder.exists(command.careerId);
-
-    if (!careerExists) throw new EntityNotFoundException('Career', command.careerId);
-
-    if (command.categoryId !== undefined) {
-      const categoryExists = await this.categoryFinder.exists(command.categoryId);
-
-      if (!categoryExists) throw new EntityNotFoundException('CourseCategory', command.categoryId);
-    }
-
-    const isDuplicate = await this.courseRepository.existsByCareerAndName(
-      command.careerId,
-      command.name,
+    const academicProgramExists = await this.academicProgramChecker.exists(
+      command.academicProgramId,
     );
 
-    if (isDuplicate) throw new CourseDuplicateNameException(command.name, command.careerId);
+    if (!academicProgramExists)
+      throw new CourseAcademicProgramNotFoundException(command.academicProgramId);
+
+    if (command.courseCategoryId) {
+      const categoryExists = await this.courseCategoryRepository.exists(command.courseCategoryId);
+
+      if (!categoryExists) throw new CourseCategoryNotFoundException(command.courseCategoryId);
+    }
+
+    const codeAlreadyExists = await this.courseRepository.existsByProgramAndCode(
+      command.academicProgramId,
+      command.code,
+    );
+
+    if (codeAlreadyExists)
+      throw new CourseCodeAlreadyExistsException(command.academicProgramId, command.code);
+
+    const courseId = this.idGenerator.generate();
 
     const course = Course.create({
-      careerId: command.careerId,
+      id: courseId,
+      academicProgramId: command.academicProgramId,
+      courseCategoryId: command.courseCategoryId,
+      code: command.code,
       name: command.name,
-      credits: command.credits,
-      categoryId: command.categoryId,
       description: command.description,
+      credits: command.credits,
+      hours: command.hours,
     });
 
-    return this.courseRepository.save(course);
+    return await this.courseRepository.create(course);
   }
 }

@@ -1,23 +1,13 @@
-// modules/courses/application/ports/out/course-repository.port.ts
+import type { Course } from '@courses/domain/entities';
 
-import { PaginationVO } from '@core/pagination';
-import { Course } from '@courses/domain/entities';
-
-export const COURSE_REPOSITORY_PORT = Symbol('COURSE_REPOSITORY_PORT');
-
-export interface FindAllCoursesFilters {
-  careerId?: number;
-  categoryId?: number;
-}
+export const COURSE_REPOSITORY_TOKEN = Symbol('COURSE_REPOSITORY');
 
 export interface ICourseRepository {
-  save(course: Course): Promise<Course>;
+  create(course: Course): Promise<Course>;
 
-  findById(id: number): Promise<Course | null>;
+  find(id: string): Promise<Course | null>;
 
-  findAll(pagination: PaginationVO, filters?: FindAllCoursesFilters): Promise<[Course[], number]>;
+  exists(id: string): Promise<boolean>;
 
-  existsByCareerAndName(careerId: number, name: string): Promise<boolean>;
-
-  delete(id: number): Promise<void>;
+  existsByProgramAndCode(academicProgramId: string, code: string): Promise<boolean>;
 }

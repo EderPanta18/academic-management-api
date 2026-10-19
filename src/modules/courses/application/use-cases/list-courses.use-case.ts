@@ -1,27 +1,24 @@
-// modules/courses/application/use-cases/list-courses.use-case.ts
-
-import { PaginatedResultDto, PaginationVO } from '@core/pagination';
-import { COURSE_REPOSITORY_PORT, type ICourseRepository } from '@courses/application/ports/out';
-import { Course } from '@courses/domain/entities';
+import type { PaginationVO } from '@core/pagination';
 import { Inject, Injectable } from '@nestjs/common';
-import { ListCoursesQuery } from '../queries';
+import { COURSE_QUERY_TOKEN, type ICourseQuery } from '../ports/out';
+import type { ListCoursesQuery } from '../queries';
+import type { CourseReadModel } from '../read-models';
 
 @Injectable()
 export class ListCoursesUseCase {
   constructor(
-    @Inject(COURSE_REPOSITORY_PORT)
-    private readonly courseRepository: ICourseRepository,
+    @Inject(COURSE_QUERY_TOKEN)
+    private readonly courseQuery: ICourseQuery,
   ) {}
 
   async execute(
     pagination: PaginationVO,
-    query: ListCoursesQuery,
-  ): Promise<PaginatedResultDto<Course>> {
-    const [courses, total] = await this.courseRepository.findAll(pagination, {
-      careerId: query.careerId,
-      categoryId: query.categoryId,
+    query: ListCoursesQuery = {},
+  ): Promise<[CourseReadModel[], number]> {
+    return await this.courseQuery.findAll(pagination, {
+      academicProgramId: query.academicProgramId,
+      courseCategoryId: query.courseCategoryId,
+      search: query.search,
     });
-
-    return PaginatedResultDto.from(courses, total, pagination);
   }
 }
