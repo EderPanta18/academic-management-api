@@ -1,34 +1,53 @@
-// modules/courses/courses.module.ts
-
-import { CareersModule } from '@careers';
-import { CourseCategoriesModule } from '@course-categories';
+import { AcademicProgramsModule } from '@academic-programs';
 import { Module } from '@nestjs/common';
-import { COURSE_FINDER_PORT, COURSE_REPOSITORY_PORT } from './application/ports';
+import {
+  COURSE_CATEGORY_REPOSITORY_TOKEN,
+  COURSE_CHECKER_TOKEN,
+  COURSE_QUERY_TOKEN,
+  COURSE_REPOSITORY_TOKEN,
+} from './application/ports';
+import { CourseChecker } from './application/services';
 import {
   CreateCourseUseCase,
   GetCourseByIdUseCase,
   ListCoursesUseCase,
 } from './application/use-cases';
-import { CourseRepository } from './infrastructure/persistence';
-import { CoursesController } from './presentation/controllers';
+import { CoursesController } from './entrypoints/http';
+import {
+  CourseCategoryRepository,
+  CourseQuery,
+  CourseRepository,
+} from './infrastructure/persistence';
 
 @Module({
-  imports: [CareersModule, CourseCategoriesModule],
+  imports: [AcademicProgramsModule],
   providers: [
+    // Casos de uso
     CreateCourseUseCase,
     GetCourseByIdUseCase,
     ListCoursesUseCase,
-    CourseRepository,
+
+    // Bindings de puertos (out)
     {
-      provide: COURSE_REPOSITORY_PORT,
+      provide: COURSE_REPOSITORY_TOKEN,
       useExisting: CourseRepository,
     },
     {
-      provide: COURSE_FINDER_PORT,
-      useExisting: CourseRepository,
+      provide: COURSE_QUERY_TOKEN,
+      useExisting: CourseQuery,
+    },
+    {
+      provide: COURSE_CATEGORY_REPOSITORY_TOKEN,
+      useExisting: CourseCategoryRepository,
+    },
+
+    // Bindings de puertos (in)
+    {
+      provide: COURSE_CHECKER_TOKEN,
+      useClass: CourseChecker,
     },
   ],
   controllers: [CoursesController],
-  exports: [COURSE_FINDER_PORT],
+  exports: [COURSE_CHECKER_TOKEN],
 })
 export class CoursesModule {}

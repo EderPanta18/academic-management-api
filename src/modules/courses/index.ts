@@ -1,3 +1,3 @@
-// modules/courses/index.ts
+export * from './application/ports/in';
 
 export { CoursesModule } from './courses.module';
