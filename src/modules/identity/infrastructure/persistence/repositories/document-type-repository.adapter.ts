@@ -1,5 +1,5 @@
 import type { IDocumentTypeRepository } from '@identity/application/ports/out';
-import { DocumentType } from '@identity/domain/entities';
+import type { DocumentType } from '@identity/domain/entities';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@platform/database';
 import { DocumentTypeRepositoryMapper } from './document-type-repository.mapper';
