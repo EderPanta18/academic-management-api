@@ -20,9 +20,9 @@ import { PROFESSOR_ROUTES, PROFESSOR_SWAGGER_TAG } from './professor-routes.cons
 @Controller(PROFESSOR_ROUTES.BASE)
 export class ProfessorsController {
   constructor(
-    private readonly createUseCase: CreateProfessorUseCase,
-    private readonly getByIdUseCase: GetProfessorByIdUseCase,
     private readonly listUseCase: ListProfessorsUseCase,
+    private readonly getByIdUseCase: GetProfessorByIdUseCase,
+    private readonly createUseCase: CreateProfessorUseCase,
   ) {}
 
   @Get()

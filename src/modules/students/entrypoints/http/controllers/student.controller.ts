@@ -20,9 +20,9 @@ import { STUDENT_ROUTES, STUDENT_SWAGGER_TAG } from './student-routes.constants'
 @Controller(STUDENT_ROUTES.BASE)
 export class StudentsController {
   constructor(
-    private readonly createUseCase: CreateStudentUseCase,
-    private readonly getByIdUseCase: GetStudentByIdUseCase,
     private readonly listUseCase: ListStudentsUseCase,
+    private readonly getByIdUseCase: GetStudentByIdUseCase,
+    private readonly createUseCase: CreateStudentUseCase,
   ) {}
 
   @Get()

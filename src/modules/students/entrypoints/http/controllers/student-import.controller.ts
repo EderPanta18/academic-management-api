@@ -33,9 +33,9 @@ import { STUDENT_IMPORT_ROUTES, STUDENT_IMPORT_SWAGGER_TAG } from './student-rou
 @Controller(STUDENT_IMPORT_ROUTES.BASE)
 export class StudentImportsController {
   constructor(
-    private readonly startImportUseCase: StartStudentImportUseCase,
-    private readonly getByIdUseCase: GetStudentImportByIdUseCase,
     private readonly listUseCase: ListStudentImportsUseCase,
+    private readonly getByIdUseCase: GetStudentImportByIdUseCase,
+    private readonly startImportUseCase: StartStudentImportUseCase,
   ) {}
 
   @Get()
