@@ -1,3 +1,2 @@
-// modules/courses/domain/entities/index.ts
-
 export * from './course';
+export * from './course-category';

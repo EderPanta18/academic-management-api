@@ -1,18 +1,21 @@
-// modules/courses/domain/entities/course/course.types.ts
-
 export interface CourseProps {
-  id: number;
-  careerId: number;
-  categoryId: number | null;
+  id: string;
+  academicProgramId: string;
+  courseCategoryId: string | null;
+  code: string;
   name: string;
   description: string | null;
   credits: number;
+  hours: number | null;
 }
 
 export interface CreateCourseProps {
-  careerId: number;
+  id: string;
+  academicProgramId: string;
+  courseCategoryId: string | null;
+  code: string;
   name: string;
+  description: string | null;
   credits: number;
-  categoryId?: number | null;
-  description?: string | null;
+  hours: number | null;
 }
