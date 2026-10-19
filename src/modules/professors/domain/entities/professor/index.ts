@@ -1,4 +1,3 @@
-// modules/professors/domain/entities/professor/index.ts
-
 export { Professor } from './professor.entity';
+export * from './professor.enums';
 export type * from './professor.types';

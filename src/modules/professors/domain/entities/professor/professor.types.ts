@@ -1,22 +1,21 @@
-// modules/professors/domain/entities/professor/professor.types.ts
-
-import { ProfessorStatus } from '@professors/domain/constants';
+import type { ProfessorStatus } from './professor.enums';
 
 export interface ProfessorProps {
-  id: number;
-  departmentId: number | null;
+  id: string;
+  personId: string;
   code: string;
-  specialty: string | null;
   institutionalEmail: string | null;
-  hireDate: Date | null;
+  department: string | null;
+  specialty: string | null;
   status: ProfessorStatus;
 }
 
 export interface CreateProfessorProps {
-  departmentId?: number | null;
+  id: string;
+  personId: string;
   code: string;
-  specialty?: string | null;
-  institutionalEmail?: string | null;
-  hireDate?: Date | null;
-  status?: ProfessorStatus | null;
+  institutionalEmail: string | null;
+  department: string | null;
+  specialty: string | null;
+  status: ProfessorStatus | null;
 }

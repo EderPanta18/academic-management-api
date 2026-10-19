@@ -1,45 +1,36 @@
-// modules/professors/domain/entities/professor/professor.entity.ts
-
-import { ProfessorStatus } from '@professors/domain/constants';
+import { ProfessorStatus } from './professor.enums';
 import type { CreateProfessorProps, ProfessorProps } from './professor.types';
 
-type ProfessorInternalProps = {
-  id?: number;
-  departmentId?: number | null;
-  code: string;
-  specialty?: string | null;
-  institutionalEmail?: string | null;
-  hireDate?: Date | null;
-  status?: ProfessorStatus | null;
-};
-
 export class Professor {
-  readonly id?: number;
-  readonly departmentId: number | null;
+  readonly id: string;
+  readonly personId: string;
   readonly code: string;
-  readonly specialty: string | null;
   readonly institutionalEmail: string | null;
-  readonly hireDate: Date | null;
+  readonly department: string | null;
+  readonly specialty: string | null;
   readonly status: ProfessorStatus;
 
-  private constructor(props: ProfessorInternalProps) {
+  private constructor(props: ProfessorProps) {
     this.id = props.id;
-    this.departmentId = props.departmentId ?? null;
+    this.personId = props.personId;
     this.code = props.code;
-    this.specialty = props.specialty ?? null;
-    this.institutionalEmail = props.institutionalEmail ?? null;
-    this.hireDate = props.hireDate ?? null;
-    this.status = props.status ?? ProfessorStatus.ACTIVE;
+    this.institutionalEmail = props.institutionalEmail;
+    this.department = props.department;
+    this.specialty = props.specialty;
+    this.status = props.status;
 
     Object.freeze(this);
   }
 
-  static create(props: CreateProfessorProps): Professor {
+  static reconstitute(props: ProfessorProps): Professor {
     return new Professor(props);
   }
 
-  static reconstitute(props: ProfessorProps): Professor {
-    return new Professor(props);
+  static create(props: CreateProfessorProps): Professor {
+    return new Professor({
+      ...props,
+      status: props.status ?? ProfessorStatus.ACTIVE,
+    });
   }
 
   canBeAssignedToCourse(): boolean {
@@ -48,6 +39,10 @@ export class Professor {
 
   isActive(): boolean {
     return this.status === ProfessorStatus.ACTIVE;
+  }
+
+  isInactive(): boolean {
+    return this.status === ProfessorStatus.INACTIVE;
   }
 
   isOnLeave(): boolean {
