@@ -1,16 +1,41 @@
-// modules/academic-periods/infrastructure/persistence/repositories/academic-period-repository.adapter.ts
-
-import type { IAcademicPeriodFinder } from '@academic-periods/application/ports/in';
+import type { IAcademicPeriodRepository } from '@academic-periods/application/ports/out';
+import type { AcademicPeriod } from '@academic-periods/domain/entities';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@platform/database';
+import { AcademicPeriodRepositoryMapper } from './academic-period-repository.mapper';
 
 @Injectable()
-export class AcademicPeriodRepository implements IAcademicPeriodFinder {
+export class AcademicPeriodRepository implements IAcademicPeriodRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  // ── IAcademicPeriodFinder ────────────────────────────────────────────────
+  async create(period: AcademicPeriod): Promise<AcademicPeriod> {
+    const data = AcademicPeriodRepositoryMapper.toPersistence(period);
 
-  async exists(id: number): Promise<boolean> {
+    const raw = await this.prisma.academicPeriod.create({ data });
+
+    return AcademicPeriodRepositoryMapper.toDomain(raw);
+  }
+
+  async update(period: AcademicPeriod): Promise<AcademicPeriod> {
+    const data = AcademicPeriodRepositoryMapper.toPersistence(period);
+
+    const raw = await this.prisma.academicPeriod.update({
+      where: { id: period.id },
+      data,
+    });
+
+    return AcademicPeriodRepositoryMapper.toDomain(raw);
+  }
+
+  async find(id: string): Promise<AcademicPeriod | null> {
+    const raw = await this.prisma.academicPeriod.findFirst({
+      where: { id, deletedAt: null },
+    });
+
+    return raw ? AcademicPeriodRepositoryMapper.toDomain(raw) : null;
+  }
+
+  async exists(id: string): Promise<boolean> {
     const count = await this.prisma.academicPeriod.count({
       where: { id, deletedAt: null },
     });
@@ -18,9 +43,9 @@ export class AcademicPeriodRepository implements IAcademicPeriodFinder {
     return count > 0;
   }
 
-  async isCurrent(id: number): Promise<boolean> {
+  async existsByCode(code: string): Promise<boolean> {
     const count = await this.prisma.academicPeriod.count({
-      where: { id, isCurrent: true, deletedAt: null },
+      where: { code, deletedAt: null },
     });
 
     return count > 0;
