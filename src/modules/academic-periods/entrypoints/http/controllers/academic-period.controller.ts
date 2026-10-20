@@ -65,9 +65,9 @@ export class AcademicPeriodsController {
   async getById(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<AcademicPeriodReadModelResponseDto> {
-    const model = await this.getByIdUseCase.execute(id);
+    const readModel = await this.getByIdUseCase.execute(id);
 
-    return AcademicPeriodResponseMapper.toReadModelResponse(model);
+    return AcademicPeriodResponseMapper.toReadModelResponse(readModel);
   }
 
   @Post()
@@ -82,32 +82,32 @@ export class AcademicPeriodsController {
   @Patch(ACADEMIC_PERIOD_ROUTES.OPEN)
   @ApiOpenAcademicPeriod()
   async open(@Param('id', ParseUUIDPipe) id: string): Promise<AcademicPeriodResponseDto> {
-    const period = await this.openUseCase.execute(id);
+    const academicPeriod = await this.openUseCase.execute(id);
 
-    return AcademicPeriodResponseMapper.toResponse(period);
+    return AcademicPeriodResponseMapper.toResponse(academicPeriod);
   }
 
   @Patch(ACADEMIC_PERIOD_ROUTES.START)
   @ApiStartAcademicPeriod()
   async start(@Param('id', ParseUUIDPipe) id: string): Promise<AcademicPeriodResponseDto> {
-    const period = await this.startUseCase.execute(id);
+    const academicPeriod = await this.startUseCase.execute(id);
 
-    return AcademicPeriodResponseMapper.toResponse(period);
+    return AcademicPeriodResponseMapper.toResponse(academicPeriod);
   }
 
   @Patch(ACADEMIC_PERIOD_ROUTES.CLOSE)
   @ApiCloseAcademicPeriod()
   async close(@Param('id', ParseUUIDPipe) id: string): Promise<AcademicPeriodResponseDto> {
-    const period = await this.closeUseCase.execute(id);
+    const academicPeriod = await this.closeUseCase.execute(id);
 
-    return AcademicPeriodResponseMapper.toResponse(period);
+    return AcademicPeriodResponseMapper.toResponse(academicPeriod);
   }
 
   @Patch(ACADEMIC_PERIOD_ROUTES.CANCEL)
   @ApiCancelAcademicPeriod()
   async cancel(@Param('id', ParseUUIDPipe) id: string): Promise<AcademicPeriodResponseDto> {
-    const period = await this.cancelUseCase.execute(id);
+    const academicPeriod = await this.cancelUseCase.execute(id);
 
-    return AcademicPeriodResponseMapper.toResponse(period);
+    return AcademicPeriodResponseMapper.toResponse(academicPeriod);
   }
 }

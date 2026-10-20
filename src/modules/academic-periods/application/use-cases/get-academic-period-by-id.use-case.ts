@@ -11,10 +11,10 @@ export class GetAcademicPeriodByIdUseCase {
   ) {}
 
   async execute(id: string): Promise<AcademicPeriodReadModel> {
-    const academicPeriod = await this.academicPeriodQuery.find(id);
+    const readModel = await this.academicPeriodQuery.find(id);
 
-    if (!academicPeriod) throw new AcademicPeriodNotFoundException(id);
+    if (!readModel) throw new AcademicPeriodNotFoundException(id);
 
-    return academicPeriod;
+    return readModel;
   }
 }

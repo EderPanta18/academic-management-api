@@ -4,32 +4,34 @@ import { createPaginatedResult, type PaginatedResult, type PaginationVO } from '
 import { AcademicPeriodReadModelResponseDto, AcademicPeriodResponseDto } from '../dtos';
 
 export class AcademicPeriodResponseMapper {
-  static toResponse(period: AcademicPeriod): AcademicPeriodResponseDto {
+  static toResponse(academicPeriod: AcademicPeriod): AcademicPeriodResponseDto {
     const dto = new AcademicPeriodResponseDto();
 
-    dto.id = period.id;
-    dto.code = period.code;
-    dto.name = period.name;
-    dto.startDate = period.startDate;
-    dto.endDate = period.endDate;
-    dto.enrollmentStartDate = period.enrollmentStartDate;
-    dto.enrollmentEndDate = period.enrollmentEndDate;
-    dto.status = period.status;
+    dto.id = academicPeriod.id;
+    dto.code = academicPeriod.code;
+    dto.name = academicPeriod.name;
+    dto.startDate = academicPeriod.startDate;
+    dto.endDate = academicPeriod.endDate;
+    dto.enrollmentStartDate = academicPeriod.enrollmentStartDate;
+    dto.enrollmentEndDate = academicPeriod.enrollmentEndDate;
+    dto.status = academicPeriod.status;
 
     return dto;
   }
 
-  static toReadModelResponse(model: AcademicPeriodReadModel): AcademicPeriodReadModelResponseDto {
+  static toReadModelResponse(
+    readModel: AcademicPeriodReadModel,
+  ): AcademicPeriodReadModelResponseDto {
     const dto = new AcademicPeriodReadModelResponseDto();
 
-    dto.id = model.id;
-    dto.code = model.code;
-    dto.name = model.name;
-    dto.startDate = model.startDate;
-    dto.endDate = model.endDate;
-    dto.enrollmentStartDate = model.enrollmentStartDate;
-    dto.enrollmentEndDate = model.enrollmentEndDate;
-    dto.status = model.status;
+    dto.id = readModel.id;
+    dto.code = readModel.code;
+    dto.name = readModel.name;
+    dto.startDate = readModel.startDate;
+    dto.endDate = readModel.endDate;
+    dto.enrollmentStartDate = readModel.enrollmentStartDate;
+    dto.enrollmentEndDate = readModel.enrollmentEndDate;
+    dto.status = readModel.status;
 
     return dto;
   }

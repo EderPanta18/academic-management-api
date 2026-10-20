@@ -17,14 +17,14 @@ export class AcademicPeriodChecker implements IAcademicPeriodChecker {
   }
 
   async isOpen(id: string): Promise<boolean> {
-    const period = await this.academicPeriodRepository.find(id);
+    const academicPeriod = await this.academicPeriodRepository.find(id);
 
-    return period?.isOpen() ?? false;
+    return academicPeriod?.isOpen() ?? false;
   }
 
   async allowsEnrollment(id: string, referenceDate: Date = new Date()): Promise<boolean> {
-    const period = await this.academicPeriodRepository.find(id);
+    const academicPeriod = await this.academicPeriodRepository.find(id);
 
-    return period?.allowsEnrollment(referenceDate) ?? false;
+    return academicPeriod?.allowsEnrollment(referenceDate) ?? false;
   }
 }
