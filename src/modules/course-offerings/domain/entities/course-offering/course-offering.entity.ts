@@ -69,7 +69,7 @@ export class CourseOffering {
     return new CourseOffering({
       ...props,
       section,
-      status: props.status ?? COURSE_OFFERING.defaults.status,
+      status: COURSE_OFFERING.defaults.status,
     });
   }
 

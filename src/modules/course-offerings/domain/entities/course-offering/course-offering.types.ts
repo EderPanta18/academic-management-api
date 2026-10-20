@@ -19,5 +19,4 @@ export interface CreateCourseOfferingProps {
   section: string;
   maxCapacity: number;
   availableCapacity: number | null;
-  status: CourseOfferingStatus | null;
 }

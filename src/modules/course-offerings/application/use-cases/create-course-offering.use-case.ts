@@ -83,7 +83,6 @@ export class CreateCourseOfferingUseCase {
       section: command.section,
       maxCapacity: command.maxCapacity,
       availableCapacity: command.availableCapacity,
-      status: null,
     });
 
     return await this.courseOfferingRepository.create(courseOffering);
