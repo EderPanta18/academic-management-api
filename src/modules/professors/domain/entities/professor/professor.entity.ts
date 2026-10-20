@@ -1,3 +1,4 @@
+import { PROFESSOR } from './professor.constants';
 import { ProfessorStatus } from './professor.enums';
 import type { CreateProfessorProps, ProfessorProps } from './professor.types';
 
@@ -29,7 +30,7 @@ export class Professor {
   static create(props: CreateProfessorProps): Professor {
     return new Professor({
       ...props,
-      status: props.status ?? ProfessorStatus.ACTIVE,
+      status: props.status ?? PROFESSOR.defaults.status,
     });
   }
 

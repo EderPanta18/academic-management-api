@@ -1,3 +1,4 @@
+import { ACADEMIC_PERIOD } from './academic-period.constants';
 import { AcademicPeriodStatus } from './academic-period.enums';
 import type { AcademicPeriodProps, CreateAcademicPeriodProps } from './academic-period.types';
 import {
@@ -48,7 +49,7 @@ export class AcademicPeriod {
 
     return new AcademicPeriod({
       ...props,
-      status: props.status ?? AcademicPeriodStatus.PLANNED,
+      status: props.status ?? ACADEMIC_PERIOD.defaults.status,
     });
   }
 
