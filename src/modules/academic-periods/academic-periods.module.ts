@@ -1,17 +1,50 @@
-// modules/academic-periods/academic-periods.module.ts
-
 import { Module } from '@nestjs/common';
-import { ACADEMIC_PERIOD_FINDER_PORT } from './application/ports';
-import { AcademicPeriodRepository } from './infrastructure/persistence';
+import {
+  ACADEMIC_PERIOD_CHECKER_TOKEN,
+  ACADEMIC_PERIOD_QUERY_TOKEN,
+  ACADEMIC_PERIOD_REPOSITORY_TOKEN,
+} from './application/ports';
+import { AcademicPeriodChecker } from './application/services';
+import {
+  CancelAcademicPeriodUseCase,
+  CloseAcademicPeriodUseCase,
+  CreateAcademicPeriodUseCase,
+  GetAcademicPeriodByIdUseCase,
+  ListAcademicPeriodsUseCase,
+  OpenAcademicPeriodUseCase,
+  StartAcademicPeriodUseCase,
+} from './application/use-cases';
+import { AcademicPeriodsController } from './entrypoints/http';
+import { AcademicPeriodQuery, AcademicPeriodRepository } from './infrastructure/persistence';
 
 @Module({
   providers: [
-    AcademicPeriodRepository,
+    // ── Casos de uso ────────────────────────────────────────────────────────
+    CreateAcademicPeriodUseCase,
+    GetAcademicPeriodByIdUseCase,
+    ListAcademicPeriodsUseCase,
+    OpenAcademicPeriodUseCase,
+    StartAcademicPeriodUseCase,
+    CloseAcademicPeriodUseCase,
+    CancelAcademicPeriodUseCase,
+
+    // ── Bindings de puertos (out) ───────────────────────────────────────────
     {
-      provide: ACADEMIC_PERIOD_FINDER_PORT,
+      provide: ACADEMIC_PERIOD_REPOSITORY_TOKEN,
       useExisting: AcademicPeriodRepository,
     },
+    {
+      provide: ACADEMIC_PERIOD_QUERY_TOKEN,
+      useExisting: AcademicPeriodQuery,
+    },
+
+    // ── Bindings de puertos (in) ────────────────────────────────────────────
+    {
+      provide: ACADEMIC_PERIOD_CHECKER_TOKEN,
+      useClass: AcademicPeriodChecker,
+    },
   ],
-  exports: [ACADEMIC_PERIOD_FINDER_PORT],
+  controllers: [AcademicPeriodsController],
+  exports: [ACADEMIC_PERIOD_CHECKER_TOKEN],
 })
 export class AcademicPeriodsModule {}
