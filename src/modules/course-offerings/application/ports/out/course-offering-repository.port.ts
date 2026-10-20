@@ -5,9 +5,9 @@ export const COURSE_OFFERING_REPOSITORY_TOKEN = Symbol('COURSE_OFFERING_REPOSITO
 export interface ICourseOfferingRepository {
   create(offering: CourseOffering): Promise<CourseOffering>;
 
-  find(id: string): Promise<CourseOffering | null>;
-
   update(offering: CourseOffering): Promise<CourseOffering>;
+
+  find(id: string): Promise<CourseOffering | null>;
 
   exists(id: string): Promise<boolean>;
 
