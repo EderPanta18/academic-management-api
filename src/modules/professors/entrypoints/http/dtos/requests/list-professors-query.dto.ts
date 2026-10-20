@@ -11,7 +11,10 @@ export class ListProfessorsQueryDto extends PaginationQueryDto {
   @IsString({ message: 'El departamento debe ser una cadena de texto' })
   department?: string;
 
-  @ApiPropertyOptional({ description: 'Filtrar por estado.', enum: ProfessorStatus })
+  @ApiPropertyOptional({
+    enum: ProfessorStatus,
+    description: 'Filtrar por estado.',
+  })
   @IsOptional()
   @IsEnum(ProfessorStatus, {
     message: `El estado debe ser uno de: ${Object.values(ProfessorStatus).join(', ')}`,
