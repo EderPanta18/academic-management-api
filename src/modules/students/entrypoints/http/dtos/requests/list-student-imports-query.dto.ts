@@ -5,8 +5,8 @@ import { IsEnum, IsOptional, IsUUID } from 'class-validator';
 
 export class ListStudentImportsQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({
-    description: 'Filtrar por estado de procesamiento.',
     enum: StudentImportStatus,
+    description: 'Filtrar por estado de procesamiento.',
   })
   @IsOptional()
   @IsEnum(StudentImportStatus, {

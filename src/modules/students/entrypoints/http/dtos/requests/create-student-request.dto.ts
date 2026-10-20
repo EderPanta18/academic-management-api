@@ -84,7 +84,12 @@ export class CreateStudentRequestDto {
   })
   phone?: string;
 
-  @ApiPropertyOptional({ description: 'Fecha de nacimiento.', example: '2000-05-20' })
+  @ApiPropertyOptional({
+    type: String,
+    format: 'date',
+    description: 'Fecha de nacimiento.',
+    example: '2000-05-20',
+  })
   @IsOptional()
   @Type(() => Date)
   @IsDate({ message: 'La fecha de nacimiento debe ser una fecha válida' })
@@ -135,9 +140,10 @@ export class CreateStudentRequestDto {
   admissionPeriod?: string;
 
   @ApiPropertyOptional({
-    description: 'Estado académico.',
     enum: StudentStatus,
     default: StudentStatus.ACTIVE,
+    description: 'Estado académico.',
+    example: StudentStatus.ACTIVE,
   })
   @IsOptional()
   @IsEnum(StudentStatus, {

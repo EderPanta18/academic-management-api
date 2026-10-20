@@ -10,7 +10,10 @@ export class ListStudentsQueryDto extends PaginationQueryDto {
   @IsUUID('4', { message: 'El ID del programa académico debe ser un UUID válido' })
   academicProgramId?: string;
 
-  @ApiPropertyOptional({ description: 'Filtrar por estado acádemico.', enum: StudentStatus })
+  @ApiPropertyOptional({
+    enum: StudentStatus,
+    description: 'Filtrar por estado acádemico.',
+  })
   @IsOptional()
   @IsEnum(StudentStatus, {
     message: `El estado debe ser uno de: ${Object.values(StudentStatus).join(', ')}`,
