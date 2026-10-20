@@ -15,8 +15,8 @@ export class CancelAcademicPeriodUseCase {
 
     if (!academicPeriod) throw new AcademicPeriodNotFoundException(id);
 
-    const cancelled = academicPeriod.cancel();
+    const academicPeriodCancelled = academicPeriod.cancel();
 
-    return await this.academicPeriodRepository.update(cancelled);
+    return await this.academicPeriodRepository.update(academicPeriodCancelled);
   }
 }

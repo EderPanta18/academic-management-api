@@ -17,16 +17,16 @@ export class AcademicPeriodRepositoryMapper {
     });
   }
 
-  static toPersistence(period: AcademicPeriod): Prisma.AcademicPeriodUncheckedCreateInput {
+  static toPersistence(academicPeriod: AcademicPeriod): Prisma.AcademicPeriodUncheckedCreateInput {
     return {
-      id: period.id,
-      code: period.code,
-      name: period.name,
-      startDate: period.startDate,
-      endDate: period.endDate,
-      enrollmentStartDate: period.enrollmentStartDate,
-      enrollmentEndDate: period.enrollmentEndDate,
-      status: period.status,
+      id: academicPeriod.id,
+      code: academicPeriod.code,
+      name: academicPeriod.name,
+      startDate: academicPeriod.startDate,
+      endDate: academicPeriod.endDate,
+      enrollmentStartDate: academicPeriod.enrollmentStartDate,
+      enrollmentEndDate: academicPeriod.enrollmentEndDate,
+      status: academicPeriod.status,
     };
   }
 }

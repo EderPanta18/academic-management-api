@@ -15,8 +15,8 @@ export class OpenAcademicPeriodUseCase {
 
     if (!academicPeriod) throw new AcademicPeriodNotFoundException(id);
 
-    const opened = academicPeriod.open();
+    const academicPeriodOpened = academicPeriod.open();
 
-    return await this.academicPeriodRepository.update(opened);
+    return await this.academicPeriodRepository.update(academicPeriodOpened);
   }
 }

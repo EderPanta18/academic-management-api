@@ -20,10 +20,10 @@ export class CreateAcademicPeriodUseCase {
 
     if (codeAlreadyExists) throw new AcademicPeriodCodeAlreadyExistsException(command.code);
 
-    const periodId = this.idGenerator.generate();
+    const academicPeriodId = this.idGenerator.generate();
 
     const academicPeriod = AcademicPeriod.create({
-      id: periodId,
+      id: academicPeriodId,
       code: command.code,
       name: command.name,
       startDate: command.startDate,

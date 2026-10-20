@@ -15,8 +15,8 @@ export class CloseAcademicPeriodUseCase {
 
     if (!academicPeriod) throw new AcademicPeriodNotFoundException(id);
 
-    const closed = academicPeriod.close();
+    const academicPeriodClosed = academicPeriod.close();
 
-    return await this.academicPeriodRepository.update(closed);
+    return await this.academicPeriodRepository.update(academicPeriodClosed);
   }
 }

@@ -74,9 +74,9 @@ export class AcademicPeriodsController {
   @ApiCreateAcademicPeriod()
   async create(@Body() dto: CreateAcademicPeriodRequestDto): Promise<AcademicPeriodResponseDto> {
     const command = AcademicPeriodRequestMapper.toCreateCommand(dto);
-    const period = await this.createUseCase.execute(command);
+    const academicPeriod = await this.createUseCase.execute(command);
 
-    return AcademicPeriodResponseMapper.toResponse(period);
+    return AcademicPeriodResponseMapper.toResponse(academicPeriod);
   }
 
   @Patch(ACADEMIC_PERIOD_ROUTES.OPEN)

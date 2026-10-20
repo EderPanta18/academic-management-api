@@ -15,8 +15,8 @@ export class StartAcademicPeriodUseCase {
 
     if (!academicPeriod) throw new AcademicPeriodNotFoundException(id);
 
-    const started = academicPeriod.start();
+    const academicPeriodStarted = academicPeriod.start();
 
-    return await this.academicPeriodRepository.update(started);
+    return await this.academicPeriodRepository.update(academicPeriodStarted);
   }
 }
