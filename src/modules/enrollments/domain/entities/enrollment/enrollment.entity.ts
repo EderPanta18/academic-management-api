@@ -1,77 +1,130 @@
-// modules/enrollments/domain/entities/enrollment.entity.ts
-
-import { EnrollmentStatus } from '@enrollments/domain/constants';
+import { ENROLLMENT } from './enrollment.constants';
+import { EnrollmentStatus } from './enrollment.enums';
 import type { CreateEnrollmentProps, EnrollmentProps } from './enrollment.types';
-
-type EnrollmentInternalProps = {
-  id?: number;
-  studentId: number;
-  courseOfferingId: number;
-  status?: EnrollmentStatus;
-  enrollmentDate: Date;
-  createdBy?: number | null;
-};
+import {
+  EnrollmentNotCancellableException,
+  EnrollmentNotConfirmableException,
+  EnrollmentNotFinishableException,
+  EnrollmentNotRejectableException,
+  EnrollmentNotWithdrawableException,
+} from './exceptions';
 
 export class Enrollment {
-  readonly id?: number;
-  readonly studentId: number;
-  readonly courseOfferingId: number;
+  readonly id: string;
+  readonly studentId: string;
+  readonly courseOfferingId: string;
+  readonly registeredByUserId: string;
   readonly status: EnrollmentStatus;
-  readonly enrollmentDate: Date;
-  readonly createdBy: number | null;
+  readonly enrolledAt: Date;
+  readonly statusReason: string | null;
 
-  private constructor(props: EnrollmentInternalProps) {
+  private constructor(props: EnrollmentProps) {
     this.id = props.id;
     this.studentId = props.studentId;
     this.courseOfferingId = props.courseOfferingId;
-    this.status = props.status ?? EnrollmentStatus.ENROLLED;
-    this.enrollmentDate = props.enrollmentDate;
-    this.createdBy = props.createdBy ?? null;
+    this.registeredByUserId = props.registeredByUserId;
+    this.status = props.status;
+    this.enrolledAt = props.enrolledAt;
+    this.statusReason = props.statusReason;
 
     Object.freeze(this);
-  }
-
-  static create(props: CreateEnrollmentProps): Enrollment {
-    return new Enrollment(props);
   }
 
   static reconstitute(props: EnrollmentProps): Enrollment {
     return new Enrollment(props);
   }
 
-  get canWithdraw(): boolean {
+  static create(props: CreateEnrollmentProps): Enrollment {
+    return new Enrollment({
+      ...props,
+      status: props.status ?? ENROLLMENT.defaults.status,
+    });
+  }
+
+  // ── Consultas de estado ───────────────────────────────────────────────────
+
+  isPending(): boolean {
+    return this.status === EnrollmentStatus.PENDING;
+  }
+
+  isEnrolled(): boolean {
     return this.status === EnrollmentStatus.ENROLLED;
   }
 
-  get canComplete(): boolean {
-    return this.status === EnrollmentStatus.ENROLLED;
+  isCancelled(): boolean {
+    return this.status === EnrollmentStatus.CANCELLED;
   }
 
-  get canSuspend(): boolean {
-    return this.status === EnrollmentStatus.ENROLLED;
-  }
-
-  get canReactivate(): boolean {
-    return this.status === EnrollmentStatus.SUSPENDED;
-  }
-
-  get isEnrolled(): boolean {
-    return this.status === EnrollmentStatus.ENROLLED;
-  }
-
-  get isWithdrawn(): boolean {
+  isWithdrawn(): boolean {
     return this.status === EnrollmentStatus.WITHDRAWN;
   }
 
-  get isCompleted(): boolean {
-    return this.status === EnrollmentStatus.COMPLETED;
+  isRejected(): boolean {
+    return this.status === EnrollmentStatus.REJECTED;
   }
 
-  get isSuspended(): boolean {
-    return this.status === EnrollmentStatus.SUSPENDED;
+  isFinished(): boolean {
+    return this.status === EnrollmentStatus.FINISHED;
   }
 
-  get isTerminal(): boolean {
-    return this.status === EnrollmentStatus.WITHDRAWN || this.status === EnrollmentStatus.COMPLETED;
+  isActive(): boolean {
+    return this.status === EnrollmentStatus.ENROLLED;
+  }
+
+  isTerminal(): boolean {
+    return this.isCancelled() || this.isWithdrawn() || this.isRejected() || this.isFinished();
+  }
+
+  // ── Transiciones de estado ────────────────────────────────────────────────
+
+  confirm(): Enrollment {
+    if (!this.isPending()) throw new EnrollmentNotConfirmableException(this.id, this.status);
+
+    return new Enrollment({
+      ...this,
+      status: EnrollmentStatus.ENROLLED,
+      statusReason: null,
+    });
+  }
+
+  cancel(reason: string | null): Enrollment {
+    if (!this.isPending() && !this.isEnrolled())
+      throw new EnrollmentNotCancellableException(this.id, this.status);
+
+    return new Enrollment({
+      ...this,
+      status: EnrollmentStatus.CANCELLED,
+      statusReason: reason,
+    });
+  }
+
+  withdraw(reason: string | null): Enrollment {
+    if (!this.isEnrolled()) throw new EnrollmentNotWithdrawableException(this.id, this.status);
+
+    return new Enrollment({
+      ...this,
+      status: EnrollmentStatus.WITHDRAWN,
+      statusReason: reason,
+    });
+  }
+
+  reject(reason: string | null): Enrollment {
+    if (!this.isPending()) throw new EnrollmentNotRejectableException(this.id, this.status);
+
+    return new Enrollment({
+      ...this,
+      status: EnrollmentStatus.REJECTED,
+      statusReason: reason,
+    });
+  }
+
+  finish(reason: string | null): Enrollment {
+    if (!this.isEnrolled()) throw new EnrollmentNotFinishableException(this.id, this.status);
+
+    return new Enrollment({
+      ...this,
+      status: EnrollmentStatus.FINISHED,
+      statusReason: reason,
+    });
   }
 }
