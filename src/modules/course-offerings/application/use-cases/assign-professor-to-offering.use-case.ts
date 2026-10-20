@@ -1,6 +1,6 @@
 import type { CourseOffering } from '@course-offerings/domain/entities';
 import { Inject, Injectable } from '@nestjs/common';
-import { type IProfessorChecker, PROFESSOR_CHECKER_TOKEN } from '@professors/application/ports/in';
+import { type IProfessorChecker, PROFESSOR_CHECKER_TOKEN } from '@professors';
 import type { AssignProfessorToOfferingCommand } from '../commands';
 import {
   CourseOfferingNotFoundException,
