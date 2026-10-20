@@ -18,24 +18,24 @@ export class StudentResponseMapper {
     return dto;
   }
 
-  static toReadModelResponse(model: StudentReadModel): StudentReadModelResponseDto {
+  static toReadModelResponse(readModel: StudentReadModel): StudentReadModelResponseDto {
     const dto = new StudentReadModelResponseDto();
 
-    dto.id = model.id;
-    dto.personId = model.personId;
-    dto.academicProgramId = model.academicProgramId;
-    dto.code = model.code;
-    dto.institutionalEmail = model.institutionalEmail;
-    dto.admissionPeriod = model.admissionPeriod;
-    dto.status = model.status;
+    dto.id = readModel.id;
+    dto.personId = readModel.personId;
+    dto.academicProgramId = readModel.academicProgramId;
+    dto.code = readModel.code;
+    dto.institutionalEmail = readModel.institutionalEmail;
+    dto.admissionPeriod = readModel.admissionPeriod;
+    dto.status = readModel.status;
 
-    dto.documentTypeName = model.documentTypeName;
-    dto.documentNumber = model.documentNumber;
-    dto.firstName = model.firstName;
-    dto.lastName = model.lastName;
-    dto.email = model.email;
-    dto.phone = model.phone;
-    dto.birthDate = model.birthDate;
+    dto.documentTypeName = readModel.documentTypeName;
+    dto.documentNumber = readModel.documentNumber;
+    dto.firstName = readModel.firstName;
+    dto.lastName = readModel.lastName;
+    dto.email = readModel.email;
+    dto.phone = readModel.phone;
+    dto.birthDate = readModel.birthDate;
 
     return dto;
   }

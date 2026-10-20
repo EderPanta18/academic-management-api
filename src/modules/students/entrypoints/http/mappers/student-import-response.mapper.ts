@@ -3,34 +3,34 @@ import type { StudentImportReadModel } from '@students/application/read-models';
 import { StudentImportReadModelResponseDto } from '../dtos';
 
 export class StudentImportResponseMapper {
-  static toResponse(model: StudentImportReadModel): StudentImportReadModelResponseDto {
+  static toReadModelResponse(readModel: StudentImportReadModel): StudentImportReadModelResponseDto {
     const dto = new StudentImportReadModelResponseDto();
 
-    dto.id = model.id;
-    dto.fileName = model.fileName;
-    dto.fileExtension = model.fileExtension;
-    dto.fileSize = model.fileSize;
-    dto.fileMimeType = model.fileMimeType;
-    dto.status = model.status;
+    dto.id = readModel.id;
+    dto.fileName = readModel.fileName;
+    dto.fileExtension = readModel.fileExtension;
+    dto.fileSize = readModel.fileSize;
+    dto.fileMimeType = readModel.fileMimeType;
+    dto.status = readModel.status;
 
-    dto.totalRows = model.totalRows;
-    dto.processedRows = model.processedRows;
-    dto.acceptedRows = model.acceptedRows;
-    dto.rejectedRows = model.rejectedRows;
-    dto.duplicatedRows = model.duplicatedRows;
-    dto.observedRows = model.observedRows;
+    dto.totalRows = readModel.totalRows;
+    dto.processedRows = readModel.processedRows;
+    dto.acceptedRows = readModel.acceptedRows;
+    dto.rejectedRows = readModel.rejectedRows;
+    dto.duplicatedRows = readModel.duplicatedRows;
+    dto.observedRows = readModel.observedRows;
 
-    dto.errors = model.errors
-      ? model.errors.map((err) => ({
+    dto.errors = readModel.errors
+      ? readModel.errors.map((err) => ({
           row: err.row,
           reasons: err.reasons,
         }))
       : null;
-    dto.failureReason = model.failureReason;
+    dto.failureReason = readModel.failureReason;
 
-    dto.createdByUserId = model.createdByUserId;
-    dto.startedAt = model.startedAt;
-    dto.finishedAt = model.finishedAt;
+    dto.createdByUserId = readModel.createdByUserId;
+    dto.startedAt = readModel.startedAt;
+    dto.finishedAt = readModel.finishedAt;
 
     return dto;
   }
@@ -40,7 +40,7 @@ export class StudentImportResponseMapper {
     pagination: PaginationVO,
     totalItems: number,
   ): PaginatedResult<StudentImportReadModelResponseDto> {
-    const mappedItems = items.map(StudentImportResponseMapper.toResponse);
+    const mappedItems = items.map(StudentImportResponseMapper.toReadModelResponse);
 
     return createPaginatedResult(mappedItems, pagination, totalItems);
   }

@@ -11,10 +11,10 @@ export class GetCourseByIdUseCase {
   ) {}
 
   async execute(id: string): Promise<CourseReadModel> {
-    const course = await this.courseQuery.find(id);
+    const readModel = await this.courseQuery.find(id);
 
-    if (!course) throw new CourseNotFoundException(id);
+    if (!readModel) throw new CourseNotFoundException(id);
 
-    return course;
+    return readModel;
   }
 }

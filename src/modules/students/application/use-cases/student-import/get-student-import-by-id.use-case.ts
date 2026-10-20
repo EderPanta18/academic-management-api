@@ -14,10 +14,10 @@ export class GetStudentImportByIdUseCase {
   ) {}
 
   async execute(importId: string): Promise<StudentImportReadModel> {
-    const studentImport = await this.studentImportQuery.find(importId);
+    const readModel = await this.studentImportQuery.find(importId);
 
-    if (!studentImport) throw new StudentImportNotFoundException(importId);
+    if (!readModel) throw new StudentImportNotFoundException(importId);
 
-    return studentImport;
+    return readModel;
   }
 }

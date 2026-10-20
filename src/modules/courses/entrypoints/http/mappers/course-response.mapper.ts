@@ -19,20 +19,20 @@ export class CourseResponseMapper {
     return dto;
   }
 
-  static toReadModelResponse(model: CourseReadModel): CourseReadModelResponseDto {
+  static toReadModelResponse(readModel: CourseReadModel): CourseReadModelResponseDto {
     const dto = new CourseReadModelResponseDto();
 
-    dto.id = model.id;
-    dto.academicProgramId = model.academicProgramId;
-    dto.courseCategoryId = model.courseCategoryId;
-    dto.code = model.code;
-    dto.name = model.name;
-    dto.description = model.description;
-    dto.credits = model.credits;
-    dto.hours = model.hours;
+    dto.id = readModel.id;
+    dto.academicProgramId = readModel.academicProgramId;
+    dto.courseCategoryId = readModel.courseCategoryId;
+    dto.code = readModel.code;
+    dto.name = readModel.name;
+    dto.description = readModel.description;
+    dto.credits = readModel.credits;
+    dto.hours = readModel.hours;
 
-    dto.academicProgramName = model.academicProgramName;
-    dto.courseCategoryName = model.courseCategoryName;
+    dto.academicProgramName = readModel.academicProgramName;
+    dto.courseCategoryName = readModel.courseCategoryName;
 
     return dto;
   }

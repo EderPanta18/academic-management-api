@@ -42,7 +42,7 @@ export class StartStudentImportUseCase {
     private readonly studentImportRepository: IStudentImportRepository,
   ) {}
 
-  async execute(command: StartStudentImportCommand): Promise<{ importId: string }> {
+  async execute(command: StartStudentImportCommand): Promise<{ studentImportId: string }> {
     const userExists = await this.userExistenceChecker.exists(command.createdByUserId);
 
     if (!userExists) throw new StudentImportUserNotFoundException(command.createdByUserId);
@@ -62,10 +62,10 @@ export class StartStudentImportUseCase {
     if (fileAlreadyExists)
       throw new StudentImportFileAlreadyExistsException(command.createdByUserId, command.fileName);
 
-    const importId = this.idGenerator.generate();
+    const studentImportId = this.idGenerator.generate();
 
     const studentImport = StudentImport.create({
-      id: importId,
+      id: studentImportId,
       fileName: command.fileName,
       fileExtension: command.fileExtension,
       fileHash: fileHash,
@@ -77,8 +77,8 @@ export class StartStudentImportUseCase {
 
     // Guardar en BD y encolar el Job
     await this.studentImportRepository.create(studentImport, command.fileContent);
-    await this.jobQueue.enqueue(STUDENT_IMPORT_JOBS.PROCESS, { importId }, { attempts: 3 });
+    await this.jobQueue.enqueue(STUDENT_IMPORT_JOBS.PROCESS, { studentImportId }, { attempts: 3 });
 
-    return { importId };
+    return { studentImportId };
   }
 }

@@ -11,10 +11,10 @@ export class GetProfessorByIdUseCase {
   ) {}
 
   async execute(id: string): Promise<ProfessorReadModel> {
-    const professor = await this.professorQuery.find(id);
+    const readModel = await this.professorQuery.find(id);
 
-    if (!professor) throw new ProfessorNotFoundException(id);
+    if (!readModel) throw new ProfessorNotFoundException(id);
 
-    return professor;
+    return readModel;
   }
 }

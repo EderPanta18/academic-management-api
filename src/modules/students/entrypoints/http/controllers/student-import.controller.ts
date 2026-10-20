@@ -59,9 +59,9 @@ export class StudentImportsController {
   async getById(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<StudentImportReadModelResponseDto> {
-    const model = await this.getByIdUseCase.execute(id);
+    const readModel = await this.getByIdUseCase.execute(id);
 
-    return StudentImportResponseMapper.toResponse(model);
+    return StudentImportResponseMapper.toReadModelResponse(readModel);
   }
 
   @Post()
@@ -76,15 +76,15 @@ export class StudentImportsController {
   async startImport(
     @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,
-  ): Promise<{ importId: string }> {
+  ): Promise<{ studentImportId: string }> {
     // TODO: Cuando el módulo de auth exista, extraer el ID del token (req.user.id).
     // Fallback temporal usando un UUID de sistema.
     // biome-ignore lint/suspicious/noExplicitAny: El módulo de autenticación aún no está implementado. Se tipará correctamente cuando exista.
     const userId = (req as any).user?.id || '00000000-0000-0000-0000-000000000000';
 
     const command = StudentImportRequestMapper.toStartCommand(file, userId);
-    const { importId } = await this.startImportUseCase.execute(command);
+    const { studentImportId } = await this.startImportUseCase.execute(command);
 
-    return { importId };
+    return { studentImportId };
   }
 }

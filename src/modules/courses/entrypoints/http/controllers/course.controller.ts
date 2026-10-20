@@ -44,9 +44,9 @@ export class CoursesController {
   @Get(COURSE_ROUTES.GET_BY_ID)
   @ApiGetCourseById()
   async getById(@Param('id', ParseUUIDPipe) id: string): Promise<CourseReadModelResponseDto> {
-    const model = await this.getByIdUseCase.execute(id);
+    const readModel = await this.getByIdUseCase.execute(id);
 
-    return CourseResponseMapper.toReadModelResponse(model);
+    return CourseResponseMapper.toReadModelResponse(readModel);
   }
 
   @Post()
