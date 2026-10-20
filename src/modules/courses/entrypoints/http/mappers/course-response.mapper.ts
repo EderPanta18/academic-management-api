@@ -24,14 +24,15 @@ export class CourseResponseMapper {
 
     dto.id = model.id;
     dto.academicProgramId = model.academicProgramId;
-    dto.academicProgramName = model.academicProgramName;
-    dto.courseCategoryName = model.courseCategoryName;
     dto.courseCategoryId = model.courseCategoryId;
     dto.code = model.code;
     dto.name = model.name;
     dto.description = model.description;
     dto.credits = model.credits;
     dto.hours = model.hours;
+
+    dto.academicProgramName = model.academicProgramName;
+    dto.courseCategoryName = model.courseCategoryName;
 
     return dto;
   }
