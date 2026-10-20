@@ -1,85 +1,91 @@
-// modules/course-offerings/application/use-cases/create-course-offering.use-case.ts
-
-import {
-  ACADEMIC_PERIOD_FINDER_PORT,
-  type IAcademicPeriodFinder,
-} from '@academic-periods/application/ports/in';
-import { EntityNotFoundException } from '@core/exceptions';
-import {
-  COURSE_OFFERING_REPOSITORY_PORT,
-  type ICourseOfferingRepository,
-} from '@course-offerings/application/ports/out';
+import { ACADEMIC_PERIOD_CHECKER_TOKEN, type IAcademicPeriodChecker } from '@academic-periods';
+import { ID_GENERATOR_TOKEN, type IIdGenerator } from '@core/contracts';
 import { CourseOffering } from '@course-offerings/domain/entities';
-import { CourseOfferingDuplicateException } from '@course-offerings/domain/exceptions';
-import { COURSE_FINDER_PORT, type ICourseFinder } from '@courses/application/ports/in';
+import { COURSE_CHECKER_TOKEN, type ICourseChecker } from '@courses';
 import { Inject, Injectable } from '@nestjs/common';
-import { type IProfessorFinder, PROFESSOR_FINDER_PORT } from '@professors/application/ports/in';
-import { CreateCourseOfferingCommand } from '../commands';
+import { type IProfessorChecker, PROFESSOR_CHECKER_TOKEN } from '@professors';
+import type { CreateCourseOfferingCommand } from '../commands';
 import {
-  AcademicPeriodNotCurrentException,
-  ProfessorNotActiveForAssignmentException,
+  CourseOfferingAcademicPeriodNotFoundException,
+  CourseOfferingAcademicPeriodNotOpenException,
+  CourseOfferingCourseNotFoundException,
+  CourseOfferingProfessorNotActiveException,
+  CourseOfferingProfessorNotFoundException,
+  CourseOfferingSectionAlreadyExistsException,
 } from '../exceptions';
+import { COURSE_OFFERING_REPOSITORY_TOKEN, type ICourseOfferingRepository } from '../ports/out';
 
 @Injectable()
 export class CreateCourseOfferingUseCase {
   constructor(
-    @Inject(COURSE_FINDER_PORT)
-    private readonly courseFinder: ICourseFinder,
+    @Inject(ID_GENERATOR_TOKEN)
+    private readonly idGenerator: IIdGenerator,
 
-    @Inject(ACADEMIC_PERIOD_FINDER_PORT)
-    private readonly academicPeriodFinder: IAcademicPeriodFinder,
+    @Inject(COURSE_CHECKER_TOKEN)
+    private readonly courseChecker: ICourseChecker,
 
-    @Inject(PROFESSOR_FINDER_PORT)
-    private readonly professorFinder: IProfessorFinder,
+    @Inject(ACADEMIC_PERIOD_CHECKER_TOKEN)
+    private readonly academicPeriodChecker: IAcademicPeriodChecker,
 
-    @Inject(COURSE_OFFERING_REPOSITORY_PORT)
-    private readonly courseOfferingrepository: ICourseOfferingRepository,
+    @Inject(PROFESSOR_CHECKER_TOKEN)
+    private readonly professorChecker: IProfessorChecker,
+
+    @Inject(COURSE_OFFERING_REPOSITORY_TOKEN)
+    private readonly courseOfferingRepository: ICourseOfferingRepository,
   ) {}
 
   async execute(command: CreateCourseOfferingCommand): Promise<CourseOffering> {
-    const courseExists = await this.courseFinder.exists(command.courseId);
+    const courseExists = await this.courseChecker.exists(command.courseId);
 
-    if (!courseExists) throw new EntityNotFoundException('Course', command.courseId);
+    if (!courseExists) throw new CourseOfferingCourseNotFoundException(command.courseId);
 
-    const isCurrent = await this.academicPeriodFinder.isCurrent(command.academicPeriodId);
+    const academicPeriodExists = await this.academicPeriodChecker.exists(command.academicPeriodId);
 
-    if (!isCurrent) throw new AcademicPeriodNotCurrentException(command.academicPeriodId);
+    if (!academicPeriodExists)
+      throw new CourseOfferingAcademicPeriodNotFoundException(command.academicPeriodId);
 
-    const section = command.section ?? 'A';
+    const academicPeriodIsOpen = await this.academicPeriodChecker.isOpen(command.academicPeriodId);
 
-    const isDuplicate = await this.courseOfferingrepository.existsByCourseAndPeriodAndSection(
-      command.courseId,
-      command.academicPeriodId,
-      section,
-    );
-
-    if (isDuplicate)
-      throw new CourseOfferingDuplicateException(
-        command.courseId,
-        command.academicPeriodId,
-        section,
-      );
+    if (!academicPeriodIsOpen)
+      throw new CourseOfferingAcademicPeriodNotOpenException(command.academicPeriodId);
 
     if (command.professorId) {
-      const professorExists = await this.professorFinder.exists(command.professorId);
+      const professorExists = await this.professorChecker.exists(command.professorId);
 
-      if (!professorExists) throw new EntityNotFoundException('Professor', command.professorId);
+      if (!professorExists) throw new CourseOfferingProfessorNotFoundException(command.professorId);
 
-      const isProfessorActive = await this.professorFinder.isActive(command.professorId);
+      const professorIsActive = await this.professorChecker.isActive(command.professorId);
 
-      if (!isProfessorActive)
-        throw new ProfessorNotActiveForAssignmentException(command.professorId);
+      if (!professorIsActive)
+        throw new CourseOfferingProfessorNotActiveException(command.professorId);
     }
 
-    const offering = CourseOffering.create({
+    const sectionAlreadyExists = await this.courseOfferingRepository.existsByCoursePeriodAndSection(
+      command.courseId,
+      command.academicPeriodId,
+      command.section,
+    );
+
+    if (sectionAlreadyExists)
+      throw new CourseOfferingSectionAlreadyExistsException(
+        command.courseId,
+        command.academicPeriodId,
+        command.section,
+      );
+
+    const courseofferingId = this.idGenerator.generate();
+
+    const courseOffering = CourseOffering.create({
+      id: courseofferingId,
       courseId: command.courseId,
       academicPeriodId: command.academicPeriodId,
       professorId: command.professorId,
       section: command.section,
-      maxStudents: command.maxStudents,
-      enrollmentDeadline: command.enrollmentDeadline,
+      maxCapacity: command.maxCapacity,
+      availableCapacity: command.availableCapacity,
+      status: null,
     });
 
-    return this.courseOfferingrepository.save(offering);
+    return await this.courseOfferingRepository.create(courseOffering);
   }
 }

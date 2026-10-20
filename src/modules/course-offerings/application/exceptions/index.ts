@@ -1,4 +1,3 @@
-// modules/course-offerings/application/exceptions/index.ts
-
-export { AcademicPeriodNotCurrentException } from './academic-period-not-current.exception';
-export { ProfessorNotActiveForAssignmentException } from './professor-not-active-for-assignment.exception';
+export * from './course-offering-query.exceptions';
+export * from './course-offering-relation.exceptions';
+export * from './course-offering-uniqueness.exceptions';

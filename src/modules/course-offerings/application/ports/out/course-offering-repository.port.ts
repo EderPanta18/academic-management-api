@@ -1,36 +1,19 @@
-// modules/course-offerings/application/ports/out/course-offering-repository.port.ts
+import type { CourseOffering } from '@course-offerings/domain/entities';
 
-import { PaginationVO } from '@core/pagination';
-import { CourseOfferingStatus } from '@course-offerings/domain/constants';
-import { CourseOffering } from '@course-offerings/domain/entities';
-
-export const COURSE_OFFERING_REPOSITORY_PORT = Symbol('COURSE_OFFERING_REPOSITORY_PORT');
-
-export interface FindAllCourseOfferingsFilters {
-  courseId?: number;
-  academicPeriodId?: number;
-  statuses?: CourseOfferingStatus[];
-}
+export const COURSE_OFFERING_REPOSITORY_TOKEN = Symbol('COURSE_OFFERING_REPOSITORY');
 
 export interface ICourseOfferingRepository {
-  save(offering: CourseOffering): Promise<CourseOffering>;
+  create(offering: CourseOffering): Promise<CourseOffering>;
 
-  findById(id: number): Promise<CourseOffering | null>;
+  find(id: string): Promise<CourseOffering | null>;
 
-  findAll(
-    pagination: PaginationVO,
-    filters?: FindAllCourseOfferingsFilters,
-  ): Promise<[CourseOffering[], number]>;
+  update(offering: CourseOffering): Promise<CourseOffering>;
 
-  assignProfessor(offeringId: number, professorId: number): Promise<CourseOffering>;
+  exists(id: string): Promise<boolean>;
 
-  activate(id: number): Promise<CourseOffering>;
-
-  existsByCourseAndPeriodAndSection(
-    courseId: number,
-    academicPeriodId: number,
+  existsByCoursePeriodAndSection(
+    courseId: string,
+    academicPeriodId: string,
     section: string,
   ): Promise<boolean>;
-
-  delete(id: number): Promise<void>;
 }

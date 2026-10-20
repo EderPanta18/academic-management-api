@@ -1,49 +1,40 @@
-// modules/course-offerings/application/use-cases/assign-professor-to-offering.use-case.ts
-
-import { EntityNotFoundException } from '@core/exceptions';
-import {
-  COURSE_OFFERING_REPOSITORY_PORT,
-  type ICourseOfferingRepository,
-} from '@course-offerings/application/ports/out';
-import { CourseOfferingStatus } from '@course-offerings/domain/constants';
-import { CourseOffering } from '@course-offerings/domain/entities';
-import {
-  CourseOfferingInvalidStatusException,
-  CourseOfferingNotFoundException,
-} from '@course-offerings/domain/exceptions';
+import type { CourseOffering } from '@course-offerings/domain/entities';
 import { Inject, Injectable } from '@nestjs/common';
-import { type IProfessorFinder, PROFESSOR_FINDER_PORT } from '@professors/application/ports/in';
-import { AssignProfessorToOfferingCommand } from '../commands';
-import { ProfessorNotActiveForAssignmentException } from '../exceptions';
+import { type IProfessorChecker, PROFESSOR_CHECKER_TOKEN } from '@professors/application/ports/in';
+import type { AssignProfessorToOfferingCommand } from '../commands';
+import {
+  CourseOfferingNotFoundException,
+  CourseOfferingProfessorNotActiveException,
+  CourseOfferingProfessorNotFoundException,
+} from '../exceptions';
+import { COURSE_OFFERING_REPOSITORY_TOKEN, type ICourseOfferingRepository } from '../ports/out';
 
 @Injectable()
 export class AssignProfessorToOfferingUseCase {
   constructor(
-    @Inject(PROFESSOR_FINDER_PORT)
-    private readonly professorFinder: IProfessorFinder,
+    @Inject(PROFESSOR_CHECKER_TOKEN)
+    private readonly professorChecker: IProfessorChecker,
 
-    @Inject(COURSE_OFFERING_REPOSITORY_PORT)
-    private readonly courseOfferingrepository: ICourseOfferingRepository,
+    @Inject(COURSE_OFFERING_REPOSITORY_TOKEN)
+    private readonly courseOfferingRepository: ICourseOfferingRepository,
   ) {}
 
   async execute(command: AssignProfessorToOfferingCommand): Promise<CourseOffering> {
-    const offering = await this.courseOfferingrepository.findById(command.offeringId);
-    if (!offering) throw new CourseOfferingNotFoundException(command.offeringId);
+    const courseOffering = await this.courseOfferingRepository.find(command.offeringId);
 
-    if (!offering.canAssignProfessor)
-      throw new CourseOfferingInvalidStatusException(command.offeringId, offering.status, [
-        CourseOfferingStatus.INACTIVE,
-        CourseOfferingStatus.ACTIVE,
-      ]);
+    if (!courseOffering) throw new CourseOfferingNotFoundException(command.offeringId);
 
-    const professorExists = await this.professorFinder.exists(command.professorId);
+    const professorExists = await this.professorChecker.exists(command.professorId);
 
-    if (!professorExists) throw new EntityNotFoundException('Professor', command.professorId);
+    if (!professorExists) throw new CourseOfferingProfessorNotFoundException(command.professorId);
 
-    const isProfessorActive = await this.professorFinder.isActive(command.professorId);
+    const professorIsActive = await this.professorChecker.isActive(command.professorId);
 
-    if (!isProfessorActive) throw new ProfessorNotActiveForAssignmentException(command.professorId);
+    if (!professorIsActive)
+      throw new CourseOfferingProfessorNotActiveException(command.professorId, command.offeringId);
 
-    return this.courseOfferingrepository.assignProfessor(command.offeringId, command.professorId);
+    const courseOfferingUpdated = courseOffering.assignProfessor(command.professorId);
+
+    return await this.courseOfferingRepository.update(courseOfferingUpdated);
   }
 }
