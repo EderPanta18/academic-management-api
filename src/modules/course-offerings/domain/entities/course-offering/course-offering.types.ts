@@ -1,24 +1,23 @@
-// modules/course-offerings/domain/entities/course-offering/course-offering.types.ts
-
-import { CourseOfferingStatus } from '@course-offerings/domain/constants';
+import type { CourseOfferingStatus } from './course-offering.enums';
 
 export interface CourseOfferingProps {
-  id: number;
-  courseId: number;
-  academicPeriodId: number;
-  professorId: number | null;
+  id: string;
+  courseId: string;
+  academicPeriodId: string;
+  professorId: string | null;
   section: string;
-  maxStudents: number;
-  enrollmentDeadline: Date | null;
+  maxCapacity: number;
+  availableCapacity: number | null;
   status: CourseOfferingStatus;
 }
 
 export interface CreateCourseOfferingProps {
-  courseId: number;
-  academicPeriodId: number;
-  professorId?: number | null;
-  section?: string | null;
-  maxStudents?: number | null;
-  enrollmentDeadline?: Date | null;
-  status?: CourseOfferingStatus | null;
+  id: string;
+  courseId: string;
+  academicPeriodId: string;
+  professorId: string | null;
+  section: string;
+  maxCapacity: number;
+  availableCapacity: number | null;
+  status: CourseOfferingStatus | null;
 }
