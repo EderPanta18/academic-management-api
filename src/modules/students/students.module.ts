@@ -45,19 +45,8 @@ import {
     GetStudentImportByIdUseCase,
     ListStudentImportsUseCase,
 
-    // ── Servicios de Aplicación ─────────────────────────────────────────────
-    StudentChecker,
-    StudentFinder,
-    StudentImportRowService,
-
     // ── Procesadores de Cola (Entrypoints) ──────────────────────────────────
     StudentImportProcessor,
-
-    // ── Infraestructura (Adaptadores) ───────────────────────────────────────
-    StudentRepository,
-    StudentQuery,
-    StudentImportRepository,
-    StudentImportQuery,
     {
       provide: USER_EXISTENCE_CHECKER_TOKEN,
       useClass: FakeUserExistenceChecker, // TODO: Reemplazar cuando el módulo Users exista
