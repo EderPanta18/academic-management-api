@@ -1,4 +1,4 @@
-export interface CourseProps {
+export type CourseProps = {
   id: string;
   academicProgramId: string;
   courseCategoryId: string | null;
@@ -7,9 +7,9 @@ export interface CourseProps {
   description: string | null;
   credits: number;
   hours: number | null;
-}
+};
 
-export interface CreateCourseProps {
+export type CreateCourseProps = {
   id: string;
   academicProgramId: string;
   courseCategoryId: string | null;
@@ -18,4 +18,4 @@ export interface CreateCourseProps {
   description: string | null;
   credits: number;
   hours: number | null;
-}
+};

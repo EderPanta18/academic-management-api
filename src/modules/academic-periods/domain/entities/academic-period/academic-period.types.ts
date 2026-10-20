@@ -1,6 +1,6 @@
 import type { AcademicPeriodStatus } from './academic-period.enums';
 
-export interface AcademicPeriodProps {
+export type AcademicPeriodProps = {
   id: string;
   code: string;
   name: string;
@@ -9,9 +9,9 @@ export interface AcademicPeriodProps {
   enrollmentStartDate: Date | null;
   enrollmentEndDate: Date | null;
   status: AcademicPeriodStatus;
-}
+};
 
-export interface CreateAcademicPeriodProps {
+export type CreateAcademicPeriodProps = {
   id: string;
   code: string;
   name: string;
@@ -20,4 +20,4 @@ export interface CreateAcademicPeriodProps {
   enrollmentStartDate: Date | null;
   enrollmentEndDate: Date | null;
   status: AcademicPeriodStatus | null;
-}
+};

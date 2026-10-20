@@ -1,6 +1,6 @@
 import type { StudentStatus } from '@students/domain/entities';
 
-export interface StudentProps {
+export type StudentProps = {
   id: string;
   personId: string;
   academicProgramId: string;
@@ -8,9 +8,9 @@ export interface StudentProps {
   institutionalEmail: string | null;
   admissionPeriod: string | null;
   status: StudentStatus;
-}
+};
 
-export interface CreateStudentProps {
+export type CreateStudentProps = {
   id: string;
   personId: string;
   academicProgramId: string;
@@ -18,4 +18,4 @@ export interface CreateStudentProps {
   institutionalEmail: string | null;
   admissionPeriod: string | null;
   status: StudentStatus | null;
-}
+};

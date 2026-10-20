@@ -1,13 +1,13 @@
-export interface CourseCategoryProps {
+export type CourseCategoryProps = {
   id: string;
   code: string;
   name: string;
   description: string | null;
-}
+};
 
-export interface CreateCourseCategoryProps {
+export type CreateCourseCategoryProps = {
   id: string;
   code: string;
   name: string;
   description: string | null;
-}
+};

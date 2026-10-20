@@ -1,6 +1,6 @@
 import type { ProfessorStatus } from './professor.enums';
 
-export interface ProfessorProps {
+export type ProfessorProps = {
   id: string;
   personId: string;
   code: string;
@@ -8,9 +8,9 @@ export interface ProfessorProps {
   department: string | null;
   specialty: string | null;
   status: ProfessorStatus;
-}
+};
 
-export interface CreateProfessorProps {
+export type CreateProfessorProps = {
   id: string;
   personId: string;
   code: string;
@@ -18,4 +18,4 @@ export interface CreateProfessorProps {
   department: string | null;
   specialty: string | null;
   status: ProfessorStatus | null;
-}
+};

@@ -1,6 +1,6 @@
 import type { CourseOfferingStatus } from './course-offering.enums';
 
-export interface CourseOfferingProps {
+export type CourseOfferingProps = {
   id: string;
   courseId: string;
   academicPeriodId: string;
@@ -9,9 +9,9 @@ export interface CourseOfferingProps {
   maxCapacity: number;
   availableCapacity: number | null;
   status: CourseOfferingStatus;
-}
+};
 
-export interface CreateCourseOfferingProps {
+export type CreateCourseOfferingProps = {
   id: string;
   courseId: string;
   academicPeriodId: string;
@@ -19,4 +19,4 @@ export interface CreateCourseOfferingProps {
   section: string;
   maxCapacity: number;
   availableCapacity: number | null;
-}
+};
