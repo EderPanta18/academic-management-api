@@ -13,8 +13,8 @@ export class AcademicProgramFinder implements IAcademicProgramFinder {
   ) {}
 
   async findIdByCode(code: string): Promise<string | null> {
-    const documentType = await this.academicProgramRepository.findByCode(code);
+    const academicProgram = await this.academicProgramRepository.findByCode(code);
 
-    return documentType ? documentType.id : null;
+    return academicProgram ? academicProgram.id : null;
   }
 }

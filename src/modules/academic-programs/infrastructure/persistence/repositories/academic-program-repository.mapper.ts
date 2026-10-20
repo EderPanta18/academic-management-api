@@ -1,13 +1,15 @@
 import { AcademicProgram } from '@academic-programs/domain/entities';
-import type { AcademicProgram as AcademicProgramRecord, Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
+
+type AcademicProgramRaw = Prisma.AcademicProgramGetPayload<Record<string, never>>;
 
 export class AcademicProgramRepositoryMapper {
-  static toDomain(record: AcademicProgramRecord): AcademicProgram {
+  static toDomain(raw: AcademicProgramRaw): AcademicProgram {
     return AcademicProgram.reconstitute({
-      id: record.id,
-      code: record.code,
-      name: record.name,
-      academicUnit: record.academicUnit,
+      id: raw.id,
+      code: raw.code,
+      name: raw.name,
+      academicUnit: raw.academicUnit,
     });
   }
 
