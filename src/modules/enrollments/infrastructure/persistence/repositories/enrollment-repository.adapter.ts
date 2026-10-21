@@ -1,95 +1,39 @@
-// modules/enrollments/infrastructure/persistence/repositories/enrollment-repository.adapter.ts
-
-import { PaginationVO } from '@core/pagination';
-import type {
-  ChangeEnrollmentStatusProps,
-  FindAllEnrollmentsFilters,
-  IEnrollmentFinder,
-  IEnrollmentRepository,
-} from '@enrollments/application/ports';
-import { EnrollmentStatus } from '@enrollments/domain/constants';
-import { Enrollment, type EnrollmentStatusLogProps } from '@enrollments/domain/entities';
+import type { IEnrollmentRepository } from '@enrollments/application/ports/out';
+import type { Enrollment } from '@enrollments/domain/entities';
+import type { EnrollmentStatusLog } from '@enrollments/domain/records';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@platform/database';
-import { Prisma } from '@prisma/client';
-import { EnrollmentPersistenceMapper } from '../mappers';
+import { EnrollmentRepositoryMapper } from './enrollment-repository.mapper';
 
 @Injectable()
-export class EnrollmentRepository implements IEnrollmentRepository, IEnrollmentFinder {
+export class EnrollmentRepository implements IEnrollmentRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  // ── IEnrollmentRepository ─────────────────────────────────────────────────
-
-  async save(enrollment: Enrollment): Promise<Enrollment> {
-    const data = EnrollmentPersistenceMapper.toPersistence(enrollment);
+  async create(enrollment: Enrollment): Promise<Enrollment> {
+    const data = EnrollmentRepositoryMapper.toCreatePersistence(enrollment);
 
     const raw = await this.prisma.enrollment.create({ data });
 
-    return EnrollmentPersistenceMapper.toDomain(raw);
+    return EnrollmentRepositoryMapper.toDomain(raw);
   }
 
-  async findById(id: number): Promise<Enrollment | null> {
+  async find(id: string): Promise<Enrollment | null> {
     const raw = await this.prisma.enrollment.findFirst({
       where: { id, deletedAt: null },
     });
 
-    return raw ? EnrollmentPersistenceMapper.toDomain(raw) : null;
+    return raw ? EnrollmentRepositoryMapper.toDomain(raw) : null;
   }
 
-  async findAll(
-    pagination: PaginationVO,
-    filters?: FindAllEnrollmentsFilters,
-  ): Promise<[Enrollment[], number]> {
-    const where: Prisma.EnrollmentWhereInput = {
-      deletedAt: null,
-      ...(filters?.studentId && { studentId: filters.studentId }),
-      ...(filters?.courseOfferingId && {
-        courseOfferingId: filters.courseOfferingId,
-      }),
-      ...(filters?.statuses?.length && { status: { in: filters.statuses } }),
-    };
-
-    const [raws, total] = await Promise.all([
-      this.prisma.enrollment.findMany({
-        where,
-        skip: pagination.offset,
-        take: pagination.pageSize,
-        orderBy: { id: 'asc' },
-      }),
-
-      this.prisma.enrollment.count({ where }),
-    ]);
-
-    return [raws.map(EnrollmentPersistenceMapper.toDomain), total];
-  }
-
-  async changeStatus(props: ChangeEnrollmentStatusProps): Promise<Enrollment> {
-    const { enrollmentId, previousStatus, newStatus, reason, changedBy } = props;
-
-    return this.prisma.$transaction(async (tx) => {
-      await tx.enrollmentStatusLog.create({
-        data: { enrollmentId, previousStatus, newStatus, reason, changedBy },
-      });
-
-      const raw = await tx.enrollment.update({
-        where: { id: enrollmentId },
-        data: { status: newStatus },
-      });
-
-      return EnrollmentPersistenceMapper.toDomain(raw);
-    });
-  }
-
-  async findStatusLogByEnrollmentId(enrollmentId: number): Promise<EnrollmentStatusLogProps[]> {
-    const raws = await this.prisma.enrollmentStatusLog.findMany({
-      where: { enrollmentId },
-      orderBy: { createdAt: 'asc' },
+  async exists(id: string): Promise<boolean> {
+    const count = await this.prisma.enrollment.count({
+      where: { id, deletedAt: null },
     });
 
-    return raws.map(EnrollmentPersistenceMapper.statusLogToDomain);
+    return count > 0;
   }
 
-  async existsByStudentAndOffering(studentId: number, courseOfferingId: number): Promise<boolean> {
+  async existsByStudentAndOffering(studentId: string, courseOfferingId: string): Promise<boolean> {
     const count = await this.prisma.enrollment.count({
       where: { studentId, courseOfferingId, deletedAt: null },
     });
@@ -97,47 +41,23 @@ export class EnrollmentRepository implements IEnrollmentRepository, IEnrollmentF
     return count > 0;
   }
 
-  async isAtCapacity(courseOfferingId: number): Promise<boolean> {
-    const offering = await this.prisma.courseOffering.findFirst({
-      where: { id: courseOfferingId, deletedAt: null },
-      select: { maxStudents: true },
+  async updateWithStatusLog(enrollment: Enrollment, log: EnrollmentStatusLog): Promise<Enrollment> {
+    const enrollmentData = EnrollmentRepositoryMapper.toUpdatePersistence(enrollment);
+    const logData = EnrollmentRepositoryMapper.logToPersistence(log);
+
+    const raw = await this.prisma.$transaction(async (tx) => {
+      await tx.enrollment.update({
+        where: { id: enrollment.id },
+        data: enrollmentData,
+      });
+
+      await tx.enrollmentStatusLog.create({ data: logData });
+
+      return tx.enrollment.findUniqueOrThrow({
+        where: { id: enrollment.id },
+      });
     });
 
-    if (!offering) return false;
-
-    const enrolledCount = await this.prisma.enrollment.count({
-      where: {
-        courseOfferingId,
-        status: EnrollmentStatus.ENROLLED,
-        deletedAt: null,
-      },
-    });
-
-    return enrolledCount >= offering.maxStudents;
-  }
-
-  async delete(id: number): Promise<void> {
-    await this.prisma.enrollment.update({
-      where: { id },
-      data: { deletedAt: new Date() },
-    });
-  }
-
-  // ── IEnrollmentFinder ─────────────────────────────────────────────────────
-
-  async exists(id: number): Promise<boolean> {
-    const count = await this.prisma.enrollment.count({
-      where: { id, deletedAt: null },
-    });
-
-    return count > 0;
-  }
-
-  async isEnrolledAndActive(id: number): Promise<boolean> {
-    const count = await this.prisma.enrollment.count({
-      where: { id, status: EnrollmentStatus.ENROLLED, deletedAt: null },
-    });
-
-    return count > 0;
+    return EnrollmentRepositoryMapper.toDomain(raw);
   }
 }
