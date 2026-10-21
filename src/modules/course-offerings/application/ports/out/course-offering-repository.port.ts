@@ -16,4 +16,6 @@ export interface ICourseOfferingRepository {
     academicPeriodId: string,
     section: string,
   ): Promise<boolean>;
+
+  countActiveEnrollments(courseOfferingId: string): Promise<number>;
 }

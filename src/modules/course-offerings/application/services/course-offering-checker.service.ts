@@ -21,4 +21,14 @@ export class CourseOfferingChecker implements ICourseOfferingChecker {
 
     return courseOffering?.isOpen() ?? false;
   }
+
+  async hasAvailableCapacity(id: string): Promise<boolean> {
+    const courseOffering = await this.courseOfferingRepository.find(id);
+
+    if (!courseOffering) return false;
+
+    const enrolledCount = await this.courseOfferingRepository.countActiveEnrollments(id);
+
+    return courseOffering.hasCapacityFor(enrolledCount);
+  }
 }

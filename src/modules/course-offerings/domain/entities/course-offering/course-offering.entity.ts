@@ -143,7 +143,7 @@ export class CourseOffering {
     });
   }
 
-  // ── Modificaciones ────────────────────────────────────────────────────────
+  // ── Otros ────────────────────────────────────────────────────────
 
   assignProfessor(professorId: string): CourseOffering {
     if (!this.isDraft() && !this.isOpen())
@@ -153,5 +153,9 @@ export class CourseOffering {
       ...this,
       professorId,
     });
+  }
+
+  hasCapacityFor(enrolledCount: number): boolean {
+    return enrolledCount < this.maxCapacity;
   }
 }

@@ -69,4 +69,14 @@ export class CourseOfferingRepository implements ICourseOfferingRepository {
 
     return count > 0;
   }
+
+  async countActiveEnrollments(courseOfferingId: string): Promise<number> {
+    return this.prisma.enrollment.count({
+      where: {
+        courseOfferingId,
+        status: 'ENROLLED',
+        deletedAt: null,
+      },
+    });
+  }
 }
