@@ -6,7 +6,11 @@ import { NestFactory } from '@nestjs/core';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
-  bootstrapApp(app);
+  await bootstrapApp(app);
 }
 
-bootstrap();
+bootstrap().catch((error) => {
+  console.error('Error fatal durante el arranque de la API:', error);
+
+  process.exit(1);
+});
