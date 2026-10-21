@@ -1,12 +1,12 @@
+import { Module } from '@nestjs/common';
 import {
   DOCUMENT_TYPE_FINDER_TOKEN,
   DOCUMENT_TYPE_REPOSITORY_TOKEN,
   PERSON_CREATION_VALIDATOR_TOKEN,
   PERSON_REPOSITORY_TOKEN,
-} from '@identity/application/ports';
-import { DocumentTypeFinder, PersonCreationValidator } from '@identity/application/services';
-import { DocumentTypeRepository, PersonRepository } from '@identity/infrastructure/persistence';
-import { Module } from '@nestjs/common';
+} from './application/ports';
+import { DocumentTypeFinder, PersonCreationValidator } from './application/services';
+import { DocumentTypeRepository, PersonRepository } from './infrastructure/persistence';
 
 @Module({
   providers: [

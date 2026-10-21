@@ -11,7 +11,7 @@ import {
   STUDENT_REPOSITORY_TOKEN,
   USER_EXISTENCE_CHECKER_TOKEN,
 } from './application/ports';
-import { StudentChecker, StudentFinder, StudentImportRowService } from './application/services';
+import { StudentChecker, StudentFinder } from './application/services';
 import {
   CreateStudentUseCase,
   GetStudentByIdUseCase,
@@ -32,7 +32,7 @@ import {
 } from './infrastructure/persistence';
 
 @Module({
-  imports: [IdentityModule, AcademicProgramsModule, FileParserModule],
+  imports: [IdentityModule, FileParserModule, AcademicProgramsModule],
   providers: [
     // ── Casos de Uso: Student ───────────────────────────────────────────────
     CreateStudentUseCase,

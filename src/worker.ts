@@ -2,8 +2,7 @@
 
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { registerJobs } from './workers/register-jobs';
-import { WorkerModule } from './workers/worker.module';
+import { registerJobs, WorkerModule } from './workers';
 
 async function bootstrapWorker(): Promise<void> {
   const logger = new Logger('WorkerBootstrap');
@@ -25,5 +24,6 @@ async function bootstrapWorker(): Promise<void> {
 
 bootstrapWorker().catch((error) => {
   console.error('Error fatal al iniciar el worker:', error);
+
   process.exit(1);
 });

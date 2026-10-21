@@ -1,14 +1,11 @@
+import { Module } from '@nestjs/common';
 import {
   ACADEMIC_PROGRAM_CHECKER_TOKEN,
   ACADEMIC_PROGRAM_FINDER_TOKEN,
   ACADEMIC_PROGRAM_REPOSITORY_TOKEN,
-} from '@academic-programs/application/ports';
-import {
-  AcademicProgramChecker,
-  AcademicProgramFinder,
-} from '@academic-programs/application/services';
-import { AcademicProgramRepository } from '@academic-programs/infrastructure/persistence';
-import { Module } from '@nestjs/common';
+} from './application/ports';
+import { AcademicProgramChecker, AcademicProgramFinder } from './application/services';
+import { AcademicProgramRepository } from './infrastructure/persistence';
 
 @Module({
   providers: [
