@@ -1,24 +1,20 @@
-//modules/modules.module.ts
+// modules/modules.module.ts
 
 import { Module } from '@nestjs/common';
 import { AcademicPeriodsModule } from './academic-periods';
-import { CareersModule } from './careers';
-import { CourseCategoriesModule } from './course-categories';
+import { AcademicProgramsModule } from './academic-programs';
 import { CourseOfferingsModule } from './course-offerings';
 import { CoursesModule } from './courses';
-import { DepartmentsModule } from './departments';
 import { EnrollmentsModule } from './enrollments';
-import { PersonsModule } from './persons';
+import { IdentityModule } from './identity';
 import { ProfessorsModule } from './professors';
 import { StudentsModule } from './students';
 
 @Module({
   imports: [
-    PersonsModule,
-    DepartmentsModule,
-    CareersModule,
+    IdentityModule,
+    AcademicProgramsModule,
     AcademicPeriodsModule,
-    CourseCategoriesModule,
     CoursesModule,
     ProfessorsModule,
     StudentsModule,
