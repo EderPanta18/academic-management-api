@@ -2,37 +2,28 @@
 
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app';
-import { registerJobs } from './workers';
+import { registerJobs } from './workers/register-jobs';
+import { WorkerModule } from './workers/worker.module';
 
 async function bootstrapWorker(): Promise<void> {
   const logger = new Logger('WorkerBootstrap');
 
-  // Creamos el contexto de la aplicación (sin servidor HTTP)
-  const app = await NestFactory.createApplicationContext(AppModule, {
+  // Creamos el contexto usando el WorkerModule (SIN HTTP)
+  const app = await NestFactory.createApplicationContext(WorkerModule, {
     logger: ['error', 'warn', 'log', 'debug'],
   });
 
-  // Registramos los procesadores de las colas
+  // Habilitamos el cierre limpio nativo de NestJS
+  // Esto llamará a onModuleDestroy de Prisma, PgBoss, etc.
+  app.enableShutdownHooks();
+
+  // Registramos los procesadores
   await registerJobs(app);
 
   logger.log('Worker de procesamiento asíncrono iniciado correctamente.');
-
-  // Manejo de cierre limpio (Graceful Shutdown)
-  const shutdown = async (signal: string) => {
-    logger.log(`Recibida señal ${signal}. Cerrando worker...`);
-
-    await app.close();
-
-    process.exit(0);
-  };
-
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
-  process.on('SIGINT', () => shutdown('SIGINT'));
 }
 
 bootstrapWorker().catch((error) => {
   console.error('Error fatal al iniciar el worker:', error);
-
   process.exit(1);
 });

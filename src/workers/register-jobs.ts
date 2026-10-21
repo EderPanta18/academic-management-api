@@ -11,6 +11,7 @@ export async function registerJobs(app: INestApplicationContext): Promise<void> 
   // Obtenemos la implementación concreta de la cola (PgBoss)
   const jobQueue = app.get<IJobQueue>(JOB_QUEUE_TOKEN);
 
+  // ── Student Import ────────────────────────────────────────────────────────
   const studentImportProcessor = app.get(StudentImportProcessor);
 
   await jobQueue.process<{ importId: string }>(STUDENT_IMPORT_JOBS.PROCESS, (payload) =>
