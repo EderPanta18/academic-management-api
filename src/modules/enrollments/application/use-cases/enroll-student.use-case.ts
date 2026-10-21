@@ -38,14 +38,14 @@ export class EnrollStudentUseCase {
     @Inject(STUDENT_FINDER_TOKEN)
     private readonly studentFinder: IStudentFinder,
 
+    @Inject(COURSE_FINDER_TOKEN)
+    private readonly courseFinder: ICourseFinder,
+
     @Inject(COURSE_OFFERING_CHECKER_TOKEN)
     private readonly courseOfferingChecker: ICourseOfferingChecker,
 
     @Inject(COURSE_OFFERING_FINDER_TOKEN)
     private readonly courseOfferingFinder: ICourseOfferingFinder,
-
-    @Inject(COURSE_FINDER_TOKEN)
-    private readonly courseFinder: ICourseFinder,
 
     @Inject(ENROLLMENT_REPOSITORY_TOKEN)
     private readonly enrollmentRepository: IEnrollmentRepository,
@@ -65,6 +65,7 @@ export class EnrollStudentUseCase {
     if (!offeringExists)
       throw new EnrollmentCourseOfferingNotFoundException(command.courseOfferingId);
 
+    // Oferta abierta
     const offeringIsOpen = await this.courseOfferingChecker.isOpen(command.courseOfferingId);
 
     if (!offeringIsOpen)
@@ -107,9 +108,11 @@ export class EnrollStudentUseCase {
       (command.status ?? EnrollmentStatus.ENROLLED) === EnrollmentStatus.ENROLLED;
 
     if (willBeEnrolled) {
-      const atCapacity = await this.enrollmentRepository.isAtCapacity(command.courseOfferingId);
+      const hasCapacity = await this.courseOfferingChecker.hasAvailableCapacity(
+        command.courseOfferingId,
+      );
 
-      if (atCapacity)
+      if (!hasCapacity)
         throw new EnrollmentCourseOfferingAtCapacityException(command.courseOfferingId);
     }
 

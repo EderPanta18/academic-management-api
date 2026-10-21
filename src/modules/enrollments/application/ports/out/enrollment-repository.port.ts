@@ -12,7 +12,5 @@ export interface IEnrollmentRepository {
 
   existsByStudentAndOffering(studentId: string, courseOfferingId: string): Promise<boolean>;
 
-  isAtCapacity(courseOfferingId: string): Promise<boolean>;
-
   updateWithStatusLog(enrollment: Enrollment, log: EnrollmentStatusLog): Promise<Enrollment>;
 }
