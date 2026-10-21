@@ -3,6 +3,13 @@ import type { ListAcademicPeriodsQuery } from '@academic-periods/application/que
 import type { CreateAcademicPeriodRequestDto, ListAcademicPeriodsQueryDto } from '../dtos';
 
 export class AcademicPeriodRequestMapper {
+  static toListQuery(dto: ListAcademicPeriodsQueryDto): ListAcademicPeriodsQuery {
+    return {
+      status: dto.status,
+      search: dto.search,
+    };
+  }
+
   static toCreateCommand(dto: CreateAcademicPeriodRequestDto): CreateAcademicPeriodCommand {
     return {
       code: dto.code,
@@ -12,13 +19,6 @@ export class AcademicPeriodRequestMapper {
       enrollmentStartDate: dto.enrollmentStartDate ?? null,
       enrollmentEndDate: dto.enrollmentEndDate ?? null,
       status: dto.status ?? null,
-    };
-  }
-
-  static toListQuery(dto: ListAcademicPeriodsQueryDto): ListAcademicPeriodsQuery {
-    return {
-      status: dto.status,
-      search: dto.search,
     };
   }
 }

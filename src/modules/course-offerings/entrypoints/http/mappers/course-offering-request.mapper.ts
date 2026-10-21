@@ -10,6 +10,16 @@ import type {
 } from '../dtos';
 
 export class CourseOfferingRequestMapper {
+  static toListQuery(dto: ListCourseOfferingsQueryDto): ListCourseOfferingsQuery {
+    return {
+      courseId: dto.courseId,
+      academicPeriodId: dto.academicPeriodId,
+      professorId: dto.professorId,
+      statuses: dto.statuses,
+      search: dto.search,
+    };
+  }
+
   static toCreateCommand(dto: CreateCourseOfferingRequestDto): CreateCourseOfferingCommand {
     return {
       courseId: dto.courseId,
@@ -28,16 +38,6 @@ export class CourseOfferingRequestMapper {
     return {
       offeringId,
       professorId: dto.professorId,
-    };
-  }
-
-  static toListQuery(dto: ListCourseOfferingsQueryDto): ListCourseOfferingsQuery {
-    return {
-      courseId: dto.courseId,
-      academicPeriodId: dto.academicPeriodId,
-      professorId: dto.professorId,
-      statuses: dto.statuses,
-      search: dto.search,
     };
   }
 }

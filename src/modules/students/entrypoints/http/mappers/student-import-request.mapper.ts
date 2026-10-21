@@ -4,6 +4,13 @@ import type { ListStudentImportsQuery } from '@students/application/queries';
 import type { ListStudentImportsQueryDto } from '../dtos';
 
 export class StudentImportRequestMapper {
+  static toListQuery(dto: ListStudentImportsQueryDto): ListStudentImportsQuery {
+    return {
+      status: dto.status,
+      createdByUserId: dto.createdByUserId,
+    };
+  }
+
   static toStartCommand(file: Express.Multer.File, userId: string): StartStudentImportCommand {
     const fileExtension = path.extname(file.originalname).toLowerCase();
 
@@ -14,13 +21,6 @@ export class StudentImportRequestMapper {
       fileMimeType: file.mimetype,
       fileContent: file.buffer,
       createdByUserId: userId,
-    };
-  }
-
-  static toListQuery(dto: ListStudentImportsQueryDto): ListStudentImportsQuery {
-    return {
-      status: dto.status,
-      createdByUserId: dto.createdByUserId,
     };
   }
 }
