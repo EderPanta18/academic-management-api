@@ -1,22 +1,17 @@
-// modules/enrollments/application/use-cases/get-enrollment-by-id.use-case.ts
-
-import {
-  ENROLLMENT_REPOSITORY_PORT,
-  type IEnrollmentRepository,
-} from '@enrollments/application/ports/out';
-import { Enrollment } from '@enrollments/domain/entities';
-import { EnrollmentNotFoundException } from '@enrollments/domain/exceptions';
 import { Inject, Injectable } from '@nestjs/common';
+import { EnrollmentNotFoundException } from '../exceptions';
+import { ENROLLMENT_QUERY_TOKEN, type IEnrollmentQuery } from '../ports/out';
+import type { EnrollmentReadModel } from '../read-models';
 
 @Injectable()
 export class GetEnrollmentByIdUseCase {
   constructor(
-    @Inject(ENROLLMENT_REPOSITORY_PORT)
-    private readonly enrollmentRepository: IEnrollmentRepository,
+    @Inject(ENROLLMENT_QUERY_TOKEN)
+    private readonly enrollmentQuery: IEnrollmentQuery,
   ) {}
 
-  async execute(id: number): Promise<Enrollment> {
-    const enrollment = await this.enrollmentRepository.findById(id);
+  async execute(id: string): Promise<EnrollmentReadModel> {
+    const enrollment = await this.enrollmentQuery.find(id);
 
     if (!enrollment) throw new EnrollmentNotFoundException(id);
 

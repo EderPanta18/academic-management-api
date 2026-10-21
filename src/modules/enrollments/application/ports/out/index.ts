@@ -1,8 +1,13 @@
-// modules/enrollments/application/ports/out/index.ts
-
 export {
-  type ChangeEnrollmentStatusProps,
-  ENROLLMENT_REPOSITORY_PORT,
-  type FindAllEnrollmentsFilters,
+  ENROLLMENT_QUERY_TOKEN,
+  type EnrollmentQueryFilters,
+  type IEnrollmentQuery,
+} from './enrollment-query.port';
+export {
+  ENROLLMENT_REPOSITORY_TOKEN,
   type IEnrollmentRepository,
 } from './enrollment-repository.port';
+export {
+  ENROLLMENT_STATUS_LOG_QUERY_TOKEN,
+  type IEnrollmentStatusLogQuery,
+} from './enrollment-status-log-query.port';

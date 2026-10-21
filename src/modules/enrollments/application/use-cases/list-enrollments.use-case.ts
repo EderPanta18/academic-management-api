@@ -1,31 +1,26 @@
-// modules/enrollments/application/use-cases/list-enrollments.use-case.ts
-
-import { PaginatedResultDto, PaginationVO } from '@core/pagination';
-import {
-  ENROLLMENT_REPOSITORY_PORT,
-  type IEnrollmentRepository,
-} from '@enrollments/application/ports/out';
-import { Enrollment } from '@enrollments/domain/entities';
+import type { PaginationVO } from '@core/pagination';
 import { Inject, Injectable } from '@nestjs/common';
-import { ListEnrollmentsQuery } from '../queries';
+import { ENROLLMENT_QUERY_TOKEN, type IEnrollmentQuery } from '../ports/out';
+import type { ListEnrollmentsQuery } from '../queries';
+import type { EnrollmentReadModel } from '../read-models';
 
 @Injectable()
 export class ListEnrollmentsUseCase {
   constructor(
-    @Inject(ENROLLMENT_REPOSITORY_PORT)
-    private readonly enrollmentRepository: IEnrollmentRepository,
+    @Inject(ENROLLMENT_QUERY_TOKEN)
+    private readonly enrollmentQuery: IEnrollmentQuery,
   ) {}
 
   async execute(
     pagination: PaginationVO,
-    query: ListEnrollmentsQuery,
-  ): Promise<PaginatedResultDto<Enrollment>> {
-    const [enrollments, total] = await this.enrollmentRepository.findAll(pagination, {
+    query: ListEnrollmentsQuery = {},
+  ): Promise<[EnrollmentReadModel[], number]> {
+    return await this.enrollmentQuery.findAll(pagination, {
       studentId: query.studentId,
       courseOfferingId: query.courseOfferingId,
+      academicPeriodId: query.academicPeriodId,
       statuses: query.statuses,
+      search: query.search,
     });
-
-    return PaginatedResultDto.from(enrollments, total, pagination);
   }
 }

@@ -1,5 +1,9 @@
-// modules/enrollments/application/use-cases/index.ts
-
+export { CancelEnrollmentUseCase } from './cancel-enrollment.use-case';
+export { ConfirmEnrollmentUseCase } from './confirm-enrollment.use-case';
 export { EnrollStudentUseCase } from './enroll-student.use-case';
+export { FinishEnrollmentUseCase } from './finish-enrollment.use-case';
 export { GetEnrollmentByIdUseCase } from './get-enrollment-by-id.use-case';
+export { GetEnrollmentHistoryUseCase } from './get-enrollment-history.use-case';
 export { ListEnrollmentsUseCase } from './list-enrollments.use-case';
+export { RejectEnrollmentUseCase } from './reject-enrollment.use-case';
+export { WithdrawEnrollmentUseCase } from './withdraw-enrollment.use-case';

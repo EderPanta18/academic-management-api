@@ -1,113 +1,130 @@
-// modules/enrollments/application/use-cases/enroll-student.use-case.ts
-
-import { EntityNotFoundException } from "@core/exceptions";
+import { ID_GENERATOR_TOKEN, type IIdGenerator } from '@core/contracts';
 import {
-  COURSE_OFFERING_FINDER_PORT,
+  COURSE_OFFERING_CHECKER_TOKEN,
+  COURSE_OFFERING_FINDER_TOKEN,
+  type ICourseOfferingChecker,
   type ICourseOfferingFinder,
-} from "@course-offerings/application/ports/in";
+} from '@course-offerings';
+import { COURSE_FINDER_TOKEN, type ICourseFinder } from '@courses';
+import { Enrollment, EnrollmentStatus } from '@enrollments/domain/entities';
+import { Inject, Injectable } from '@nestjs/common';
 import {
-  ENROLLMENT_REPOSITORY_PORT,
-  type IEnrollmentRepository,
-} from "@enrollments/application/ports/out";
-import { Enrollment } from "@enrollments/domain/entities";
-import {
-  EnrollmentCapacityExceededException,
-  EnrollmentDuplicateException,
-} from "@enrollments/domain/exceptions";
-import { Inject, Injectable } from "@nestjs/common";
-import {
+  type IStudentChecker,
   type IStudentFinder,
-  STUDENT_FINDER_PORT,
-} from "@students/application/ports/in";
-import { EnrollStudentCommand } from "../commands";
+  STUDENT_CHECKER_TOKEN,
+  STUDENT_FINDER_TOKEN,
+} from '@students';
+import type { EnrollStudentCommand } from '../commands';
 import {
-  CourseOfferingNotOpenException,
-  EnrollmentCareerMismatchException,
-  StudentNotActiveForEnrollmentException,
-} from "../exceptions";
+  EnrollmentCourseOfferingAtCapacityException,
+  EnrollmentCourseOfferingNotFoundException,
+  EnrollmentCourseOfferingNotOpenException,
+  EnrollmentStudentAlreadyEnrolledException,
+  EnrollmentStudentNotActiveException,
+  EnrollmentStudentNotFoundException,
+  EnrollmentStudentNotInCourseAcademicProgramException,
+} from '../exceptions';
+import { ENROLLMENT_REPOSITORY_TOKEN, type IEnrollmentRepository } from '../ports/out';
 
 @Injectable()
 export class EnrollStudentUseCase {
   constructor(
-    @Inject(STUDENT_FINDER_PORT)
+    @Inject(ID_GENERATOR_TOKEN)
+    private readonly idGenerator: IIdGenerator,
+
+    @Inject(STUDENT_CHECKER_TOKEN)
+    private readonly studentChecker: IStudentChecker,
+
+    @Inject(STUDENT_FINDER_TOKEN)
     private readonly studentFinder: IStudentFinder,
 
-    @Inject(COURSE_OFFERING_FINDER_PORT)
+    @Inject(COURSE_OFFERING_CHECKER_TOKEN)
+    private readonly courseOfferingChecker: ICourseOfferingChecker,
+
+    @Inject(COURSE_OFFERING_FINDER_TOKEN)
     private readonly courseOfferingFinder: ICourseOfferingFinder,
 
-    @Inject(ENROLLMENT_REPOSITORY_PORT)
+    @Inject(COURSE_FINDER_TOKEN)
+    private readonly courseFinder: ICourseFinder,
+
+    @Inject(ENROLLMENT_REPOSITORY_TOKEN)
     private readonly enrollmentRepository: IEnrollmentRepository,
   ) {}
 
   async execute(command: EnrollStudentCommand): Promise<Enrollment> {
-    const studentExists = await this.studentFinder.exists(command.studentId);
+    const studentExists = await this.studentChecker.exists(command.studentId);
 
-    if (!studentExists)
-      throw new EntityNotFoundException("Student", command.studentId);
+    if (!studentExists) throw new EnrollmentStudentNotFoundException(command.studentId);
 
-    const offeringExists = await this.courseOfferingFinder.exists(
-      command.courseOfferingId,
-    );
+    const studentIsActive = await this.studentChecker.isActive(command.studentId);
+
+    if (!studentIsActive) throw new EnrollmentStudentNotActiveException(command.studentId);
+
+    const offeringExists = await this.courseOfferingChecker.exists(command.courseOfferingId);
 
     if (!offeringExists)
-      throw new EntityNotFoundException(
-        "CourseOffering",
-        command.courseOfferingId,
-      );
+      throw new EnrollmentCourseOfferingNotFoundException(command.courseOfferingId);
 
-    const studentActive = await this.studentFinder.isActive(command.studentId);
+    const offeringIsOpen = await this.courseOfferingChecker.isOpen(command.courseOfferingId);
 
-    if (!studentActive)
-      throw new StudentNotActiveForEnrollmentException(command.studentId);
+    if (!offeringIsOpen)
+      throw new EnrollmentCourseOfferingNotOpenException(command.courseOfferingId);
 
-    const offeringOpen = await this.courseOfferingFinder.isOpenForEnrollment(
-      command.courseOfferingId,
-    );
-
-    if (!offeringOpen)
-      throw new CourseOfferingNotOpenException(command.courseOfferingId);
-
-    const studentCareerId = await this.studentFinder.getCareerIdByStudentId(
+    // Compatibilidad de programa académico
+    const studentAcademicProgramId = await this.studentFinder.getAcademicProgramId(
       command.studentId,
     );
 
-    const courseCareerId =
-      await this.courseOfferingFinder.getCourseCareerIdByOfferingId(
-        command.courseOfferingId,
-      );
+    const courseId = await this.courseOfferingFinder.getCourseId(command.courseOfferingId);
 
-    if (studentCareerId !== courseCareerId)
-      throw new EnrollmentCareerMismatchException(
+    if (!courseId) throw new EnrollmentCourseOfferingNotFoundException(command.courseOfferingId);
+
+    const courseAcademicProgramId = await this.courseFinder.getAcademicProgramId(courseId);
+
+    if (!courseAcademicProgramId)
+      throw new EnrollmentCourseOfferingNotFoundException(command.courseOfferingId);
+
+    if (studentAcademicProgramId !== courseAcademicProgramId)
+      throw new EnrollmentStudentNotInCourseAcademicProgramException(
         command.studentId,
-        command.courseOfferingId,
+        courseAcademicProgramId,
       );
 
-    const duplicate =
-      await this.enrollmentRepository.existsByStudentAndOffering(
-        command.studentId,
-        command.courseOfferingId,
-      );
-
-    if (duplicate)
-      throw new EnrollmentDuplicateException(
-        command.studentId,
-        command.courseOfferingId,
-      );
-
-    const atCapacity = await this.enrollmentRepository.isAtCapacity(
+    // Sin duplicado
+    const duplicate = await this.enrollmentRepository.existsByStudentAndOffering(
+      command.studentId,
       command.courseOfferingId,
     );
 
-    if (atCapacity)
-      throw new EnrollmentCapacityExceededException(command.courseOfferingId);
+    if (duplicate)
+      throw new EnrollmentStudentAlreadyEnrolledException(
+        command.studentId,
+        command.courseOfferingId,
+      );
+
+    // Capacidad (solo si quedará en estado ENROLLED)
+    const willBeEnrolled =
+      (command.status ?? EnrollmentStatus.ENROLLED) === EnrollmentStatus.ENROLLED;
+
+    if (willBeEnrolled) {
+      const atCapacity = await this.enrollmentRepository.isAtCapacity(command.courseOfferingId);
+
+      if (atCapacity)
+        throw new EnrollmentCourseOfferingAtCapacityException(command.courseOfferingId);
+    }
+
+    const enrollmentId = this.idGenerator.generate();
 
     const enrollment = Enrollment.create({
+      id: enrollmentId,
       studentId: command.studentId,
       courseOfferingId: command.courseOfferingId,
-      enrollmentDate: command.enrollmentDate,
-      createdBy: command.createdBy,
+      registeredByUserId: command.registeredByUserId,
+      enrolledAt: command.enrolledAt,
+      status: command.status,
+      statusReason: command.statusReason,
     });
 
-    return this.enrollmentRepository.save(enrollment);
+    return await this.enrollmentRepository.create(enrollment);
   }
 }
