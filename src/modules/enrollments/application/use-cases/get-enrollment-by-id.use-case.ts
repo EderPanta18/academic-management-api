@@ -11,10 +11,10 @@ export class GetEnrollmentByIdUseCase {
   ) {}
 
   async execute(id: string): Promise<EnrollmentReadModel> {
-    const enrollment = await this.enrollmentQuery.find(id);
+    const readModel = await this.enrollmentQuery.find(id);
 
-    if (!enrollment) throw new EnrollmentNotFoundException(id);
+    if (!readModel) throw new EnrollmentNotFoundException(id);
 
-    return enrollment;
+    return readModel;
   }
 }
