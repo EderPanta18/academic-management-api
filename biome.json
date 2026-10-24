@@ -6,16 +6,7 @@
         "useIgnoreFile": true
     },
     "files": {
-        "ignoreUnknown": false,
-        "includes": [
-            "**",
-            "!node_modules",
-            "!dist",
-            "!coverage",
-            "!prisma/migrations",
-            "!prisma/seeds",
-            "!prisma/seeds"
-        ]
+        "ignoreUnknown": true
     },
     "formatter": {
         "enabled": true,
@@ -62,7 +53,7 @@
             },
             "correctness": {
                 "noUnusedImports": "error",
-                "noUnusedVariables": "warn"
+                "noUnusedVariables": "error"
             }
         }
     }

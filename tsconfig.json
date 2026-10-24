@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "module": "commonjs",
+        "target": "ES2023",
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "isolatedModules": true,
@@ -9,11 +10,9 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "allowSyntheticDefaultImports": true,
-        "target": "ES2023",
         "sourceMap": true,
         "outDir": "./dist",
 
-        // aliases
         "paths": {
             "@app": ["./src/app"],
             "@app/*": ["./src/app/*"],
@@ -21,11 +20,14 @@
             "@core": ["./src/core"],
             "@core/*": ["./src/core/*"],
 
+            "@platform": ["./src/platform"],
+            "@platform/*": ["./src/platform/*"],
+
             "@shared": ["./src/shared"],
             "@shared/*": ["./src/shared/*"],
 
-            "@platform": ["./src/platform"],
-            "@platform/*": ["./src/platform/*"],
+            "@workers": ["./src/workers"],
+            "@workers/*": ["./src/workers/*"],
 
             "@modules": ["./src/modules"],
             "@modules/*": ["./src/modules/*"],
@@ -33,20 +35,14 @@
             "@identity": ["./src/modules/identity"],
             "@identity/*": ["./src/modules/identity/*"],
 
-            "@persons": ["./src/modules/persons"],
-            "@persons/*": ["./src/modules/persons/*"],
+            "@faculties": ["./src/modules/faculties"],
+            "@faculties/*": ["./src/modules/faculties/*"],
 
-            "@departments": ["./src/modules/departments"],
-            "@departments/*": ["./src/modules/departments/*"],
+            "@academic-departments": ["./src/modules/academic-departments"],
+            "@academic-departments/*": ["./src/modules/academic-departments/*"],
 
-            "@careers": ["./src/modules/careers"],
-            "@careers/*": ["./src/modules/careers/*"],
-
-            "@academic-periods": ["./src/modules/academic-periods"],
-            "@academic-periods/*": ["./src/modules/academic-periods/*"],
-
-            "@course-categories": ["./src/modules/course-categories"],
-            "@course-categories/*": ["./src/modules/course-categories/*"],
+            "@academic-programs": ["./src/modules/academic-programs"],
+            "@academic-programs/*": ["./src/modules/academic-programs/*"],
 
             "@courses": ["./src/modules/courses"],
             "@courses/*": ["./src/modules/courses/*"],
@@ -57,11 +53,26 @@
             "@students": ["./src/modules/students"],
             "@students/*": ["./src/modules/students/*"],
 
+            "@academic-periods": ["./src/modules/academic-periods"],
+            "@academic-periods/*": ["./src/modules/academic-periods/*"],
+
             "@course-offerings": ["./src/modules/course-offerings"],
             "@course-offerings/*": ["./src/modules/course-offerings/*"],
 
             "@enrollments": ["./src/modules/enrollments"],
             "@enrollments/*": ["./src/modules/enrollments/*"],
+
+            "@users": ["./src/modules/users"],
+            "@users/*": ["./src/modules/users/*"],
+
+            "@authorization": ["./src/modules/authorization"],
+            "@authorization/*": ["./src/modules/authorization/*"],
+
+            "@audit": ["./src/modules/audit"],
+            "@audit/*": ["./src/modules/audit/*"],
+
+            "@reports": ["./src/modules/reports"],
+            "@reports/*": ["./src/modules/reports/*"],
         },
 
         "skipLibCheck": true,
