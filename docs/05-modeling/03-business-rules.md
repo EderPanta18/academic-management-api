@@ -10,25 +10,25 @@ Los identificadores `RN` distinguen reglas estables. No representan nombres de f
 
 **RN-002 — Perfiles no intercambiables.** Cada estudiante y docente corresponde a una persona existente; una misma persona puede desempeñar ambos perfiles. La condición de estudiante, docente o persona no concede automáticamente acceso a una cuenta.
 
-**RN-003 — Unidades institucionales diferenciadas.** Toda escuela profesional y departamento académico pertenece a una facultad. Todo docente está adscrito a una facultad y cada estudiante pertenece a una escuela profesional.
+**RN-003 — Unidades institucionales diferenciadas.** Cada programa académico y cada departamento académico pertenece a una facultad. Todo docente está adscrito a una facultad y cada estudiante pertenece a un programa académico.
 
-**RN-004 — Propiedad de los cursos.** Cada curso pertenece a un solo departamento académico. Su código es único en la universidad; no se crean cursos equivalentes por escuela profesional para representar una materia compartida.
+**RN-004 — Propiedad de los cursos.** Cada curso pertenece a un solo departamento académico. Su código es único en la universidad; no se crean cursos equivalentes por programa académico para representar una materia compartida.
 
-**RN-005 — Elegibilidad por asociación.** Una escuela profesional solo habilita inscripciones en cursos asociados a ella. La asociación escuela–curso debe estar vigente al aceptar una nueva inscripción; no puede inferirse a partir de que escuela y departamento pertenezcan a la misma facultad.
+**RN-005 — Elegibilidad por asociación.** Un programa académico habilita la inscripción en un curso únicamente durante un episodio vigente de su asociación con él. Los episodios del mismo par no se superponen; una nueva habilitación crea otro episodio sin reescribir el anterior. La elegibilidad no se infiere de la facultad a la que pertenecen el programa y el departamento.
 
-**RN-006 — Docencia entre facultades.** Una oferta puede asignarse a un docente activo de otra facultad. La adscripción del docente no altera el departamento propietario del curso ni la elegibilidad por escuela.
+**RN-006 — Docencia entre facultades.** Una oferta puede asignarse a un docente activo de otra facultad. La adscripción del docente no altera el departamento propietario del curso ni la elegibilidad por programa académico.
 
 **RN-007 — Clasificación homogénea.** Un curso pertenece a una categoría de formación `GENERAL`, `DISCIPLINARY` o `SPECIALIZED`. No se incorporan al mismo catálogo valores que expresen modalidad de dictado o condición de electivo.
 
 **RN-008 — Vigencia sin destrucción histórica.** Deshabilitar una persona, perfil, unidad, curso o asociación impide nuevas relaciones que requieran su vigencia, pero no borra ni reinterpreta inscripciones o actuaciones anteriores.
 
-**RN-009 — Cambios estructurales compatibles.** No se permite desasociar una escuela de un curso si existen inscripciones `ENROLLED` de estudiantes de esa escuela en dicho curso durante periodos no cerrados. Tampoco se permite cambiar la escuela actual de un estudiante si ello dejaría inválidas inscripciones `ENROLLED` de periodos operativos. Los registros históricos permanecen atribuidos a la escuela con la que se aceptaron.
+**RN-009 — Cambios estructurales compatibles.** No se permite cerrar un episodio programa–curso si existen inscripciones `ENROLLED` admitidas bajo ese programa y curso durante periodos no cerrados. Tampoco se permite cambiar el programa académico actual de un estudiante si ello dejaría inválidas inscripciones `ENROLLED` de periodos operativos. Los registros históricos permanecen atribuidos al programa académico con el que se aceptaron.
 
 **RN-010 — Recursos referenciados.** No se deshabilita ni sustituye arbitrariamente un recurso necesario para ofertas `OPEN` o inscripciones `ENROLLED` activas. El mantenimiento debe respetar las referencias vigentes y conservar las históricas.
 
 ## 2. Periodos académicos y ofertas
 
-**RN-011 — Fechas válidas del periodo.** Cada periodo tiene fecha de inicio y término académico y ventana de inscripción obligatoria, con inicio no posterior al fin de cada intervalo. La inscripción no se extiende más allá del término académico del periodo.
+**RN-011 — Fechas válidas del periodo.** Cada periodo tiene fechas ordenadas de inicio y término académico y una ventana de admisión obligatoria, también ordenada, cuyo final no excede el término académico. Este límite restringe **nuevas admisiones**, no la conservación histórica de inscripciones existentes.
 
 **RN-012 — Periodo habilitado para inscribir.** Se admiten inscripciones ordinarias únicamente cuando el periodo está `OPEN` o `IN_PROGRESS` y la fecha actual pertenece, inclusive, a su ventana de inscripción. Los estados `PLANNED`, `CLOSED` y `CANCELLED` no habilitan inscribir.
 
@@ -46,21 +46,21 @@ Los identificadores `RN` distinguen reglas estables. No representan nombres de f
 
 ## 3. Admisión de inscripciones
 
-**RN-019 — Habilitación del estudiante.** Solo un estudiante en estado `ACTIVE`, vigente y con escuela profesional válida puede obtener una nueva inscripción ordinaria.
+**RN-019 — Habilitación del estudiante.** Solo un estudiante en estado `ACTIVE`, vigente y con programa académico válido puede obtener una nueva inscripción ordinaria.
 
 **RN-020 — Inscripción directa.** Cuando se cumplen todas las condiciones, se crea una inscripción en estado `ENROLLED`, sin estados intermedios de solicitud, espera o aprobación. Una operación rechazada no crea inscripción ni consume cupo.
 
-**RN-021 — Curso correspondiente a la escuela.** La escuela profesional del estudiante debe mantener asociación vigente con el curso de la oferta elegida al momento de registrar la inscripción. Una oferta puede recibir estudiantes de distintas escuelas elegibles y todos utilizan la misma capacidad.
+**RN-021 — Curso correspondiente al programa académico.** El programa académico del estudiante debe mantener asociación vigente con el curso de la oferta elegida al momento de registrar la inscripción. Una oferta puede recibir estudiantes de distintos programas académicos elegibles y todos utilizan la misma capacidad.
 
 **RN-022 — Unicidad entre secciones.** Un estudiante no puede conservar dos inscripciones `ENROLLED` para un mismo **curso y periodo**. Cambiar el identificador de sección no crea una excepción.
 
-**RN-023 — Efecto histórico de retiro.** Si existe un antecedente `WITHDRAWN` de un estudiante en un curso y periodo, no se autoriza otra inscripción **ordinaria** para ese mismo estudiante, curso y periodo, aunque el retiro haya liberado una plaza.
+**RN-023 — Efecto histórico de retiro.** Un retiro auténtico cuyos efectos continúan vigentes bloquea otra inscripción **ordinaria** del mismo estudiante en el mismo curso y periodo, aunque haya liberado plaza. Un retiro registrado por error y rectificado conserva el movimiento histórico, pero no conserva ese efecto impeditivo.
 
 **RN-024 — Cupo disponible real.** Se acepta una nueva inscripción únicamente si las inscripciones `ENROLLED` de la oferta, incluida la operación solicitada, no superan su capacidad máxima. La comprobación debe seguir siendo válida bajo operaciones concurrentes.
 
 **RN-025 — Nueva identidad tras cancelación.** Una inscripción `CANCELLED` no se reactiva por operación ordinaria. Si vuelven a cumplirse todas las condiciones, la nueva inscripción crea otro registro y conserva intacto el antecedente cancelado.
 
-**RN-026 — Contexto académico histórico.** La inscripción debe preservar la escuela profesional que justificó su aceptación y la identidad del curso y periodo, aunque la escuela actual del estudiante o la asociación escuela–curso cambien después. Una corrección no utiliza esa conservación para ocultar incoherencias de registros vigentes.
+**RN-026 — Contexto académico histórico.** La inscripción preserva el programa académico de admisión y las identidades del curso y periodo, aunque el programa actual del estudiante o la vigencia de la asociación cambien después. La comprobación histórica utiliza el episodio válido en el instante de admisión, sin atribuirle retroactivamente otro episodio. Una corrección no puede ocultar incoherencias de registros vigentes.
 
 ## 4. Cancelación, retiro y cambio de sección
 
@@ -94,7 +94,7 @@ Los identificadores `RN` distinguen reglas estables. No representan nombres de f
 
 **RN-039 — Aislamiento por fila.** Una importación de estudiantes incorpora cada fila válida sin depender del éxito de las demás. Una fila rechazada no deja un estudiante o persona parcialmente creados; una fila duplicada no sobrescribe al estudiante existente.
 
-**RN-040 — Escuela identificable para importar.** Toda fila incorporada debe referirse a una escuela profesional existente y vigente, identificada por su código institucional. Un código desconocido provoca rechazo de esa fila, no una asignación inferida.
+**RN-040 — Programa académico identificable para importar.** Toda fila incorporada debe referirse a un programa académico existente y vigente, identificado por su código institucional. Un código desconocido provoca rechazo de esa fila, no una asignación inferida.
 
 **RN-041 — Archivo no repetido por cuenta.** Se rechaza la segunda presentación del contenido binario idéntico por el mismo usuario, identificada mediante su hash SHA-256. El archivo admitido y sus resultados se conservan para consulta autorizada.
 

@@ -35,7 +35,7 @@ La figura distingue dependencias conceptuales; el contexto transaccional es una 
 
 La representación relacional preserva **identidades estables, relaciones explícitas y hechos históricos**. Las claves primarias mantienen la identidad de un recurso aunque cambien sus atributos o deje de estar vigente. Los códigos institucionales y combinaciones con valor de identidad disponen de restricciones propias y no sustituyen las referencias persistentes.
 
-- Las asociaciones entre escuela profesional y curso conservan antecedentes de vigencia; desasociar no modifica retrospectivamente una inscripción admitida.
+- Los episodios de asociación programa–curso conservan su vigencia histórica; cerrar un episodio o habilitar otro posterior no altera retroactivamente una inscripción admitida.
 - Las inscripciones conservan el contexto académico de admisión y su identidad a través de cambios de sección; cancelar una inscripción no reutiliza su registro para una nueva admisión.
 - La ocupación y los cupos disponibles se **derivan** de las inscripciones `ENROLLED` y la capacidad de la oferta. No se mantiene un segundo saldo persistente de vacantes que pueda divergir.
 - Los movimientos de inscripción y los registros de auditoría preservan evidencia histórica diferenciada. Una rectificación agrega evidencia y no borra el hecho original.

@@ -28,9 +28,9 @@ La autorización determina **qué operación y qué información puede utilizar 
 
 La lectura de información académica de coordinación no implica permiso de modificar personas, estudiantes o inscripciones. El permiso de reportes tampoco confiere acceso a recursos nominales, archivos de importación, observaciones por fila o auditoría. Una cuenta que reúna varios roles obtiene la unión real de sus permisos, no una excepción implícita al alcance institucional de cada operación.
 
-Las facultades exclusivas de **corrección extraordinaria**, **administración de cuentas y autorizaciones** y **consulta transversal de auditoría** permanecen reservadas a la función administrativa. Los roles personalizados no sirven para eludir estas restricciones; una asignación que las infringiera se rechaza incluso si utiliza un identificador de permiso reconocido.
+Las facultades exclusivas de **corrección extraordinaria**, **administración de cuentas y autorizaciones** y **consulta transversal de auditoría** requieren el rol protegido `ADMIN` y el permiso efectivo correspondiente. Los roles personalizados no sirven para eludir estas restricciones; una asignación que las infringiera se rechaza incluso si utiliza un identificador de permiso reconocido.
 
-Los permisos son **institucionales**: no se introduce una jerarquía automática de autorización por facultad, departamento o escuela profesional. Las asociaciones académicas y los filtros de consulta siguen siendo necesarios para decidir si una operación tiene sentido, pero no constituyen por sí mismos restricciones RBAC territoriales.
+Los permisos son **institucionales**: no se introduce una jerarquía automática de autorización por facultad, departamento o programa académico. Las asociaciones académicas y los filtros de consulta siguen siendo necesarios para decidir si una operación tiene sentido, pero no constituyen por sí mismos restricciones RBAC territoriales.
 
 ## 3. Aplicación por operación y recurso
 
@@ -43,7 +43,7 @@ El acceso al adaptador externo no reemplaza el control del caso de uso. Un worke
 
 ```mermaid
 flowchart TB
-    REQ[Solicitud con identidad autenticada] --> ACCOUNT{Cuenta y sesión vigentes}
+    REQ[Nueva solicitud autenticada] --> ACCOUNT{Cuenta y sesión vigentes}
     ACCOUNT -->|No| UNAUTH[Rechazo de autenticación]
     ACCOUNT -->|Sí| PERM{Permiso efectivo vigente}
     PERM -->|No| DENY[Acceso denegado]

@@ -6,7 +6,7 @@ El proceso no consiste únicamente en agregar un nombre a una lista. Intervienen
 
 ## Contexto institucional
 
-La actividad académica de una universidad se organiza mediante facultades, escuelas profesionales y departamentos académicos, cuyas responsabilidades se relacionan, pero no son equivalentes. La pertenencia de un estudiante a una escuela profesional, la procedencia académica de un curso y su disponibilidad para determinadas escuelas son aspectos diferentes que deben mantenerse coherentes.
+La actividad académica de una universidad se organiza mediante facultades, programas académicos y departamentos académicos, cuyas responsabilidades se relacionan, pero no son equivalentes. La pertenencia de un estudiante a un programa académico, la procedencia académica de un curso y su disponibilidad para determinadas programas académicos son aspectos diferentes que deben mantenerse coherentes.
 
 Los cursos pertenecen al catálogo académico, mientras que su dictado se concreta en ofertas asociadas a periodos y secciones. Una misma materia puede estar disponible en distintas secciones o periodos, con docentes y capacidades diferentes. Por ello, la existencia de un curso no implica, por sí sola, que esté disponible para una inscripción determinada.
 
@@ -32,9 +32,9 @@ Las importaciones masivas añaden otra fuente de dificultad cuando contienen reg
 
 ### Relaciones académicas insuficientemente claras
 
-La organización universitaria no se reduce a una relación aislada entre un estudiante y un curso. Intervienen la escuela profesional del estudiante, las unidades académicas responsables de los cursos y la oferta concreta en la que se pretende registrar la inscripción.
+La organización universitaria no se reduce a una relación aislada entre un estudiante y un curso. Intervienen el programa académico del estudiante, las unidades académicas responsables de los cursos y la oferta concreta en la que se pretende registrar la inscripción.
 
-Confundir estas relaciones puede ocasionar que un curso sea tratado como exclusivo de una escuela pese a ser compartido, que se asigne una disponibilidad académica incorrecta o que los registros históricos pierdan su significado al cambiar la organización vigente.
+Confundir estas relaciones puede ocasionar que un curso sea tratado como exclusivo de un programa académico pese a ser compartido, que se asigne una disponibilidad académica incorrecta o que los registros históricos pierdan su significado al cambiar la organización vigente.
 
 ### Disponibilidad variable de periodos y ofertas
 
@@ -80,7 +80,7 @@ Estas consecuencias están relacionadas: una inscripción incorrecta puede alter
 La operación requiere poder responder preguntas concretas sin reconstruir manualmente el estado de múltiples registros:
 
 - Qué estudiantes participan en un periodo académico y en qué ofertas mantienen inscripciones vigentes.
-- Qué cursos están disponibles para una escuela profesional y en qué secciones se ofrecen.
+- Qué cursos están disponibles para un programa académico y en qué secciones se ofrecen.
 - Qué ofertas admiten inscripciones y qué capacidad conservan.
 - Si un estudiante registra más de una inscripción vigente para el mismo curso y periodo.
 - Qué movimientos explican la situación de una inscripción y la ocupación actual de una sección.

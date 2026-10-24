@@ -11,7 +11,7 @@ La preparación organiza la información necesaria para que exista una oferta in
 ```mermaid
 flowchart TD
     A([Inicio]) --> B[Identificar unidades académicas y cursos]
-    B --> C[Comprobar asociaciones entre cursos y escuelas]
+    B --> C[Comprobar asociaciones entre cursos y programas académicos]
     C --> D[Definir periodo y ventana de inscripción]
     D --> E[Configurar ofertas, secciones y capacidades]
     E --> F[Asignar docente a cada oferta que se abrirá]
@@ -24,7 +24,7 @@ flowchart TD
 
 **Participación.** Administración y coordinación académica mantienen estructura, periodos y ofertas. Secretaría puede consultarlos para operar inscripciones, sin modificar su configuración. La apertura efectiva exige que la oferta disponga de docente; la elegibilidad final de una inscripción depende también del estudiante, del momento y de los cupos al solicitarla.
 
-**Condiciones de rechazo.** Una estructura incoherente, un curso no asociado a la escuela profesional pertinente, una oferta no habilitable o una configuración incompatible con registros vigentes impiden completar el paso afectado. La falta de habilitación no se resuelve mediante una excepción implícita para secretaría.
+**Condiciones de rechazo.** Una estructura incoherente, un curso no asociado al programa académico pertinente, una oferta no habilitable o una configuración incompatible con registros vigentes impiden completar el paso afectado. La falta de habilitación no se resuelve mediante una excepción implícita para secretaría.
 
 ## 2. Registrar una inscripción
 
@@ -34,7 +34,7 @@ El registro es inmediato: una solicitud válida produce una inscripción `ENROLL
 flowchart TD
     A([Solicitud de inscripción]) --> B{Actor y sesión autorizados}
     B -- No --> X[Rechazar operación]
-    B -- Sí --> C{Estudiante ACTIVE y curso asociado a su escuela}
+    B -- Sí --> C{Estudiante ACTIVE y curso asociado a su programa académico}
     C -- No --> X
     C -- Sí --> D{Periodo y oferta habilitados dentro de la ventana}
     D -- No --> X
@@ -140,7 +140,7 @@ flowchart TD
     C -- No --> D[Conservar archivo y aceptar procesamiento]
     D --> E[Entregar identificador de seguimiento]
     E --> F[Procesar una fila]
-    F --> G{Escuela identificada y datos válidos}
+    F --> G{Programa académico identificado y datos válidos}
     G -- No --> H[Registrar fila rechazada y su causa]
     G -- Sí --> I{Estudiante ya existente}
     I -- Sí --> J[Registrar duplicado sin modificarlo]

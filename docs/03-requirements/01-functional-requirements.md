@@ -9,12 +9,12 @@ Cada criterio de aceptación expresa una condición comprobable. Las restriccion
 | ID | Requerimiento | Criterio de aceptación |
 | --- | --- | --- |
 | RF-001 | El sistema debe registrar y mantener la identidad de las personas asociadas a perfiles académicos o cuentas de acceso. | Una misma identidad documental no genera personas duplicadas y sus datos comunes se mantienen de forma centralizada. |
-| RF-002 | El sistema debe administrar facultades, departamentos académicos y escuelas profesionales como unidades institucionales diferenciadas. | Es posible mantener su información y consultar sus relaciones institucionales sin confundir sus responsabilidades. |
-| RF-003 | El sistema debe registrar estudiantes asociados a una persona y a una escuela profesional. | Cada estudiante tiene un código institucional único y una pertenencia académica identificable. |
+| RF-002 | El sistema debe administrar facultades, departamentos académicos y programas académicos como unidades institucionales diferenciadas. | Es posible mantener su información y consultar sus relaciones institucionales sin confundir sus responsabilidades. |
+| RF-003 | El sistema debe registrar estudiantes asociados a una persona y a un programa académico. | Cada estudiante tiene un código institucional único y una pertenencia académica identificable. |
 | RF-004 | El sistema debe administrar la situación de los estudiantes y utilizarla al determinar su habilitación para inscribirse. | Solo los estudiantes en estado `ACTIVE` pueden registrar una inscripción ordinaria. |
 | RF-005 | El sistema debe registrar docentes asociados a una persona y a una facultad. | Un docente puede asignarse a ofertas de cursos de otras facultades sin cambiar su adscripción institucional. |
-| RF-006 | El sistema debe administrar un catálogo de cursos identificados por códigos únicos en la universidad, asociados a departamentos académicos y clasificados según una dimensión de categorías académicas. | Un curso se identifica de manera unívoca, conserva su unidad responsable y no depende de una sola escuela profesional. |
-| RF-007 | El sistema debe administrar la asociación entre escuelas profesionales y cursos. | Un curso puede asociarse con varias escuelas y solo se considera elegible para estudiantes de una escuela con asociación vigente. |
+| RF-006 | El sistema debe administrar un catálogo de cursos identificados por códigos únicos en la universidad, asociados a departamentos académicos y clasificados según una dimensión de categorías académicas. | Un curso se identifica de manera unívoca, conserva su unidad responsable y no depende de una soel programa académico. |
+| RF-007 | El sistema debe administrar la asociación entre programas académicos y cursos. | Un curso puede asociarse con varios programas académicos y solo se considera elegible para estudiantes de un programa académico con asociación vigente. |
 | RF-008 | El sistema debe conservar la validez histórica de referencias académicas cuando se actualicen o deshabiliten registros o asociaciones. | La modificación del catálogo no destruye ni reinterpreta inscripciones históricas y rechaza cambios incompatibles con operaciones vigentes. |
 | RF-009 | El sistema debe consultar los tipos de documento de identidad admitidos mediante un catálogo institucional fijo. | Las identidades utilizan tipos reconocidos sin habilitar modificaciones arbitrarias del catálogo desde la API. |
 
@@ -34,7 +34,7 @@ Cada criterio de aceptación expresa una condición comprobable. Las restriccion
 | ID | Requerimiento | Criterio de aceptación |
 | --- | --- | --- |
 | RF-016 | El sistema debe registrar directamente una inscripción válida en una oferta, sin etapa previa de solicitud o aprobación. | Una operación aceptada crea una inscripción `ENROLLED` y una rechazada no crea una inscripción parcial. |
-| RF-017 | El sistema debe verificar la habilitación del estudiante y la pertenencia del curso a su escuela profesional. | Se rechaza la inscripción de estudiantes no activos o en cursos no asociados a su escuela. |
+| RF-017 | El sistema debe verificar la habilitación del estudiante y la asociación vigente del curso con su programa académico. | Se rechaza la inscripción de estudiantes no activos o en cursos no asociados a su programa académico. |
 | RF-018 | El sistema debe comprobar conjuntamente la ventana de inscripción, el estado del periodo, la disponibilidad de la oferta y los cupos. | Una inscripción solo se acepta si todas esas condiciones se cumplen en el momento de registrarla. |
 | RF-019 | El sistema debe impedir más de una inscripción vigente de un estudiante en un mismo curso y periodo, incluso si se intenta utilizar otra sección. | Los intentos repetidos o sobre distintas secciones no generan duplicidad vigente. |
 | RF-020 | El sistema debe mantener la unicidad y la ocupación de cupos frente a solicitudes simultáneas. | La concurrencia no produce sobrecupos, duplicidades ni movimientos registrados a medias. |
@@ -55,7 +55,7 @@ Cada criterio de aceptación expresa una condición comprobable. Las restriccion
 | RF-030 | El sistema debe recibir importaciones de estudiantes en formatos CSV y XLSX. | Ambos formatos admitidos se procesan bajo las mismas reglas de validación de estudiantes. |
 | RF-031 | El sistema debe validar cada fila de forma independiente y procesar los registros válidos aunque existan filas rechazadas. | Una fila inválida no revierte las filas correctas; ninguna fila deja registros parciales. |
 | RF-032 | El sistema debe identificar estudiantes existentes y tratarlos como duplicados sin modificarlos. | Un registro duplicado queda reflejado en el resultado y no sobrescribe información estudiantil. |
-| RF-033 | El sistema debe identificar la escuela profesional indicada en cada fila mediante su código institucional. | Las filas con códigos desconocidos se rechazan con una observación específica. |
+| RF-033 | El sistema debe identificar el programa académico indicado en cada fila mediante su código institucional. | Las filas con códigos desconocidos se rechazan con una observación específica. |
 | RF-034 | El sistema debe impedir que una misma cuenta importe dos veces el contenido exacto de un mismo archivo. | El segundo intento sobre el archivo idéntico del mismo usuario se rechaza sin duplicar registros; otros contenidos se evalúan normalmente. |
 | RF-035 | El sistema debe ejecutar las importaciones como procesos asíncronos con identificador y seguimiento de estado. | El usuario recibe constancia de aceptación del procesamiento y puede consultar posteriormente su progreso y resultado. |
 | RF-036 | El sistema debe conservar el archivo original y un resultado verificable de cada importación admitida. | Quedan disponibles su origen, responsable, cantidades por resultado y observaciones por fila. |
@@ -66,7 +66,7 @@ Cada criterio de aceptación expresa una condición comprobable. Las restriccion
 | --- | --- | --- |
 | RF-037 | El sistema debe proporcionar reportes predefinidos sobre estudiantes y el estado de sus registros. | Se pueden consultar conteos y distribuciones estudiantiles sin incluir calificaciones, rendimiento o avance curricular ni ejecutar consultas arbitrarias proporcionadas por el cliente. |
 | RF-038 | El sistema debe proporcionar reportes de cursos, ofertas, secciones, docentes y ocupación. | Se distinguen ofertas existentes, disponibles, completas y su participación docente usando datos operativos consistentes. |
-| RF-039 | El sistema debe proporcionar reportes de inscripciones por periodo, escuela profesional, curso, oferta y situación. | Las consultas de actividad exigen un periodo explícito y no mezclan inscripciones vigentes con históricas sin distinguirlas. |
+| RF-039 | El sistema debe proporcionar reportes de inscripciones por periodo, programa académico, curso, oferta y situación. | Las consultas de actividad exigen un periodo explícito y no mezclan inscripciones vigentes con históricas sin distinguirlas. |
 | RF-040 | El sistema debe permitir al personal con autorización de consulta de importaciones acceder al seguimiento y al resultado detallado de cada carga. | `ADMIN` y `SECRETARY`, mediante `students.imports.read`, pueden consultar el estado, las cantidades y las observaciones por fila de una importación; `reports.read` por sí solo no concede ese acceso. |
 | RF-041 | El sistema debe restringir los reportes a consultas y filtros predefinidos, en respuestas de datos estructurados. | Los reportes pueden ofrecer indicadores agregados de importaciones, pero no archivos originales ni observaciones por fila; no se admiten consultas libres ni exportaciones documentales de reportes. |
 

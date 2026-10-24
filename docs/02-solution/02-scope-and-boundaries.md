@@ -7,8 +7,8 @@ El límite del producto se define por su responsabilidad sobre las inscripciones
 ## Ámbito institucional
 
 - El sistema sirve a **una institución universitaria**; sus facultades y demás unidades académicas forman parte de esa misma organización.
-- La estructura institucional contemplada incluye **facultades**, **departamentos académicos** y **escuelas profesionales**, representadas por programas académicos dentro del sistema.
-- Los estudiantes se vinculan con una escuela profesional. Los cursos pertenecen académicamente a un departamento y pueden habilitarse para más de una escuela profesional.
+- La estructura institucional contemplada incluye **facultades**, **departamentos académicos** y **programas académicos**, como unidades institucionales diferenciadas.
+- Los estudiantes se vinculan con un programa académico. Los cursos pertenecen académicamente a un departamento y pueden habilitarse para más de un programa académico.
 - Los docentes se registran con su pertenencia institucional y pueden estar asignados a ofertas de cursos de otras facultades.
 - La operación cotidiana corresponde a usuarios administrativos autorizados. La condición de estudiante o docente no concede por sí sola una cuenta ni acceso funcional.
 
@@ -20,7 +20,7 @@ La organización y sus relaciones se incluyen en la medida necesaria para defini
 
 El sistema permite mantener personas y sus perfiles académicos de estudiante o docente, evitando tratar la información personal compartida como datos independientes para cada función.
 
-Se incluyen el registro y mantenimiento de estudiantes, docentes, facultades, departamentos académicos, escuelas profesionales, cursos y sus categorías. También se administra la asociación que determina qué cursos corresponden a cada escuela profesional.
+Se incluyen el registro y mantenimiento de estudiantes, docentes, facultades, departamentos académicos, programas académicos, cursos y sus categorías. También se administra la asociación que determina qué cursos corresponden a cada programa académico.
 
 La información de docentes cubre su participación en la oferta académica; la de estudiantes, su identificación y situación relevante para inscribirse. No comprende la gestión integral de expedientes laborales o de trayectoria académica.
 
@@ -28,7 +28,7 @@ La información de docentes cubre su participación en la oferta académica; la 
 
 Se contempla la administración de periodos académicos, de sus condiciones de inscripción y de las ofertas de cursos que se organizan dentro de ellos.
 
-Cada oferta concreta la disponibilidad de un curso para un periodo y una sección, con capacidad definida, docente asignado y situación operativa. La administración incluye las acciones necesarias para habilitar, cerrar o cancelar periodos y ofertas, así como la reapertura autorizada de ofertas cuando sus condiciones lo permiten.
+Cada oferta concreta la disponibilidad de un curso para un periodo y una sección, con capacidad definida, situación operativa y asignación docente exigida para su apertura. La administración incluye las acciones necesarias para habilitar, cerrar o cancelar periodos y ofertas, así como la reapertura autorizada de ofertas cuando sus condiciones lo permiten.
 
 La existencia de un curso en el catálogo no implica que esté ofertado ni que acepte inscripciones en un momento determinado.
 
@@ -62,7 +62,7 @@ Se incluyen consultas y reportes predefinidos sobre:
 - Población estudiantil y situación de sus registros.
 - Cursos y su actividad de oferta.
 - Secciones, capacidad y ocupación.
-- Inscripciones y su distribución por periodo y escuela profesional.
+- Inscripciones y su distribución por periodo y programa académico.
 - Participación de docentes en las ofertas.
 - Indicadores agregados de importaciones, como cantidades procesadas, incorporadas, duplicadas y rechazadas.
 
@@ -133,4 +133,4 @@ La proximidad temática con la vida universitaria no es suficiente para incluir 
 
 La primera versión constituye un **backend especializado en gestión de inscripciones académicas**, con funciones institucionales complementarias estrictamente necesarias para operar el proceso. Su resultado esperado es un registro consistente y supervisable de ofertas, estudiantes e inscripciones, con control de acceso y preservación de la historia funcional.
 
-Esta delimitación expresa el alcance del diseño aprobado. No certifica por sí misma el estado de implementación del repositorio.
+

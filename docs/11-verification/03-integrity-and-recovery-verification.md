@@ -58,7 +58,7 @@ Las pruebas controlan interrupciones **antes y después** de confirmar las difer
 | Después de confirmar varias filas | Las incorporaciones y resultados existentes se conservan; se continúa con las unidades restantes. |
 | Antes del resultado final | La consulta no presenta una ejecución incompleta como finalizada correctamente. |
 
-Para CSV y XLSX se verifica equivalencia de las reglas de interpretación; se distinguen archivo ilegible, fila inválida, código de escuela desconocido, identidad duplicada y registros correctos. Las cantidades finales corresponden exactamente a filas incorporadas, duplicadas y rechazadas, sin clasificar trabajo no examinado como rechazo. El archivo original permanece recuperable bajo autorización.
+Para CSV y XLSX se verifica equivalencia de las reglas de interpretación; se distinguen archivo ilegible, fila inválida, código de programa académico desconocido, identidad duplicada y registros correctos. Cada fila confirmada tiene un único resultado duradero por importación y posición; los efectos se escriben de forma atómica con ese resultado. Las cantidades finales se obtienen de esos resultados, sin clasificar trabajo no examinado como rechazo ni crear dobles confirmaciones ante reintentos. El archivo original permanece recuperable bajo autorización.
 
 La ejecución técnica puede repetirse; **no se exige entrega exactamente una vez**. Lo exigido es que los efectos confirmados sean idempotentes y que el resultado funcional pueda reconciliarse con los hechos persistidos.
 

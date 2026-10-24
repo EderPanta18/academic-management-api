@@ -27,9 +27,9 @@ La inscripción es una operación de negocio que depende de varias condiciones r
 
 ### Información académica al servicio de la inscripción
 
-El sistema administra la información institucional necesaria para que el proceso tenga sentido: personas, estudiantes, docentes, facultades, escuelas profesionales, departamentos académicos, categorías de cursos, cursos, periodos y ofertas.
+El sistema administra la información institucional necesaria para que el proceso tenga sentido: personas, estudiantes, docentes, facultades, programas académicos, departamentos académicos, categorías de cursos, cursos, periodos y ofertas.
 
-La estructura académica permite distinguir la pertenencia del estudiante, la responsabilidad sobre los cursos y la disponibilidad de estos para determinadas escuelas profesionales. La participación de una misma asignatura en más de una escuela no implica multiplicar artificialmente el catálogo de cursos.
+La estructura académica permite distinguir la pertenencia del estudiante, la responsabilidad sobre los cursos y la disponibilidad de estos para determinados programas académicos. La participación de una misma asignatura en más de un programa académico no implica multiplicar artificialmente el catálogo de cursos.
 
 Esta información se mantiene porque condiciona las inscripciones y su seguimiento, no para extender el producto hacia una administración universitaria integral.
 
@@ -75,4 +75,3 @@ Los **estudiantes** son destinatarios de la validez de sus inscripciones, pero e
 ## Resultado de la solución
 
 La universidad dispone de una base operativa única para organizar sus ofertas y administrar inscripciones con reglas consistentes, movimientos identificables y consultas de seguimiento. La validez de una inscripción puede justificarse a partir de los datos y condiciones institucionales que la sustentan, mientras que los cambios posteriores conservan su significado histórico.
-

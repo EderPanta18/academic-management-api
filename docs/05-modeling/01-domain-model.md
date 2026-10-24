@@ -7,7 +7,7 @@ El modelo distingue **identidad**, **estructura académica**, **oferta**, **insc
 | Concepto | Significado en el dominio | Relación esencial |
 | --- | --- | --- |
 | **Persona** | Identidad humana común a perfiles académicos y, cuando corresponda, a una cuenta. | Se identifica por un tipo y número de documento; puede participar en varios perfiles sin duplicar sus datos personales. |
-| **Estudiante** | Perfil mediante el cual una persona se incorpora al registro de inscripciones. | Corresponde a una persona y pertenece a una escuela profesional vigente. |
+| **Estudiante** | Perfil mediante el cual una persona se incorpora al registro de inscripciones. | Corresponde a una persona y pertenece a un programa académico vigente. |
 | **Docente** | Perfil de una persona habilitada para responsabilizarse de ofertas académicas. | Corresponde a una persona y está adscrito a una facultad. |
 | **Usuario** | Cuenta que permite actuar dentro del sistema con autorizaciones verificables. | Puede estar vinculada a una persona; no concede por sí misma condición de estudiante o docente. |
 
@@ -21,14 +21,14 @@ El ámbito institucional comprende **una única universidad**. No existe una ent
 
 | Concepto | Responsabilidad | Relación |
 | --- | --- | --- |
-| **Facultad** | Unidad académica organizativa de primer nivel. | Agrupa departamentos académicos, escuelas profesionales y docentes. |
+| **Facultad** | Unidad académica organizativa de primer nivel. | Agrupa departamentos académicos, programas académicos y docentes. |
 | **Departamento académico** | Unidad responsable de la adscripción y mantenimiento académico de cursos. | Pertenece a una facultad y es propietario académico de múltiples cursos. |
-| **Escuela profesional** (`academic_program`) | Unidad a la que pertenece un estudiante y que determina qué cursos puede inscribir. | Pertenece a una facultad; se vincula a cursos mediante asociaciones explícitas. |
-| **Curso** | Unidad académica identificable en el catálogo institucional, independiente del momento y la sección en que se ofrece. | Pertenece a un departamento y puede corresponder a varias escuelas profesionales. |
-| **Asociación escuela–curso** | Relación que habilita a los estudiantes de una escuela para inscribirse en ofertas del curso. | Resuelve la relación muchos a muchos sin crear copias del curso. |
+| **Programa académico** (`academic_program`) | Unidad a la que pertenece un estudiante y que determina qué cursos puede inscribir. | Pertenece a una facultad; se vincula a cursos mediante asociaciones explícitas. |
+| **Curso** | Unidad académica identificable en el catálogo institucional, independiente del momento y la sección en que se ofrece. | Pertenece a un departamento y puede corresponder a varios programas académicos. |
+| **Asociación programa–curso** | Episodio de vigencia que habilita a los estudiantes de un programa a inscribirse en ofertas del curso. | Resuelve la relación muchos a muchos, preservando desasociaciones y asociaciones posteriores sin duplicar el curso. |
 | **Categoría de curso** | Clasificación académica de una sola dimensión para organizar el catálogo. | Clasifica un curso, sin sustituir su pertenencia a un departamento. |
 
-La escuela profesional no es propietaria exclusiva del curso. El **departamento académico** mantiene la adscripción del curso, mientras que la asociación escuela–curso establece su elegibilidad para estudiantes de distintas escuelas, incluso cuando pertenezcan a facultades diferentes.
+El programa académico no es propietario exclusivo del curso. El **departamento académico** mantiene la adscripción del curso, mientras que la asociación programa–curso establece su elegibilidad para estudiantes de distintos programas académicos, incluso cuando pertenezcan a facultades diferentes.
 
 La adscripción del docente a una facultad no limita a esa facultad las ofertas que puede impartir: puede ser asignado a un curso de otro departamento o facultad. No se introduce una relación de pertenencia obligatoria entre docente y departamento.
 
@@ -39,41 +39,41 @@ classDiagram
     direction LR
     class Facultad
     class DepartamentoAcademico
-    class EscuelaProfesional
+    class ProgramaAcademico
     class Docente
     class Estudiante
     class Curso
-    class AsociacionEscuelaCurso
+    class AsociacionProgramaCurso
     class CategoriaCurso
 
     Facultad "1" --> "0..*" DepartamentoAcademico : agrupa
-    Facultad "1" --> "0..*" EscuelaProfesional : agrupa
+    Facultad "1" --> "0..*" ProgramaAcademico : agrupa
     Facultad "1" --> "0..*" Docente : adscribe
     DepartamentoAcademico "1" --> "0..*" Curso : responsabiliza
-    EscuelaProfesional "1" --> "0..*" Estudiante : integra
-    EscuelaProfesional "1" --> "0..*" AsociacionEscuelaCurso : habilita
-    Curso "1" --> "0..*" AsociacionEscuelaCurso : pertenece a
+    ProgramaAcademico "1" --> "0..*" Estudiante : integra
+    ProgramaAcademico "1" --> "0..*" AsociacionProgramaCurso : habilita
+    Curso "1" --> "0..*" AsociacionProgramaCurso : pertenece a
     CategoriaCurso "1" --> "0..*" Curso : clasifica
 ```
 
-La relación muchos a muchos entre escuelas profesionales y cursos **no** significa que todas las escuelas tengan acceso a todas las ofertas. Significa que una oferta de ese curso puede recibir inscripciones de estudiantes de cualquiera de las escuelas que mantengan una asociación válida.
+Cada episodio de asociación programa–curso posee un inicio y un final opcional de vigencia; una desasociación lo concluye sin borrarlo y una nueva habilitación constituye un episodio distinto. La relación muchos a muchos entre programas académicos y cursos **no** significa que todos los programas académicos tengan acceso a todas las ofertas. Significa que una oferta de ese curso puede recibir inscripciones de estudiantes de cualquiera de los programas académicos que mantengan una asociación válida.
 
 ## 3. Curso, periodo, oferta e inscripción
 
 | Concepto | Identidad y significado | Diferencia determinante |
 | --- | --- | --- |
 | **Periodo académico** | Intervalo institucional de desarrollo académico, con ventana propia de inscripción y situación operativa. | Su ventana de inscripción no equivale necesariamente a sus fechas de desarrollo académico. |
-| **Oferta de curso** (`course offering`) | Dictado de un curso en un periodo y una sección determinados, con capacidad y docente responsable. | No constituye un curso nuevo del catálogo ni se vincula exclusivamente a una escuela profesional. |
+| **Oferta de curso** (`course offering`) | Dictado de un curso en un periodo y una sección determinados, con capacidad y asignación docente obligatoria al abrir la oferta. | No constituye un curso nuevo del catálogo ni se vincula exclusivamente a un programa académico. |
 | **Inscripción** (`enrollment`) | Registro de la participación administrativa de un estudiante en una oferta concreta. | No representa solicitud, calificación, asistencia ni aprobación de curso. |
 | **Movimiento de inscripción** | Hecho histórico que explica una creación, cancelación, retiro, traslado de sección o corrección. | No sustituye el estado vigente de la inscripción ni el registro general de auditoría. |
 
-Una misma oferta puede reunir estudiantes de **distintas escuelas profesionales** siempre que cada una esté asociada al curso. Todos comparten **una única capacidad máxima de esa oferta**; no se crean cupos separados por escuela.
+Una misma oferta puede reunir estudiantes de **distintos programas académicos** siempre que cada uno esté asociado al curso. Todos comparten **una única capacidad máxima de esa oferta**; no se crean cupos separados por programa académico.
 
-La elegibilidad de una inscripción se determina por la escuela profesional vigente del estudiante, la asociación vigente con el curso, la disponibilidad del periodo y de la oferta, la situación del estudiante y las reglas de duplicidad y capacidad.
+La elegibilidad de una inscripción se determina por el programa académico vigente del estudiante, la asociación vigente con el curso, la disponibilidad del periodo y de la oferta, la situación del estudiante y las reglas de duplicidad y capacidad.
 
 Cada inscripción conserva una sola **oferta actual**. Un cambio de sección actualiza esa referencia, sin cambiar la identidad de la inscripción ni crear una inscripción adicional. El movimiento asociado conserva cuál era la oferta anterior y cuál pasó a ser la actual.
 
-El **contexto académico con el que se aceptó una inscripción** debe conservarse históricamente: la escuela profesional que habilitó la inscripción y la identidad del curso y periodo no pueden reinterpretarse retroactivamente por cambios posteriores del catálogo o del perfil del estudiante. Las referencias históricas sobreviven incluso si la asociación escuela–curso deja de admitir nuevas inscripciones.
+El **contexto académico con el que se aceptó una inscripción** debe conservarse históricamente: el programa académico que habilitó la inscripción y la identidad del curso y periodo no pueden reinterpretarse retroactivamente por cambios posteriores del catálogo o del perfil del estudiante. Las referencias históricas sobreviven incluso si la asociación programa–curso deja de admitir nuevas inscripciones.
 
 ### Relación funcional de las inscripciones
 
@@ -90,7 +90,7 @@ classDiagram
 
     Curso "1" --> "0..*" OfertaCurso : se ofrece como
     PeriodoAcademico "1" --> "0..*" OfertaCurso : contiene
-    Docente "1" --> "0..*" OfertaCurso : imparte
+    Docente "0..1" --> "0..*" OfertaCurso : imparte
     Estudiante "1" --> "0..*" Inscripcion : registra
     OfertaCurso "1" --> "0..*" Inscripcion : recibe
     Inscripcion "1" --> "1..*" MovimientoInscripcion : conserva
@@ -125,9 +125,9 @@ No se considera un movimiento de inscripción el simple acceso a un reporte. No 
 ## 6. Fronteras conceptuales
 
 - **Persona ≠ usuario:** compartir identidad humana no obliga a disponer de credenciales.
-- **Facultad ≠ departamento ≠ escuela:** representan adscripción institucional, responsabilidad sobre cursos y pertenencia del estudiante, respectivamente.
+- **Facultad ≠ departamento ≠ programa académico:** representan adscripción institucional, responsabilidad sobre cursos y pertenencia del estudiante, respectivamente.
 - **Curso ≠ oferta:** el primero es catálogo; la segunda tiene sección, periodo, docente y cupos.
-- **Asociación escuela–curso ≠ oferta:** la elegibilidad del curso no crea ni reserva secciones.
+- **Asociación programa–curso ≠ oferta:** la elegibilidad del curso no crea ni reserva secciones.
 - **Inscripción ≠ historial:** la inscripción expresa su referencia y estado actuales; los movimientos explican cómo llegó a ellos.
 - **Retiro ≠ cancelación:** cada uno representa un hecho académico distinto y tiene condiciones temporales distintas.
 - **Estado final ≠ aprobación:** el sistema no registra calificaciones ni certifica cursos aprobados.

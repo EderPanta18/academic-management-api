@@ -60,21 +60,21 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Objetivo.** Conservar personas y estudiantes identificables, con información suficiente para comprobar su situación académica.
 
-**Precondiciones.** Actor `ADMIN` o `SECRETARY` autorizado; para registrar un estudiante, persona existente y escuela profesional válida.
+**Precondiciones.** Actor `ADMIN` o `SECRETARY` autorizado; para registrar un estudiante, persona existente y programa académico válido.
 
-**Secuencia funcional.** El actor identifica a la persona, comprueba su situación documental y registra o actualiza el perfil estudiantil dentro de su escuela. El sistema previene duplicidades, conserva la pertenencia académica y aplica el estado estudiantil permitido.
+**Secuencia funcional.** El actor identifica a la persona, comprueba su situación documental y registra o actualiza el perfil estudiantil dentro de su programa académico. El sistema previene duplicidades, conserva la pertenencia académica y aplica el estado estudiantil permitido.
 
-**Alternativas.** Una identidad repetida, un código de estudiante duplicado, una escuela inexistente o una modificación incompatible con antecedentes vigentes se rechazan sin afectar otros registros.
+**Alternativas.** Una identidad repetida, un código de estudiante duplicado, un programa académico inexistente o una modificación incompatible con antecedentes vigentes se rechazan sin afectar otros registros.
 
 **Resultado.** Persona y estudiante consultables, con identidad y relaciones válidas; las actualizaciones no reinterpretan inscripciones históricas.
 
 ### CU-04 — Mantener estructura y catálogo académico
 
-**Objetivo.** Organizar las unidades académicas, los cursos y las asociaciones que permiten ofrecerlos a las escuelas profesionales.
+**Objetivo.** Organizar las unidades académicas, los cursos y las asociaciones que permiten ofrecerlos a los programas académicos.
 
 **Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` con permiso para la operación concreta.
 
-**Secuencia funcional.** El actor mantiene facultades, departamentos, escuelas profesionales, categorías, cursos y asociaciones escuela–curso. El sistema comprueba las relaciones y la identidad institucional de los cursos antes de confirmar cada modificación.
+**Secuencia funcional.** El actor mantiene facultades, departamentos, programas académicos, categorías, cursos y asociaciones programa–curso. El sistema comprueba las relaciones y la identidad institucional de los cursos antes de confirmar cada modificación.
 
 **Alternativas.** Se rechaza el cambio que duplica un curso, produce una relación académica inválida o deja sin sustento inscripciones vigentes. La desasociación de un curso no borra su participación histórica.
 
@@ -122,7 +122,7 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Objetivo.** Inscribir de manera inmediata a un estudiante elegible en una oferta disponible.
 
-**Precondiciones.** Actor autorizado y autenticado; estudiante registrado y activo; curso asociado a la escuela del estudiante; periodo y oferta habilitados dentro de la ventana de inscripción; plaza disponible; ausencia de otra inscripción `ENROLLED` del mismo curso y periodo **y de un antecedente `WITHDRAWN` de ese mismo estudiante, curso y periodo** que impida reinscripción ordinaria.
+**Precondiciones.** Actor autorizado y autenticado; estudiante registrado y activo; curso asociado al programa académico del estudiante; periodo y oferta habilitados dentro de la ventana de inscripción; plaza disponible; ausencia de otra inscripción `ENROLLED` del mismo curso y periodo **y de un antecedente `WITHDRAWN` de ese mismo estudiante, curso y periodo** que impida reinscripción ordinaria.
 
 **Secuencia funcional.**
 
@@ -199,7 +199,7 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 1. El actor entrega el archivo.
 2. El sistema rechaza una repetición exacta ya importada por la misma cuenta o acepta la nueva carga con identificador de seguimiento.
-3. El procesamiento evalúa individualmente las filas y reconoce las escuelas por sus códigos institucionales.
+3. El procesamiento evalúa individualmente las filas y reconoce los programas académicos por sus códigos institucionales.
 4. Cada fila válida puede incorporarse sin depender de las filas rechazadas; estudiantes existentes se clasifican como duplicados y no se modifican.
 5. El actor con `students.imports.read` consulta el resultado con cantidades, observaciones por fila y evidencia de la carga.
 

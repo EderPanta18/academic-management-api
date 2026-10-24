@@ -21,7 +21,7 @@ sequenceDiagram
         Acceso-->>Operador: Deniega la operación
     else Acceso autorizado
         Acceso->>Gestion: Tramitar inscripción
-        Gestion->>Academia: Verificar estudiante ACTIVE y curso asociado a su escuela
+        Gestion->>Academia: Verificar estudiante ACTIVE y curso asociado a su programa académico
         Academia-->>Gestion: Resultado de elegibilidad
         Gestion->>Oferta: Verificar ventana, habilitación y disponibilidad
         Oferta-->>Gestion: Condiciones académicas y cupo
@@ -179,7 +179,7 @@ sequenceDiagram
             Recepcion->>Proceso: Solicitar procesamiento
             Recepcion-->>Operador: Confirma aceptación e identificador
             loop Por cada fila del archivo
-                Proceso->>Estudiantes: Validar datos, escuela y existencia previa
+                Proceso->>Estudiantes: Validar datos, programa académico y existencia previa
                 alt Fila válida y estudiante nuevo
                     Estudiantes-->>Proceso: Incorporación independiente confirmada
                     Proceso->>Seguimiento: Registrar fila incorporada

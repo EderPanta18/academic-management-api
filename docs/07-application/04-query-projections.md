@@ -45,10 +45,10 @@ El módulo `reports` gobierna las consultas institucionales predefinidas y compo
 
 | Familia | Resultado consultable | Delimitación funcional |
 | --- | --- | --- |
-| **Estudiantes** | Conteos y distribuciones por situación estudiantil y escuela profesional. | La vigencia se distingue de los antecedentes cuando el filtro lo permite. |
-| **Cursos y estructura** | Distribuciones por curso, categoría, escuela, departamento o facultad. | El curso de catálogo no se confunde con su oferta en un periodo. |
+| **Estudiantes** | Conteos y distribuciones por situación estudiantil y programa académico. | La vigencia se distingue de los antecedentes cuando el filtro lo permite. |
+| **Cursos y estructura** | Distribuciones por curso, categoría, programa académico, departamento o facultad. | El curso de catálogo no se confunde con su oferta en un periodo. |
 | **Ofertas y docencia** | Secciones, docentes, situación, capacidad y ocupación por periodo. | El periodo se selecciona expresamente. |
-| **Inscripciones** | Conteos por periodo, curso, escuela, oferta y estado de inscripción. | `ENROLLED`, `CANCELLED` y `WITHDRAWN` conservan significados distintos. |
+| **Inscripciones** | Conteos por periodo, curso, programa académico, oferta y estado de inscripción. | `ENROLLED`, `CANCELLED` y `WITHDRAWN` conservan significados distintos. |
 | **Importaciones** | Cantidades agregadas de cargas, filas incorporadas, duplicadas y rechazadas. | No incluye archivos, seguimiento individual ni observaciones por fila. |
 
 Cada familia declara las dimensiones y combinaciones admitidas; la aplicación no acepta instrucciones arbitrarias para crear otras consultas. Los reportes ofrecen observación institucional, no administración indirecta de los recursos representados.

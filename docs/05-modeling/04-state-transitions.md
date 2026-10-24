@@ -114,7 +114,7 @@ Esta entidad posee exactamente tres estados:
 | --- | --- | --- | --- |
 | `ENROLLED` | Inscripción vigente aceptada. | Sí. | No, porque ya existe una inscripción vigente. |
 | `CANCELLED` | Inscripción anulada antes del inicio académico o por rectificación excepcional. | No. | Solo como **nuevo registro**, si todas las condiciones ordinarias se cumplen y no existe bloqueo adicional. |
-| `WITHDRAWN` | Inscripción retirada durante el desarrollo académico. | No. | No; conserva bloqueo histórico para ese curso y periodo. |
+| `WITHDRAWN` | Inscripción retirada durante el desarrollo académico. | No. | No si el retiro es auténtico; una rectificación extraordinaria de un error elimina su efecto impeditivo sin borrar el movimiento. |
 
 ```mermaid
 stateDiagram-v2
@@ -125,7 +125,7 @@ stateDiagram-v2
 
 | Origen | Evento ordinario | Destino | Condiciones | Efectos |
 | --- | --- | --- | --- | --- |
-| Sin registro | Inscribir | `ENROLLED` | Estudiante activo; escuela asociada al curso; periodo y oferta habilitados; ventana válida; cupo; sin duplicidad ni retiro previo impeditivo. | Nueva inscripción, plaza ocupada y movimiento inicial. |
+| Sin registro | Inscribir | `ENROLLED` | Estudiante activo; programa académico asociado al curso; periodo y oferta habilitados; ventana válida; cupo; sin duplicidad ni retiro previo impeditivo. | Nueva inscripción, plaza ocupada y movimiento inicial. |
 | `ENROLLED` | Cancelar | `CANCELLED` | Periodo `OPEN`, antes de la fecha académica de inicio, permiso y motivo. | Plaza liberada, identidad e historial preservados. |
 | `ENROLLED` | Retirar | `WITHDRAWN` | Periodo `IN_PROGRESS`, fecha de desarrollo vigente, permiso y motivo. | Plaza liberada, bloqueo de reinscripción ordinaria e historial preservado. |
 
@@ -137,7 +137,7 @@ El cierre del periodo deja cada inscripción con su último estado registrado. N
 
 No forman parte de las flechas ordinarias del diagrama. Una corrección autorizada exclusivamente para administración permite, con motivo y evidencia, rectificar una anulación fuera del plazo ordinario, efectuar un traslado extemporáneo compatible o enmendar un error comprobado en el estado o movimiento de una inscripción.
 
-Si un estado `CANCELLED` o `WITHDRAWN` se registró erróneamente, su rectificación **no equivale a una reinscripción ordinaria**. Debe conservar el estado/movimiento erróneo como antecedente, añadir un movimiento correctivo y verificar todas las referencias, la unicidad de inscripciones vigentes y la capacidad real. Nunca se elimina el retiro auténtico para eludir la prohibición de reinscripción.
+Si un estado `CANCELLED` o `WITHDRAWN` se registró erróneamente, su rectificación **no equivale a una reinscripción ordinaria**. Debe conservar el estado/movimiento erróneo como antecedente, añadir un movimiento correctivo y verificar todas las referencias, la unicidad de inscripciones vigentes y la capacidad real. Nunca se elimina un retiro auténtico para eludir la prohibición de reinscripción. La rectificación de un retiro erróneo conserva su registro y lo identifica expresamente como corregido, sin mantener un bloqueo funcional injustificado.
 
 ## 5. Movimientos y estados actuales
 
@@ -145,7 +145,7 @@ Un movimiento histórico no tiene un estado de ciclo de vida editable: es un hec
 
 | Movimiento | Qué deja registrado |
 | --- | --- |
-| Creación | Inscripción inicial, oferta, escuela de referencia, responsable y momento. |
+| Creación | Inscripción inicial, oferta, programa académico de referencia, responsable y momento. |
 | Cancelación | Estado anterior y nuevo, motivo y responsable. |
 | Retiro | Estado anterior y nuevo, motivo y responsable. |
 | Cambio de sección | Oferta anterior y nueva del mismo curso y periodo, motivo y responsable; estado de inscripción sin cambio. |
@@ -156,7 +156,7 @@ La escritura del movimiento y el efecto sobre la inscripción forman **una únic
 ## 6. Comprobaciones comunes a las transiciones
 
 - **Estado de origen válido:** ningún actor puede aplicar una operación ordinaria a un estado incompatible.
-- **Fechas reales:** la fecha del servidor y las fechas institucionales gobiernan las ventanas; no basta con que un usuario tenga permiso.
+- **Fechas reales:** la fecha institucional, obtenida de un reloj confiable e interpretada en `America/Lima`, gobierna las ventanas; el permiso del usuario no la sustituye.
 - **Referencias vigentes:** las entidades utilizadas para crear o trasladar una inscripción deben cumplir sus condiciones académicas.
 - **Capacidad y unicidad:** una transición no puede provocar cupos negativos ni inscripciones vigentes duplicadas.
 - **Trazabilidad:** las transiciones aceptadas conservan el usuario responsable, el momento y la causa cuando corresponda.

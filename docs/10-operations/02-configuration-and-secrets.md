@@ -15,6 +15,8 @@ Cada proceso recibe un conjunto explícito y validado de parámetros. Las config
 | Transporte y origen | Orígenes autorizados, HTTPS, cookies y política CORS. | No se habilitan orígenes comodín con credenciales ni se relaja `Secure` en producción. |
 | Diagnóstico | Nivel de emisión y destino de registros operativos. | El nivel de logging no desactiva auditoría persistente ni permite registrar secretos. |
 
+Los días académicos y los límites de sus ventanas se interpretan en **America/Lima**; los instantes persistidos de actuación, sesión, procesamiento y auditoría se conservan en **UTC**. La zona horaria del proceso o de PostgreSQL no altera esta interpretación.
+
 Los identificadores físicos exactos de variables se definen en la configuración ejecutable y su validación; no se mantiene un segundo listado normativo que pueda divergir. Cada configuración tiene propietario técnico, tipo esperado y tratamiento definido al faltar.
 
 ## 2. Separación de entornos

@@ -48,7 +48,7 @@ La evidencia de cada ejecución de verificación identifica:
 5. **Estado persistido observado** cuando se evalúan escrituras, concurrencia, recuperación o auditoría.
 6. **Incidencias y decisión de aceptación**, atribuible a la revisión examinada.
 
-La evidencia se conserva en los mecanismos de pruebas y entrega correspondientes, sin duplicar reportes de ejecución dentro de la especificación normativa. El código, las migraciones y el contrato OpenAPI generado son fuentes ejecutables que se comparan con las obligaciones, no sustitutos de ellas.
+La evidencia de ejecución se conserva y permanece vinculada a la versión y el entorno verificados. El código, las migraciones y el contrato OpenAPI generado son fuentes ejecutables que se comparan con las obligaciones, no sustitutos de ellas.
 
 ## 4. Revisión ante cambios
 

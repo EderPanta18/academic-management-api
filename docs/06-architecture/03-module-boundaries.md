@@ -9,10 +9,10 @@ Los módulos se delimitan por **capacidad del negocio, reglas propias y autorida
 | `identity` | Identidad común de personas y tipos de documento. | Mantiene personas; no crea perfiles ni cuentas por efecto implícito. |
 | `faculties` | Facultades y su vigencia institucional. | No modifica perfiles ni cursos adscritos. |
 | `academic-departments` | Departamentos dependientes de facultades. | No modifica directamente la adscripción de cursos. |
-| `academic-programs` | Escuelas profesionales y asociaciones escuela–curso. | Gobierna habilitación de cursos por escuela, no el contenido del curso. |
+| `academic-programs` | Programas académicos y asociaciones programa–curso. | Gobierna habilitación de cursos por programa académico, no el contenido del curso. |
 | `courses` | Catálogo de cursos, categorías y adscripción departamental. | No administra ofertas ni inscripciones. |
 | `professors` | Perfiles docentes y adscripción a una facultad. | No modifica una oferta al cambiar información del docente. |
-| `students` | Perfil estudiantil, escuela vigente e importaciones administrativas. | No inscribe al estudiante ni modifica ofertas. |
+| `students` | Perfil estudiantil, programa académico vigente e importaciones administrativas. | No inscribe al estudiante ni modifica ofertas. |
 | `academic-periods` | Periodos, ventanas de inscripción y transiciones de periodo. | No altera automáticamente los estados de inscripciones. |
 | `course-offerings` | Ofertas, secciones, docente asignado, aforo máximo y ciclo de vida. | No crea ni cancela inscripciones. |
 | `enrollments` | Inscripción, cancelación, retiro, cambio de sección, corrección e historial de movimientos. | Autoridad sobre el estado de la inscripción y sus movimientos. |
@@ -59,26 +59,24 @@ El registro de una inscripción constituye una aplicación concreta de estas reg
 
 ```mermaid
 flowchart LR
-    E[enrollments: coordinación y escritura] --> S[students: vigencia y escuela]
-    E --> P[academic-programs: habilitación curso–escuela]
+    E[enrollments: coordinación y escritura] --> S[students: vigencia y programa académico]
+    E --> P[academic-programs: habilitación curso–programa]
     E --> O[course-offerings: oferta y aforo]
     E --> T[academic-periods: fechas y estado]
     E --> H[Movimientos históricos propios]
     E --> A[Auditoría transversal obligatoria]
 ```
 
-En este caso, `enrollments` inicia las verificaciones funcionales, garantiza la identidad histórica de la escuela asociada al alta y determina la modificación que se pretende confirmar. El estado de estudiante, la asociación escuela–curso, el estado del periodo y las condiciones de una oferta se consultan mediante contratos de sus propietarios.
-
 `course-offerings` posee el **aforo máximo configurado**; `enrollments` posee las inscripciones cuya condición `ENROLLED` ocupa plazas. La capacidad restante se deriva de ambos datos. Consultar plazas libres antes de escribir no reserva cupo: la confirmación debe impedir sobrecapacidad frente a solicitudes simultáneas.
 
-El historial funcional pertenece a `enrollments`; la auditoría transversal conserva quién realizó operaciones sensibles. La escritura crítica registra ambos efectos requeridos dentro de su unidad de consistencia, sin que el módulo de auditoría tome decisiones académicas. **Este reparto de propiedad, coordinación y consistencia se aplica a cualquier colaboración intermodular; el registro de inscripción no define un mecanismo especial de integración.**
+El historial funcional pertenece a `enrollments` y la evidencia transversal conserva la atribución de las operaciones sensibles. La confirmación mantiene ambos efectos necesarios sin trasladar la decisión académica a auditoría.
 
 ## 4. Cambios que cruzan capacidades
 
 | Situación | Responsabilidad del propietario | Colaboración requerida |
 | --- | --- | --- |
-| Cambiar la escuela vigente del estudiante. | `students` decide la actualización del perfil. | Consultar restricciones sobre inscripciones vigentes sin reinterpretar su escuela histórica. |
-| Desasociar un curso de una escuela. | `academic-programs` decide la asociación. | Impedir invalidar inscripciones vigentes en periodos operativos. |
+| Cambiar el programa académico vigente del estudiante. | `students` decide la actualización del perfil. | Consultar restricciones sobre inscripciones vigentes sin reinterpretar su programa académico histórico. |
+| Desasociar un curso de un programa académico. | `academic-programs` decide la asociación. | Impedir invalidar inscripciones vigentes en periodos operativos. |
 | Abrir una oferta o asignarle docente. | `course-offerings` decide el estado y su asignación. | Comprobar vigencia del profesor, curso y periodo correspondiente. |
 | Cerrar un periodo académico. | `academic-periods` decide su ciclo de vida. | Aplicar condiciones de cierre sin transiciones implícitas de inscripciones. |
 | Consultar datos de varias capacidades. | `reports` define la proyección y los filtros autorizados. | Acceso de lectura controlado, sin escribir las fuentes. |

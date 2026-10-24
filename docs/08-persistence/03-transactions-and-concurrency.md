@@ -40,7 +40,7 @@ Las restricciones únicas de PostgreSQL actúan además como última barrera par
 
 | Operación | Comprobación dentro de la unidad | Efectos confirmados conjuntamente |
 | --- | --- | --- |
-| **Inscripción** | Estudiante habilitado, escuela–curso vigente, oferta y periodo elegibles, ausencia de inscripción activa o retiro impeditivo y cupo real. | Registro `ENROLLED`, contexto académico conservado, movimiento de creación y evidencia exigida. |
+| **Inscripción** | Estudiante habilitado, programa–curso vigente, oferta y periodo elegibles, ausencia de inscripción activa o retiro impeditivo y cupo real. | Registro `ENROLLED`, contexto académico conservado, movimiento de creación y evidencia exigida. |
 | **Cancelación** | Estado `ENROLLED`, momento y periodo habilitantes, autoridad y motivo. | Estado `CANCELLED`, liberación derivada de plaza y movimiento con atribución. |
 | **Retiro** | Estado `ENROLLED`, desarrollo efectivo del periodo, autoridad y motivo. | Estado `WITHDRAWN`, antecedente impeditivo para nueva inscripción ordinaria, liberación derivada de plaza y movimiento. |
 | **Cambio de sección** | Misma identidad de curso y periodo, ofertas elegibles, autorización, motivo y capacidad del destino. | Actualización única de referencia a la oferta, ocupaciones derivadas coherentes y movimiento con origen y destino. |

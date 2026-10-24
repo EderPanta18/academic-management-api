@@ -70,7 +70,7 @@ El caso de uso de `students` interpreta el archivo conservado y normaliza sus re
 | --- | --- |
 | Datos y formato | Los atributos exigidos se pueden interpretar sin asignar datos inferidos. |
 | Identidad documental | Se reconoce una persona sin crear duplicados ni aceptar identidades incompatibles. |
-| Escuela profesional | El código institucional identifica una escuela existente y vigente. |
+| Programa académico | El código institucional identifica un programa académico existente y vigente. |
 | Perfil estudiantil | El código de estudiante y la identidad no contradicen perfiles ya registrados. |
 | Incorporación | Se confirma como una sola unidad el vínculo permitido y el perfil estudiantil nuevo. |
 | Evidencia | La fila recibe un resultado estable y una observación cuando corresponda. |
@@ -88,7 +88,19 @@ El procesamiento distingue de manera explícita estos resultados:
 
 Cada incorporación válida confirma sus efectos indivisiblemente. Una fila fallida no deja persona o estudiante parcialmente incorporados; los éxitos anteriores se conservan. Las cantidades se calculan sobre resultados confirmados y no clasifican como rechazadas las filas que nunca llegaron a examinarse.
 
-## 5. Reejecución y resultado de una importación
+## 5. Estados y recuperación de una importación
+
+La importación conserva uno de estos estados funcionales:
+
+| Estado | Significado |
+| --- | --- |
+| `PENDING` | Admisión confirmada; el procesamiento todavía no comienza. |
+| `PROCESSING` | Hay ejecución activa o recuperable, con resultados por fila que pueden estar ya confirmados. |
+| `COMPLETED` | Todas las filas evaluables tienen resultado definitivo y ninguna fue rechazada. |
+| `COMPLETED_WITH_ERRORS` | Finalizó el recorrido de las filas evaluables, pero existen filas rechazadas. |
+| `FAILED` | Un fallo definitivo impide concluir el encargo; los resultados parciales confirmados se conservan y las filas restantes siguen sin resultado definitivo. |
+
+`PENDING` pasa a `PROCESSING` cuando comienza la ejecución; `PROCESSING` termina en uno de los tres resultados finales. Una interrupción recuperable no crea una importación nueva ni transforma filas pendientes en rechazadas. Un error que impide interpretar el archivo concluye en `FAILED`; los duplicados identificados sin modificación de datos son resultados definitivos, no fallos.
 
 La **deduplicación de admisiones por archivo** y la **idempotencia del procesamiento** son garantías distintas. La primera evita una segunda importación del mismo contenido por el mismo usuario; la segunda evita que entregas repetidas del encargo ya admitido creen nuevamente estudiantes, alteren perfiles o inflen cantidades.
 

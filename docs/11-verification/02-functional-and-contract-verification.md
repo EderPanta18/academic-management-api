@@ -6,10 +6,10 @@ Las pruebas funcionales demuestran que cada intención permitida produce su efec
 
 | Área y cobertura | Escenarios que debe distinguir la evidencia |
 | --- | --- |
-| Identidades y catálogos (`RF-001`–`RF-009`) | Identidad documental compartida sin duplicación; unicidad de códigos; relaciones entre facultades, departamentos, escuelas, docentes y cursos; asociación curso-escuela; deshabilitación sin destruir referencias históricas; catálogo fijo de tipos de documento. |
+| Identidades y catálogos (`RF-001`–`RF-009`) | Identidad documental compartida sin duplicación; unicidad de códigos; relaciones entre facultades, departamentos, programas académicos, docentes y cursos; episodios de asociación programa–curso sin solapamientos y con historia recuperable; deshabilitación sin destruir referencias históricas; catálogo fijo de tipos de documento. |
 | Periodos y ofertas (`RF-010`–`RF-015`) | Ventana de inscripción y fechas frontera; transiciones válidas y prohibidas; oferta vinculada a periodo, curso, sección y docente; imposibilidad de abrir sin docente; ocupación y disponibilidad correctas. |
 | Inscripciones (`RF-016`–`RF-029`) | Elegibilidad completa, cupo, unicidad por curso/periodo entre secciones, cancelación, retiro, cambio de sección, corrección privilegiada, motivos, historial y conservación al cerrar el periodo. |
-| Importaciones (`RF-030`–`RF-036`) | CSV/XLSX; admisión, archivo original y seguimiento; filas incorporadas, duplicadas, rechazadas y no procesadas; código de escuela; mismo archivo/usuario rechazado y archivo idéntico de otra cuenta tratado como una solicitud independiente. |
+| Importaciones (`RF-030`–`RF-036`) | CSV/XLSX; admisión, archivo original y seguimiento; filas incorporadas, duplicadas, rechazadas y no procesadas; estados globales `PENDING`, `PROCESSING`, `COMPLETED`, `COMPLETED_WITH_ERRORS`, `FAILED`; código de programa académico; mismo archivo/usuario rechazado y archivo idéntico de otra cuenta tratado como una solicitud independiente. |
 | Reportes (`RF-037`–`RF-041`) | Consultas predefinidas sobre estudiantes, cursos, ofertas, ocupación e inscripciones; filtros y periodo exigible; indicadores agregados de importaciones y detalle restringido; ausencia de consultas libres o exportaciones ajenas al alcance. |
 | Cuentas y permisos (`RF-042`–`RF-051`) | Cuenta administrada, sesiones revocables, sesión única, rotación, roles institucionales y personalizados, prohibición de autoasignación, corrección exclusivamente administrativa y cambios de contraseña con revocación. |
 | Auditoría (`RF-052`–`RF-054`) | Atribución de actuaciones y eventos de seguridad; consulta restringida; imposibilidad de editar o eliminar evidencia por vías ordinarias. |
@@ -18,7 +18,7 @@ Las condiciones del dominio se prueban con combinaciones significativas, no con 
 
 ## 2. Inscripciones y cambios de estado
 
-La prueba de inscripción ordinaria confirma que una admisión válida crea un registro `ENROLLED`, ocupa exactamente una plaza y produce sus efectos históricos. La misma intención se rechaza si el estudiante no está `ACTIVE`, el curso no pertenece a su escuela, la ventana está cerrada, la oferta no admite inscripciones o no queda cupo.
+La prueba de inscripción ordinaria confirma que una admisión válida crea un registro `ENROLLED`, ocupa exactamente una plaza y produce sus efectos históricos. La misma intención se rechaza si el estudiante no está `ACTIVE`, el curso no pertenece a su programa académico, la ventana está cerrada, la oferta no admite inscripciones o no queda cupo.
 
 | Escenario | Resultado verificable |
 | --- | --- |
@@ -26,6 +26,7 @@ La prueba de inscripción ordinaria confirma que una admisión válida crea un r
 | Cancelación ordinaria antes del inicio | Estado `CANCELLED`, plaza liberada, motivo y movimiento conservados. |
 | Reinscripción después de `CANCELLED` con condiciones vigentes | Se crea una inscripción nueva; la cancelada permanece como antecedente. |
 | Retiro durante el periodo en curso | Estado `WITHDRAWN`, plaza liberada, motivo registrado y prohibición de reinscripción ordinaria al mismo curso y periodo. |
+| Retiro registrado por error y rectificado | El movimiento original permanece inalterado y la rectificación justificada desactiva exclusivamente su efecto impeditivo, sin ocultar un retiro auténtico ni crear duplicidades. |
 | Cambio de sección permitido | Se conserva la identidad de la inscripción y la ocupación se traslada de forma indivisible al destino válido. |
 | Cambio a otro curso/periodo o sección sin plaza | Rechazo sin alterar inscripción, cupos ni historial con un movimiento ficticio. |
 | Cierre de periodo con inscripciones históricas | Se conservan `ENROLLED`, `CANCELLED` o `WITHDRAWN` tal como quedaron, sin generar estados académicos inexistentes. |

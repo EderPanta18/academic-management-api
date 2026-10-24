@@ -70,6 +70,8 @@ erDiagram
         uuid id PK
         uuid academic_program_id FK
         uuid course_id FK
+        datetime valid_from
+        datetime valid_until
     }
     USERS {
         uuid id PK
@@ -87,10 +89,12 @@ erDiagram
 | Persona | Tipo de documento + número | Esa combinación identifica una única persona. El mismo número con un tipo diferente no se confunde automáticamente. |
 | Estudiante | Código institucional; persona | El código identifica un estudiante y una persona no posee perfiles estudiantiles duplicados. |
 | Docente | Código institucional; persona | El código identifica un docente y una persona no posee perfiles docentes duplicados. |
-| Facultad, departamento y escuela profesional | Código institucional propio | No se reutiliza un código para representar otra unidad histórica. |
-| Curso | Código institucional | Único en toda la universidad, no solo dentro de un departamento o escuela. |
-| Asociación escuela–curso | Escuela + curso | No existen dos asociaciones simultáneamente vigentes del mismo par; la desasociación conserva antecedentes. |
+| Facultad, departamento y programa académico | Código institucional propio | No se reutiliza un código para representar otra unidad histórica. |
+| Curso | Código institucional | Único en toda la universidad, no solo dentro de un departamento o programa académico. |
+| Asociación programa–curso | Identidad propia por episodio de vigencia | Se admiten episodios sucesivos del mismo par, nunca intervalos superpuestos. La desasociación cierra el episodio sin destruirlo. |
 | Cuenta | Correo de acceso y persona opcional | Una identidad de acceso no se duplica; la vinculación con persona no es obligatoria. |
+
+Cada episodio de asociación usa el intervalo **[inicio, fin)**, con fin opcional para representar vigencia abierta. Los límites son instantes inequívocos: un programa y un curso no pueden poseer dos episodios temporalmente solapados. La inscripción se valida frente al episodio vigente en el instante de su admisión, sin duplicar su identificador en la inscripción.
 
 Los registros académicos con historial no pueden reutilizar identidades o códigos para atribuirles un significado distinto. La baja lógica y la desasociación impiden nuevas relaciones ordinarias sin destruir referencias existentes. El modelo de consultas distingue la vigencia de los registros de su existencia histórica.
 
@@ -109,7 +113,7 @@ erDiagram
     PROFESSORS o|--o{ COURSE_OFFERINGS : asignado_a
     STUDENTS ||--o{ ENROLLMENTS : registra
     COURSE_OFFERINGS ||--o{ ENROLLMENTS : recibe
-    ACADEMIC_PROGRAMS ||--o{ ENROLLMENTS : escuela_de_referencia
+    ACADEMIC_PROGRAMS ||--o{ ENROLLMENTS : programa_de_referencia
     ENROLLMENTS ||--|{ ENROLLMENT_MOVEMENTS : historial
     USERS ||--o{ ENROLLMENT_MOVEMENTS : ejecuta
 
@@ -144,7 +148,7 @@ erDiagram
     }
 ```
 
-La referencia al docente puede ser nula **solo durante la preparación** de la oferta; para el estado `OPEN` es obligatoria. El dato de escuela de referencia en `ENROLLMENTS` identifica la escuela con la que se admitió la inscripción y evita reinterpretar hechos históricos cuando cambia la escuela actual de un estudiante.
+La referencia al docente puede ser nula durante la preparación de la oferta y debe estar presente para abrirla. `ENROLLMENTS.academic_program_id` conserva el **programa académico de admisión**, que no se deriva necesariamente del programa actual del estudiante. No se duplica la referencia al episodio programa–curso: la elegibilidad histórica se determina por programa, curso e instante confirmado de admisión frente a los episodios conservados.
 
 ### Identidad lógica y consistencia entre referencias
 
@@ -152,15 +156,15 @@ La referencia al docente puede ser nula **solo durante la preparación** de la o
 | --- | --- |
 | Periodo | Código único y fechas académicas válidas; las fechas de la ventana de inscripción también son obligatorias y ordenadas. |
 | Oferta | Identidad única por combinación **curso + periodo + sección**, conservada en la historia, incluso tras su cancelación. Capacidad máxima estrictamente positiva. |
-| Inscripción | Cada registro conserva una identidad propia aunque haya sido cancelado. Se vincula exactamente a un estudiante, a una oferta y a la escuela con la que se aceptó. |
+| Inscripción | Cada registro conserva una identidad propia aunque haya sido cancelado. Se vincula exactamente a un estudiante, a una oferta y al programa académico con el que se aceptó. |
 | Unicidad de inscripción | No pueden coexistir dos inscripciones `ENROLLED` del mismo estudiante al **mismo curso y periodo**, aunque correspondan a ofertas distintas. |
-| Antecedente de retiro | Un movimiento que deja una inscripción en `WITHDRAWN` impide crear ordinariamente otra inscripción de ese estudiante para ese curso y periodo, aunque no ocupe plaza. |
+| Antecedente de retiro | Un retiro auténtico de efectos vigentes impide la reinscripción ordinaria al mismo curso y periodo; un retiro registrado por error y rectificado conserva su historia, pero no su efecto impeditivo. |
 | Nueva inscripción tras cancelación | Es otro registro con otra identidad; nunca reabre o reemplaza el registro `CANCELLED`. |
 | Movimiento | Pertenece a una sola inscripción, conserva el actor y el momento y registra los valores anteriores y posteriores relevantes para su tipo. No admite edición o eliminación ordinaria. |
 
 La unicidad por estudiante, curso y periodo **no equivale** a una unicidad limitada al par estudiante–oferta. El curso y el periodo se obtienen de la oferta, pero deben permanecer consistentes en cualquier mecanismo de almacenamiento elegido; no se autoriza una inscripción activa duplicada mediante una sección diferente.
 
-**Una inscripción puede cambiar su oferta actual** únicamente hacia otra sección del mismo curso y periodo. Su escuela académica de referencia, curso y periodo históricos permanecen interpretables. El movimiento de cambio conserva las ofertas anterior y nueva; no se crea otra inscripción.
+**Una inscripción puede cambiar su oferta actual** únicamente hacia otra sección del mismo curso y periodo. Su programa académico de referencia, curso y periodo históricos permanecen interpretables. El movimiento de cambio conserva las ofertas anterior y nueva; no se crea otra inscripción.
 
 ### Cupos
 
@@ -182,6 +186,7 @@ erDiagram
     PERMISSIONS ||--o{ ROLE_PERMISSIONS : habilita
     USERS ||--o{ USER_SESSIONS : mantiene
     USERS ||--o{ STUDENT_IMPORTS : presenta
+    STUDENT_IMPORTS ||--o{ STUDENT_IMPORT_RESULTS : registra
     USERS ||--o{ AUDIT_LOGS : actor
 
     USERS {
@@ -213,6 +218,11 @@ erDiagram
         uuid created_by_user_id FK
         string file_hash
     }
+    STUDENT_IMPORT_RESULTS {
+        uuid import_id PK,FK
+        int row_number PK
+        string result_status
+    }
     AUDIT_LOGS {
         uuid id PK
         uuid actor_user_id FK
@@ -224,18 +234,19 @@ erDiagram
 | `user_roles` | Una relación usuario–rol aparece una sola vez; cada cuenta puede recibir varios roles. |
 | `role_permissions` | Una relación rol–permiso aparece una sola vez; los permisos provienen de un catálogo controlado. |
 | `user_sessions` | Pueden existir sesiones históricas revocadas, pero como máximo una permanece activa por usuario. |
-| `student_imports` | Conserva el contenido binario original y los resultados del procesamiento; la combinación **usuario + SHA-256 del archivo** es una clave de idempotencia. |
+| `student_imports` | Conserva los bytes originales, su huella SHA-256 y el usuario responsable; **usuario + hash** identifica de forma única una admisión. |
+| `student_import_results` | Cada fila resuelta tiene identidad **importación + posición de fila**, resultado y observaciones; una misma fila no produce resultados definitivos duplicados. |
 | `audit_logs` | Guarda evidencia de operaciones sensibles sin operaciones ordinarias de edición o eliminación. |
 
-Los resultados por fila de una importación forman parte de su registro operativo; no se necesita convertir cada fila recibida en una entidad académica persistente. Una fila válida crea o vincula los registros permitidos sin sobrescribir estudiantes existentes, y una fila rechazada no altera el catálogo académico.
+Los resultados por fila se conservan en una relación técnica propia de la importación, **no como nuevas entidades académicas**. Las filas admitidas pueden concluir como incorporadas, duplicadas o rechazadas; las todavía no procesadas carecen de resultado definitivo. Las cantidades agregadas se derivan de las unidades confirmadas y no constituyen otra fuente independiente de verdad. Una fila válida incorpora solo los registros permitidos, sin sobrescribir estudiantes existentes; una fila rechazada no altera el catálogo académico.
 
 Las identidades de los usuarios, docentes y estudiantes se conservan aunque sus perfiles se deshabiliten, para mantener la atribución de inscripciones, movimientos, cargas y auditorías anteriores.
 
 ## 4. Conservación y vigencia de referencias
 
 1. **Deshabilitar no significa borrar:** el registro histórico sigue identificable; no se sustituye su clave primaria por la de otro registro.
-2. **Relaciones históricas:** las asociaciones entre escuelas y cursos que estuvieron vigentes deben poder reconocerse en el periodo en que habilitaron una inscripción.
-3. **Cambios de escuela del estudiante:** los datos actuales pueden evolucionar sin alterar la escuela de referencia de inscripciones anteriores; el cambio no debe invalidar inscripciones `ENROLLED` de periodos operativos.
+2. **Relaciones históricas:** los episodios programa–curso permanecen identificables con sus límites temporales, de modo que una admisión anterior no cambia de significado tras cerrar o volver a abrir la asociación.
+3. **Cambios de programa académico del estudiante:** los datos actuales pueden evolucionar sin alterar el programa académico de referencia de inscripciones anteriores; el cambio no debe invalidar inscripciones `ENROLLED` de periodos operativos.
 4. **Cambios de estructura o docentes:** las ofertas y sus inscripciones históricas conservan referencias, aunque el recurso de catálogo ya no se utilice para nuevas operaciones.
 5. **Movimientos inmutables:** las rectificaciones se agregan como nuevos hechos y no reescriben o destruyen movimientos previos.
 6. **Baja lógica:** se aplica a recursos administrativos que se pueden deshabilitar; no se utiliza para ocultar una inscripción, movimiento, importación o auditoría que deba permanecer como evidencia.
