@@ -12,17 +12,17 @@ La aceptación de una operación diferida que requiere un archivo confirma en **
 2. Los bytes originales del archivo y su huella de identidad, conservados como parte de los datos durables de la importación.
 3. La intención de despacho en el **outbox transaccional**, con identidad estable y contrato mínimo necesario para su entrega.
 
-Esta elección evita que una aceptación dependa de un archivo temporal de Multer o de una ruta local del worker. El almacenamiento original comparte la durabilidad y las garantías de recuperación del registro de importación. No se responde aceptación si alguno de los tres elementos no queda confirmado.
+La operación se confirma mediante una frontera transaccional compartida, sin requerir un mecanismo de transacciones adicional para el outbox. Esta elección evita que una aceptación dependa de archivos temporales o rutas locales del proceso consumidor. El almacenamiento original comparte la durabilidad y las garantías de recuperación del registro de importación. No se responde aceptación si alguno de los tres elementos no queda confirmado.
 
-La respuesta pública contiene la **identidad funcional de importación**, nunca el identificador del job de PgBoss ni el identificador físico del registro de outbox. La aceptación no presupone el procesamiento de filas.
+La respuesta pública contiene la **identidad funcional de importación**, no identificadores técnicos de transporte o de almacenamiento del outbox. La aceptación no presupone el procesamiento de filas.
 
 ```mermaid
 sequenceDiagram
     participant IN as Adaptador de entrada
     participant APP as Caso de uso productor
     participant DB as PostgreSQL
-    participant REL as Relay de outbox
-    participant Q as PgBoss
+    participant REL as Despachador de outbox
+    participant Q as Cola de trabajos
     participant WORK as Caso de uso consumidor
 
     IN->>APP: Solicita admitir operación
@@ -41,7 +41,7 @@ El reconocimiento de despacho **no equivale** al reconocimiento de ejecución. L
 
 ## 2. Outbox, entrega y reconocimiento
 
-La escritura de un hecho funcional y la intención de publicar un job o evento forman una unidad transaccional cuando su entrega es obligatoria. Solo después de confirmar esa unidad el relay intenta la publicación en PgBoss.
+La escritura de un hecho funcional y la intención de publicar un trabajo o evento forman una unidad transaccional **cuando la entrega durable está vinculada al cambio de negocio**. Solo después del commit se intenta la publicación. Los trabajos independientes que no necesitan esa garantía pueden utilizar directamente la cola, sin registrar una intención de outbox.
 
 - Cada intención posee **identidad durable, estado de entrega y datos mínimos** suficientes para reintentar sin reconstruir una decisión funcional desde logs.
 - Los procesos de relay reclaman unidades pendientes de manera concurrentemente segura, evitando que dos emisores trabajen simultáneamente sobre el mismo registro reclamado. Una reclamación interrumpida vuelve a quedar disponible para recuperación.
@@ -49,7 +49,7 @@ La escritura de un hecho funcional y la intención de publicar un job o evento f
 - Si el broker aceptó el mensaje y el relay se interrumpió antes de registrar ese hecho, una repetición es admisible. La publicación utiliza identidad estable y el consumidor controla la idempotencia de sus efectos.
 - Los hechos de dominio y sus movimientos o auditorías **no dependen** de que el relay termine para estar confirmados. Un evento publicado más tarde describe un hecho ya existente, no autoriza reescribirlo.
 
-PgBoss administra la entrega persistente y los intentos técnicos de ejecución; **el estado funcional consultable permanece bajo el módulo propietario**. Ni el broker ni el outbox se usan como repositorio alternativo de estudiantes, inscripciones o resultados históricos.
+La cola administra la entrega persistente y los intentos técnicos de ejecución; **el estado funcional consultable permanece bajo el módulo propietario**. Ni el transporte ni el outbox se usan como repositorio alternativo de estudiantes, inscripciones o resultados históricos.
 
 ## 3. Confirmación recuperable de unidades de trabajo
 

@@ -35,15 +35,15 @@ Las reglas del dominio se comprueban por la capacidad propietaria aunque una ent
 
 La distinción depende de lo que hace el consumidor, no del número de tablas consultadas. Una lectura utilizada para **tomar una decisión de negocio** requiere garantizar que esa decisión permanezca válida en la confirmación; no basta con tratarla como proyección informativa.
 
-Los módulos consumidores importan mediante NestJS el módulo proveedor necesario para obtener un puerto exportado. **Conocen su dependencia de módulo declarada y su contrato público**, pero no la implementación interna. No se intenta ocultar artificialmente el grafo real de NestJS.
+Las capacidades consumidoras declaran las dependencias necesarias para obtener los contratos públicos de sus proveedores. **La composición hace explícito qué capacidades se necesitan**, sin exponer implementaciones internas ni ocultar el grafo real de dependencias.
 
-Para puertos de comportamiento inyectados se utilizan contratos con identidad en tiempo de ejecución; las clases abstractas constituyen el mecanismo habitual del proyecto. Los tipos TypeScript puros pueden compartirse sin inyección. La composición hace la asociación de contrato e implementación; el consumidor no construye providers ajenos.
+Los contratos inyectables deben poder identificarse durante la ejecución, mientras que los tipos usados solo para expresar datos no requieren inyección. La composición vincula contratos e implementaciones; el consumidor no construye dependencias ajenas.
 
 ## 3. Superficies públicas y encapsulación
 
-El contrato público interno de un módulo se limita a las operaciones que otros módulos realmente necesitan. Su exportación mediante `exports` de NestJS habilita la inyección; no autoriza a exponer entidades mutables, repositorios, adaptadores o casos de uso internos indiscriminadamente.
+La superficie pública de una capacidad se limita a las operaciones que otras capacidades necesitan. Su exposición para consumo no autoriza a publicar indiscriminadamente entidades mutables, repositorios, adaptadores o casos de uso internos.
 
-La reexportación mediante `index.ts` organiza importaciones de TypeScript, pero **no equivale** a `exports` de NestJS. Ambos mecanismos deben respetar la misma intención de encapsulación, aunque cumplan funciones distintas.
+La organización de importaciones de código y la exposición de dependencias en el contenedor cumplen funciones distintas. Ambas deben respetar la misma superficie pública y las restricciones de encapsulación.
 
 Los puertos de entrada representan capacidades que un módulo ofrece. Los puertos de salida representan necesidades de aplicación que adaptadores satisfacen. No todo puerto de salida debe convertirse en contrato público para otras capacidades.
 
@@ -53,22 +53,22 @@ Los adaptadores de ejecución que necesita un proceso pueden tener una exposici�
 
 | Área | Propósito | Restricción |
 | --- | --- | --- |
-| `core` | Abstracciones transversales puras, contratos técnicos estables, errores base. | No conoce módulos funcionales ni implementaciones NestJS/Prisma. |
-| `platform` | Adaptadores técnicos comunes de persistencia, mensajería, archivos, seguridad técnica y observabilidad. | No se atribuye decisiones de un dominio académico. |
-| `shared` | Tipos auxiliares y utilidades pequeñas sin propiedad funcional. | No aloja servicios que deciden elegibilidad, permisos o cupos. |
-| `app` | Composición de procesos que exponen interfaces de interacción y de sus adaptadores habilitados. | No es una capa de casos de uso académicos ni impone HTTP como única forma de entrada. |
-| `workers` | Composición de procesos consumidores de trabajo diferido y conexión técnica de sus adaptadores de entrega. | No contiene las reglas funcionales ni sustituye los casos de uso de los módulos. |
-| `modules` | Capacidades con dominio, aplicación y adaptadores propios. | No atraviesan superficies privadas de otros módulos. |
+| Abstracciones transversales | Contratos técnicos puros, tipos base y errores compartidos. | No conocen capacidades funcionales ni detalles de infraestructura. |
+| Infraestructura común | Integraciones de persistencia, mensajería, archivos, seguridad técnica y observabilidad. | No asume decisiones del dominio académico. |
+| Utilidades compartidas | Funciones y tipos auxiliares sin propiedad funcional. | No decide elegibilidad, permisos ni cupos. |
+| Composición de entradas | Integra los adaptadores y capacidades necesarios para atender solicitudes. | No contiene reglas de negocio ni obliga a utilizar un único protocolo. |
+| Composición de trabajo diferido | Integra consumidores y sus dependencias de ejecución. | No reemplaza los casos de uso ni contiene decisiones funcionales. |
+| Capacidades funcionales | Dominio, aplicación y adaptadores bajo una responsabilidad definida. | No atraviesan las superficies privadas de otras capacidades. |
 
-Un tipo general compartido no implica dependencia funcional. En cambio, el nombre, estado y reglas de una inscripción siguen perteneciendo a `enrollments` y no se trasladan a `core` para resolver dificultades de importación.
+Un tipo general compartido no implica dependencia funcional. Las reglas y el estado de una inscripción permanecen bajo la capacidad que los gobierna; no se trasladan a un área compartida para resolver dificultades de importación.
 
-La distinción entre `app` y `workers` expresa responsabilidades de composición y ejecución, no una división de los casos de uso por protocolo. La API REST utiliza composición HTTP y los trabajos diferidos utilizan consumidores de PgBoss; ambos invocan contratos de aplicación del módulo propietario. La inclusión de otros adaptadores no modifica estas reglas de dependencia.
+La composición de entradas y la de trabajo diferido expresan responsabilidades de ejecución distintas, no una división de las reglas funcionales por protocolo. Ambas utilizan los contratos de aplicación de la capacidad propietaria, aunque cambien los adaptadores o sus tecnologías.
 
-Los módulos de plataforma pueden estar disponibles mediante módulos NestJS de infraestructura, pero se importan explícitamente donde su provider es necesario. `@Global()` no se usa para eludir una frontera ni evitar declarar dependencias funcionales.
+Las dependencias técnicas se declaran explícitamente cuando aportan capacidades que un consumidor utiliza, como acceso a persistencia o generación de identificadores. La configuración general del proceso puede estar disponible de forma global si permanece transversal y no introduce dependencias funcionales ocultas. La disponibilidad global de infraestructura no concede acceso a datos privados ni permite atravesar contratos públicos.
 
 ## 5. Prevención de ciclos y dependencias indebidas
 
-Se prohíben ciclos entre módulos funcionales y dependencias de capas externas hacia internas invertidas de manera incorrecta. La existencia de `forwardRef` no constituye autorización para diseñar módulos mutuamente dependientes.
+Se prohíben ciclos entre capacidades funcionales y dependencias que inviertan indebidamente la dirección de las capas. Los mecanismos del framework para resolver referencias circulares no justifican diseñar componentes mutuamente dependientes.
 
 ```mermaid
 flowchart LR
@@ -78,7 +78,7 @@ flowchart LR
     Provider --> Data[Estado bajo su propiedad]
 ```
 
-Si A requiere una operación de B y B requiere una operación de A, se identifica la responsabilidad que realmente coordina el flujo, se divide la colaboración o se extrae un contrato con dueño adecuado. No se solucionan ciclos introduciendo un módulo `shared` que acumula decisiones de ambos.
+Si dos capacidades se requieren mutuamente, se identifica la responsabilidad que coordina el flujo, se divide la colaboración o se define un contrato con propietario claro. No se solucionan ciclos creando un área compartida que acumula decisiones de ambas.
 
 Los agregadores de dominio son componentes de composición, no nuevos propietarios. Sus exportaciones son selectivas y no deben habilitar dependencias privilegiadas entre módulos agrupados.
 

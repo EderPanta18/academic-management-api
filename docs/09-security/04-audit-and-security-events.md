@@ -39,7 +39,7 @@ Los eventos de seguridad permiten analizar intentos fallidos sin registrar cada 
 
 ## 4. Confirmación, preservación y rectificación
 
-Las operaciones académicas sensibles y sus evidencias obligatorias se confirman **dentro de la misma unidad transaccional**. Si la operación se revierte, no se incorpora un evento que afirme falsamente que el cambio se completó. Los sucesos independientes, como un intento fallido de acceso, generan evidencia de su resultado real sin depender de una modificación académica inexistente.
+Las operaciones académicas sensibles y sus evidencias obligatorias se confirman **dentro de una misma frontera transaccional**, sin introducir una transacción independiente para la evidencia. Si la operación se revierte, no se incorpora un evento que afirme falsamente que el cambio se completó. Los sucesos independientes, como un intento fallido de acceso, generan evidencia de su resultado real sin depender de una modificación académica inexistente.
 
 Los eventos son **de solo incorporación**: no existe una operación ordinaria para sobrescribirlos, suprimirlos o rectificar silenciosamente hechos previos. Cuando es necesaria una aclaración administrativa, se agrega nueva evidencia que identifica el antecedente y explica la rectificación, preservando la atribución original.
 
@@ -60,7 +60,7 @@ sequenceDiagram
     end
 ```
 
-Las **operaciones que exigen evidencia atómica** confirman sus efectos y el registro auditable como una unidad. Los rechazos de autenticación y otros sucesos de seguridad se conservan como hechos de intento, no como modificaciones académicas confirmadas.
+El diagrama representa las **operaciones que exigen evidencia atómica**. Los rechazos de autenticación y otros sucesos de seguridad se documentan como hechos de intento, no como modificaciones académicas confirmadas.
 
 ## 5. Consulta restringida y protección de la evidencia
 

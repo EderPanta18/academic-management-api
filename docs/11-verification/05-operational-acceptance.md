@@ -16,6 +16,8 @@ La aceptación de una versión integra pruebas funcionales, seguridad, integrida
 | Observabilidad | Se distingue error de acceso, fallo funcional, atraso de trabajo y defecto de infraestructura mediante señales correlacionables, sin ruido ni secretos. |
 | Recuperación | Respaldo, restauración y reconciliación preservan datos confirmados y trabajo admitido. |
 
+La aceptación comprueba con escenarios representativos que una configuración booleana obligatoria ausente o una entrada inválida impiden iniciar la responsabilidad correspondiente, mientras que una opción omitida con valor predeterminado explícito conserva el comportamiento declarado. Cuando un archivo local y el entorno del proceso proporcionan el mismo parámetro, prevalece el valor explícito del proceso y se valida la configuración efectiva. También se distingue que una caída de PostgreSQL puede invalidar la preparación sin invalidar la vida del proceso, y que la indisponibilidad de PgBoss impide declarar preparado al consumidor, pero no necesariamente a una API capaz de confirmar operaciones y persistir intenciones en outbox. Las comprobaciones de preparación son acotadas y no generan trabajos funcionales artificiales.
+
 Las comprobaciones que alteran datos se realizan en entornos controlados y con registros de prueba; ninguna prueba de publicación exige crear o modificar inscripciones reales de la institución para demostrar su validez.
 
 ## 2. Orden de los controles y criterios de bloqueo

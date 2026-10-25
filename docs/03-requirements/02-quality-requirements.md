@@ -17,7 +17,7 @@ Los requerimientos de calidad establecen las condiciones transversales de seguri
 | --- | --- | --- |
 | RNF-005 | Las contraseñas y credenciales de sesión deben protegerse frente a exposición y reutilización indebida. | No se almacenan contraseñas ni credenciales de renovación en texto plano ni se exponen tokens mediante respuestas de datos o registros operativos. |
 | RNF-006 | Las operaciones protegidas deben comprobar la identidad, la vigencia de la sesión y la autorización efectiva en el momento de la solicitud. | Una cuenta deshabilitada, una sesión revocada o un permiso retirado dejan de conceder acceso. |
-| RNF-007 | La autenticación basada en cookies debe limitar su exposición y proteger las operaciones que modifican estado frente a solicitudes de origen no autorizado. | Los controles de cookies, origen y solicitudes con credenciales impiden ejecutar cambios desde orígenes no admitidos. |
+| RNF-007 | Las operaciones autenticadas mediante cookies que modifican información deben contar con protección frente a solicitudes de origen no autorizado y ataques CSRF, adicional al control de acceso entre orígenes. | Las solicitudes que no satisfacen la política de origen y protección CSRF se rechazan antes de producir cambios, incluso cuando carecen de información de origen suficiente para considerarlas confiables. |
 | RNF-008 | Los intentos reiterados de autenticación inválida deben limitarse mediante una política verificable. | Tras cinco fallos por identidad dentro de quince minutos, los intentos adicionales se rechazan temporalmente. |
 | RNF-009 | Los datos personales, las sesiones, los permisos y los eventos de auditoría solo deben ser accesibles dentro de las autorizaciones correspondientes. | Los intentos de consulta o modificación sin permiso se rechazan, sin filtrar información sensible en errores. |
 
@@ -35,7 +35,7 @@ Los requerimientos de calidad establecen las condiciones transversales de seguri
 | --- | --- | --- |
 | RNF-013 | Los trabajos de importación deben ejecutarse de manera separada de la atención interactiva y ofrecer estados consultables. | La aceptación de una carga no requiere esperar al procesamiento completo y su resultado final puede consultarse. |
 | RNF-014 | Las fallas de una fila o un procesamiento no deben propagarse indebidamente a registros ya aceptados o a otras solicitudes. | Los resultados parciales correctos permanecen íntegros y los errores quedan identificados. |
-| RNF-015 | La API debe ofrecer respuestas y errores estructurados de manera uniforme, con validación estricta y códigos HTTP coherentes. | Operaciones equivalentes mantienen convenciones consistentes; entradas inesperadas se rechazan sin producir resultados indeterminados. |
+| RNF-015 | La API debe mantener un contrato uniforme que distinga explícitamente los resultados satisfactorios de los errores estructurados, con validación estricta y estados HTTP coherentes. | Las respuestas mantienen la distinción entre éxito, datos y detalle de error definida por el contrato de la API; las entradas inesperadas se rechazan y los conflictos funcionales conocidos reciben el estado HTTP correspondiente sin exponer información técnica sensible. |
 | RNF-016 | Las consultas de colecciones y reportes deben disponer de filtros controlados, ordenamiento determinista y límites de paginación. | Las respuestas no dependen de ordenamientos arbitrarios ni admiten filtros o tamaños no autorizados. |
 
 ## 5. Mantenibilidad, observabilidad y verificación

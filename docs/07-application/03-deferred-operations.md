@@ -9,13 +9,13 @@ La **importación de estudiantes** es la operación diferida de negocio definida
 | Elemento | Responsabilidad de aplicación | Límite |
 | --- | --- | --- |
 | **Admisión** | Autorizar la intención y confirmar una constancia recuperable. | La aceptación no certifica que la ejecución haya concluido. |
-| **Identidad funcional** | Asignar un identificador consultable que se conserva durante la ejecución. | No exponer como identificador contractual el ID interno del job. |
-| **Ejecución** | Invocar el caso de uso propietario con el contexto necesario. | Un processor no sustituye reglas ni operaciones del módulo. |
+| **Identidad funcional** | Asignar un identificador consultable que se conserva durante la ejecución. | No exponer como identificador contractual el identificador interno del trabajo en la cola. |
+| **Ejecución** | Invocar el caso de uso propietario con el contexto necesario. | El ejecutor técnico no sustituye las reglas ni las operaciones de la capacidad propietaria. |
 | **Progreso y resultados** | Representar resultados confirmados, errores y trabajo no concluido. | No inferir éxito por la recepción o reconocimiento de un mensaje. |
 | **Reanudación** | Reconocer efectos ya confirmados y continuar sin duplicarlos. | No depender de memoria de proceso ni de entrega exactamente una vez. |
 | **Consulta** | Devolver estado y evidencia según los permisos aplicables. | No confundir seguimiento funcional con registros técnicos del broker. |
 
-La aceptación exige una identidad funcional persistente y una **obligación durable de ejecución**. La aplicación expresa ese compromiso; la infraestructura lo cumple mediante sus mecanismos transaccionales, outbox, publicación y recuperación. El rechazo previo a la confirmación de admisión no genera un trabajo presentado como aceptado.
+La aceptación exige una identidad funcional persistente y una **obligación durable de ejecución**. La aplicación expresa ese compromiso; la infraestructura lo cumple mediante persistencia, publicación y recuperación adecuadas. El outbox transaccional se utiliza cuando una intención de publicación debe confirmarse atómicamente junto con un cambio de negocio, como la admisión persistente de una importación; no se impone a encargos independientes que no requieren esa vinculación. El rechazo previo a la confirmación de admisión no genera un trabajo presentado como aceptado.
 
 ```mermaid
 sequenceDiagram
@@ -64,7 +64,7 @@ El adaptador REST comunica **`202 Accepted`** y el identificador de importación
 
 ## 4. Interpretación de filas y confirmación parcial
 
-El caso de uso de `students` interpreta el archivo conservado y normaliza sus registros a una representación común. Cada fila mantiene referencia a su posición de origen. Un defecto que impide interpretar el archivo afecta a la operación completa; **una fila inválida no impide procesar las demás**.
+La importación interpreta el archivo conservado respetando las particularidades de CSV y XLSX y aplica reglas comunes de interpretación de campos y validación de estudiantes. Cada fila procesada conserva una referencia inequívoca a su posición en el archivo original, independiente del orden o índice de los registros devueltos por el lector. La identidad de su resultado persistente combina la importación y esa posición, de modo que los reintentos reconocen unidades ya confirmadas incluso si existen filas vacías, omitidas o registros con saltos de línea. La ubicación y las causas de rechazo permanecen asociadas al resultado individual. Un defecto que impide interpretar el archivo afecta a la operación completa; **una fila inválida no impide procesar las demás**.
 
 | Comprobación de una fila | Resultado que debe preservar |
 | --- | --- |
@@ -119,6 +119,6 @@ El permiso **`students.imports.read`** protege el seguimiento individual, el arc
 
 ## 6. Límites de la responsabilidad
 
-La aplicación conoce la identidad y el resultado del encargo. **No** utiliza el ID de PgBoss como contrato público, no implementa reintentos técnicos dentro del dominio y no atribuye al proceso worker permisos funcionales propios. La conservación durable, el envío recuperable y la atomicidad física se satisfacen mediante infraestructura; el contrato de la operación determina qué hechos deben observarse y qué rechazos se exponen.
+La aplicación conoce la identidad y el resultado del encargo. **No** utiliza identificadores internos de la cola como contrato público, no implementa reintentos técnicos dentro del dominio y no atribuye al proceso worker permisos funcionales propios. La conservación durable, el envío recuperable y la atomicidad física se satisfacen mediante infraestructura; el contrato de la operación determina qué hechos deben observarse y qué rechazos se exponen.
 
 La importación es una aplicación específica del procesamiento diferido, no una definición de lo que es un job, una cola, un worker o cualquier otra operación diferible.

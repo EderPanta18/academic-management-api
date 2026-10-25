@@ -36,8 +36,8 @@ Una deshabilitación del estudiante **no cambia automáticamente** sus inscripci
 | Estado | Significado |
 | --- | --- |
 | `PLANNED` | Periodo preparado, todavía no habilitado para nuevas inscripciones. |
-| `OPEN` | Periodo abierto administrativamente para operar su ventana de inscripción, aun antes del inicio académico. |
-| `IN_PROGRESS` | Periodo cuyo desarrollo académico ha comenzado. Puede aceptar inscripciones si su ventana continúa vigente. |
+| `OPEN` | Periodo abierto administrativamente antes del inicio académico; solo habilita operaciones ordinarias sujetas a la ventana mientras no se alcance esa fecha. |
+| `IN_PROGRESS` | Periodo cuyo desarrollo académico ya comenzó tras una transición autorizada; puede admitir operaciones ordinarias si su ventana continúa vigente. |
 | `CLOSED` | Periodo concluido para operaciones ordinarias de inscripción. |
 | `CANCELLED` | Periodo anulado antes del desarrollo académico. No se reactiva ordinariamente. |
 
@@ -53,11 +53,13 @@ stateDiagram-v2
 
 | Origen | Evento | Destino | Condiciones determinantes |
 | --- | --- | --- | --- |
-| `PLANNED` | Abrir | `OPEN` | Estructura y fechas válidas; ventana de inscripción configurada. |
-| `OPEN` | Iniciar desarrollo | `IN_PROGRESS` | Se alcanzó la fecha de inicio académico; el periodo no fue cancelado. |
+| `PLANNED` | Abrir | `OPEN` | Acción explícita de actor autorizado; estructura y fechas válidas; ventana de inscripción configurada. Si ya se alcanzó el inicio académico, la apertura solo regulariza el estado administrativo y no habilita operaciones ordinarias. |
+| `OPEN` | Iniciar desarrollo | `IN_PROGRESS` | Transición explícita por actor autorizado, una vez alcanzada la fecha de inicio académico; el periodo no fue cancelado. |
 | `IN_PROGRESS` | Cerrar | `CLOSED` | Acción autorizada de finalización del periodo; no modifica inscripciones existentes. |
 | `PLANNED` | Cancelar | `CANCELLED` | No existen inscripciones `ENROLLED` vinculadas. |
 | `OPEN` | Cancelar | `CANCELLED` | No comenzó la fecha académica y no existen inscripciones `ENROLLED` vinculadas. |
+
+Cuando un periodo permanece en `PLANNED` después de alcanzar su inicio académico, un actor autorizado puede regularizarlo mediante **dos transiciones explícitas y consecutivas**: `PLANNED → OPEN` y, posteriormente, `OPEN → IN_PROGRESS`. El estado intermedio `OPEN` no habilita nuevas inscripciones, cambios de sección ni reaperturas de ofertas mientras la fecha y el estado sean incompatibles. Ni el transcurso del tiempo ni la primera transición ejecutan automáticamente la segunda. Una vez en `IN_PROGRESS`, cada operación ordinaria continúa sujeta a la ventana de inscripción y a las demás condiciones aplicables.
 
 `CLOSED` y `CANCELLED` son terminales. El cierre del periodo no exige transformar `ENROLLED` a otro estado y no ejecuta automáticamente cierre o cancelación de ofertas.
 
@@ -65,12 +67,12 @@ stateDiagram-v2
 
 El derecho a registrar una nueva inscripción ordinaria resulta de una **conjunción**:
 
-1. Periodo en `OPEN` o `IN_PROGRESS`.
-2. Fecha actual comprendida entre el inicio y el fin de la ventana de inscripción, ambos inclusive.
+1. Estado del periodo coherente con la fecha institucional: `OPEN` únicamente antes del inicio académico, o `IN_PROGRESS` desde esa fecha.
+2. Fecha institucional actual comprendida entre el inicio y el fin de la ventana de inscripción, ambos inclusive.
 3. Oferta en `OPEN` y con cupo.
 4. Elegibilidad y ausencia de bloqueos históricos del estudiante y curso.
 
-El estado `OPEN` **no** sustituye la validación de fechas. Un periodo que sigue `OPEN` cuando ya empezó su fecha académica no convierte una cancelación tardía en válida; debe regularizarse su situación antes de operar movimientos propios de `IN_PROGRESS`.
+El estado `OPEN` **no** sustituye la validación de fechas. Si se alcanza el inicio académico y el periodo permanece en `OPEN`, se rechazan nuevas inscripciones y cambios de sección ordinarios, incluso si la ventana sigue abierta. El paso del tiempo y la solicitud de una operación no provocan la transición automática: se requiere iniciar el desarrollo mediante una acción explícita y autorizada. Ese retraso tampoco convierte una cancelación tardía en válida ni permite operar movimientos propios de `IN_PROGRESS`.
 
 ## 3. Oferta de curso
 
@@ -97,7 +99,7 @@ stateDiagram-v2
 | --- | --- | --- | --- |
 | `DRAFT` | Abrir | `OPEN` | Curso, periodo, capacidad y docente activo válidos; periodo compatible con operar inscripciones. |
 | `OPEN` | Cerrar | `CLOSED` | Actor autorizado; inscripciones existentes conservadas. |
-| `CLOSED` | Reabrir | `OPEN` | Periodo `OPEN` o `IN_PROGRESS` dentro de ventana de inscripción; docente habilitado y capacidad consistente. |
+| `CLOSED` | Reabrir | `OPEN` | Periodo `OPEN` antes del inicio académico o `IN_PROGRESS` desde ese inicio, siempre dentro de la ventana de inscripción; docente habilitado y capacidad consistente. Si `OPEN` quedó atrasado respecto de la fecha, se rechaza la reapertura. |
 | `CLOSED` | Finalizar | `FINISHED` | Periodo concluido; no implica resultado individual de aprobación. |
 | `DRAFT` | Cancelar | `CANCELLED` | Sin inscripciones `ENROLLED`. |
 | `OPEN` | Cancelar | `CANCELLED` | Sin inscripciones `ENROLLED`; se conserva su historia. |
@@ -129,7 +131,7 @@ stateDiagram-v2
 | `ENROLLED` | Cancelar | `CANCELLED` | Periodo `OPEN`, antes de la fecha académica de inicio, permiso y motivo. | Plaza liberada, identidad e historial preservados. |
 | `ENROLLED` | Retirar | `WITHDRAWN` | Periodo `IN_PROGRESS`, fecha de desarrollo vigente, permiso y motivo. | Plaza liberada, bloqueo de reinscripción ordinaria e historial preservado. |
 
-**El cambio de sección no cambia el estado**: `ENROLLED` permanece `ENROLLED`. Modifica únicamente la oferta actual hacia otra sección del mismo curso y periodo, dentro de las condiciones permitidas, y añade un movimiento de traslado. No existe estado de inscripción `PENDING`, `REJECTED` o `FINISHED`.
+**El cambio de sección no cambia el estado**: `ENROLLED` permanece `ENROLLED`. Modifica únicamente la oferta actual hacia otra sección del mismo curso y periodo, dentro de la ventana y con el estado del periodo coherente con la fecha institucional, y añade un movimiento de traslado. No existe estado de inscripción `PENDING`, `REJECTED` o `FINISHED`.
 
 El cierre del periodo deja cada inscripción con su último estado registrado. Ni la finalización de una oferta ni el cierre del periodo acreditan que se aprobó el curso.
 

@@ -11,7 +11,7 @@ La base de datos es físicamente compartida por el monolito modular. Compartir a
 | **Módulo propietario** | Define el significado, las modificaciones válidas y los contratos para acceder a sus datos. | No cede sus reglas a un repositorio compartido genérico. |
 | **Puerto de persistencia** | Expresa las operaciones de almacenamiento que necesita un caso de uso, con tipos funcionales. | No expone el cliente Prisma, consultas SQL ni transacciones físicas como API de negocio. |
 | **Adaptador de repositorio** | Traduce entidades, condiciones de consulta y cambios válidos a persistencia relacional. | No decide estados académicos ni permisos de actuación. |
-| **Unidad de trabajo** | Aporta un contexto transaccional común para los participantes de una operación indivisible. | Ningún participante confirma anticipadamente su propia fracción. |
+| **Contexto transaccional compartido** | Permite que los participantes de una operación indivisible trabajen dentro de una misma frontera de confirmación. | Ningún participante confirma anticipadamente su propia fracción; no exige un patrón o clase concreta. |
 | **Consulta controlada** | Recupera o consolida datos confirmados conforme a un contrato de lectura autorizado. | La consolidación no habilita escrituras sobre propietarios ajenos. |
 | **Infraestructura compartida** | Gestiona conexiones, ejecución transaccional, adaptadores y recursos técnicos comunes. | No se convierte en módulo funcional ni introduce dependencias desde el dominio. |
 
@@ -19,17 +19,18 @@ Un módulo no accede al repositorio privado de otro para modificar su informaci�
 
 ```mermaid
 flowchart TB
-    ENTRY[Casos de uso de módulos] --> PORT[Puertos y unidad de trabajo]
+    ENTRY[Casos de uso de módulos] --> PORT[Puertos de persistencia]
     PORT --> ADAPTER[Adaptadores de persistencia]
     ADAPTER --> ORM[Prisma]
     ORM --> DB[(PostgreSQL)]
     READ[Consultas autorizadas] --> QUERY[Adaptadores de lectura]
     QUERY --> DB
-    TX[Contexto transaccional] -.->|participación común| ADAPTER
+    ENTRY -.->|delimita operación| TX[Contexto transaccional compartido]
+    TX -.->|participación común| ADAPTER
     TX -.->|participación común| QUERY
 ```
 
-La figura distingue dependencias conceptuales; el contexto transaccional es una capacidad técnica inyectada, no una dependencia del dominio respecto del ORM.
+La figura distingue dependencias conceptuales; la frontera transaccional compartida es una capacidad técnica disponible para los casos de uso, no una dependencia del dominio respecto del ORM ni la exigencia de un patrón con nombre propio.
 
 ## 2. Representación y conservación
 

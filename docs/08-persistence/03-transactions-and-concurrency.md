@@ -1,20 +1,20 @@
 # Transacciones y control de concurrencia
 
-Cada comando define sus **efectos obligatorios indivisibles**. La infraestructura de persistencia ejecuta las escrituras y comprobaciones vinculadas bajo una unidad transaccional común, incluso cuando intervienen módulos diferentes. Una consulta preliminar no constituye una reserva ni habilita a confirmar más tarde una decisión basada en datos obsoletos.
+Cada comando define sus **efectos obligatorios indivisibles**. La infraestructura ejecuta las escrituras y comprobaciones relacionadas dentro de una misma frontera transaccional, incluso cuando intervienen capacidades distintas. Una consulta preliminar no constituye una reserva ni habilita a confirmar más tarde una decisión basada en datos obsoletos.
 
-PostgreSQL confirma o revierte la unidad completa. Prisma proporciona el contexto transaccional; los casos de uso participan a través de contratos que no exponen al dominio detalles del cliente ORM.
+PostgreSQL confirma o revierte la operación completa. El caso de uso delimita los efectos atómicos y los componentes de persistencia comparten el mismo contexto de transacción, sin imponer una clase, interfaz o patrón de coordinación específico.
 
 ## 1. Propiedad y participación en la transacción
 
 - El **caso de uso coordinador** define qué hechos deben confirmarse juntos y qué propietarios funcionales participan.
-- La **unidad de trabajo** suministra un contexto compartido a los adaptadores involucrados. Los colaboradores no abren confirmaciones independientes para un fragmento de la misma operación.
+- La **frontera transaccional compartida** permite que todos los participantes utilicen la misma transacción. Ningún colaborador confirma por separado un fragmento de los efectos indivisibles.
 - Las **reglas y autorizaciones** se comprueban sobre el estado que puede confirmarse de manera segura. Si una referencia o condición cambia durante la operación, esta se revalida o provoca el rechazo de la transacción.
-- El **historial y la auditoría obligatorios** forman parte de la confirmación del cambio que registran. Ninguna escritura de evidencia se difiere para completar retroactivamente una respuesta exitosa.
+- El **historial, la auditoría y la intención durable de publicación** forman parte de la misma confirmación cuando son efectos obligatorios del comando. La publicación externa se realiza después del commit; ninguna evidencia requerida se agrega retroactivamente a una operación presentada como exitosa.
 - Una **respuesta de éxito** solo se produce después del commit efectivo. Un rollback no deja un movimiento falso, una inscripción parcial ni una plaza consumida.
 
 ```mermaid
 flowchart TB
-    REQ[Comando autorizado] --> TX[Unidad de trabajo]
+    REQ[Comando autorizado] --> TX[Frontera transaccional]
     TX --> CHECK[Verificaciones definitivas]
     CHECK --> WRITE[Escrituras funcionales]
     WRITE --> HIST[Evidencia e historial requeridos]
@@ -32,9 +32,9 @@ Las operaciones que pueden alterar **cupos, unicidad de inscripciones, anteceden
 
 `SERIALIZABLE` hace que las transacciones confirmadas respeten un orden equivalente a una ejecución serial. Cuando dos escrituras no pueden confirmar sus decisiones simultáneamente, PostgreSQL aborta una de ellas; el sistema **no acepta ambas suponiendo que una lectura anterior sigue siendo válida**.
 
-Los conflictos de serialización se reintentan mediante la **repetición de la unidad transaccional completa**, con relectura de recursos, autorización y condiciones, sin reutilizar resultados de una ejecución revertida. El número de intentos es limitado: un conflicto persistente no produce bucles infinitos ni se presenta como éxito. Si al reintentar se confirma que la regla funcional ya no se cumple, se comunica el rechazo correspondiente; una indisponibilidad técnica no se disfraza de infracción académica.
+Los conflictos recuperables de serialización se reintentan mediante la **repetición de la transacción completa**, con relectura de recursos, autorización y condiciones, sin reutilizar resultados de una ejecución revertida. Los intentos son acotados y no producen efectos externos irreversibles dentro de la operación reintentable; cuando corresponde una entrega durable, se registra su intención transaccional. Si al reintentar la regla funcional deja de cumplirse, se comunica el rechazo correspondiente. Un conflicto persistente o una indisponibilidad técnica no se presenta como éxito ni se disfraza de infracción académica.
 
-Las restricciones únicas de PostgreSQL actúan además como última barrera para identidades que pueden expresarse estructuralmente. El aislamiento y las restricciones son **complementarios**: el primero protege decisiones de conjunto y las segundas impiden colisiones representables por claves.
+Las consultas ordinarias y las escrituras que no protegen invariantes concurrentes no requieren aislamiento `SERIALIZABLE` por defecto. Las restricciones únicas de PostgreSQL actúan además como última barrera para identidades que pueden expresarse estructuralmente. El aislamiento y las restricciones son **complementarios**: el primero protege decisiones de conjunto y las segundas impiden colisiones representables por claves.
 
 ## 3. Confirmación de operaciones académicas
 
@@ -69,6 +69,6 @@ Las consultas informativas recuperan únicamente datos confirmados. Un informe q
 
 ## 6. Fallos y traducción del resultado
 
-Se distingue entre **conflicto funcional confirmado**, **colisión por clave o condición persistente**, **conflicto transitorio de serialización** y **error técnico de almacenamiento**. Un reintento puede transformar un conflicto transitorio en éxito o revelar que otra operación válida agotó un cupo. Solo en este último caso corresponde comunicar una regla académica incumplida.
+Se distingue entre **conflicto funcional confirmado**, **colisión por restricción persistente**, **conflicto transitorio de serialización** y **error técnico de almacenamiento**. Un reintento puede transformar un conflicto transitorio en éxito o revelar que otra operación válida agotó un cupo. Solo en este último caso corresponde comunicar una regla académica incumplida.
 
-Los errores del ORM y los identificadores internos de tablas permanecen en infraestructura. La aplicación recibe categorías de fallo interpretables y no comunica una operación confirmada antes de obtener evidencia de su commit.
+La infraestructura clasifica técnicamente los errores conocidos; la aplicación los interpreta según la operación y la restricción involucrada, sin imponer una correspondencia HTTP universal por código de error. Los detalles del motor de persistencia permanecen internos. No se comunica una operación como confirmada antes del commit efectivo.

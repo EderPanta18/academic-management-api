@@ -4,7 +4,7 @@ La configuración declara las condiciones técnicas bajo las cuales opera cada p
 
 ## 1. Contrato de configuración
 
-Cada proceso recibe un conjunto explícito y validado de parámetros. Las configuraciones requeridas deben tener significado inequívoco; una ausencia, valor mal formado o combinación incompatible **impide iniciar** la responsabilidad afectada en lugar de activar un comportamiento inseguro por defecto.
+Cada proceso recibe un conjunto explícito y validado de parámetros. Las configuraciones **obligatorias** deben estar presentes y ser válidas; las opcionales pueden utilizar valores predeterminados explícitos que no reduzcan las garantías del sistema. Los valores inválidos y las combinaciones incompatibles **impiden iniciar** la responsabilidad afectada; nunca se transforman silenciosamente en un valor aparentemente válido. Esto comprende los parámetros booleanos: sus valores verdaderos y falsos se reconocen de manera inequívoca y se distinguen de la ausencia o de una entrada mal formada.
 
 | Grupo | Propósito | Reglas operativas |
 | --- | --- | --- |
@@ -12,10 +12,13 @@ Cada proceso recibe un conjunto explícito y validado de parámetros. Las config
 | Persistencia | Conectividad de PostgreSQL y parámetros técnicos de acceso. | Las credenciales se mantienen fuera del código; el acceso de procesos no autoriza migraciones o lecturas administrativas indiscriminadas. |
 | Mensajería y despacho | Conectividad de PgBoss, recepción y despacho recuperable. | Una falla de cola no transforma una operación admitida en no admitida ni autoriza perder su intención persistente. |
 | Identidad y sesiones | Material de firma, vigencia de credenciales y validación de tokens. | Los secretos permanecen en servidor; su ausencia impide habilitar autenticación. Las duraciones aprobadas no dependen de valores arbitrarios del cliente. |
-| Transporte y origen | Orígenes autorizados, HTTPS, cookies y política CORS. | No se habilitan orígenes comodín con credenciales ni se relaja `Secure` en producción. |
+| Transporte y origen | Orígenes autorizados, HTTPS, cookies y política CORS. | Las credenciales requieren orígenes autorizados explícitamente: los comodines o la aceptación indiscriminada de orígenes son configuraciones inválidas que impiden el arranque. No se relaja `Secure` en producción. |
 | Diagnóstico | Nivel de emisión y destino de registros operativos. | El nivel de logging no desactiva auditoría persistente ni permite registrar secretos. |
+| Referencia temporal | Zona horaria institucional y reloj de referencia para decisiones basadas en fechas. | Las fechas académicas se interpretan en `America/Lima`; los instantes de ejecución y auditoría se almacenan en UTC. Ningún proceso deriva días institucionales de la zona horaria local del host. |
 
-Los días académicos y los límites de sus ventanas se interpretan en **America/Lima**; los instantes persistidos de actuación, sesión, procesamiento y auditoría se conservan en **UTC**. La zona horaria del proceso o de PostgreSQL no altera esta interpretación.
+La configuración efectiva incorpora las variables proporcionadas por el entorno de ejecución y, cuando corresponde, las definidas en archivos locales. Las variables explícitas del proceso tienen precedencia sobre las de los archivos. La configuración resultante se valida antes de habilitar cada proceso y se consume de forma coherente, sin lecturas alternativas que eludan la validación.
+
+La zona horaria institucional es una decisión compartida entre API, workers y consultas; se aplica de manera uniforme al interpretar el inicio y cierre de días calendario, independientemente del huso horario del servidor o de PostgreSQL. La sincronización del reloj es una condición operativa para aplicar ventanas y caducidades.
 
 Los identificadores físicos exactos de variables se definen en la configuración ejecutable y su validación; no se mantiene un segundo listado normativo que pueda divergir. Cada configuración tiene propietario técnico, tipo esperado y tratamiento definido al faltar.
 

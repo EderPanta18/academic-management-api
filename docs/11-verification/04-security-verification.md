@@ -23,12 +23,12 @@ Estas pruebas contrastan el estado persistido de sesión y el resultado de llama
 La matriz de autorización se ejerce con los roles institucionales `ADMIN`, `SECRETARY`, `ACADEMIC_COORDINATOR` y `REPORT_VIEWER`, además de combinaciones válidas de múltiples roles y roles personalizados.
 
 - **Operaciones académicas:** secretaría y administración ejecutan los movimientos que les corresponden; coordinación académica consulta inscripciones, pero no las modifica; el lector de reportes no adquiere acceso nominal por poder consultar indicadores.
-- **Administración sensible:** las correcciones extraordinarias, la gestión de cuentas y autorizaciones, y la consulta transversal de auditoría permanecen reservadas a la función administrativa. Un rol personalizado no elude esas reservas.
+- **Administración sensible:** las correcciones extraordinarias, la gestión de cuentas y autorizaciones, y la consulta transversal de auditoría exigen simultáneamente rol protegido `ADMIN` y permiso específico. Un rol personalizado con permisos ordinarios acumulados no elude esas reservas; se rechaza asignarle permisos institucionalmente reservados.
 - **Autoelevación:** ninguna cuenta altera sus propias asignaciones, ni directamente ni por modificaciones masivas o indirectas.
 - **Combinación de roles:** los permisos efectivos representan la unión autorizada de capacidades asignadas, sin conferir operaciones ajenas al catálogo o a sus restricciones institucionales.
 - **Revocación dinámica:** retirar un rol o permiso impide el siguiente uso de esa capacidad sin exigir que el usuario cierre sesión; una cuenta deshabilitada queda bloqueada aunque posea varios roles.
 - **Importaciones y reportes:** `reports.read` permite exclusivamente agregados autorizados; los archivos, estados individuales y observaciones por fila requieren `students.imports.read`.
-- **Ejecución diferida:** el trabajo conserva el contexto de admisión y no adquiere una identidad administrativa ficticia por ejecutarse en un worker.
+- **Ejecución diferida:** el trabajo conserva el actor, alcance e intención autorizada de su admisión. La revocación posterior de cuenta, sesión o rol impide nuevas admisiones, pero no invalida un trabajo durable ya aceptado; el worker no usa una sesión revocada ni amplía el encargo. Las condiciones académicas se validan al confirmar cada efecto.
 
 Las pruebas incluyen un usuario autenticado sin permiso, un usuario con permiso pero recurso incompatible, una referencia ajena a su visibilidad y un actor autorizado con condiciones funcionales inválidas. Se distinguen correctamente **rechazo de autorización** y **rechazo de regla de negocio**.
 
@@ -36,12 +36,12 @@ Las pruebas incluyen un usuario autenticado sin permiso, un usuario con permiso 
 
 - Las cookies de acceso y renovación incorporan `HttpOnly`, `SameSite=Lax`, `Secure` en producción y las rutas admitidas: acceso en `/`, renovación en `/api/v1/auth`, sin atributo `Domain` expansivo.
 - Las respuestas de autenticación no entregan tokens en `data`, parámetros de URL o mensajes de error.
-- Las solicitudes que modifican estado y usan cookies verifican estrictamente `Origin`: un origen ausente, `null` o no autorizado se rechaza, también durante login, refresh, logout y admisión de archivos.
+- Las solicitudes que modifican estado y usan cookies verifican su procedencia, también durante login, refresh, logout y admisión de archivos. Un `Origin` nulo o no autorizado se rechaza. La ausencia de `Origin` también se rechaza, salvo cuando otro mecanismo expresamente autorizado verifica de forma segura la procedencia; nunca constituye autorización implícita.
 - CORS admite credenciales solo desde orígenes expresamente configurados; ninguna respuesta autoriza credenciales a un comodín de orígenes.
 - Entradas inesperadas, nombres de campos no admitidos, archivos inválidos y filtros manipulados no permiten eludir la validación o alcanzar capacidades no autorizadas.
 - Los registros operativos y errores no revelan contraseñas, JWT, refresh tokens, bytes de archivos, hashes de contraseña o detalles de otras cuentas.
 
-Las comprobaciones de CSRF y cookies utilizan solicitudes con combinaciones controladas de origen, credenciales y método, no solo inspección estática de la configuración.
+Las comprobaciones de CSRF y cookies utilizan solicitudes con combinaciones controladas de origen, credenciales y método, no solo inspección estática de la configuración. Verifican que una solicitud rechazada por procedencia no confirme cambios funcionales; si se admite una alternativa a `Origin`, comprueban tanto su aplicación válida como el rechazo cuando dicha verificación falta o falla.
 
 ## 4. Auditoría y evidencia sensible
 

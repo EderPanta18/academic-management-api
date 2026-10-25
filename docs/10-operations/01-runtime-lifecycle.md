@@ -35,7 +35,9 @@ El arranque establece configuración válida, conexión a recursos, composición
 4. **Admisión:** habilitar solicitudes o recepción de trabajos solo después de completar las comprobaciones correspondientes.
 5. **Diagnóstico:** comunicar fallas de inicialización como errores accionables; no simular disponibilidad cuando falta una dependencia esencial.
 
-La capacidad de responder a una comprobación de vida no implica que el proceso pueda atender nuevas operaciones. La **disponibilidad para recibir trabajo** se considera por responsabilidad: la API requiere sus dependencias de consultas y transacciones; un consumidor requiere además el mecanismo de entrega que utiliza.
+Las comprobaciones de **vida** y **preparación** tienen propósitos distintos. La primera determina si el proceso sigue operativo y evita interpretar una caída temporal de dependencias externas como una falla que requiera reiniciarlo. La segunda determina si puede atender las responsabilidades esenciales que tiene asignadas; si no puede hacerlo, deja de declararse preparado para recibir trabajo.
+
+La preparación se verifica **por responsabilidad**, con comprobaciones ligeras, acotadas en tiempo y sin efectos de negocio. La atención interactiva requiere las capacidades de persistencia indispensables para sus operaciones; una indisponibilidad de la mensajería no la declara automáticamente no preparada cuando puede seguir admitiendo operaciones y conservando sus intenciones durables. El consumo de trabajo diferido requiere además el mecanismo de entrega de encargos; el despacho recuperable comprueba las dependencias necesarias para publicar pendientes. No se exige a todos los procesos comprobar las mismas dependencias ni ejecutar trabajos artificiales como prueba de disponibilidad.
 
 ## 3. Apagado controlado y reinicio
 

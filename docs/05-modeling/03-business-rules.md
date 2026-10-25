@@ -30,13 +30,13 @@ Los identificadores `RN` distinguen reglas estables. No representan nombres de f
 
 **RN-011 — Fechas válidas del periodo.** Cada periodo tiene fechas ordenadas de inicio y término académico y una ventana de admisión obligatoria, también ordenada, cuyo final no excede el término académico. Este límite restringe **nuevas admisiones**, no la conservación histórica de inscripciones existentes.
 
-**RN-012 — Periodo habilitado para inscribir.** Se admiten inscripciones ordinarias únicamente cuando el periodo está `OPEN` o `IN_PROGRESS` y la fecha actual pertenece, inclusive, a su ventana de inscripción. Los estados `PLANNED`, `CLOSED` y `CANCELLED` no habilitan inscribir.
+**RN-012 — Periodo habilitado para inscribir.** Se admiten inscripciones ordinarias únicamente cuando la fecha institucional actual pertenece, inclusive, a la ventana de inscripción y es coherente con el estado del periodo: `OPEN` habilita antes de la fecha de inicio académico e `IN_PROGRESS` habilita desde esa fecha. Si se alcanza el inicio académico y el periodo permanece en `OPEN`, se rechazan nuevas inscripciones hasta que una transición explícita y autorizada lo sitúe en `IN_PROGRESS`; el paso del tiempo no modifica el estado automáticamente. Los estados `PLANNED`, `CLOSED` y `CANCELLED` no habilitan inscribir.
 
 **RN-013 — Oferta identificable.** Una oferta pertenece a un solo curso y periodo; su sección identifica una única oferta de ese curso en ese periodo. Su capacidad máxima es positiva.
 
 **RN-014 — Docente antes de apertura.** Una oferta `OPEN` debe tener un docente asignado en condición académica habilitada. Una oferta en preparación puede no tenerlo; una oferta cerrada conserva la referencia histórica al docente que corresponda.
 
-**RN-015 — Oferta habilitada para inscribir.** La inscripción ordinaria requiere que la oferta esté `OPEN`. Una oferta con capacidad completa puede continuar en estado `OPEN`, pero no admite nuevas plazas mientras su ocupación alcance el máximo.
+**RN-015 — Oferta habilitada para inscribir.** La inscripción ordinaria requiere que la oferta esté `OPEN`. Una oferta con capacidad completa puede continuar en estado `OPEN`, pero no admite nuevas plazas mientras su ocupación alcance el máximo. La reapertura de una oferta `CLOSED` también exige que el estado del periodo y la fecha institucional sean coherentes para operar dentro de la ventana de inscripción; no se admite la reapertura con un periodo `OPEN` cuyo inicio académico ya se alcanzó.
 
 **RN-016 — No reducir cupos ocupados.** La capacidad máxima no puede establecerse por debajo del número de inscripciones `ENROLLED` de la oferta.
 
@@ -72,7 +72,7 @@ Los identificadores `RN` distinguen reglas estables. No representan nombres de f
 
 **RN-030 — Liberación de ocupación.** Cancelar o retirar elimina a la inscripción del conteo de plazas ocupadas. Una plaza liberada solo puede ser utilizada para una nueva inscripción si el periodo, la oferta y la ventana vigente siguen habilitándola.
 
-**RN-031 — Traslado conservando identidad.** Un cambio de sección requiere inscripción `ENROLLED`, motivo, ventana abierta, periodo habilitado y ofertas de origen y destino `OPEN`. El destino debe ser **otra oferta del mismo curso y periodo**, con capacidad disponible. La inscripción mantiene su identidad y su estado.
+**RN-031 — Traslado conservando identidad.** Un cambio de sección requiere inscripción `ENROLLED`, motivo, ventana abierta, periodo cuyo estado sea coherente con la fecha institucional conforme a la habilitación ordinaria y ofertas de origen y destino `OPEN`. El destino debe ser **otra oferta del mismo curso y periodo**, con capacidad disponible. La inscripción mantiene su identidad y su estado. Si la fecha de inicio académico ya llegó y el periodo sigue `OPEN`, se rechaza el traslado hasta que se confirme la transición autorizada a `IN_PROGRESS`.
 
 **RN-032 — Traslado indivisible.** La actualización de la oferta actual, la ocupación de origen y destino y el movimiento histórico deben confirmarse como una unidad. Si alguna parte falla, la inscripción conserva íntegramente su sección anterior.
 

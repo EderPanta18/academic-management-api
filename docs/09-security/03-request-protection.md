@@ -21,9 +21,9 @@ Las credenciales no aparecen en parámetros de URL, cuerpos JSON de respuesta, m
 
 ## 2. Procedencia y protección frente a CSRF
 
-Toda solicitud HTTP **que modifique estado** y utilice credenciales basadas en cookies se somete a una validación estricta de la cabecera **`Origin`** contra el conjunto explícito de orígenes admitidos. Esto comprende autenticación que emite cookies, renovación, cierre de sesión, modificaciones académicas, administración de cuentas y recepción de importaciones.
+Toda solicitud HTTP **que modifique estado** y utilice credenciales basadas en cookies se somete a una verificación estricta de procedencia. Se contrasta **`Origin`** con el conjunto explícito de orígenes admitidos; cuando esté ausente, la solicitud solo se acepta si un mecanismo alternativo definido en la política permite verificar su procedencia. Esto comprende autenticación que emite cookies, renovación, cierre de sesión, modificaciones académicas, administración de cuentas y recepción de importaciones.
 
-- Un `Origin` ausente, `null` o ajeno al conjunto admitido provoca rechazo de la operación protegida por esta política; no se interpreta como autorización implícita.
+- Un `Origin` nulo o ajeno al conjunto admitido provoca rechazo. Su ausencia nunca implica autorización: si no puede verificarse la procedencia por una alternativa expresamente admitida, también se rechaza.
 - La comparación verifica esquema, host y puerto del origen permitido, no coincidencias parciales de dominio, sufijos de texto o comodines.
 - Una operación rechazada por procedencia **no produce el cambio funcional solicitado**. Los métodos de consulta no se transforman en comandos por conveniencia.
 - La validación del origen no sustituye la identidad, la sesión vigente, el permiso efectivo ni las reglas funcionales.
@@ -34,7 +34,7 @@ La protección comprende también rutas de autenticación porque fijar o renovar
 
 Las respuestas CORS con credenciales se habilitan exclusivamente para orígenes configurados de forma explícita. Cuando se autoriza un origen, el servidor declara su valor concreto; **no utiliza `*` junto con credenciales**. Los métodos, cabeceras y respuestas de preflight se limitan al contrato admitido.
 
-**CORS controla el acceso de navegadores a respuestas entre orígenes; no es un mecanismo de autorización de usuarios.** Por tanto, una petición que no esté sujeta a CORS sigue necesitando todas las verificaciones de identidad, permisos y procedencia aplicables. La lista de orígenes es una configuración de seguridad, no una ampliación dinámica derivada de una cabecera recibida.
+**CORS controla el acceso de navegadores a respuestas entre orígenes; no es un mecanismo de autorización de usuarios.** Por tanto, una petición que no esté sujeta a CORS sigue necesitando todas las verificaciones de identidad, permisos y procedencia aplicables. La lista de orígenes es una configuración de seguridad, no una ampliación dinámica derivada de una cabecera recibida. Las configuraciones que combinan credenciales con orígenes comodín o aceptación indiscriminada de orígenes se rechazan durante el arranque.
 
 ## 4. Validación y tratamiento de entradas
 
