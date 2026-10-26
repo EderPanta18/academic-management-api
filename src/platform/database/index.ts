@@ -1,3 +1,2 @@
-// platform/database/index.ts
-
-export { PrismaModule, PrismaService } from './prisma';
+export { DatabaseModule } from './database.module';
+export { PrismaService } from './prisma.service';
