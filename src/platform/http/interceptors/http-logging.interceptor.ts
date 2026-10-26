@@ -1,4 +1,4 @@
-// platform/http/interceptors/http-logging.interceptor.ts
+// src/platform/http/interceptors/http-logging.interceptor.ts
 
 import {
   type CallHandler,
@@ -8,8 +8,7 @@ import {
   type NestInterceptor,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { type Observable, tap } from 'rxjs';
 
 @Injectable()
 export class HttpLoggingInterceptor implements NestInterceptor {
@@ -17,27 +16,20 @@ export class HttpLoggingInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const http = context.switchToHttp();
+    const request = http.getRequest<Request>();
+    const response = http.getResponse<Response>();
 
-    const req = http.getRequest<Request>();
-    const res = http.getResponse<Response>();
+    const route = request.route?.path;
+    const path = typeof route === 'string' ? `${request.baseUrl}${route}` : '[ruta]';
 
-    const method = req.method;
-    const path = req.originalUrl || req.url;
     const startedAt = Date.now();
 
     return next.handle().pipe(
       tap({
         next: () => {
-          const duration = Date.now() - startedAt;
+          const durationMs = Date.now() - startedAt;
 
-          this.logger.log(`${method} ${path} → ${res.statusCode} [${duration}ms]`);
-        },
-        error: (err) => {
-          const duration = Date.now() - startedAt;
-
-          this.logger.error(
-            `${method} ${path} → ${res.statusCode || 500} [${duration}ms] - ${err.message}`,
-          );
+          this.logger.log(`${request.method} ${path} → ${response.statusCode} [${durationMs}ms]`);
         },
       }),
     );

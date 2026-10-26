@@ -1,4 +1,4 @@
-// platform/http/swagger/swagger-setup.ts
+// src/platform/http/swagger/swagger.setup.ts
 
 import type { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -9,6 +9,8 @@ export type SwaggerSetupOptions = {
   description: string;
   version: string;
   path: string;
+  accessCookieName: string;
+  refreshCookieName: string;
   tags?: readonly SwaggerTag[];
 };
 
@@ -16,14 +18,13 @@ export function setupSwagger(app: INestApplication, options: SwaggerSetupOptions
   const builder = new DocumentBuilder()
     .setTitle(options.title)
     .setDescription(options.description)
-    .setVersion(options.version);
+    .setVersion(options.version)
+    .addCookieAuth(options.accessCookieName, undefined, 'accessCookie')
+    .addCookieAuth(options.refreshCookieName, undefined, 'refreshCookie');
 
-  options.tags?.forEach((tag) => {
-    builder.addTag(tag.name, tag.description);
-  });
+  for (const tag of options.tags ?? []) builder.addTag(tag.name, tag.description);
 
-  const config = builder.build();
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, builder.build());
 
   SwaggerModule.setup(options.path, app, document);
 }

@@ -1,4 +1,4 @@
-// platform/http/index.ts
+// src/platform/http/index.ts
 
 export { HEALTH_SWAGGER_TAG } from './health';
 export { HttpModule } from './http.module';

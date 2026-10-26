@@ -1,3 +1,3 @@
-// platform/http/pipes/index.ts
+// src/platform/http/pipes/index.ts
 
 export { RequestValidationPipe } from './request-validation.pipe';

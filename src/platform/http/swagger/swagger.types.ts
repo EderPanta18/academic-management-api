@@ -1,4 +1,4 @@
-// platform/http/swagger/swagger.types.ts
+// src/platform/http/swagger/swagger.types.ts
 
 export type SwaggerTag = {
   name: string;

@@ -1,7 +1,7 @@
-// platform/http/http-setup.ts
+// src/platform/http/http.setup.ts
 
 import type { INestApplication } from '@nestjs/common';
-import { AppConfigService } from '../config';
+import { ConfigService } from '@platform/config';
 import { type SwaggerTag, setupSwagger } from './swagger';
 
 export type HttpSetupOptions = {
@@ -10,25 +10,26 @@ export type HttpSetupOptions = {
 
 export function setupHttp(
   app: INestApplication,
-  config: AppConfigService,
+  config: ConfigService,
   options: HttpSetupOptions = {},
 ): void {
-  const { app: appConfig, cors: corsConfig, openapi: openapiConfig } = config;
-
   app.enableCors({
-    origin: corsConfig.origins,
-    credentials: corsConfig.credentials,
+    origin: config.cors.origins,
+    credentials: config.cors.credentials,
+    methods: ['GET', 'HEAD', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   });
 
-  app.setGlobalPrefix(appConfig.apiPrefix);
+  app.setGlobalPrefix(config.apiPrefix);
 
-  if (!openapiConfig.enabled) return;
+  if (!config.openapi.enabled) return;
 
   setupSwagger(app, {
-    title: appConfig.name,
-    description: appConfig.description,
-    version: appConfig.version,
-    path: openapiConfig.path,
+    title: config.app.name,
+    description: config.app.description,
+    version: config.app.version,
+    path: config.openapi.path,
+    accessCookieName: config.jwt.access.name,
+    refreshCookieName: config.jwt.refresh.name,
     tags: options.swaggerTags,
   });
 }
