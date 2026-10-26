@@ -1,28 +1,55 @@
-// src/platform/config/env.validation.ts
+// src/platform/config/env/env.validation.ts
 
-import { plainToInstance, Transform, Type } from 'class-transformer';
+import { Buffer } from 'node:buffer';
+import { URL } from 'node:url';
+import { plainToInstance, Transform } from 'class-transformer';
 import {
   IsBoolean,
+  IsEmail,
   IsIn,
   IsInt,
   IsNotEmpty,
   IsString,
+  Matches,
   Max,
   Min,
-  ValidationError,
+  type ValidationError,
   validateSync,
 } from 'class-validator';
-import { EnvironmentVariables, LogLevel, NodeEnvironment } from './env.types';
+import type { EnvironmentVariables, LogLevel, NodeEnvironment } from './env.types';
 
-export const NODE_ENV_VALUES = ['development', 'test', 'production'] as const;
+const NODE_ENV_VALUES = ['development', 'test', 'production'] as const;
+const LOG_LEVEL_VALUES = ['debug', 'info', 'warn', 'error'] as const;
 
-export const LOG_LEVEL_VALUES = ['debug', 'info', 'warn', 'error'] as const;
+const ROUTE_PATTERN = /^\/[a-zA-Z0-9_-]+(?:\/[a-zA-Z0-9_-]+)*$/;
+const SCHEMA_PATTERN = /^[a-z_][a-z0-9_]*$/;
+const COOKIE_NAME_PATTERN = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
+const JWT_DURATION_PATTERN = /^([1-9][0-9]*)(s|m|h|d)$/;
+const INTEGER_PATTERN = /^(0|[1-9][0-9]*)$/;
 
-class EnvironmentVariablesClass {
+function parseBoolean(value: unknown): unknown {
+  if (value === true || value === 'true') return true;
+
+  if (value === false || value === 'false') return false;
+
+  return value;
+}
+
+function parseInteger(value: unknown): unknown {
+  if (typeof value !== 'string') return value;
+
+  if (!INTEGER_PATTERN.test(value)) return value;
+
+  const parsed = Number(value);
+
+  return Number.isSafeInteger(parsed) ? parsed : value;
+}
+
+class EnvironmentVariablesClass implements EnvironmentVariables {
   @IsIn(NODE_ENV_VALUES)
   NODE_ENV!: NodeEnvironment;
 
-  @Type(() => Number)
+  @Transform(({ value }) => parseInteger(value))
   @IsInt()
   @Min(1)
   @Max(65535)
@@ -41,7 +68,7 @@ class EnvironmentVariablesClass {
   APP_VERSION!: string;
 
   @IsString()
-  @IsNotEmpty()
+  @Matches(ROUTE_PATTERN)
   API_PREFIX!: string;
 
   @IsIn(LOG_LEVEL_VALUES)
@@ -55,55 +82,62 @@ class EnvironmentVariablesClass {
   @IsNotEmpty()
   DIRECT_DATABASE_URL!: string;
 
-  @Transform(({ value }) => value === true || value === 'true')
+  @Transform(({ value }) => parseBoolean(value))
   @IsBoolean()
   DATABASE_LOG_QUERIES!: boolean;
 
   @IsString()
-  @IsNotEmpty()
+  @Matches(SCHEMA_PATTERN)
   QUEUE_SCHEMA!: string;
 
-  @Type(() => Number)
+  @Transform(({ value }) => parseInteger(value))
   @IsInt()
   @Min(0)
+  @Max(Number.MAX_SAFE_INTEGER)
   QUEUE_RETRY_LIMIT!: number;
 
-  @Type(() => Number)
+  @Transform(({ value }) => parseInteger(value))
   @IsInt()
   @Min(0)
+  @Max(Number.MAX_SAFE_INTEGER)
   QUEUE_RETRY_DELAY_MS!: number;
 
-  @Transform(({ value }) => value === true || value === 'true')
+  @Transform(({ value }) => parseBoolean(value))
   @IsBoolean()
   QUEUE_RETRY_BACKOFF!: boolean;
 
-  @Type(() => Number)
+  @Transform(({ value }) => parseInteger(value))
   @IsInt()
   @Min(1)
+  @Max(Number.MAX_SAFE_INTEGER)
   QUEUE_EXPIRE_IN_MINUTES!: number;
 
-  @Type(() => Number)
+  @Transform(({ value }) => parseInteger(value))
   @IsInt()
   @Min(0)
+  @Max(Number.MAX_SAFE_INTEGER)
   QUEUE_ARCHIVE_COMPLETED_AFTER_DAYS!: number;
 
-  @Type(() => Number)
+  @Transform(({ value }) => parseInteger(value))
   @IsInt()
   @Min(0)
+  @Max(Number.MAX_SAFE_INTEGER)
   QUEUE_ARCHIVE_FAILED_AFTER_DAYS!: number;
 
-  @Type(() => Number)
+  @Transform(({ value }) => parseInteger(value))
   @IsInt()
   @Min(1)
+  @Max(Number.MAX_SAFE_INTEGER)
   QUEUE_JOB_CONCURRENCY!: number;
 
-  @Type(() => Number)
+  @Transform(({ value }) => parseInteger(value))
   @IsInt()
   @Min(1)
+  @Max(Number.MAX_SAFE_INTEGER)
   QUEUE_EVENT_CONCURRENCY!: number;
 
   @IsString()
-  @IsNotEmpty()
+  @Matches(COOKIE_NAME_PATTERN)
   JWT_ACCESS_NAME!: string;
 
   @IsString()
@@ -115,7 +149,7 @@ class EnvironmentVariablesClass {
   JWT_ACCESS_EXPIRES_IN!: string;
 
   @IsString()
-  @IsNotEmpty()
+  @Matches(COOKIE_NAME_PATTERN)
   JWT_REFRESH_NAME!: string;
 
   @IsString()
@@ -126,11 +160,11 @@ class EnvironmentVariablesClass {
   @IsNotEmpty()
   JWT_REFRESH_EXPIRES_IN!: string;
 
-  @Transform(({ value }) => value === true || value === 'true')
+  @Transform(({ value }) => parseBoolean(value))
   @IsBoolean()
   AUTH_SINGLE_SESSION!: boolean;
 
-  @Transform(({ value }) => value === true || value === 'true')
+  @Transform(({ value }) => parseBoolean(value))
   @IsBoolean()
   AUTH_REFRESH_TOKEN_ROTATION!: boolean;
 
@@ -138,20 +172,19 @@ class EnvironmentVariablesClass {
   @IsNotEmpty()
   CORS_ORIGINS!: string;
 
-  @Transform(({ value }) => value === true || value === 'true')
+  @Transform(({ value }) => parseBoolean(value))
   @IsBoolean()
   CORS_CREDENTIALS!: boolean;
 
-  @Transform(({ value }) => value === true || value === 'true')
+  @Transform(({ value }) => parseBoolean(value))
   @IsBoolean()
   OPENAPI_ENABLED!: boolean;
 
   @IsString()
-  @IsNotEmpty()
+  @Matches(ROUTE_PATTERN)
   OPENAPI_PATH!: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsEmail()
   ADMIN_EMAIL!: string;
 
   @IsString()
@@ -175,10 +208,159 @@ function formatValidationErrors(errors: ValidationError[]): string {
     .join('\n');
 }
 
+function isPostgresUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+
+    return (
+      (url.protocol === 'postgresql:' || url.protocol === 'postgres:') && url.hostname.length > 0
+    );
+  } catch {
+    return false;
+  }
+}
+
+function isValidJwtDuration(value: string): boolean {
+  const match = JWT_DURATION_PATTERN.exec(value);
+
+  if (!match) return false;
+
+  const amount = Number(match[1]);
+
+  if (!Number.isSafeInteger(amount)) return false;
+
+  const unit = match[2];
+
+  const multiplier =
+    unit === 's' ? 1_000 : unit === 'm' ? 60_000 : unit === 'h' ? 3_600_000 : 86_400_000;
+
+  const durationMs = amount * multiplier;
+
+  return Number.isSafeInteger(durationMs) && durationMs > 0;
+}
+
+function isValidOrigin(origin: string, production: boolean): boolean {
+  try {
+    const url = new URL(origin);
+
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return false;
+
+    if (production && url.protocol !== 'https:') return false;
+
+    return url.origin === origin && url.username === '' && url.password === '';
+  } catch {
+    return false;
+  }
+}
+
+function validateConfiguration(env: EnvironmentVariables): void {
+  const errors: string[] = [];
+  const production = env.NODE_ENV === 'production';
+
+  // Database
+
+  if (!isPostgresUrl(env.DATABASE_URL))
+    errors.push('DATABASE_URL debe ser una URL PostgreSQL válida.');
+
+  if (!isPostgresUrl(env.DIRECT_DATABASE_URL))
+    errors.push('DIRECT_DATABASE_URL debe ser una URL PostgreSQL válida.');
+
+  // Queue
+
+  if (Buffer.byteLength(env.QUEUE_SCHEMA, 'utf8') > 63)
+    errors.push('QUEUE_SCHEMA supera el límite de un identificador PostgreSQL.');
+
+  const queueDurations = [
+    {
+      name: 'QUEUE_EXPIRE_IN_MINUTES',
+      value: env.QUEUE_EXPIRE_IN_MINUTES,
+      multiplier: 60,
+    },
+    {
+      name: 'QUEUE_ARCHIVE_COMPLETED_AFTER_DAYS',
+      value: env.QUEUE_ARCHIVE_COMPLETED_AFTER_DAYS,
+      multiplier: 86_400,
+    },
+    {
+      name: 'QUEUE_ARCHIVE_FAILED_AFTER_DAYS',
+      value: env.QUEUE_ARCHIVE_FAILED_AFTER_DAYS,
+      multiplier: 86_400,
+    },
+  ];
+
+  for (const { name, value, multiplier } of queueDurations)
+    if (!Number.isSafeInteger(value * multiplier))
+      errors.push(`${name} excede el rango numérico seguro.`);
+
+  // JWT
+
+  if (env.JWT_ACCESS_NAME === env.JWT_REFRESH_NAME)
+    errors.push('Los nombres de las cookies JWT deben ser diferentes.');
+
+  if (env.JWT_ACCESS_SECRET === env.JWT_REFRESH_SECRET)
+    errors.push('Los secretos JWT de acceso y renovación deben ser diferentes.');
+
+  if (!isValidJwtDuration(env.JWT_ACCESS_EXPIRES_IN))
+    errors.push('JWT_ACCESS_EXPIRES_IN debe ser una duración válida (s, m, h, d).');
+
+  if (!isValidJwtDuration(env.JWT_REFRESH_EXPIRES_IN))
+    errors.push('JWT_REFRESH_EXPIRES_IN debe ser una duración válida (s, m, h, d).');
+
+  // CORS
+
+  const origins = env.CORS_ORIGINS.split(',').map((origin) => origin.trim());
+
+  if (
+    origins.some((origin) => !isValidOrigin(origin, production)) ||
+    origins.length !== new Set(origins).size
+  )
+    errors.push('CORS_ORIGINS debe contener orígenes válidos, explícitos y sin duplicados.');
+
+  if (env.CORS_CREDENTIALS && origins.every((origin) => origin === ''))
+    errors.push('CORS_CREDENTIALS requiere al menos un origen autorizado.');
+
+  // Security
+
+  if (production) {
+    const secrets = [
+      { name: 'JWT_ACCESS_SECRET', value: env.JWT_ACCESS_SECRET },
+      { name: 'JWT_REFRESH_SECRET', value: env.JWT_REFRESH_SECRET },
+    ];
+
+    for (const { name, value } of secrets)
+      if (value.startsWith('change-me-') || Buffer.byteLength(value, 'utf8') < 32)
+        errors.push(`${name} debe contener un secreto seguro en producción.`);
+
+    if (env.ADMIN_PASSWORD === 'change-me-admin-password')
+      errors.push('ADMIN_PASSWORD debe configurarse antes de producción.');
+  }
+
+  // Required non-blank values
+
+  const nonBlankValues = [
+    { name: 'APP_NAME', value: env.APP_NAME },
+    { name: 'APP_DESCRIPTION', value: env.APP_DESCRIPTION },
+    { name: 'APP_VERSION', value: env.APP_VERSION },
+    { name: 'JWT_ACCESS_SECRET', value: env.JWT_ACCESS_SECRET },
+    { name: 'JWT_REFRESH_SECRET', value: env.JWT_REFRESH_SECRET },
+    { name: 'ADMIN_PASSWORD', value: env.ADMIN_PASSWORD },
+    { name: 'ADMIN_FIRST_NAME', value: env.ADMIN_FIRST_NAME },
+    { name: 'ADMIN_LAST_NAME', value: env.ADMIN_LAST_NAME },
+  ];
+
+  for (const { name, value } of nonBlankValues)
+    if (value.trim().length === 0) errors.push(`${name} no puede contener únicamente espacios.`);
+
+  if (errors.length > 0)
+    throw new Error(
+      `Configuración de entorno incompatible:\n${errors.map((error) => `- ${error}`).join('\n')}`,
+    );
+}
+
 export function validateEnvironment(rawConfig: Record<string, unknown>): EnvironmentVariables {
   const validated = plainToInstance(EnvironmentVariablesClass, rawConfig, {
-    exposeDefaultValues: false,
     enableImplicitConversion: false,
+    exposeDefaultValues: false,
   });
 
   const errors = validateSync(validated, {
@@ -187,52 +369,9 @@ export function validateEnvironment(rawConfig: Record<string, unknown>): Environ
   });
 
   if (errors.length > 0)
-    throw new Error(`❌ Variables de entorno no válidas:\n${formatValidationErrors(errors)}`);
+    throw new Error(`Variables de entorno inválidas:\n${formatValidationErrors(errors)}`);
 
-  return {
-    NODE_ENV: validated.NODE_ENV,
+  validateConfiguration(validated);
 
-    APP_PORT: validated.APP_PORT,
-    APP_NAME: validated.APP_NAME,
-    APP_DESCRIPTION: validated.APP_DESCRIPTION,
-    APP_VERSION: validated.APP_VERSION,
-    API_PREFIX: validated.API_PREFIX,
-
-    LOG_LEVEL: validated.LOG_LEVEL,
-
-    DATABASE_URL: validated.DATABASE_URL,
-    DIRECT_DATABASE_URL: validated.DIRECT_DATABASE_URL,
-    DATABASE_LOG_QUERIES: validated.DATABASE_LOG_QUERIES,
-
-    QUEUE_SCHEMA: validated.QUEUE_SCHEMA,
-    QUEUE_RETRY_LIMIT: validated.QUEUE_RETRY_LIMIT,
-    QUEUE_RETRY_DELAY_MS: validated.QUEUE_RETRY_DELAY_MS,
-    QUEUE_RETRY_BACKOFF: validated.QUEUE_RETRY_BACKOFF,
-    QUEUE_EXPIRE_IN_MINUTES: validated.QUEUE_EXPIRE_IN_MINUTES,
-    QUEUE_ARCHIVE_COMPLETED_AFTER_DAYS: validated.QUEUE_ARCHIVE_COMPLETED_AFTER_DAYS,
-    QUEUE_ARCHIVE_FAILED_AFTER_DAYS: validated.QUEUE_ARCHIVE_FAILED_AFTER_DAYS,
-    QUEUE_JOB_CONCURRENCY: validated.QUEUE_JOB_CONCURRENCY,
-    QUEUE_EVENT_CONCURRENCY: validated.QUEUE_EVENT_CONCURRENCY,
-
-    JWT_ACCESS_NAME: validated.JWT_ACCESS_NAME,
-    JWT_ACCESS_SECRET: validated.JWT_ACCESS_SECRET,
-    JWT_ACCESS_EXPIRES_IN: validated.JWT_ACCESS_EXPIRES_IN,
-    JWT_REFRESH_NAME: validated.JWT_REFRESH_NAME,
-    JWT_REFRESH_SECRET: validated.JWT_REFRESH_SECRET,
-    JWT_REFRESH_EXPIRES_IN: validated.JWT_REFRESH_EXPIRES_IN,
-
-    AUTH_SINGLE_SESSION: validated.AUTH_SINGLE_SESSION,
-    AUTH_REFRESH_TOKEN_ROTATION: validated.AUTH_REFRESH_TOKEN_ROTATION,
-
-    CORS_ORIGINS: validated.CORS_ORIGINS,
-    CORS_CREDENTIALS: validated.CORS_CREDENTIALS,
-
-    OPENAPI_ENABLED: validated.OPENAPI_ENABLED,
-    OPENAPI_PATH: validated.OPENAPI_PATH,
-
-    ADMIN_EMAIL: validated.ADMIN_EMAIL,
-    ADMIN_PASSWORD: validated.ADMIN_PASSWORD,
-    ADMIN_FIRST_NAME: validated.ADMIN_FIRST_NAME,
-    ADMIN_LAST_NAME: validated.ADMIN_LAST_NAME,
-  };
+  return validated;
 }

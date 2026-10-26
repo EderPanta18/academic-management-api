@@ -8,7 +8,6 @@ import type { AppConfig } from './configuration';
 export class AppConfigService {
   constructor(private readonly configService: ConfigService<AppConfig, true>) {}
 
-  // Getters por sección
   get app() {
     return this.configService.get('app', { infer: true });
   }
@@ -45,7 +44,6 @@ export class AppConfigService {
     return this.configService.get('log', { infer: true });
   }
 
-  // Getters directos para propiedades anidadas
   get port() {
     return this.app.port;
   }

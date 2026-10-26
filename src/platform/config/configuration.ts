@@ -116,9 +116,7 @@ export function buildAppConfig(env: EnvironmentVariables): AppConfig {
       refreshTokenRotation: env.AUTH_REFRESH_TOKEN_ROTATION,
     },
     cors: {
-      origins: env.CORS_ORIGINS.split(',')
-        .map((s) => s.trim())
-        .filter(Boolean),
+      origins: env.CORS_ORIGINS.split(',').map((origin) => origin.trim()),
       credentials: env.CORS_CREDENTIALS,
     },
     openapi: {

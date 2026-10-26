@@ -1,4 +1,4 @@
-// src/platform/config/env.types.ts
+// src/platform/config/env/env.types.ts
 
 export type NodeEnvironment = 'development' | 'test' | 'production';
 

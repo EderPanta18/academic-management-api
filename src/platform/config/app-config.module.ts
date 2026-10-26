@@ -4,25 +4,7 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppConfigService } from './app-config.service';
 import { buildAppConfig } from './configuration';
-import { type EnvironmentVariables, validateEnvironment } from './env';
-
-let validatedEnv: EnvironmentVariables;
-
-function getValidatedEnv(): EnvironmentVariables {
-  if (!validatedEnv)
-    throw new Error(
-      'Environment variables were requested before validation. ' +
-        'Ensure AppConfigModule is imported and ConfigModule.forRoot ran first.',
-    );
-
-  return validatedEnv;
-}
-
-function validateAndStore(raw: Record<string, unknown>): EnvironmentVariables {
-  validatedEnv = validateEnvironment(raw);
-
-  return validatedEnv;
-}
+import { validateEnvironment } from './env';
 
 @Global()
 @Module({
@@ -30,10 +12,9 @@ function validateAndStore(raw: Record<string, unknown>): EnvironmentVariables {
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      expandVariables: true,
       skipProcessEnv: true,
-      validate: validateAndStore,
-      load: [() => buildAppConfig(getValidatedEnv())],
+      expandVariables: false,
+      load: [() => buildAppConfig(validateEnvironment(process.env))],
     }),
   ],
   providers: [AppConfigService],
