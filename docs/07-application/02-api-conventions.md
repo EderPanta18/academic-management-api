@@ -18,14 +18,14 @@ Una consulta de estado histórico no modifica ese estado. La deshabilitación de
 
 Las respuestas con cuerpo utilizan JSON y una envoltura común:
 
-| Campo | Propósito |
-| --- | --- |
-| `success` | Indica si la operación tuvo un resultado satisfactorio o fallido. |
-| `statusCode` | Estado HTTP efectivo de la respuesta. |
-| `timestamp` | Momento del resultado, expresado como fecha y hora inequívoca. |
-| `path` | Ruta HTTP atendida, sin secretos ni credenciales. |
-| `data` | Resultado de la operación satisfactoria: recurso, lista o resultado compuesto. |
-| `error` | Descripción estructurada del fallo, con código, mensaje y detalles permitidos. |
+| Campo        | Propósito                                                                      |
+| ------------ | ------------------------------------------------------------------------------ |
+| `success`    | Indica si la operación tuvo un resultado satisfactorio o fallido.              |
+| `statusCode` | Estado HTTP efectivo de la respuesta.                                          |
+| `timestamp`  | Momento del resultado, expresado como fecha y hora inequívoca.                 |
+| `path`       | Ruta HTTP atendida, sin secretos ni credenciales.                              |
+| `data`       | Resultado de la operación satisfactoria: recurso, lista o resultado compuesto. |
+| `error`      | Descripción estructurada del fallo, con código, mensaje y detalles permitidos. |
 
 Las respuestas satisfactorias incluyen `success: true` y `data`, sin un error ficticio. Las respuestas fallidas incluyen `success: false` y `error`, sin un resultado exitoso ficticio en `data`. Los errores de validación, autorización o negocio mantienen códigos y descripciones consistentes; los fallos inesperados no divulgan trazas, consultas internas ni información de otros usuarios.
 
@@ -35,18 +35,18 @@ La estructura de salida se aplica desde el adaptador HTTP: no impone que los cas
 
 ## 3. Estados HTTP y significado
 
-| Código | Uso contractual |
-| --- | --- |
-| `200 OK` | Lectura o modificación confirmada con resultado representado. |
-| `201 Created` | Recurso creado y confirmado. |
-| `202 Accepted` | Trabajo admitido de manera durable, cuya ejecución todavía no se declara finalizada. |
-| `204 No Content` | Respuesta sin cuerpo, únicamente cuando el contrato de la operación la admite. |
-| `400 Bad Request` | Estructura, parámetros o validación de entrada inválidos. |
-| `401 Unauthorized` | Credenciales o sesión inexistentes, inválidas o no vigentes. |
-| `403 Forbidden` | Cuenta autenticada sin autorización efectiva para la operación. |
-| `404 Not Found` | Recurso o referencia solicitada no encontrada dentro del acceso permitido. |
-| `409 Conflict` | Solicitud incompatible con una condición funcional o estado concurrente, incluida la duplicidad de una operación que no puede repetirse. |
-| `500 Internal Server Error` | Falla interna no representada como rechazo funcional; se entrega sin detalles sensibles. |
+| Código                      | Uso contractual                                                                                                                          |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `200 OK`                    | Lectura o modificación confirmada con resultado representado.                                                                            |
+| `201 Created`               | Recurso creado y confirmado.                                                                                                             |
+| `202 Accepted`              | Trabajo admitido de manera durable, cuya ejecución todavía no se declara finalizada.                                                     |
+| `204 No Content`            | Respuesta sin cuerpo, únicamente cuando el contrato de la operación la admite.                                                           |
+| `400 Bad Request`           | Estructura, parámetros o validación de entrada inválidos.                                                                                |
+| `401 Unauthorized`          | Credenciales o sesión inexistentes, inválidas o no vigentes.                                                                             |
+| `403 Forbidden`             | Cuenta autenticada sin autorización efectiva para la operación.                                                                          |
+| `404 Not Found`             | Recurso o referencia solicitada no encontrada dentro del acceso permitido.                                                               |
+| `409 Conflict`              | Solicitud incompatible con una condición funcional o estado concurrente, incluida la duplicidad de una operación que no puede repetirse. |
+| `500 Internal Server Error` | Falla interna no representada como rechazo funcional; se entrega sin detalles sensibles.                                                 |
 
 Las operaciones de creación y modificación comunican normalmente `201` o `200`, con una respuesta estructurada. Si una operación admite `204`, no devuelve cuerpo ni envoltura JSON. Un conflicto académico, una solicitud inválida y un problema de autorización **no se ocultan como errores `500`**. El rechazo de una operación atómica no comunica éxito parcial.
 
@@ -63,7 +63,8 @@ Los archivos se reciben mediante el mecanismo de carga HTTP y se entregan al cas
 - Las consultas de colecciones potencialmente extensas utilizan paginación desde **`page=1`**, con **`limit=20`** por defecto y **`limit=100`** como máximo. Las colecciones acotadas pueden devolverse completas cuando así lo establece el contrato de consulta.
 - Los filtros y criterios de ordenación pertenecen a un conjunto explícitamente admitido por cada consulta. Se rechazan filtros, campos de ordenación y tamaños no autorizados.
 - El orden es determinista e incluye un criterio estable de desempate para evitar resultados ambiguos entre páginas.
-- Los resultados paginados se representan dentro de `data` mediante `items` y `meta`. `meta` contiene `page` (página efectiva), `limit` (tamaño aplicado), `total` (cantidad total de elementos que satisfacen los filtros) y `totalPages` (cantidad total de páginas). No se duplica `meta` en la raíz ni se altera la estructura de cada elemento.
+- Los resultados paginados se representan dentro de `data` mediante `items` y `meta`. Los metadatos incluyen `page` (página efectiva), `limit` (tamaño aplicado), `totalItems` (cantidad de elementos que satisfacen los filtros), `totalPages` (cantidad de páginas resultante), `hasNextPage` (existencia de elementos en páginas posteriores) y `hasPreviousPage` (existencia de una posición de página anterior). No se duplica `meta` en la raíz ni se altera la estructura de cada elemento.
+- Los metadatos se calculan coherentemente a partir de los mismos filtros, el tamaño de página y el total de elementos. Los indicadores de navegación son derivados, no estados independientes: no se persisten ni se mantienen por separado. Una colección sin coincidencias informa `totalItems=0` y `totalPages=0`; la ausencia de elementos en una página no suprime los metadatos ni modifica la forma contractual de la respuesta.
 - Los listados no paginados devuelven la colección directamente en `data`, sin `items` ni metadatos de paginación. Una misma operación no alterna entre ambos formatos en función del número de resultados.
 - La lectura ordinaria privilegia registros vigentes cuando la capacidad tiene una noción de vigencia. La consulta histórica utiliza filtros explícitos; no se mezclan registros inactivos con vigentes sin distinguirlos.
 
