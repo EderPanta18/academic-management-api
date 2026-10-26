@@ -1,4 +1,4 @@
-// platform/id-generator/id-generator.service.ts
+// src/platform/id-generator/id-generator.service.ts
 
 import { randomUUID } from 'node:crypto';
 import type { IIdGenerator } from '@core/contracts';
