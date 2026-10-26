@@ -1,6 +1,17 @@
+// src/platform/queue/pgboss/queue-registry.ts
+
+import { SystemException } from '@core/exceptions';
 import { Injectable } from '@nestjs/common';
-import { AppConfigService } from '@platform/config';
+import { ConfigService } from '@platform/config';
 import { PgBoss } from 'pg-boss';
+
+type QueueSettings = {
+  retryLimit: number;
+  retryDelay: number;
+  retryBackoff: boolean;
+  expireInSeconds: number;
+  deleteAfterSeconds: number;
+};
 
 @Injectable()
 export class QueueRegistry {
@@ -9,44 +20,90 @@ export class QueueRegistry {
 
   constructor(
     private readonly boss: PgBoss,
-    private readonly config: AppConfigService,
+    private readonly config: ConfigService,
   ) {}
 
   async ensure(name: string): Promise<void> {
     if (this.known.has(name)) return;
 
-    const existing = this.inFlight.get(name);
+    const pending = this.inFlight.get(name);
 
-    if (existing) return existing;
+    if (pending) {
+      await pending;
 
-    const promise = this.createIfNeeded(name).finally(() => {
-      this.inFlight.delete(name);
-    });
+      return;
+    }
 
-    this.inFlight.set(name, promise);
-    await promise;
+    const operation = this.createIfNeeded(name)
+      .then(() => {
+        this.known.add(name);
+      })
+      .finally(() => {
+        this.inFlight.delete(name);
+      });
 
-    this.known.add(name);
+    this.inFlight.set(name, operation);
+
+    await operation;
   }
 
   private async createIfNeeded(name: string): Promise<void> {
-    const found = await this.boss.getQueue(name);
+    const queue = this.config.queue;
 
-    if (found) return;
+    const settings: QueueSettings = {
+      retryLimit: queue.retryLimit,
+      retryDelay: queue.retryDelayMs / 1_000,
+      retryBackoff: queue.retryBackoff,
+      expireInSeconds: queue.expireInMinutes * 60,
+      deleteAfterSeconds: queue.archiveCompletedAfterDays * 86_400,
+    };
 
-    const queueConfig = this.config.queue;
+    if (
+      !Number.isSafeInteger(settings.retryLimit) ||
+      settings.retryLimit < 0 ||
+      !Number.isSafeInteger(settings.retryDelay) ||
+      settings.retryDelay < 0 ||
+      !Number.isSafeInteger(settings.expireInSeconds) ||
+      settings.expireInSeconds < 1 ||
+      settings.expireInSeconds > 86_400 ||
+      !Number.isSafeInteger(settings.deleteAfterSeconds) ||
+      settings.deleteAfterSeconds < 0
+    )
+      throw new SystemException('La configuración de la cola PgBoss es inválida.');
 
-    await this.boss.createQueue(name, {
-      retryLimit: queueConfig.retryLimit,
-      retryDelay: queueConfig.retryDelayMs / 1000,
-      retryBackoff: queueConfig.retryBackoff,
-      expireInSeconds: queueConfig.expireInMinutes * 60,
-      deleteAfterSeconds: queueConfig.archiveCompletedAfterDays * 86400,
-    });
+    const existing = await this.boss.getQueue(name);
+
+    if (existing) {
+      this.assertConfiguration(name, existing, settings);
+
+      return;
+    }
+
+    try {
+      await this.boss.createQueue(name, settings);
+    } catch (error) {
+      const created = await this.boss.getQueue(name);
+
+      if (!created) throw error;
+
+      this.assertConfiguration(name, created, settings);
+    }
   }
 
-  clear(): void {
-    this.known.clear();
-    this.inFlight.clear();
+  private assertConfiguration(
+    name: string,
+    actual: NonNullable<Awaited<ReturnType<PgBoss['getQueue']>>>,
+    expected: QueueSettings,
+  ): void {
+    if (
+      actual.retryLimit !== expected.retryLimit ||
+      actual.retryDelay !== expected.retryDelay ||
+      actual.retryBackoff !== expected.retryBackoff ||
+      actual.expireInSeconds !== expected.expireInSeconds ||
+      actual.deleteAfterSeconds !== expected.deleteAfterSeconds
+    )
+      throw new SystemException(
+        `La cola "${name}" tiene una configuración diferente de la requerida.`,
+      );
   }
 }

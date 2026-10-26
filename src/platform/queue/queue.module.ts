@@ -1,3 +1,5 @@
+// src/platform/queue/queue.module.ts
+
 import { EVENT_BUS_TOKEN, JOB_QUEUE_TOKEN } from '@core/contracts';
 import { Module, type OnModuleDestroy } from '@nestjs/common';
 import { PgBoss } from 'pg-boss';
