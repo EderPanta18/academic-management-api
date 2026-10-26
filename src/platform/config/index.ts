@@ -1,4 +1,4 @@
 // src/platform/config/index.ts
 
-export { AppConfigModule } from './app-config.module';
-export { AppConfigService } from './app-config.service';
+export { ConfigModule } from './config.module';
+export { ConfigService } from './config.service';

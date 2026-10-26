@@ -1,12 +1,10 @@
-// src/platform/config/app-config.service.ts
-
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import type { AppConfig } from './configuration';
+import { ConfigService as NestConfigService } from '@nestjs/config';
+import type { Config } from './config.factory';
 
 @Injectable()
-export class AppConfigService {
-  constructor(private readonly configService: ConfigService<AppConfig, true>) {}
+export class ConfigService {
+  constructor(private readonly configService: NestConfigService<Config, true>) {}
 
   get app() {
     return this.configService.get('app', { infer: true });
@@ -40,16 +38,20 @@ export class AppConfigService {
     return this.configService.get('admin', { infer: true });
   }
 
-  get log() {
-    return this.configService.get('log', { infer: true });
-  }
-
   get port() {
     return this.app.port;
   }
 
   get nodeEnv() {
-    return this.app.nodeEnv;
+    return this.configService.get('nodeEnv', { infer: true });
+  }
+
+  get apiPrefix() {
+    return this.configService.get('apiPrefix', { infer: true });
+  }
+
+  get logLevel() {
+    return this.configService.get('logLevel', { infer: true });
   }
 
   get isDevelopment() {

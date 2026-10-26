@@ -2,17 +2,15 @@
 
 import type { EnvironmentVariables, LogLevel, NodeEnvironment } from './env';
 
-export type AppConfig = {
+export type Config = {
+  nodeEnv: NodeEnvironment;
+  apiPrefix: string;
+  logLevel: LogLevel;
   app: {
     port: number;
-    nodeEnv: NodeEnvironment;
     name: string;
     description: string;
     version: string;
-    apiPrefix: string;
-  };
-  log: {
-    level: LogLevel;
   };
   database: {
     url: string;
@@ -66,18 +64,16 @@ export type AppConfig = {
   };
 };
 
-export function buildAppConfig(env: EnvironmentVariables): AppConfig {
+export function buildConfig(env: EnvironmentVariables): Config {
   return {
+    nodeEnv: env.NODE_ENV,
+    apiPrefix: env.API_PREFIX,
+    logLevel: env.LOG_LEVEL,
     app: {
       port: env.APP_PORT,
-      nodeEnv: env.NODE_ENV,
       name: env.APP_NAME,
       description: env.APP_DESCRIPTION,
       version: env.APP_VERSION,
-      apiPrefix: env.API_PREFIX,
-    },
-    log: {
-      level: env.LOG_LEVEL,
     },
     database: {
       url: env.DATABASE_URL,
