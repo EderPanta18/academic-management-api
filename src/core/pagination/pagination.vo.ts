@@ -28,22 +28,28 @@ export class PaginationVO {
   private validate(): void {
     const errors: FieldError[] = [];
 
-    if (!Number.isInteger(this.page) || this.page < PAGINATION_PAGE.range.min)
+    if (!Number.isSafeInteger(this.page) || this.page < PAGINATION_PAGE.range.min)
       errors.push({
         field: 'page',
-        messages: [`page debe ser un entero mayor o igual a ${PAGINATION_PAGE.range.min}.`],
+        messages: [`page debe ser un entero seguro mayor o igual a ${PAGINATION_PAGE.range.min}.`],
       });
 
-    if (!Number.isInteger(this.limit) || this.limit < PAGINATION_LIMIT.range.min)
+    if (
+      !Number.isSafeInteger(this.limit) ||
+      this.limit < PAGINATION_LIMIT.range.min ||
+      this.limit > PAGINATION_LIMIT.range.max
+    )
       errors.push({
         field: 'limit',
-        messages: [`limit debe ser un entero mayor o igual a ${PAGINATION_LIMIT.range.min}.`],
+        messages: [
+          `limit debe ser un entero entre ${PAGINATION_LIMIT.range.min} y ${PAGINATION_LIMIT.range.max}.`,
+        ],
       });
 
-    if (this.limit > PAGINATION_LIMIT.range.max)
+    if (errors.length === 0 && !Number.isSafeInteger((this.page - 1) * this.limit))
       errors.push({
-        field: 'limit',
-        messages: [`limit no puede superar ${PAGINATION_LIMIT.range.max}.`],
+        field: 'page',
+        messages: ['page produce un desplazamiento fuera del rango seguro.'],
       });
 
     if (errors.length > 0)

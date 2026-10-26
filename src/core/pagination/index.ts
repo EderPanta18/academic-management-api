@@ -1,4 +1,4 @@
-// core/pagination/index.ts
+// src/core/pagination/index.ts
 
 export { createPaginatedResult, type PaginatedResult } from './paginated-result';
 export * from './pagination.constants';

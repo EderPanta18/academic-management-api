@@ -1,8 +1,8 @@
 // src/core/exceptions/index.ts
 
-export { AppException } from './app.exception';
+export { AppException, type ErrorKind } from './app.exception';
 export { ConflictException } from './conflict.exception';
-export { DomainException } from './domain.exception';
+export { type DomainErrorReason, DomainException } from './domain.exception';
 export { ForbiddenException } from './forbidden.exception';
 export { NotFoundException } from './not-found.exception';
 export { SystemException } from './system.exception';

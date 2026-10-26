@@ -3,8 +3,7 @@
 import { AppException } from './app.exception';
 
 export abstract class NotFoundException extends AppException {
-  readonly kind = 'NOT_FOUND';
-  readonly statusCode = 404;
+  readonly kind = 'NOT_FOUND' as const;
 
   protected constructor(message: string, cause?: unknown) {
     super(message, cause);

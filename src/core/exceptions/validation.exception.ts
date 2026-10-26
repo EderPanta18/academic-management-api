@@ -8,37 +8,29 @@ export type FieldError = {
 };
 
 export class ValidationException extends AppException {
-  readonly kind = 'VALIDATION';
-  readonly statusCode = 400;
-  readonly errorKey: string = 'VALIDATION_ERROR';
-  readonly errorCode: string = 'VAL_001';
-
+  readonly kind = 'VALIDATION' as const;
+  readonly errorCode = 'VAL_001';
   readonly fieldErrors: FieldError[];
 
   constructor(message: string, fieldErrors: FieldError[] = [], cause?: unknown) {
     super(message, cause);
-
     this.fieldErrors = ValidationException.normalize(fieldErrors);
   }
 
   private static normalize(fieldErrors: FieldError[]): FieldError[] {
-    const map = new Map<string, string[]>();
+    const grouped = new Map<string, Set<string>>();
 
     for (const { field, messages } of fieldErrors) {
-      const existing = map.get(field);
+      const existing = grouped.get(field) ?? new Set<string>();
 
-      if (existing) {
-        const newMessages = messages.filter((msg) => !existing.includes(msg));
+      for (const message of messages) existing.add(message);
 
-        existing.push(...newMessages);
-      } else {
-        map.set(field, [...messages]);
-      }
+      grouped.set(field, existing);
     }
 
-    return Array.from(map.entries()).map(([field, messages]) => ({
+    return Array.from(grouped, ([field, messages]) => ({
       field,
-      messages,
+      messages: [...messages],
     }));
   }
 }

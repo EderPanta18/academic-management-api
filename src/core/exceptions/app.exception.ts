@@ -1,17 +1,20 @@
 // src/core/exceptions/app.exception.ts
 
-export abstract class AppException extends Error {
-  abstract readonly statusCode: number;
-  abstract readonly errorKey: string;
-  abstract readonly errorCode: string;
+export type ErrorKind =
+  | 'DOMAIN'
+  | 'VALIDATION'
+  | 'CONFLICT'
+  | 'NOT_FOUND'
+  | 'UNAUTHORIZED'
+  | 'FORBIDDEN'
+  | 'SYSTEM';
 
-  override readonly cause?: unknown;
+export abstract class AppException extends Error {
+  abstract readonly kind: ErrorKind;
+  abstract readonly errorCode: string;
 
   protected constructor(message: string, cause?: unknown) {
     super(message, { cause });
-
-    this.name = this.constructor.name;
-
-    Object.setPrototypeOf(this, new.target.prototype);
+    this.name = new.target.name;
   }
 }

@@ -1,5 +1,6 @@
 // src/core/pagination/paginated-result.ts
 
+import { ValidationException } from '@core/exceptions';
 import type { PaginationVO } from './pagination.vo';
 
 export type PaginatedResult<TItem> = {
@@ -19,12 +20,17 @@ export function createPaginatedResult<TItem>(
   pagination: PaginationVO,
   totalItems: number,
 ): PaginatedResult<TItem> {
-  const { page, limit, offset } = pagination;
+  if (!Number.isSafeInteger(totalItems) || totalItems < 0)
+    throw new ValidationException('El total de elementos no es válido.', [
+      {
+        field: 'totalItems',
+        messages: ['totalItems debe ser un entero seguro mayor o igual a cero.'],
+      },
+    ]);
+
+  const { page, limit } = pagination;
 
   const totalPages = Math.ceil(totalItems / limit);
-
-  const hasNextPage = offset + limit < totalItems;
-  const hasPreviousPage = page > 1;
 
   return {
     items,
@@ -33,8 +39,8 @@ export function createPaginatedResult<TItem>(
       limit,
       totalItems,
       totalPages,
-      hasNextPage,
-      hasPreviousPage,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
     },
   };
 }
