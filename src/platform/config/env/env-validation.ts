@@ -1,4 +1,4 @@
-// src/platform/config/env/env.validation.ts
+// src/platform/config/env/env-validation.ts
 
 import { Buffer } from 'node:buffer';
 import { URL } from 'node:url';

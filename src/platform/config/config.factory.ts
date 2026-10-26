@@ -1,4 +1,4 @@
-// src/platform/config/configuration.ts
+// src/platform/config/config.factory.ts
 
 import type { EnvironmentVariables, LogLevel, NodeEnvironment } from './env';
 

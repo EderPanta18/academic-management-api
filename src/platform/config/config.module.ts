@@ -1,3 +1,5 @@
+// src/platform/config/config.module.ts
+
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule as NestConfigModule } from '@nestjs/config';
 import { buildConfig } from './config.factory';

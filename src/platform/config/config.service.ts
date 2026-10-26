@@ -1,3 +1,5 @@
+// src/platform/config/config.service.ts
+
 import { Injectable } from '@nestjs/common';
 import { ConfigService as NestConfigService } from '@nestjs/config';
 import type { Config } from './config.factory';
