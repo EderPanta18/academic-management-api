@@ -1,10 +1,9 @@
-// modules/identity/application/exceptions/identity-relation.errors.ts
+// src/modules/identity/application/exceptions/person-relation.errors.ts
 
 import { PersonException } from '@identity/domain/exceptions';
 
 export class PersonDocumentTypeNotFoundException extends PersonException {
-  readonly statusCode = 400;
-  readonly errorKey = 'PERSON_DOCUMENT_TYPE_NOT_FOUND';
+  readonly reason = 'NOT_FOUND' as const;
   readonly errorCode = 'PER_RELATION_001';
 
   constructor(documentTypeId: string) {

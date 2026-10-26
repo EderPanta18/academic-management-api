@@ -1,8 +1,9 @@
+// src/modules/identity/application/services/person-creation-validator.service.ts
+
 import {
   PersonDocumentAlreadyExistsException,
   PersonDocumentTypeNotFoundException,
   PersonEmailAlreadyExistsException,
-  PersonPhoneAlreadyExistsException,
 } from '@identity/application/exceptions';
 import { Inject, Injectable } from '@nestjs/common';
 import type { PersonUniquenessCheckInput } from '../contracts';
@@ -41,12 +42,6 @@ export class PersonCreationValidator implements IPersonCreationValidator {
       const emailAlreadyExists = await this.personRepository.existsByEmail(input.email);
 
       if (emailAlreadyExists) throw new PersonEmailAlreadyExistsException(input.email);
-    }
-
-    if (input.phone) {
-      const phoneAlreadyExists = await this.personRepository.existsByPhone(input.phone);
-
-      if (phoneAlreadyExists) throw new PersonPhoneAlreadyExistsException(input.phone);
     }
   }
 }

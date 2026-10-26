@@ -1,4 +1,4 @@
-// modules/persons/infrastructure/persistence/repositories/person-repository.adapter.ts
+// src/modules/identity/infrastructure/persistence/repositories/person-repository.adapter.ts
 
 import type { IPersonRepository } from '@identity/application/ports/out';
 import { Injectable } from '@nestjs/common';

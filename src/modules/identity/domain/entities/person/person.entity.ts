@@ -1,3 +1,5 @@
+// src/modules/identity/domain/entities/person/person.entity.ts
+
 import type { CreatePersonProps, PersonProps } from './person.types';
 
 export class Person {

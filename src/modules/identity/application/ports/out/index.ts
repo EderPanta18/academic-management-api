@@ -1,4 +1,4 @@
-// modules/persons/application/ports/out/index.ts
+// src/modules/identity/application/ports/out/index.ts
 
 export {
   DOCUMENT_TYPE_REPOSITORY_TOKEN,

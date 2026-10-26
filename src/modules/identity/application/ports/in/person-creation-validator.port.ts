@@ -1,4 +1,4 @@
-// modules/persons/application/ports/in/person-creation-validator.port.ts
+// src/modules/identity/application/ports/in/person-creation-validator.port.ts
 
 import type { PersonUniquenessCheckInput } from '@identity/application/contracts';
 

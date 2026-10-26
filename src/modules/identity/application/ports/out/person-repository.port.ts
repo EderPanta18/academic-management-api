@@ -1,3 +1,5 @@
+// src/modules/identity/application/ports/out/person-repository.port.ts
+
 export const PERSON_REPOSITORY_TOKEN = Symbol('PERSON_REPOSITORY');
 
 export interface IPersonRepository {

@@ -1,3 +1,5 @@
+// src/modules/identity/domain/entities/document-type/document-type.entity.ts
+
 import type { CreateDocumentTypeProps, DocumentTypeProps } from './document-type.types';
 
 export class DocumentType {

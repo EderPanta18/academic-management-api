@@ -1,3 +1,5 @@
+// src/modules/identity/domain/entities/person/person.types.ts
+
 export type PersonProps = {
   id: string;
   documentTypeId: string;

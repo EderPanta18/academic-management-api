@@ -1,3 +1,5 @@
+// src/modules/identity/infrastructure/persistence/repositories/document-type-repository.mapper.ts
+
 import { DocumentType } from '@identity/domain/entities';
 import type { Prisma } from '@prisma/client';
 
