@@ -1,3 +1,3 @@
-// shared/dtos/request/index.ts
+// src/shared/dtos/request/index.ts
 
 export { PaginationQueryDto } from './pagination-query.dto';

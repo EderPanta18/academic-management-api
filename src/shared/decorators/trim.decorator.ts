@@ -1,21 +1,19 @@
-// shared/decorators/trim.decorator.ts
+// src/shared/decorators/trim.decorator.ts
 
 import { Transform } from 'class-transformer';
 
 export function Trim(): PropertyDecorator {
-  return Transform(({ value }) => {
-    if (value === null || value === undefined) return undefined;
-
-    return String(value).trim();
-  });
+  return Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  );
 }
 
 export function TrimOptional(): PropertyDecorator {
-  return Transform(({ value }) => {
-    if (value === null || value === undefined) return undefined;
+  return Transform(({ value }: { value: unknown }) => {
+    if (typeof value !== 'string') return value;
 
-    const text = String(value).trim();
+    const trimmed = value.trim();
 
-    return text === '' ? undefined : text;
+    return trimmed === '' ? undefined : trimmed;
   });
 }
