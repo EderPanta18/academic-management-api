@@ -1,3 +1,3 @@
-// platform/files/index.ts
+// src/platform/files/index.ts
 
 export { FileParserModule } from './parser';

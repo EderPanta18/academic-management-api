@@ -1,9 +1,7 @@
-// platform/files/parser/strategies/file-parser.strategy.ts
+// src/platform/files/parser/strategies/file-parser.strategy.ts
 
-export const FILE_PARSER_STRATEGIES_TOKEN = Symbol('FILE_PARSER_STRATEGIES');
+import type { ParsedRow } from '@core/contracts';
 
 export interface IFileParserStrategy {
-  canHandle(extension: string): boolean;
-
-  parse(buffer: Buffer): Record<string, unknown>[];
+  parse(content: Uint8Array): Promise<ParsedRow[]>;
 }

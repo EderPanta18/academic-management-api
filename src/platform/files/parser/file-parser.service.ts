@@ -1,25 +1,27 @@
-import type { IFileParser } from '@core/contracts';
+// src/platform/files/parser/file-parser.service.ts
+
+import type { FileFormat, IFileParser, ParsedRow } from '@core/contracts';
 import { SystemException } from '@core/exceptions';
-import { Inject, Injectable } from '@nestjs/common';
-import { FILE_PARSER_STRATEGIES_TOKEN, type IFileParserStrategy } from './strategies';
+import { Injectable } from '@nestjs/common';
+import { CsvFileParserStrategy, XlsxFileParserStrategy } from './strategies';
 
 @Injectable()
 export class FileParserService implements IFileParser {
   constructor(
-    @Inject(FILE_PARSER_STRATEGIES_TOKEN)
-    private readonly strategies: IFileParserStrategy[],
+    private readonly csvParser: CsvFileParserStrategy,
+    private readonly xlsxParser: XlsxFileParserStrategy,
   ) {}
 
-  parse(buffer: Buffer, extension: string): Record<string, unknown>[] {
-    const normalizedExt = extension.startsWith('.') ? extension : `.${extension}`;
+  parse(content: Uint8Array, format: FileFormat): Promise<ParsedRow[]> {
+    switch (format) {
+      case 'csv':
+        return this.csvParser.parse(content);
 
-    const strategy = this.strategies.find((s) => s.canHandle(normalizedExt));
+      case 'xlsx':
+        return this.xlsxParser.parse(content);
 
-    if (!strategy)
-      throw new SystemException(
-        `No hay una estrategia registrada para la extensión "${normalizedExt}".`,
-      );
-
-    return strategy.parse(buffer);
+      default:
+        throw new SystemException('El parser recibió un formato fuera de su contrato.');
+    }
   }
 }
