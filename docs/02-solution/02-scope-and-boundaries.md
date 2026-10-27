@@ -12,7 +12,7 @@ El límite del producto se define por su responsabilidad sobre las inscripciones
 - Los docentes se registran con su pertenencia institucional y pueden estar asignados a ofertas de cursos de otras facultades.
 - La operación cotidiana corresponde a usuarios administrativos autorizados. La condición de estudiante o docente no concede por sí sola una cuenta ni acceso funcional.
 
-La organización y sus relaciones se incluyen en la medida necesaria para definir quién puede inscribirse, en qué curso y sobre qué oferta, y para conservar el significado de los registros.
+La organización y sus relaciones se incluyen en la medida necesaria para definir quién puede inscribirse, en qué curso y sobre qué oferta, y para conservar el significado de los registros. Las operaciones de mantenimiento dependen de las necesidades funcionales de cada recurso: la existencia de una entidad o de una capacidad administrativa no implica disponer de todas las operaciones de creación, consulta, modificación y baja.
 
 ## Capacidades incluidas
 
@@ -20,13 +20,13 @@ La organización y sus relaciones se incluyen en la medida necesaria para defini
 
 El sistema permite mantener personas y sus perfiles académicos de estudiante o docente, evitando tratar la información personal compartida como datos independientes para cada función.
 
-Se incluyen el registro y mantenimiento de estudiantes, docentes, facultades, departamentos académicos, programas académicos, cursos y sus categorías. También se administra la asociación que determina qué cursos corresponden a cada programa académico.
+Se incluyen el registro y la actualización de estudiantes, docentes, facultades, departamentos académicos, programas académicos y cursos, junto con las consultas necesarias. Las bajas lógicas de unidades y recursos de catálogo que las admiten están condicionadas por sus dependencias vigentes. Las categorías de cursos se utilizan conforme al catálogo establecido, y las asociaciones programa–curso se habilitan y cierran sin eliminar sus episodios históricos.
 
 La información de docentes cubre su participación en la oferta académica; la de estudiantes, su identificación y situación relevante para inscribirse. No comprende la gestión integral de expedientes laborales o de trayectoria académica.
 
 ### 2. Periodos académicos y ofertas de cursos
 
-Se contempla la administración de periodos académicos, de sus condiciones de inscripción y de las ofertas de cursos que se organizan dentro de ellos.
+Se contempla el registro, la consulta, el ajuste autorizado de fechas y la transición de periodos académicos, así como la preparación, la consulta, la configuración y las transiciones de las ofertas de cursos que se organizan dentro de ellos.
 
 Cada oferta concreta la disponibilidad de un curso para un periodo y una sección, con capacidad definida, situación operativa y asignación docente exigida para su apertura. La administración incluye las acciones necesarias para habilitar, cerrar o cancelar periodos y ofertas, así como la reapertura autorizada de ofertas cuando sus condiciones lo permiten.
 
@@ -74,7 +74,7 @@ Los reportes son consultas controladas, no un generador libre de indicadores, co
 
 El sistema administra cuentas internas de acceso, autenticación, sesiones, roles y permisos. Distingue las responsabilidades de administración, coordinación académica, secretaría y consulta de reportes.
 
-Comprende la creación y gestión autorizada de usuarios, la asignación controlada de roles y permisos, la revocación de accesos y la protección de operaciones sensibles. No existe registro público de cuentas; el acceso se habilita mediante administración autorizada.
+Comprende el registro, la consulta y la modificación autorizados de cuentas, la administración delimitada de roles y sus asignaciones, la revocación de accesos y la protección de operaciones sensibles. No existe registro público de cuentas; el acceso se habilita mediante administración autorizada.
 
 La existencia de varios roles para una cuenta y la capacidad de administrar roles personalizados no amplían el alcance académico del producto: constituyen mecanismos para regular las responsabilidades de quienes lo operan.
 

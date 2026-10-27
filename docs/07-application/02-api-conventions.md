@@ -9,10 +9,10 @@ La definición ejecutable de las operaciones, parámetros y esquemas se publica 
 - Todas las rutas públicas de la API utilizan el prefijo **`/api/v1`**.
 - Los nombres de recursos son sustantivos plurales, en inglés y `kebab-case`. Los identificadores corresponden a recursos funcionales estables y no a posiciones de una colección.
 - Las rutas expresan la jerarquía funcional solo cuando representa una relación de pertenencia real. La estructura de carpetas o los nombres de módulos no determinan automáticamente rutas públicas.
-- `GET` consulta recursos o colecciones sin efectos de modificación; `POST` admite creaciones u operaciones funcionales explícitas; `PATCH` modifica parcialmente recursos donde la actualización está permitida; `DELETE` se reserva a eliminaciones realmente admitidas por el dominio.
+- `GET` consulta recursos o colecciones sin efectos de modificación; `POST` admite creaciones u operaciones funcionales explícitas; `PATCH` modifica parcialmente recursos donde la actualización está permitida; `DELETE` se reserva a bajas o eliminaciones expresamente admitidas. Ningún recurso obtiene estas operaciones automáticamente por disponer de un módulo, una tabla o un mecanismo de baja lógica.
 - Las transiciones sujetas a reglas y evidencia propia se exponen como **operaciones intencionales**. No se ofrece una actualización genérica de `status` para forzar cancelaciones, retiros, cambios de sección o correcciones.
 
-Una consulta de estado histórico no modifica ese estado. La deshabilitación de una referencia institucional no autoriza una eliminación física de registros que sustentan movimientos anteriores.
+Una consulta de estado histórico no modifica ese estado. La baja lógica no implica eliminación física ni habilita por sí sola una operación de restauración. Los recursos no disponibles para las operaciones ordinarias se tratan como no encontrados en ese ámbito; las condiciones que bloquean una operación admitida se comunican como conflictos funcionales.
 
 ## 2. Estructura común de respuestas
 

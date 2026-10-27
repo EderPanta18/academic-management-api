@@ -1,6 +1,6 @@
 # Fronteras de módulos
 
-Los módulos se delimitan por **capacidad del negocio, reglas propias y autoridad para modificar un estado**, no por tablas, técnicas ni frecuencia de colaboración. Una agrupación organizativa no concede acceso privilegiado entre módulos: reunir capacidades en una carpeta de dominio no equivale a fusionarlas.
+Los módulos se delimitan por **capacidad del negocio, reglas propias y autoridad para modificar un estado**, no por tablas, técnicas ni frecuencia de colaboración. La propiedad funcional no implica disponer de un conjunto completo de operaciones de creación, consulta, actualización y eliminación. Una agrupación organizativa no concede acceso privilegiado entre módulos: reunir capacidades en una carpeta de dominio no equivale a fusionarlas.
 
 ## 1. Capacidades y responsables
 

@@ -1,6 +1,6 @@
 # Autorización y control de acceso
 
-La autorización determina **qué operación y qué información puede utilizar una cuenta habilitada**. Es independiente del mecanismo por el que ingresó la solicitud y se aplica sobre permisos efectivos, recursos involucrados y restricciones funcionales. Autenticarse, ser administrador o poder consultar un reporte no suprime las reglas de integridad académica.
+La autorización determina **qué operación y qué información puede utilizar una cuenta habilitada**. Solo existen permisos efectivos sobre capacidades funcionales previstas; un permiso no crea operaciones adicionales sobre una entidad. Es independiente del mecanismo por el que ingresó la solicitud y se aplica sobre permisos efectivos, recursos involucrados y restricciones funcionales. Autenticarse, ser administrador o poder consultar un reporte no suprime las reglas de integridad académica.
 
 ## 1. Modelo de roles y permisos
 
@@ -37,7 +37,7 @@ Los permisos son **institucionales**: no se introduce una jerarquía automática
 La autorización funciona en dos niveles complementarios:
 
 1. **Capacidad solicitada:** el contexto autenticado necesita el permiso de lectura, modificación, operación sensible o consulta correspondiente.
-2. **Condiciones de la intención y del recurso:** el caso de uso comprueba las restricciones que hacen válida la acción, como vigencia, titularidad de estado, ventanas académicas, curso elegible, cupos o motivo obligatorio.
+2. **Condiciones de la intención y del recurso:** la operación debe formar parte del alcance admitido y el caso de uso comprueba las restricciones que la hacen válida, como vigencia, titularidad de estado, ventanas académicas, curso elegible, cupos o motivo obligatorio.
 
 El acceso al adaptador externo no reemplaza el control del caso de uso. Un worker o un adaptador alternativo tampoco ejecuta una operación privilegiada porque omita un controlador HTTP. La aplicación utiliza un contexto de actuación fiable; los identificadores de usuario aportados arbitrariamente por clientes no sustituyen al actor autenticado.
 

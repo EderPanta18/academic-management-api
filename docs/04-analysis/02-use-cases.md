@@ -1,6 +1,6 @@
 # Casos de uso
 
-Los casos de uso describen los resultados que un actor autorizado obtiene al interactuar con el sistema. Se centran en **objetivos funcionales completos** y sus condiciones observables, sin convertir cada campo editable ni cada operación técnica en un caso de uso separado.
+Los casos de uso describen los resultados que un actor autorizado obtiene al interactuar con el sistema. Cada objetivo funcional agrupa únicamente las operaciones expresamente contempladas y sus condiciones observables. Un nombre como mantener o administrar no implica que todos los recursos admitan creación, consulta, modificación, eliminación y restauración.
 
 Los identificadores `CU` permiten distinguir las interacciones y relacionarlas con los requerimientos funcionales. Una autorización constituye una precondición de acceso; no reemplaza la validación académica, que sigue siendo obligatoria incluso para el administrador.
 
@@ -48,7 +48,7 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Precondiciones.** Actor `ADMIN` autorizado y registro de cuenta o rol apropiado para la operación solicitada.
 
-**Secuencia funcional.** El administrador crea o modifica cuentas, cambia su estado, asigna roles y administra roles personalizados bajo el catálogo de permisos autorizado. El sistema aplica inmediatamente los cambios que afectan a la vigencia de las sesiones.
+**Secuencia funcional.** El administrador registra, consulta y modifica cuentas y su estado; consulta roles, administra sus asignaciones y registra o modifica roles personalizados mediante permisos existentes. El sistema aplica inmediatamente los cambios que afectan a la vigencia de las sesiones.
 
 **Alternativas.** Se rechaza el registro público, la modificación no autorizada de roles base, la creación arbitraria de permisos y la alteración de las propias asignaciones de roles del administrador.
 
@@ -62,7 +62,7 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Precondiciones.** Actor `ADMIN` o `SECRETARY` autorizado; para registrar un estudiante, persona existente y programa académico válido.
 
-**Secuencia funcional.** El actor identifica a la persona, comprueba su situación documental y registra o actualiza el perfil estudiantil dentro de su programa académico. El sistema previene duplicidades, conserva la pertenencia académica y aplica el estado estudiantil permitido.
+**Secuencia funcional.** El actor registra o consulta a la persona y actualiza sus datos de identidad cuando corresponde. Registra, consulta o actualiza el perfil estudiantil y solicita las transiciones de estado admitidas. El sistema comprueba las identidades, la pertenencia académica y las restricciones aplicables.
 
 **Alternativas.** Una identidad personal repetida, un código de estudiante duplicado en el conjunto sujeto a unicidad vigente, un programa académico inexistente o no vigente, o una modificación incompatible con antecedentes protegidos se rechazan sin afectar otros registros.
 
@@ -74,7 +74,7 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` con permiso para la operación concreta.
 
-**Secuencia funcional.** El actor mantiene facultades identificadas por sigla institucional y nombre, departamentos y programas identificados por sus códigos, categorías, cursos y asociaciones programa–curso. El sistema verifica la unicidad operativa entre registros vigentes, la vigencia de las referencias requeridas y las dependencias que condicionan una baja lógica antes de confirmar cada modificación.
+**Secuencia funcional.** El actor registra, consulta o actualiza facultades, departamentos, programas académicos y cursos, y solicita su baja lógica cuando corresponde. Consulta las categorías institucionales y habilita, consulta o cierra episodios de asociación programa–curso. El sistema comprueba las identidades, la unicidad entre registros vigentes, las referencias necesarias y las dependencias que condicionan cada baja.
 
 **Alternativas.** Se rechaza la duplicidad entre registros vigentes de un atributo sujeto a unicidad, la relación con un recurso padre no vigente y la baja lógica que deje dependencias vigentes incompatibles. La reutilización de un código, sigla o nombre de un registro dado de baja no recupera su identidad anterior. La desasociación de un curso no borra su participación histórica.
 
@@ -86,7 +86,7 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` autorizado; persona existente y facultad de adscripción vigente.
 
-**Secuencia funcional.** El actor identifica a la persona y registra o actualiza su perfil docente y adscripción. El sistema verifica la relación institucional sin imponer que el curso dictado pertenezca a la misma facultad.
+**Secuencia funcional.** El actor identifica a la persona y registra, consulta o actualiza su perfil docente, adscripción y situación operativa dentro de las transiciones admitidas. El sistema verifica la relación institucional sin imponer que el curso dictado pertenezca a la misma facultad.
 
 **Alternativas.** Se rechazan perfiles duplicados o relaciones inexistentes. La coordinación no adquiere permiso para crear personas mediante este caso de uso.
 
@@ -98,7 +98,7 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` autorizado; datos y condiciones temporales compatibles con la operación solicitada.
 
-**Secuencia funcional.** El actor registra o modifica el periodo y su ventana de inscripción, solicita su habilitación o ejecuta una transición operativa. El sistema comprueba que la transición y las fechas mantengan el significado de las operaciones ya registradas.
+**Secuencia funcional.** El actor registra, consulta o modifica el periodo, sus fechas y su ventana de inscripción, o solicita una transición de estado admitida. El sistema comprueba que la transición y las fechas mantengan el significado de las operaciones ya registradas.
 
 **Alternativas.** Se rechazan fechas incoherentes o transiciones no admitidas. El cierre no modifica automáticamente los estados de las inscripciones.
 
@@ -110,7 +110,7 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` autorizado; curso y periodo válidos; docente válido cuando se asigne y obligatorio para abrir la oferta.
 
-**Secuencia funcional.** El actor configura una oferta en un periodo, define sección y capacidad, asigna docente antes de su apertura y solicita las transiciones operativas permitidas. El sistema comprueba que una oferta abierta tenga docente y que los cambios no vulneren inscripciones existentes.
+**Secuencia funcional.** El actor registra, consulta o configura una oferta en un periodo, establece sección y capacidad, asigna docente antes de su apertura y solicita las transiciones operativas permitidas. El sistema comprueba que una oferta abierta tenga docente y que los cambios no vulneren inscripciones existentes.
 
 **Alternativas.** Se rechaza abrir sin docente, reducir la capacidad por debajo de la ocupación vigente o ejecutar una transición incompatible con la situación de la oferta. Cerrar o cancelar la oferta no modifica implícitamente inscripciones.
 
@@ -257,6 +257,6 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 ## 6. Reglas de lectura del catálogo
 
-Los casos de uso expresan **resultados observables**. No determinan la cantidad de controladores, servicios o transacciones internas. Las condiciones que implican simultaneidad, estados o integridad describen el comportamiento que debe garantizarse, sin imponer un mecanismo técnico particular.
+Los casos de uso expresan **resultados observables**. No determinan la cantidad de controladores, servicios o transacciones internas. Cada operación contemplada tiene un propósito funcional y una autorización; no se derivan operaciones adicionales del nombre del caso de uso, del módulo o de su representación persistente. Las condiciones que implican simultaneidad, estados o integridad describen el comportamiento que debe garantizarse, sin imponer un mecanismo técnico particular.
 
 Los movimientos ordinarios y las correcciones extraordinarias son intenciones distintas, aun cuando afecten una misma inscripción. Tampoco se equipara la aceptación de un archivo para importación con la finalización exitosa de su procesamiento.

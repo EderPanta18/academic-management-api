@@ -43,7 +43,7 @@ La representación relacional preserva **identidades estables, relaciones explí
 - Los archivos originales de importación se conservan como contenido binario durable asociado a la importación admitida, junto a los resultados y el contexto de atribución; su existencia no depende del sistema de archivos temporal del proceso HTTP o worker.
 - La deshabilitación de catálogos, perfiles o cuentas no provoca borrados en cascada de evidencia histórica. La vigencia administrativa y la existencia del registro son conceptos distintos.
 
-Los índices únicos parciales materializan en PostgreSQL la unicidad entre registros no eliminados lógicamente, allí donde una tabla con baja lógica posea atributos de negocio sujetos a unicidad, individuales o combinados. No se aplican indiscriminadamente a índices de rendimiento, claves primarias ni a garantías de identidad o evidencia no sujetas a baja lógica.
+Los índices únicos parciales materializan en PostgreSQL la unicidad entre registros no eliminados lógicamente, allí donde una tabla con baja lógica posea atributos de negocio sujetos a unicidad, individuales o combinados. No sustituyen los índices de rendimiento, las claves primarias, las restricciones estructurales de cardinalidad ni las garantías de identidad y evidencia históricas.
 
 El esquema físico traduce estas necesidades a claves, referencias, restricciones, índices y representaciones aptas para PostgreSQL. **El modelo físico no reinterpreta las reglas académicas**: las estructuras generadas por Prisma implementan su persistencia sin sustituir los contratos funcionales.
 

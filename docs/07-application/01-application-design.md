@@ -12,7 +12,7 @@ La capa de aplicación **interpreta intenciones funcionales autorizadas, coordin
 | **Operación diferida**        | Aceptar una intención recuperable, conservar su identidad funcional y coordinar su resultado. | No delegar el significado del trabajo a una cola o a un proceso worker.                         |
 | **Proyección de lectura**     | Combinar información confirmada bajo filtros, significado y autorización definidos.           | No adquirir permisos de escritura sobre las fuentes ni exponer datos por asociación accidental. |
 
-Cada caso de uso tiene un **módulo propietario** que determina sus condiciones y resultados. Coordinar varios módulos no concede acceso directo a sus repositorios privados ni convierte al coordinador en propietario de sus datos.
+Cada caso de uso tiene un **módulo propietario** que determina sus condiciones y resultados. Las operaciones de aplicación responden a capacidades funcionales reconocidas: no se incorporan comandos genéricos de eliminación, restauración o actualización por el solo hecho de que exista un repositorio o una entidad persistente. Coordinar varios módulos no concede acceso directo a sus repositorios privados ni convierte al coordinador en propietario de sus datos.
 
 ## 2. Entrada, contexto de actuación y resultados
 
@@ -64,7 +64,7 @@ El caso de uso determina **qué resultados deben confirmarse juntos**. Los puert
 
 ## 4. Comandos, consultas y efectos derivados
 
-Los comandos expresan operaciones intencionales, no asignaciones arbitrarias de atributos. Registrar una inscripción, cancelarla, retirarla, cambiar su sección y corregirla extraordinariamente son intenciones diferentes aunque operen sobre un mismo recurso. Cada intención conserva su autorización, condiciones y resultado propios.
+Los comandos expresan operaciones intencionales, no asignaciones arbitrarias de atributos. Registrar una inscripción, cancelarla, retirarla, cambiar su sección y corregirla extraordinariamente son intenciones diferentes aunque operen sobre un mismo recurso. Cada intención conserva su autorización, condiciones y resultado propios. Las entidades con baja lógica no adquieren por ello operaciones públicas de baja o restauración si estas no forman parte de sus capacidades admitidas.
 
 Las consultas presentan información vigente o histórica sin ejecutar transiciones. La separación entre comandos y consultas es **lógica**: no exige bases de datos separadas, proyecciones materializadas ni un bus adicional de eventos.
 

@@ -2,7 +2,7 @@
 
 Las siguientes reglas expresan condiciones **obligatorias** para reconocer una estructura académica válida, aceptar inscripciones y conservar antecedentes. Se aplican con independencia de quién inicie la operación o de la forma técnica de exponerla. Una autorización habilita a solicitar una operación, pero **no suspende las reglas de integridad académica**.
 
-Los identificadores `RN` distinguen reglas estables. No representan nombres de funciones, verificaciones individuales de una API ni un orden de ejecución.
+Los identificadores `RN` distinguen reglas estables. No representan nombres de funciones, verificaciones individuales de una API ni un orden de ejecución. La existencia de una regla de vigencia, baja o unicidad no habilita por sí sola una operación de mantenimiento sobre todos los recursos afectados; las operaciones admitidas se delimitan funcionalmente.
 
 ## 1. Identidad y organización académica
 
@@ -104,7 +104,7 @@ Los identificadores `RN` distinguen reglas estables. No representan nombres de f
 
 ## 7. Invariantes transversales
 
-**RN-044 — Unicidad operativa de registros con baja lógica.** En toda entidad que admita baja lógica, las restricciones de unicidad sobre atributos de negocio, individuales o combinados, se aplican solo entre registros vigentes. Los registros dados de baja no reservan esos valores para nuevas identidades. La facultad exige sigla institucional y nombre únicos entre facultades vigentes; sus siglas y nombres pueden reutilizarse tras la baja. El UUID de cada registro permanece único y no reutilizable, y las referencias históricas siguen apuntando a la identidad original. Las entidades sin baja lógica, las identidades personales y la evidencia inmutable conservan sus restricciones específicas; un estado funcional como `CANCELLED`, `WITHDRAWN` o `INACTIVE` no equivale a una baja lógica.
+**RN-044 — Unicidad operativa de registros con baja lógica.** En las entidades que admiten baja lógica, la unicidad de los atributos de negocio reutilizables, individuales o combinados, se exige entre registros vigentes. Los registros dados de baja no reservan esos valores para nuevas identidades. Las siglas y los nombres de las facultades están sujetos a esta regla. Las identidades permanentes, las relaciones de cardinalidad obligatoria y la evidencia histórica conservan sus restricciones propias. Reutilizar un valor de negocio no sustituye las referencias al registro anterior. Un estado funcional como `CANCELLED`, `WITHDRAWN` o `INACTIVE` no equivale a una baja lógica.
 
 Las operaciones de inscripción, retiro, cancelación, cambio de sección y rectificación deben preservar conjuntamente:
 
