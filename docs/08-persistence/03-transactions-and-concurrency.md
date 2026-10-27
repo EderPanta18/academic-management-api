@@ -28,24 +28,28 @@ El diagrama muestra una operación atómica. Las operaciones que admiten resulta
 
 ## 2. Política de aislamiento para decisiones críticas
 
-Las operaciones que pueden alterar **cupos, unicidad de inscripciones, antecedentes que impiden reinscribir, estados de habilitación o capacidad de ofertas** se ejecutan con aislamiento PostgreSQL **`SERIALIZABLE`**. La comprobación final y la escritura pertinente ocurren dentro de esa misma transacción.
+Las operaciones que pueden alterar **cupos, unicidad de inscripciones, antecedentes que impiden reinscribir, estados de habilitación, capacidad de ofertas o integridad de bajas lógicas y dependencias vigentes** se ejecutan con aislamiento PostgreSQL **`SERIALIZABLE`**. La comprobación final y la escritura pertinente ocurren dentro de esa misma transacción.
 
 `SERIALIZABLE` hace que las transacciones confirmadas respeten un orden equivalente a una ejecución serial. Cuando dos escrituras no pueden confirmar sus decisiones simultáneamente, PostgreSQL aborta una de ellas; el sistema **no acepta ambas suponiendo que una lectura anterior sigue siendo válida**.
 
 Los conflictos recuperables de serialización se reintentan mediante la **repetición de la transacción completa**, con relectura de recursos, autorización y condiciones, sin reutilizar resultados de una ejecución revertida. Los intentos son acotados y no producen efectos externos irreversibles dentro de la operación reintentable; cuando corresponde una entrega durable, se registra su intención transaccional. Si al reintentar la regla funcional deja de cumplirse, se comunica el rechazo correspondiente. Un conflicto persistente o una indisponibilidad técnica no se presenta como éxito ni se disfraza de infracción académica.
 
+Las altas y bajas de registros con atributos de negocio reutilizables deben preservar simultáneamente la unicidad entre vigentes y la validez de las relaciones que requieran un padre vigente. La reutilización de un código, sigla o nombre dado de baja no puede atribuir referencias históricas a otra identidad. Una comprobación previa de dependientes no basta: debe ser coherente con las escrituras concurrentes que podrían crear o modificar esas dependencias hasta confirmar la baja.
+
 Las consultas ordinarias y las escrituras que no protegen invariantes concurrentes no requieren aislamiento `SERIALIZABLE` por defecto. Las restricciones únicas de PostgreSQL actúan además como última barrera para identidades que pueden expresarse estructuralmente. El aislamiento y las restricciones son **complementarios**: el primero protege decisiones de conjunto y las segundas impiden colisiones representables por claves.
 
 ## 3. Confirmación de operaciones académicas
 
-| Operación | Comprobación dentro de la unidad | Efectos confirmados conjuntamente |
-| --- | --- | --- |
-| **Inscripción** | Estudiante habilitado, programa–curso vigente, oferta y periodo elegibles, ausencia de inscripción activa o retiro impeditivo y cupo real. | Registro `ENROLLED`, contexto académico conservado, movimiento de creación y evidencia exigida. |
-| **Cancelación** | Estado `ENROLLED`, momento y periodo habilitantes, autoridad y motivo. | Estado `CANCELLED`, liberación derivada de plaza y movimiento con atribución. |
-| **Retiro** | Estado `ENROLLED`, desarrollo efectivo del periodo, autoridad y motivo. | Estado `WITHDRAWN`, antecedente impeditivo para nueva inscripción ordinaria, liberación derivada de plaza y movimiento. |
-| **Cambio de sección** | Misma identidad de curso y periodo, ofertas elegibles, autorización, motivo y capacidad del destino. | Actualización única de referencia a la oferta, ocupaciones derivadas coherentes y movimiento con origen y destino. |
-| **Corrección extraordinaria** | Alcance administrativo permitido y mantenimiento de identidades, cupos y restricciones históricas. | Rectificación delimitada, evidencia nueva y conservación de los hechos originales. |
-| **Mantenimiento de capacidad o habilitación** | La modificación no invalida ofertas abiertas, inscripciones activas ni referencias protegidas. | Nuevo estado o capacidad sin ruptura de condiciones de ocupación y trazabilidad exigible. |
+| Operación                                     | Comprobación dentro de la unidad                                                                                                           | Efectos confirmados conjuntamente                                                                                       |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| **Inscripción**                               | Estudiante habilitado, programa–curso vigente, oferta y periodo elegibles, ausencia de inscripción activa o retiro impeditivo y cupo real. | Registro `ENROLLED`, contexto académico conservado, movimiento de creación y evidencia exigida.                         |
+| **Cancelación**                               | Estado `ENROLLED`, momento y periodo habilitantes, autoridad y motivo.                                                                     | Estado `CANCELLED`, liberación derivada de plaza y movimiento con atribución.                                           |
+| **Retiro**                                    | Estado `ENROLLED`, desarrollo efectivo del periodo, autoridad y motivo.                                                                    | Estado `WITHDRAWN`, antecedente impeditivo para nueva inscripción ordinaria, liberación derivada de plaza y movimiento. |
+| **Cambio de sección**                         | Misma identidad de curso y periodo, ofertas elegibles, autorización, motivo y capacidad del destino.                                       | Actualización única de referencia a la oferta, ocupaciones derivadas coherentes y movimiento con origen y destino.      |
+| **Corrección extraordinaria**                 | Alcance administrativo permitido y mantenimiento de identidades, cupos y restricciones históricas.                                         | Rectificación delimitada, evidencia nueva y conservación de los hechos originales.                                      |
+| **Mantenimiento de capacidad o habilitación** | La modificación no invalida ofertas abiertas, inscripciones activas ni referencias protegidas.                                             | Nuevo estado o capacidad sin ruptura de condiciones de ocupación y trazabilidad exigible.                               |
+| **Baja lógica de un recurso referenciado**    | Registro vigente, ausencia de dependientes vigentes que impidan la baja y preservación de dependencias históricas.                         | Marca de baja, historia y auditoría exigidas, sin cascada de bajas ni alteración de FK.                                 |
+| **Alta con valor de negocio reutilizado**     | Ausencia de conflicto entre registros vigentes y referencia operativa a padres vigentes.                                                   | Nueva identidad permanente con valor reutilizado, sin modificar ni absorber registros históricos.                       |
 
 La ocupación **no se incrementa ni decrementa mediante un contador paralelo**. Se observa como cantidad de inscripciones `ENROLLED`; por ello, las operaciones que pueden cambiar esa cantidad deben utilizar la misma política de consistencia concurrente, incluidas las correcciones y el mantenimiento de capacidad.
 
@@ -53,7 +57,7 @@ En un **cambio de sección** la inscripción conserva su identidad. No se confir
 
 ## 4. Repetición de solicitudes e importaciones
 
-Una transacción fallida no se reaprovecha: todo reintento parte de una unidad nueva y vuelve a evaluar el estado persistido. Las operaciones sin clave de idempotencia propia no adquieren una garantía de *exactly once* por utilizar transacciones.
+Una transacción fallida no se reaprovecha: todo reintento parte de una unidad nueva y vuelve a evaluar el estado persistido. Las operaciones sin clave de idempotencia propia no adquieren una garantía de _exactly once_ por utilizar transacciones.
 
 La **admisión de un archivo** confirma una sola importación por cuenta y huella de bytes, incluso si dos solicitudes llegan al mismo tiempo. La restricción de identidad persistida y su transacción impiden aceptar ambas.
 

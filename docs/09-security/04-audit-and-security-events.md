@@ -4,11 +4,11 @@ La auditoría es la **evidencia institucional atribuible** de decisiones adminis
 
 ## 1. Tres tipos de información con finalidades distintas
 
-| Información | Propósito | Regla de conservación |
-| --- | --- | --- |
-| **Movimiento de inscripción** | Reconstruir la trayectoria académica de una inscripción: creación, cancelación, retiro, traslado o corrección. | Se incorpora al historial de la inscripción y no se modifica mediante edición ordinaria. |
-| **Evento de auditoría** | Atribuir una decisión o cambio sensible a una identidad, operación y resultado. | Evidencia de solo incorporación, consultable únicamente bajo autorización administrativa. |
-| **Registro operativo** | Diagnosticar fallas, latencia, fallos de integración o estado de procesos. | Es telemetría técnica, no fuente de verdad del hecho administrativo. |
+| Información                   | Propósito                                                                                                      | Regla de conservación                                                                     |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| **Movimiento de inscripción** | Reconstruir la trayectoria académica de una inscripción: creación, cancelación, retiro, traslado o corrección. | Se incorpora al historial de la inscripción y no se modifica mediante edición ordinaria.  |
+| **Evento de auditoría**       | Atribuir una decisión o cambio sensible a una identidad, operación y resultado.                                | Evidencia de solo incorporación, consultable únicamente bajo autorización administrativa. |
+| **Registro operativo**        | Diagnosticar fallas, latencia, fallos de integración o estado de procesos.                                     | Es telemetría técnica, no fuente de verdad del hecho administrativo.                      |
 
 Una misma operación puede generar un movimiento funcional y un evento de auditoría porque responden a preguntas diferentes. Un evento de mensajería publicado posteriormente tampoco reemplaza la evidencia que debe quedar confirmada con la operación original.
 
@@ -26,14 +26,14 @@ La auditoría utiliza identidades duraderas: deshabilitar una cuenta no borra su
 
 ## 3. Acciones y sucesos cubiertos
 
-| Grupo | Evidencia registrada | Consideración |
-| --- | --- | --- |
-| **Inscripciones y correcciones** | Altas, cancelaciones, retiros, cambios de sección y rectificaciones extraordinarias. | Su hecho confirmado conserva también movimiento funcional y motivo cuando es obligatorio. |
-| **Administración académica** | Modificaciones relevantes de estructura, periodos, ofertas y referencias que afecten la operación. | La evidencia identifica la decisión administrativa, no todo acceso de lectura rutinaria. |
-| **Usuarios y autorizaciones** | Creación, habilitación/deshabilitación de cuentas, restablecimientos, cambios y asignaciones de roles/permisos. | No conserva contraseñas ni secretos anteriores o nuevos. |
-| **Importaciones** | Admisión, identidad del responsable, resultado global y sucesos funcionales relevantes. | El detalle de filas permanece bajo la capacidad de importaciones; no se copia cada archivo ni cada fila al registro transversal. |
-| **Autenticación y sesiones** | Accesos logrados y fallidos relevantes, renovaciones, cierre, revocaciones y reutilización detectada de credenciales. | Los intentos y situaciones de seguridad se diferencian de cambios académicos confirmados. |
-| **Rechazos de protección** | Intentos significativos de violar permisos, procedencia o límites de autenticación. | Se registra contexto suficiente sin convertir el rechazo en una operación de negocio aceptada. |
+| Grupo                            | Evidencia registrada                                                                                                  | Consideración                                                                                                                    |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **Inscripciones y correcciones** | Altas, cancelaciones, retiros, cambios de sección y rectificaciones extraordinarias.                                  | Su hecho confirmado conserva también movimiento funcional y motivo cuando es obligatorio.                                        |
+| **Administración académica**     | Modificaciones relevantes de estructura, periodos, ofertas y referencias que afecten la operación.                    | La evidencia identifica la decisión administrativa, no todo acceso de lectura rutinaria.                                         |
+| **Usuarios y autorizaciones**    | Creación, habilitación/deshabilitación de cuentas, restablecimientos, cambios y asignaciones de roles/permisos.       | No conserva contraseñas ni secretos anteriores o nuevos.                                                                         |
+| **Importaciones**                | Admisión, identidad del responsable, resultado global y sucesos funcionales relevantes.                               | El detalle de filas permanece bajo la capacidad de importaciones; no se copia cada archivo ni cada fila al registro transversal. |
+| **Autenticación y sesiones**     | Accesos logrados y fallidos relevantes, renovaciones, cierre, revocaciones y reutilización detectada de credenciales. | Los intentos y situaciones de seguridad se diferencian de cambios académicos confirmados.                                        |
+| **Rechazos de protección**       | Intentos significativos de violar permisos, procedencia o límites de autenticación.                                   | Se registra contexto suficiente sin convertir el rechazo en una operación de negocio aceptada.                                   |
 
 Los eventos de seguridad permiten analizar intentos fallidos sin registrar cada solicitud HTTP ordinaria como auditoría institucional. La telemetría puede agrupar datos diagnósticos; esa agrupación no debe destruir evidencia administrativa requerida.
 

@@ -32,7 +32,8 @@ erDiagram
     }
     FACULTIES {
         uuid id PK
-        string code UK
+        string acronym UK
+        string name UK
     }
     ACADEMIC_DEPARTMENTS {
         uuid id PK
@@ -80,23 +81,26 @@ erDiagram
     }
 ```
 
+**Interpretación de `UK`:** indica un atributo sujeto a unicidad según su ámbito lógico. En entidades con baja lógica, la unicidad de atributos de negocio, incluidos conjuntos de columnas, rige exclusivamente entre registros vigentes; en entidades sin baja lógica y en identidades o evidencias históricas no sujetas a esa política, se mantienen las restricciones propias de su modelo. `PK` conserva identidad global permanente. El diagrama no prescribe el diseño físico de los índices.
+
 **Cardinalidad interpretativa:** la relación `PERSONS`–`USERS` es opcional en ambos sentidos. Una cuenta puede estar vinculada como máximo a una persona y una persona a como máximo una cuenta; las cuentas administrativas sin persona asociada son válidas. Cada perfil estudiantil o docente sí requiere su propia persona. Una persona puede tener ambos perfiles.
 
 ### Claves y asociaciones determinantes
 
-| Estructura | Identidad o referencia | Restricción lógica |
-| --- | --- | --- |
-| Persona | Tipo de documento + número | Esa combinación identifica una única persona. El mismo número con un tipo diferente no se confunde automáticamente. |
-| Estudiante | Código institucional; persona | El código identifica un estudiante y una persona no posee perfiles estudiantiles duplicados. |
-| Docente | Código institucional; persona | El código identifica un docente y una persona no posee perfiles docentes duplicados. |
-| Facultad, departamento y programa académico | Código institucional propio | No se reutiliza un código para representar otra unidad histórica. |
-| Curso | Código institucional | Único en toda la universidad, no solo dentro de un departamento o programa académico. |
-| Asociación programa–curso | Identidad propia por episodio de vigencia | Se admiten episodios sucesivos del mismo par, nunca intervalos superpuestos. La desasociación cierra el episodio sin destruirlo. |
-| Cuenta | Correo de acceso y persona opcional | Una identidad de acceso no se duplica; la vinculación con persona no es obligatoria. |
+| Estructura                        | Identidad o referencia                    | Restricción lógica                                                                                                                                                      |
+| --------------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Persona                           | Tipo de documento + número                | Esa combinación identifica una única persona. El mismo número con un tipo diferente no se confunde automáticamente.                                                     |
+| Estudiante                        | Código institucional; persona             | El código es único en el ámbito de vigencia del perfil cuando este admite baja lógica; la identidad personal y sus referencias conservan sus garantías propias.         |
+| Docente                           | Código institucional; persona             | El código es único en el ámbito de vigencia del perfil cuando este admite baja lógica; la adscripción institucional no altera la identidad personal.                    |
+| Facultad                          | Sigla institucional (`acronym`) y nombre  | La sigla y el nombre son únicos entre facultades vigentes de la universidad; la identidad histórica es su UUID y ambos valores pueden reutilizarse tras la baja lógica. |
+| Departamento y programa académico | Código institucional propio               | El código es único entre registros vigentes de cada tipo; su reutilización tras una baja no sustituye la identidad del registro anterior.                               |
+| Curso                             | Código institucional                      | Único entre cursos vigentes de toda la universidad, no solo dentro de un departamento o programa académico.                                                             |
+| Asociación programa–curso         | Identidad propia por episodio de vigencia | Se admiten episodios sucesivos del mismo par, nunca intervalos superpuestos. La desasociación cierra el episodio sin destruirlo.                                        |
+| Cuenta                            | Correo de acceso y persona opcional       | Una identidad de acceso no se duplica; la vinculación con persona no es obligatoria.                                                                                    |
 
 Cada episodio de asociación usa el intervalo **[inicio, fin)**, con fin opcional para representar vigencia abierta. Los límites son instantes inequívocos: un programa y un curso no pueden poseer dos episodios temporalmente solapados. La inscripción se valida frente al episodio vigente en el instante de su admisión, sin duplicar su identificador en la inscripción.
 
-Los registros académicos con historial no pueden reutilizar identidades o códigos para atribuirles un significado distinto. La baja lógica y la desasociación impiden nuevas relaciones ordinarias sin destruir referencias existentes. El modelo de consultas distingue la vigencia de los registros de su existencia histórica.
+Las identidades permanentes de los registros históricos no se reutilizan. En toda entidad con baja lógica, los atributos de negocio que tengan restricciones de unicidad —simples o compuestas— se comparan exclusivamente entre registros vigentes; los valores de un registro dado de baja pueden volver a utilizarse en otra identidad permanente. El mismo código, sigla o nombre en registros de épocas distintas no permite sustituir ni reinterpretar sus referencias históricas. La baja lógica y la desasociación impiden nuevas relaciones ordinarias sobre recursos no vigentes sin destruir los vínculos anteriores. El modelo de consultas distingue la vigencia de la existencia histórica.
 
 ### Catálogos
 
@@ -152,15 +156,15 @@ La referencia al docente puede ser nula durante la preparación de la oferta y d
 
 ### Identidad lógica y consistencia entre referencias
 
-| Elemento | Restricción estructural o referencial |
-| --- | --- |
-| Periodo | Código único y fechas académicas válidas; las fechas de la ventana de inscripción también son obligatorias y ordenadas. |
-| Oferta | Identidad única por combinación **curso + periodo + sección**, conservada en la historia, incluso tras su cancelación. Capacidad máxima estrictamente positiva. |
-| Inscripción | Cada registro conserva una identidad propia aunque haya sido cancelado. Se vincula exactamente a un estudiante, a una oferta y al programa académico con el que se aceptó. |
-| Unicidad de inscripción | No pueden coexistir dos inscripciones `ENROLLED` del mismo estudiante al **mismo curso y periodo**, aunque correspondan a ofertas distintas. |
-| Antecedente de retiro | Un retiro auténtico de efectos vigentes impide la reinscripción ordinaria al mismo curso y periodo; un retiro registrado por error y rectificado conserva su historia, pero no su efecto impeditivo. |
-| Nueva inscripción tras cancelación | Es otro registro con otra identidad; nunca reabre o reemplaza el registro `CANCELLED`. |
-| Movimiento | Pertenece a una sola inscripción, conserva el actor y el momento y registra los valores anteriores y posteriores relevantes para su tipo. No admite edición o eliminación ordinaria. |
+| Elemento                           | Restricción estructural o referencial                                                                                                                                                                |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Periodo                            | Código único y fechas académicas válidas; las fechas de la ventana de inscripción también son obligatorias y ordenadas.                                                                              |
+| Oferta                             | Identidad única por combinación **curso + periodo + sección**, conservada en la historia, incluso tras su cancelación. Capacidad máxima estrictamente positiva.                                      |
+| Inscripción                        | Cada registro conserva una identidad propia aunque haya sido cancelado. Se vincula exactamente a un estudiante, a una oferta y al programa académico con el que se aceptó.                           |
+| Unicidad de inscripción            | No pueden coexistir dos inscripciones `ENROLLED` del mismo estudiante al **mismo curso y periodo**, aunque correspondan a ofertas distintas.                                                         |
+| Antecedente de retiro              | Un retiro auténtico de efectos vigentes impide la reinscripción ordinaria al mismo curso y periodo; un retiro registrado por error y rectificado conserva su historia, pero no su efecto impeditivo. |
+| Nueva inscripción tras cancelación | Es otro registro con otra identidad; nunca reabre o reemplaza el registro `CANCELLED`.                                                                                                               |
+| Movimiento                         | Pertenece a una sola inscripción, conserva el actor y el momento y registra los valores anteriores y posteriores relevantes para su tipo. No admite edición o eliminación ordinaria.                 |
 
 La unicidad por estudiante, curso y periodo **no equivale** a una unicidad limitada al par estudiante–oferta. El curso y el periodo se obtienen de la oferta, pero deben permanecer consistentes en cualquier mecanismo de almacenamiento elegido; no se autoriza una inscripción activa duplicada mediante una sección diferente.
 
@@ -229,14 +233,14 @@ erDiagram
     }
 ```
 
-| Entidad o asociación | Integridad relevante |
-| --- | --- |
-| `user_roles` | Una relación usuario–rol aparece una sola vez; cada cuenta puede recibir varios roles. |
-| `role_permissions` | Una relación rol–permiso aparece una sola vez; los permisos provienen de un catálogo controlado. |
-| `user_sessions` | Pueden existir sesiones históricas revocadas, pero como máximo una permanece activa por usuario. |
-| `student_imports` | Conserva los bytes originales, su huella SHA-256 y el usuario responsable; **usuario + hash** identifica de forma única una admisión. |
+| Entidad o asociación     | Integridad relevante                                                                                                                                           |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `user_roles`             | Una relación usuario–rol aparece una sola vez; cada cuenta puede recibir varios roles.                                                                         |
+| `role_permissions`       | Una relación rol–permiso aparece una sola vez; los permisos provienen de un catálogo controlado.                                                               |
+| `user_sessions`          | Pueden existir sesiones históricas revocadas, pero como máximo una permanece activa por usuario.                                                               |
+| `student_imports`        | Conserva los bytes originales, su huella SHA-256 y el usuario responsable; **usuario + hash** identifica de forma única una admisión.                          |
 | `student_import_results` | Cada fila resuelta tiene identidad **importación + posición de fila**, resultado y observaciones; una misma fila no produce resultados definitivos duplicados. |
-| `audit_logs` | Guarda evidencia de operaciones sensibles sin operaciones ordinarias de edición o eliminación. |
+| `audit_logs`             | Guarda evidencia de operaciones sensibles sin operaciones ordinarias de edición o eliminación.                                                                 |
 
 Los resultados por fila se conservan en una relación técnica propia de la importación, **no como nuevas entidades académicas**. Las filas admitidas pueden concluir como incorporadas, duplicadas o rechazadas; las todavía no procesadas carecen de resultado definitivo. Las cantidades agregadas se derivan de las unidades confirmadas y no constituyen otra fuente independiente de verdad. Una fila válida incorpora solo los registros permitidos, sin sobrescribir estudiantes existentes; una fila rechazada no altera el catálogo académico.
 
@@ -249,6 +253,6 @@ Las identidades de los usuarios, docentes y estudiantes se conservan aunque sus 
 3. **Cambios de programa académico del estudiante:** los datos actuales pueden evolucionar sin alterar el programa académico de referencia de inscripciones anteriores; el cambio no debe invalidar inscripciones `ENROLLED` de periodos operativos.
 4. **Cambios de estructura o docentes:** las ofertas y sus inscripciones históricas conservan referencias, aunque el recurso de catálogo ya no se utilice para nuevas operaciones.
 5. **Movimientos inmutables:** las rectificaciones se agregan como nuevos hechos y no reescriben o destruyen movimientos previos.
-6. **Baja lógica:** se aplica a recursos administrativos que se pueden deshabilitar; no se utiliza para ocultar una inscripción, movimiento, importación o auditoría que deba permanecer como evidencia.
+6. **Baja lógica:** se aplica a recursos administrativos que se pueden deshabilitar; no se utiliza para ocultar una inscripción, movimiento, importación o auditoría que deba permanecer como evidencia. Un recurso padre solo puede darse de baja si no conserva dependientes vigentes que requieran su vigencia; los dependientes históricos dados de baja mantienen sus referencias. La creación o asociación operativa de un dependiente requiere que su padre esté vigente.
 
 Las **restricciones lógicas exigidas** se mantienen independientes de las decisiones físicas de índices, claves, control de concurrencia, migraciones y tipos concretos, que se materializan mediante los mecanismos ejecutables de persistencia.

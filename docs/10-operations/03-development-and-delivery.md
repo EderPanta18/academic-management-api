@@ -14,14 +14,14 @@ Secuencia de preparación:
 4. Iniciar por separado la atención interactiva y la composición de consumidores, verificando sus dependencias.
 5. Utilizar identidades y registros de prueba acordes con las restricciones académicas; no usar datos personales reales como conjunto de pruebas.
 
-| Comando | Uso previsto |
-| --- | --- |
-| `pnpm exec prisma migrate dev` | Aplicar y desarrollar migraciones **solo en la base de desarrollo**. |
-| `pnpm exec prisma generate` | Generar el cliente de acceso a datos correspondiente al esquema. |
-| `pnpm run start:dev` | Ejecutar la API en modo de desarrollo con recarga. |
-| `pnpm run start:worker` | Ejecutar la composición de trabajo diferido. |
-| `pnpm run build` | Construir los artefactos del backend. |
-| `pnpm exec prisma studio` | Inspección local controlada de datos, sin emplearla como vía para cambios administrativos institucionales. |
+| Comando                        | Uso previsto                                                                                               |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `pnpm exec prisma migrate dev` | Aplicar y desarrollar migraciones **solo en la base de desarrollo**.                                       |
+| `pnpm exec prisma generate`    | Generar el cliente de acceso a datos correspondiente al esquema.                                           |
+| `pnpm run start:dev`           | Ejecutar la API en modo de desarrollo con recarga.                                                         |
+| `pnpm run start:worker`        | Ejecutar la composición de trabajo diferido.                                                               |
+| `pnpm run build`               | Construir los artefactos del backend.                                                                      |
+| `pnpm exec prisma studio`      | Inspección local controlada de datos, sin emplearla como vía para cambios administrativos institucionales. |
 
 **pnpm es el único gestor de paquetes y ejecutor oficial del proyecto.** Los comandos Prisma se invocan mediante `pnpm exec`. El comando de reinicio destructivo o reconstrucción directa del esquema no forma parte de la operación institucional.
 

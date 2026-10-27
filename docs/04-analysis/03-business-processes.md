@@ -183,16 +183,16 @@ Los reportes distinguen situaciones vigentes e históricas mediante filtros admi
 
 ## 8. Resultados que deben permanecer distinguibles
 
-| Situación | Resultado funcional |
-| --- | --- |
-| Inscripción válida | `ENROLLED`, cupo ocupado, creación e identidad del actor registradas. |
-| Inscripción inválida | Rechazo sin cupo ni inscripción parcial. |
-| Cancelación ordinaria | `CANCELLED`, plaza liberada, motivo e historial preservados. |
-| Retiro ordinario | `WITHDRAWN`, plaza liberada y prohibición de reinscripción ordinaria al mismo curso y periodo. |
-| Cambio de sección | Misma inscripción, nuevo destino, ocupación consistente e historial del traslado. |
-| Corrección extraordinaria | Modificación acotada y justificada, sin pérdida de integridad. |
-| Archivo aceptado | Seguimiento disponible; procesamiento aún no necesariamente concluido. |
-| Fila inválida o duplicada | Resultado registrado sin modificar datos que no corresponde modificar. |
-| Consulta de reporte | Datos de lectura; ninguna modificación operativa asociada. |
+| Situación                 | Resultado funcional                                                                            |
+| ------------------------- | ---------------------------------------------------------------------------------------------- |
+| Inscripción válida        | `ENROLLED`, cupo ocupado, creación e identidad del actor registradas.                          |
+| Inscripción inválida      | Rechazo sin cupo ni inscripción parcial.                                                       |
+| Cancelación ordinaria     | `CANCELLED`, plaza liberada, motivo e historial preservados.                                   |
+| Retiro ordinario          | `WITHDRAWN`, plaza liberada y prohibición de reinscripción ordinaria al mismo curso y periodo. |
+| Cambio de sección         | Misma inscripción, nuevo destino, ocupación consistente e historial del traslado.              |
+| Corrección extraordinaria | Modificación acotada y justificada, sin pérdida de integridad.                                 |
+| Archivo aceptado          | Seguimiento disponible; procesamiento aún no necesariamente concluido.                         |
+| Fila inválida o duplicada | Resultado registrado sin modificar datos que no corresponde modificar.                         |
+| Consulta de reporte       | Datos de lectura; ninguna modificación operativa asociada.                                     |
 
 Los diagramas representan la secuencia funcional y sus decisiones. Las verificaciones de fechas, autorización y consistencia se realizan en el momento en que la operación intenta confirmarse, no solamente cuando el usuario selecciona una opción.

@@ -6,14 +6,14 @@ Los mecanismos de transporte constituyen una frontera de seguridad distinta de l
 
 El acceso y la renovación se transportan mediante **dos cookies independientes** cuya configuración responde al propósito de cada credencial.
 
-| Propiedad | Cookie de acceso | Cookie de renovación |
-| --- | --- | --- |
-| `HttpOnly` | Obligatorio. | Obligatorio. |
-| `Secure` | Obligatorio en producción sobre HTTPS. | Obligatorio en producción sobre HTTPS. |
-| `SameSite` | `Lax`. | `Lax`. |
-| `Domain` | Ausente; cookie limitada al host emisor. | Ausente; cookie limitada al host emisor. |
-| `Path` | `/`. | `/api/v1/auth`. |
-| Vigencia máxima de la credencial | 15 minutos. | 7 días. |
+| Propiedad                        | Cookie de acceso                         | Cookie de renovación                     |
+| -------------------------------- | ---------------------------------------- | ---------------------------------------- |
+| `HttpOnly`                       | Obligatorio.                             | Obligatorio.                             |
+| `Secure`                         | Obligatorio en producción sobre HTTPS.   | Obligatorio en producción sobre HTTPS.   |
+| `SameSite`                       | `Lax`.                                   | `Lax`.                                   |
+| `Domain`                         | Ausente; cookie limitada al host emisor. | Ausente; cookie limitada al host emisor. |
+| `Path`                           | `/`.                                     | `/api/v1/auth`.                          |
+| Vigencia máxima de la credencial | 15 minutos.                              | 7 días.                                  |
 
 El atributo `HttpOnly` impide que el código JavaScript normal del navegador lea las credenciales; no reemplaza protección contra solicitudes forjadas ni resuelve por sí solo la seguridad del cliente. El atributo `SameSite=Lax` tampoco reemplaza la validación estricta de procedencia exigida a las operaciones sensibles.
 

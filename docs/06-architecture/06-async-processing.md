@@ -6,13 +6,13 @@ La arquitectura distingue las garantías comunes de ejecución de las reglas par
 
 ## 1. Trabajos, eventos y propiedad
 
-| Concepto | Significado | Responsabilidad |
-| --- | --- | --- |
-| **Job** | Encargo persistente de una operación diferible. | El módulo dueño define su contrato, aceptación, identidad funcional y resultado; la infraestructura entrega el trabajo. |
-| **Evento** | Comunicación de un hecho funcional ya confirmado. | El módulo dueño define el hecho; la infraestructura lo publica a consumidores autorizados. |
-| **Processor** | Adaptador que recibe una entrega y activa un caso de uso. | Pertenece a la capacidad funcional que ejecuta; no reemplaza su lógica de aplicación. |
-| **Worker** | Proceso que registra consumidores y gestiona su ejecución. | Compone recursos y adaptadores; no decide reglas académicas. |
-| **Outbox y relay** | Persisten y despachan intenciones de publicación recuperables. | Implementan una garantía técnica compartida sin adquirir propiedad del hecho o trabajo. |
+| Concepto           | Significado                                                    | Responsabilidad                                                                                                         |
+| ------------------ | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Job**            | Encargo persistente de una operación diferible.                | El módulo dueño define su contrato, aceptación, identidad funcional y resultado; la infraestructura entrega el trabajo. |
+| **Evento**         | Comunicación de un hecho funcional ya confirmado.              | El módulo dueño define el hecho; la infraestructura lo publica a consumidores autorizados.                              |
+| **Processor**      | Adaptador que recibe una entrega y activa un caso de uso.      | Pertenece a la capacidad funcional que ejecuta; no reemplaza su lógica de aplicación.                                   |
+| **Worker**         | Proceso que registra consumidores y gestiona su ejecución.     | Compone recursos y adaptadores; no decide reglas académicas.                                                            |
+| **Outbox y relay** | Persisten y despachan intenciones de publicación recuperables. | Implementan una garantía técnica compartida sin adquirir propiedad del hecho o trabajo.                                 |
 
 No toda operación requiere trabajo diferido ni genera eventos. Los contratos se crean para consecuencias funcionales definidas, no para transformar toda llamada entre módulos en mensajería. Un evento no sustituye el historial ni la auditoría obligatoria de su hecho de origen.
 
@@ -86,14 +86,14 @@ Para eventos, el hecho publicado ya existe y permanece confirmado antes de ser e
 
 La infraestructura controla la recepción, la concurrencia técnica, los reintentos y el reconocimiento de entregas. El módulo propietario define qué operaciones pueden repetirse, cuáles son sus claves de idempotencia y cómo se conserva el resultado funcional.
 
-| Situación | Garantía requerida |
-| --- | --- |
-| Fallo antes de confirmar la admisión. | No existe encargo aceptado ni intención parcial de publicación. |
-| Caída tras confirmar la admisión, antes de publicar. | La intención persistida permanece disponible para el relay. |
-| Caída tras publicar, antes de reconocer. | La entrega puede repetirse sin duplicar efectos. |
-| Fallo durante la ejecución. | Los cambios confirmados se distinguen de los no confirmados; la recuperación no repite efectos persistentes. |
-| Error permanente. | El propietario registra un resultado de fallo y el estado funcional alcanzado, sin presentar éxito inexistente. |
-| Apagado del consumidor. | Cada instancia compartida se detiene una sola vez bajo su responsable técnico, después de interrumpir nuevas recepciones y finalizar o liberar de forma controlada las entregas en curso. |
+| Situación                                            | Garantía requerida                                                                                                                                                                        |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fallo antes de confirmar la admisión.                | No existe encargo aceptado ni intención parcial de publicación.                                                                                                                           |
+| Caída tras confirmar la admisión, antes de publicar. | La intención persistida permanece disponible para el relay.                                                                                                                               |
+| Caída tras publicar, antes de reconocer.             | La entrega puede repetirse sin duplicar efectos.                                                                                                                                          |
+| Fallo durante la ejecución.                          | Los cambios confirmados se distinguen de los no confirmados; la recuperación no repite efectos persistentes.                                                                              |
+| Error permanente.                                    | El propietario registra un resultado de fallo y el estado funcional alcanzado, sin presentar éxito inexistente.                                                                           |
+| Apagado del consumidor.                              | Cada instancia compartida se detiene una sola vez bajo su responsable técnico, después de interrumpir nuevas recepciones y finalizar o liberar de forma controlada las entregas en curso. |
 
 No se presume orden absoluto de entrega ni procesamiento exactamente una vez. Cuando el orden modifica el resultado, el módulo responsable establece identidad, versión o condiciones de transición capaces de rechazar una entrega obsoleta. Los eventos y trabajos incluyen el contexto de trazabilidad imprescindible, sin confiar permisos a valores del payload no autorizados.
 

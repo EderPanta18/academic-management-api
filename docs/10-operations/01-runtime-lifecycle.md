@@ -4,11 +4,11 @@ El backend se ejecuta como un **monolito modular con procesos independientes**. 
 
 ## 1. Procesos y responsabilidades operativas
 
-| Responsabilidad de ejecución | Servicio que presta | Dependencias necesarias | Límite operativo |
-| --- | --- | --- | --- |
-| Atención interactiva | Recibe solicitudes REST, autentica, autoriza y entrega resultados o admisiones durables. | PostgreSQL, composición NestJS y adaptadores requeridos. | No ejecuta importaciones completas durante la solicitud ni confía en memoria local para una decisión confirmada. |
-| Trabajo diferido | Consume encargos aceptados, activa sus casos de uso y conserva progreso confirmado. | PostgreSQL, PgBoss y adaptadores de los módulos consumidores. | No decide permisos propios de la identidad humana ni expone identificadores internos de jobs como contratos públicos. |
-| Despacho recuperable | Localiza intenciones persistidas y las entrega a la mensajería, registrando su reconocimiento. | PostgreSQL y PgBoss. | No presenta una entrega como si fuera una ejecución funcional finalizada. |
+| Responsabilidad de ejecución | Servicio que presta                                                                            | Dependencias necesarias                                       | Límite operativo                                                                                                      |
+| ---------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Atención interactiva         | Recibe solicitudes REST, autentica, autoriza y entrega resultados o admisiones durables.       | PostgreSQL, composición NestJS y adaptadores requeridos.      | No ejecuta importaciones completas durante la solicitud ni confía en memoria local para una decisión confirmada.      |
+| Trabajo diferido             | Consume encargos aceptados, activa sus casos de uso y conserva progreso confirmado.            | PostgreSQL, PgBoss y adaptadores de los módulos consumidores. | No decide permisos propios de la identidad humana ni expone identificadores internos de jobs como contratos públicos. |
+| Despacho recuperable         | Localiza intenciones persistidas y las entrega a la mensajería, registrando su reconocimiento. | PostgreSQL y PgBoss.                                          | No presenta una entrega como si fuera una ejecución funcional finalizada.                                             |
 
 La función de despacho puede ejecutarse junto a una composición de trabajo técnico; es una responsabilidad identificable, **no una exigencia de desplegar un tercer servicio**. Cada instancia que aloja una de estas responsabilidades administra sus conexiones, recursos y cierre. Varias instancias no dependen de estado de memoria compartido.
 

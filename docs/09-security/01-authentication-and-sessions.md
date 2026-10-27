@@ -14,13 +14,13 @@ La autenticación comprueba la identidad de una **cuenta interna administrada**;
 
 Cada cuenta mantiene **como máximo una sesión activa**. Esta exclusividad y la rotación de la credencial de renovación son garantías obligatorias que no pueden desactivarse mediante configuración. La sesión se conserva como estado revocable controlado por `users`, separado de los permisos que administra `authorization`.
 
-| Elemento | Decisión de seguridad | Garantía |
-| --- | --- | --- |
-| **Sesión de cuenta** | Identidad persistente de sesión, titular, vigencia y estado de revocación. | La existencia de un token no sustituye su validación. |
-| **Access token** | **JWT firmado**, de vida máxima **15 minutos**, que identifica cuenta y sesión. | Concede una credencial breve, no una autorización permanente ni una copia vinculante de roles. |
-| **Refresh token** | Credencial aleatoria de renovación, de vida máxima **7 días**, **rotatoria** y vinculada a la sesión. | Solo se acepta la credencial vigente; la anterior deja de ser válida tras una rotación confirmada. |
-| **Persistencia de renovación** | Se conserva un verificador no reversible de la credencial de refresh, no su valor en texto plano. | La consulta de datos persistidos no entrega una credencial reutilizable. |
-| **Transporte** | Cookies separadas, `HttpOnly`; el acceso y la renovación no se serializan como tokens dentro de `data`. | El JavaScript del cliente no necesita leer las credenciales. |
+| Elemento                       | Decisión de seguridad                                                                                   | Garantía                                                                                           |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Sesión de cuenta**           | Identidad persistente de sesión, titular, vigencia y estado de revocación.                              | La existencia de un token no sustituye su validación.                                              |
+| **Access token**               | **JWT firmado**, de vida máxima **15 minutos**, que identifica cuenta y sesión.                         | Concede una credencial breve, no una autorización permanente ni una copia vinculante de roles.     |
+| **Refresh token**              | Credencial aleatoria de renovación, de vida máxima **7 días**, **rotatoria** y vinculada a la sesión.   | Solo se acepta la credencial vigente; la anterior deja de ser válida tras una rotación confirmada. |
+| **Persistencia de renovación** | Se conserva un verificador no reversible de la credencial de refresh, no su valor en texto plano.       | La consulta de datos persistidos no entrega una credencial reutilizable.                           |
+| **Transporte**                 | Cookies separadas, `HttpOnly`; el acceso y la renovación no se serializan como tokens dentro de `data`. | El JavaScript del cliente no necesita leer las credenciales.                                       |
 
 Las duraciones de las credenciales son configurables, pero deben ser **positivas, inequívocas y no superar los máximos de quince minutos para el acceso y siete días para la renovación**. Los valores inválidos impiden iniciar el servicio; no se sustituyen silenciosamente.
 

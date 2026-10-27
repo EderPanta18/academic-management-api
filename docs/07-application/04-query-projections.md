@@ -6,13 +6,13 @@ Los **reportes operativos institucionales** son la capacidad de lectura consolid
 
 ## 1. Responsabilidades de una consulta
 
-| Responsabilidad | Decisión de aplicación | Límite |
-| --- | --- | --- |
-| **Consulta de recurso** | Recuperar un recurso o su historial dentro del acceso permitido. | No conferir derechos sobre otros recursos enlazados. |
-| **Proyección** | Seleccionar campos y relaciones necesarias para un resultado comprensible. | No exponer entidades internas o estructuras de persistencia. |
-| **Consolidación** | Unir información de propietarios funcionales distintos conforme a una definición de consulta. | No modificar datos de origen ni asumir su titularidad. |
-| **Agregación** | Calcular cantidades o distribuciones con unidad y filtros explícitos. | No sumar conceptos incompatibles ni modificar su interpretación. |
-| **Visibilidad** | Aplicar el ámbito de autorización antes de representar el resultado. | No utilizar agregados o filtros para eludir restricciones de lectura detallada. |
+| Responsabilidad         | Decisión de aplicación                                                                        | Límite                                                                          |
+| ----------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| **Consulta de recurso** | Recuperar un recurso o su historial dentro del acceso permitido.                              | No conferir derechos sobre otros recursos enlazados.                            |
+| **Proyección**          | Seleccionar campos y relaciones necesarias para un resultado comprensible.                    | No exponer entidades internas o estructuras de persistencia.                    |
+| **Consolidación**       | Unir información de propietarios funcionales distintos conforme a una definición de consulta. | No modificar datos de origen ni asumir su titularidad.                          |
+| **Agregación**          | Calcular cantidades o distribuciones con unidad y filtros explícitos.                         | No sumar conceptos incompatibles ni modificar su interpretación.                |
+| **Visibilidad**         | Aplicar el ámbito de autorización antes de representar el resultado.                          | No utilizar agregados o filtros para eludir restricciones de lectura detallada. |
 
 Las consultas ordinarias y las consolidadas responden a responsabilidades distintas, pero comparten el principio de **lectura sin efecto de negocio**. Esta separación no exige mantener otra base de datos o generar modelos persistentes de lectura.
 
@@ -43,13 +43,13 @@ Las proyecciones pueden recuperar información de varios propietarios mediante c
 
 El módulo `reports` gobierna las consultas institucionales predefinidas y compone información académica y administrativa autorizada.
 
-| Familia | Resultado consultable | Delimitación funcional |
-| --- | --- | --- |
-| **Estudiantes** | Conteos y distribuciones por situación estudiantil y programa académico. | La vigencia se distingue de los antecedentes cuando el filtro lo permite. |
-| **Cursos y estructura** | Distribuciones por curso, categoría, programa académico, departamento o facultad. | El curso de catálogo no se confunde con su oferta en un periodo. |
-| **Ofertas y docencia** | Secciones, docentes, situación, capacidad y ocupación por periodo. | El periodo se selecciona expresamente. |
-| **Inscripciones** | Conteos por periodo, curso, programa académico, oferta y estado de inscripción. | `ENROLLED`, `CANCELLED` y `WITHDRAWN` conservan significados distintos. |
-| **Importaciones** | Cantidades agregadas de cargas, filas incorporadas, duplicadas y rechazadas. | No incluye archivos, seguimiento individual ni observaciones por fila. |
+| Familia                 | Resultado consultable                                                             | Delimitación funcional                                                    |
+| ----------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| **Estudiantes**         | Conteos y distribuciones por situación estudiantil y programa académico.          | La vigencia se distingue de los antecedentes cuando el filtro lo permite. |
+| **Cursos y estructura** | Distribuciones por curso, categoría, programa académico, departamento o facultad. | El curso de catálogo no se confunde con su oferta en un periodo.          |
+| **Ofertas y docencia**  | Secciones, docentes, situación, capacidad y ocupación por periodo.                | El periodo se selecciona expresamente.                                    |
+| **Inscripciones**       | Conteos por periodo, curso, programa académico, oferta y estado de inscripción.   | `ENROLLED`, `CANCELLED` y `WITHDRAWN` conservan significados distintos.   |
+| **Importaciones**       | Cantidades agregadas de cargas, filas incorporadas, duplicadas y rechazadas.      | No incluye archivos, seguimiento individual ni observaciones por fila.    |
 
 Cada familia declara las dimensiones y combinaciones admitidas; la aplicación no acepta instrucciones arbitrarias para crear otras consultas. Los reportes ofrecen observación institucional, no administración indirecta de los recursos representados.
 
@@ -73,14 +73,14 @@ Los totales deben distinguir **personas, estudiantes, cursos, ofertas, inscripci
 
 Toda consulta se ejecuta dentro del ámbito de lectura autorizado. **`reports.read`** habilita las familias de reportes institucionales predefinidas, pero no otorga por sí solo acceso a recursos nominales, evidencias administrativas ni otras capacidades protegidas.
 
-| Información | Alcance de `reports.read` |
-| --- | --- |
-| Indicadores institucionales y distribuciones admitidas | Acceso mediante las consultas predefinidas y sus filtros. |
-| Totales agregados de importaciones | Permitidos sin identificar archivos o filas concretas. |
-| Importación individual, archivo fuente y observaciones por fila | No habilitados. |
-| Historial nominal detallado de una inscripción | No habilitado por ese permiso por sí solo. |
-| Eventos de auditoría y seguridad | No habilitados. |
-| Creación, modificación o corrección de recursos académicos | No habilitadas. |
+| Información                                                     | Alcance de `reports.read`                                 |
+| --------------------------------------------------------------- | --------------------------------------------------------- |
+| Indicadores institucionales y distribuciones admitidas          | Acceso mediante las consultas predefinidas y sus filtros. |
+| Totales agregados de importaciones                              | Permitidos sin identificar archivos o filas concretas.    |
+| Importación individual, archivo fuente y observaciones por fila | No habilitados.                                           |
+| Historial nominal detallado de una inscripción                  | No habilitado por ese permiso por sí solo.                |
+| Eventos de auditoría y seguridad                                | No habilitados.                                           |
+| Creación, modificación o corrección de recursos académicos      | No habilitadas.                                           |
 
 La aplicación autoriza **la pregunta y el resultado**, no únicamente el acceso a una ruta. Componer información de módulos diferentes no permite revelar un detalle restringido mediante filtros o dimensiones que el contrato no admite. Los resultados no contienen trazas técnicas, consultas SQL ni campos internos usados para calcular el reporte.
 

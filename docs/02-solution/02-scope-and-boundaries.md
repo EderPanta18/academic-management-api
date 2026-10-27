@@ -100,19 +100,19 @@ Las condiciones detalladas de los estados y movimientos forman parte del comport
 
 ## Exclusiones explícitas
 
-| Área | Fuera de la primera versión |
-| --- | --- |
-| Resultados académicos | Calificaciones, actas, promedios, evaluaciones, aprobación de cursos y expedientes académicos completos. |
-| Currículo | Planes y versiones curriculares, ciclos curriculares, equivalencias, prerrequisitos y comprobación de avance de estudios. |
-| Finanzas | Pensiones, pagos, deudas, facturación, becas y bloqueo de inscripciones por obligaciones financieras. |
-| Asistencia y horarios | Control de asistencia, planificación horaria detallada, conflictos de horarios, aulas, edificios y reserva de ambientes. |
-| Admisión y certificación | Procesos de admisión, postulaciones, títulos, constancias y certificados. |
-| Autoservicio | Portales de autoservicio estudiantil o docente, solicitudes de inscripción y flujos de aprobación asociados. |
-| Comunicación | Notificaciones por correo, mensajería, campañas y automatizaciones de comunicación con estudiantes. |
-| Integración institucional | Sincronización automática con ERP, LMS, sistemas externos reales u otras instituciones. |
-| Administración general | Recursos humanos, nóminas, gestión documental completa y operaciones administrativas no relacionadas con las inscripciones. |
+| Área                      | Fuera de la primera versión                                                                                                      |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Resultados académicos     | Calificaciones, actas, promedios, evaluaciones, aprobación de cursos y expedientes académicos completos.                         |
+| Currículo                 | Planes y versiones curriculares, ciclos curriculares, equivalencias, prerrequisitos y comprobación de avance de estudios.        |
+| Finanzas                  | Pensiones, pagos, deudas, facturación, becas y bloqueo de inscripciones por obligaciones financieras.                            |
+| Asistencia y horarios     | Control de asistencia, planificación horaria detallada, conflictos de horarios, aulas, edificios y reserva de ambientes.         |
+| Admisión y certificación  | Procesos de admisión, postulaciones, títulos, constancias y certificados.                                                        |
+| Autoservicio              | Portales de autoservicio estudiantil o docente, solicitudes de inscripción y flujos de aprobación asociados.                     |
+| Comunicación              | Notificaciones por correo, mensajería, campañas y automatizaciones de comunicación con estudiantes.                              |
+| Integración institucional | Sincronización automática con ERP, LMS, sistemas externos reales u otras instituciones.                                          |
+| Administración general    | Recursos humanos, nóminas, gestión documental completa y operaciones administrativas no relacionadas con las inscripciones.      |
 | Carga y analítica general | Importaciones genéricas de todas las entidades, exportación documental de reportes, consultas analíticas libres y plataforma BI. |
-| Multiinstitución | Administración de universidades independientes, separación de datos por institución o reglas multitenant. |
+| Multiinstitución          | Administración de universidades independientes, separación de datos por institución o reglas multitenant.                        |
 
 Estas exclusiones son **límites del producto**, no funcionalidades implícitas pendientes de activar. Incorporarlas supondría modificar expresamente su alcance.
 
@@ -132,5 +132,3 @@ La proximidad temática con la vida universitaria no es suficiente para incluir 
 ## Delimitación del resultado
 
 La primera versión constituye un **backend especializado en gestión de inscripciones académicas**, con funciones institucionales complementarias estrictamente necesarias para operar el proceso. Su resultado esperado es un registro consistente y supervisable de ofertas, estudiantes e inscripciones, con control de acceso y preservación de la historia funcional.
-
-

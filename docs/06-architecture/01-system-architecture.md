@@ -6,13 +6,13 @@ El backend adopta un **monolito modular** organizado por capacidades funcionales
 
 La arquitectura diferencia cinco responsabilidades:
 
-| Responsabilidad | Función | Restricción |
-| --- | --- | --- |
-| Dominio | Preserva significado, estados e invariantes académicos. | No depende de protocolos, frameworks, ORM ni brokers. |
-| Aplicación | Ejecuta y coordina casos de uso, autorización funcional y unidades de consistencia. | No delega reglas de negocio a adaptadores. |
-| Adaptadores de entrada | Traducen mecanismos de invocación a contratos de aplicación. | No son propietarios de los estados académicos. |
-| Adaptadores de salida | Materializan persistencia, criptografía, mensajería, lectura de archivos y otras capacidades técnicas. | No sustituyen a los módulos que deciden las reglas. |
-| Composición | Ensambla módulos, adaptadores y recursos para un proceso concreto. | No contiene lógica académica. |
+| Responsabilidad        | Función                                                                                                | Restricción                                           |
+| ---------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| Dominio                | Preserva significado, estados e invariantes académicos.                                                | No depende de protocolos, frameworks, ORM ni brokers. |
+| Aplicación             | Ejecuta y coordina casos de uso, autorización funcional y unidades de consistencia.                    | No delega reglas de negocio a adaptadores.            |
+| Adaptadores de entrada | Traducen mecanismos de invocación a contratos de aplicación.                                           | No son propietarios de los estados académicos.        |
+| Adaptadores de salida  | Materializan persistencia, criptografía, mensajería, lectura de archivos y otras capacidades técnicas. | No sustituyen a los módulos que deciden las reglas.   |
+| Composición            | Ensambla módulos, adaptadores y recursos para un proceso concreto.                                     | No contiene lógica académica.                         |
 
 La distinción anterior es **funcional**, no una lista cerrada de tecnologías o directorios. Los mecanismos de entrada pertenecen a una frontera extensible: incorporar otro transporte o protocolo requiere un adaptador, no una segunda implementación de los casos de uso. La misma regla rige las salidas técnicas y los mecanismos de ejecución.
 
@@ -77,7 +77,7 @@ El procesamiento diferido conserva una **admisión duradera** antes de responder
 
 Las reglas del dominio no conocen NestJS, Prisma, PgBoss, protocolos de transporte, cookies ni herramientas de validación externa. La aplicación consume contratos; los adaptadores materializan esos contratos. La selección tecnológica pertenece al diseño de infraestructura y composición, sin propagarse a las entidades académicas.
 
-En un mismo proceso se comparten capacidades técnicas sin abrir acceso indiscriminado a la información de otros módulos. El almacenamiento compartido facilita transacciones, pero **no convierte la base de datos en una interfaz pública entre módulos**.
+En un mismo proceso se comparten capacidades técnicas sin abrir acceso indiscriminado a la información de otros módulos. El almacenamiento compartido facilita transacciones, pero **no convierte la base de datos en una interfaz pública entre módulos**. Se admite una excepción restringida: los adaptadores de persistencia pueden consultar datos de otras capacidades exclusivamente para comprobar existencia y vigencia de relaciones que condicionan la integridad de una operación propia. Esta lectura técnica no autoriza escritura de datos ajenos, acceso desde dominio o aplicación al ORM ni apropiación de reglas funcionales de otra capacidad.
 
 Se rechazan dependencias circulares como solución ordinaria de integración. Cuando dos capacidades necesitan mutuamente internals ajenos, se redefinen la propiedad funcional, los contratos y la dirección de colaboración. La estructura de carpetas nunca es una autorización implícita de dependencia.
 

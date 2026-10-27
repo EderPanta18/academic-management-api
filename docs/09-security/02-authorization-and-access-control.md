@@ -14,17 +14,17 @@ La autorización determina **qué operación y qué información puede utilizar 
 
 ## 2. Derechos institucionales de los roles base
 
-| Capacidad | `ADMIN` | `SECRETARY` | `ACADEMIC_COORDINATOR` | `REPORT_VIEWER` |
-| --- | :---: | :---: | :---: | :---: |
-| Administrar cuentas y asignaciones de roles | Sí | No | No | No |
-| Administrar estructura académica, docentes, periodos y ofertas | Sí | No | Sí | No |
-| Mantener personas y estudiantes | Sí | Sí | Solo consulta académica autorizada | No |
-| Importar estudiantes y consultar el detalle de sus importaciones | Sí | Sí | No | No |
-| Registrar, cancelar, retirar o cambiar sección de una inscripción | Sí | Sí | No | No |
-| Consultar información académica e inscripciones nominales autorizadas | Sí | Sí | Sí | No |
-| Ejecutar correcciones extraordinarias de inscripciones | Sí | No | No | No |
-| Consultar reportes institucionales predefinidos | Sí | Sí | Sí | Sí |
-| Consultar eventos de auditoría y seguridad | Sí | No | No | No |
+| Capacidad                                                             | `ADMIN` | `SECRETARY` |       `ACADEMIC_COORDINATOR`       | `REPORT_VIEWER` |
+| --------------------------------------------------------------------- | :-----: | :---------: | :--------------------------------: | :-------------: |
+| Administrar cuentas y asignaciones de roles                           |   Sí    |     No      |                 No                 |       No        |
+| Administrar estructura académica, docentes, periodos y ofertas        |   Sí    |     No      |                 Sí                 |       No        |
+| Mantener personas y estudiantes                                       |   Sí    |     Sí      | Solo consulta académica autorizada |       No        |
+| Importar estudiantes y consultar el detalle de sus importaciones      |   Sí    |     Sí      |                 No                 |       No        |
+| Registrar, cancelar, retirar o cambiar sección de una inscripción     |   Sí    |     Sí      |                 No                 |       No        |
+| Consultar información académica e inscripciones nominales autorizadas |   Sí    |     Sí      |                 Sí                 |       No        |
+| Ejecutar correcciones extraordinarias de inscripciones                |   Sí    |     No      |                 No                 |       No        |
+| Consultar reportes institucionales predefinidos                       |   Sí    |     Sí      |                 Sí                 |       Sí        |
+| Consultar eventos de auditoría y seguridad                            |   Sí    |     No      |                 No                 |       No        |
 
 La lectura de información académica de coordinación no implica permiso de modificar personas, estudiantes o inscripciones. El permiso de reportes tampoco confiere acceso a recursos nominales, archivos de importación, observaciones por fila o auditoría. Una cuenta que reúna varios roles obtiene la unión real de sus permisos, no una excepción implícita al alcance institucional de cada operación.
 

@@ -4,13 +4,13 @@ La capa de aplicación **interpreta intenciones funcionales autorizadas, coordin
 
 ## 1. Responsabilidades y propiedad
 
-| Tipo de operación | Responsabilidad de aplicación | Límite |
-| --- | --- | --- |
-| **Comando** | Coordinar una modificación intencional y confirmar sus efectos obligatorios. | No autorizar escrituras libres sobre estados ni datos privados de otros módulos. |
-| **Consulta** | Recuperar recursos, relaciones e historiales visibles para el solicitante. | No modificar el estado funcional como consecuencia de una lectura. |
-| **Colaboración intermodular** | Obtener comprobaciones o ejecutar capacidades ajenas a través de contratos públicos. | No asumir la propiedad de invariantes de los colaboradores. |
-| **Operación diferida** | Aceptar una intención recuperable, conservar su identidad funcional y coordinar su resultado. | No delegar el significado del trabajo a una cola o a un proceso worker. |
-| **Proyección de lectura** | Combinar información confirmada bajo filtros, significado y autorización definidos. | No adquirir permisos de escritura sobre las fuentes ni exponer datos por asociación accidental. |
+| Tipo de operación             | Responsabilidad de aplicación                                                                 | Límite                                                                                          |
+| ----------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| **Comando**                   | Coordinar una modificación intencional y confirmar sus efectos obligatorios.                  | No autorizar escrituras libres sobre estados ni datos privados de otros módulos.                |
+| **Consulta**                  | Recuperar recursos, relaciones e historiales visibles para el solicitante.                    | No modificar el estado funcional como consecuencia de una lectura.                              |
+| **Colaboración intermodular** | Obtener comprobaciones o ejecutar capacidades ajenas a través de contratos públicos.          | No asumir la propiedad de invariantes de los colaboradores.                                     |
+| **Operación diferida**        | Aceptar una intención recuperable, conservar su identidad funcional y coordinar su resultado. | No delegar el significado del trabajo a una cola o a un proceso worker.                         |
+| **Proyección de lectura**     | Combinar información confirmada bajo filtros, significado y autorización definidos.           | No adquirir permisos de escritura sobre las fuentes ni exponer datos por asociación accidental. |
 
 Cada caso de uso tiene un **módulo propietario** que determina sus condiciones y resultados. Coordinar varios módulos no concede acceso directo a sus repositorios privados ni convierte al coordinador en propietario de sus datos.
 
@@ -52,13 +52,13 @@ La coordinación comprende tres responsabilidades distintas:
 2. **Decisión:** comprobar autorización e invariantes a través de capacidades propietarias, sin confiar en condiciones vistas previamente por la interfaz.
 3. **Confirmación:** exigir que los efectos que constituyen una sola operación queden registrados de manera íntegra o no se informen como realizados.
 
-| Operación concreta | Confirmación que exige el caso de uso |
-| --- | --- |
-| Registrar una inscripción | Inscripción válida, ocupación coherente e historial de creación. |
-| Cancelar, retirar o cambiar de sección | Movimiento válido, efecto sobre la plaza y evidencia de actor y motivo exigible. |
-| Ejecutar corrección extraordinaria | Modificación delimitada, preservación histórica y evidencia administrativa obligatoria. |
-| Administrar identidades y permisos | Cambio autorizado y mantenimiento de las restricciones de seguridad y atribución. |
-| Admitir una operación diferida | Identidad funcional aceptada y obligación durable de entrega para ejecución. |
+| Operación concreta                     | Confirmación que exige el caso de uso                                                   |
+| -------------------------------------- | --------------------------------------------------------------------------------------- |
+| Registrar una inscripción              | Inscripción válida, ocupación coherente e historial de creación.                        |
+| Cancelar, retirar o cambiar de sección | Movimiento válido, efecto sobre la plaza y evidencia de actor y motivo exigible.        |
+| Ejecutar corrección extraordinaria     | Modificación delimitada, preservación histórica y evidencia administrativa obligatoria. |
+| Administrar identidades y permisos     | Cambio autorizado y mantenimiento de las restricciones de seguridad y atribución.       |
+| Admitir una operación diferida         | Identidad funcional aceptada y obligación durable de entrega para ejecución.            |
 
 El caso de uso determina **qué resultados deben confirmarse juntos**. Los puertos transaccionales y la persistencia implementan cómo se alcanza esa indivisibilidad; la aplicación no contiene sentencias SQL, reglas de bloqueo ni estructuras de almacenamiento. Si la confirmación falla, no se comunica un éxito parcial como si la operación hubiera concluido.
 
@@ -76,13 +76,13 @@ La **identidad del recurso** y la **identidad de una operación** no son equival
 
 Una validación inicial no reserva cupos ni garantiza unicidad. Las operaciones concurrentes aceptadas deben preservar las mismas restricciones de inscripción, capacidad, referencias y estado que una ejecución aislada. Ante un conflicto, la aplicación comunica un rechazo funcional reconocible; no crea una inscripción intermedia ni registra un movimiento falso.
 
-| Categoría | Significado para la aplicación | Límite |
-| --- | --- | --- |
-| Entrada inválida | La intención carece de datos válidos para su contrato. | No se interpreta como rechazo de una regla académica ya evaluada. |
-| Acceso denegado | El contexto no habilita la acción o visibilidad requerida. | No se revela información protegida para explicar el rechazo. |
-| Referencia no visible o inexistente | El recurso no puede recuperarse dentro del acceso permitido. | No permite inferir registros fuera del ámbito autorizado. |
-| Regla funcional incumplida | El estado o las condiciones del dominio impiden la operación. | No se convierte en escritura parcial ni en corrección automática. |
-| Conflicto de concurrencia o repetición | La operación contradice una condición confirmada por otra ejecución o una identidad previamente admitida. | No duplica efectos para satisfacer la solicitud. |
-| Falla técnica | No es posible completar o confirmar la ejecución por un error técnico. | No se presenta como operación exitosa ni expone detalles internos. |
+| Categoría                              | Significado para la aplicación                                                                            | Límite                                                             |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Entrada inválida                       | La intención carece de datos válidos para su contrato.                                                    | No se interpreta como rechazo de una regla académica ya evaluada.  |
+| Acceso denegado                        | El contexto no habilita la acción o visibilidad requerida.                                                | No se revela información protegida para explicar el rechazo.       |
+| Referencia no visible o inexistente    | El recurso no puede recuperarse dentro del acceso permitido.                                              | No permite inferir registros fuera del ámbito autorizado.          |
+| Regla funcional incumplida             | El estado o las condiciones del dominio impiden la operación.                                             | No se convierte en escritura parcial ni en corrección automática.  |
+| Conflicto de concurrencia o repetición | La operación contradice una condición confirmada por otra ejecución o una identidad previamente admitida. | No duplica efectos para satisfacer la solicitud.                   |
+| Falla técnica                          | No es posible completar o confirmar la ejecución por un error técnico.                                    | No se presenta como operación exitosa ni expone detalles internos. |
 
 La atribución, los permisos y los resultados consultables pertenecen al contrato de aplicación. Los códigos HTTP, el tratamiento de conexiones, la gestión de procesos consumidores y las garantías físicas de almacenamiento permanecen en sus respectivos adaptadores e infraestructura.

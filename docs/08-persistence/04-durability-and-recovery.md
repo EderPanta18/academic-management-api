@@ -69,15 +69,15 @@ La misma pauta de recuperación corresponde a cualquier trabajo diferido con efe
 
 ## 4. Escenarios de interrupción
 
-| Punto de interrupción | Estado durable observable | Recuperación permitida |
-| --- | --- | --- |
-| Antes de confirmar admisión | No hay operación aceptada ni intención de despacho válida. | Rechazar o volver a admitir una solicitud completa. |
-| Tras confirmar admisión, antes de publicar | Registro funcional, archivo e intención permanecen juntos. | El relay recupera la entrega pendiente. |
-| Tras publicar, antes de registrar reconocimiento | La intención puede parecer no publicada aunque el broker la haya recibido. | Reintentar publicación; la identidad y el consumidor previenen efectos duplicados. |
-| Tras entregar, antes de confirmar efectos | Los cambios de la unidad no confirmada no son visibles como completados. | Volver a ejecutar desde registros persistentes. |
-| Tras confirmar una unidad, antes de reconocer entrega | Los efectos y su evidencia ya existen. | Reconocer la repetición sin crear nuevos efectos. |
-| Tras confirmar varias filas y antes de concluir una importación | Las filas resueltas y las restantes son distinguibles. | Continuar únicamente las unidades sin resultado confirmado y consolidar el estado. |
-| Fallo técnico no recuperable automáticamente | Se conserva el progreso real, la evidencia y la causa técnica apropiada. | Registrar fallo funcionalmente visible sin eliminar resultados ya confirmados. |
+| Punto de interrupción                                           | Estado durable observable                                                  | Recuperación permitida                                                             |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Antes de confirmar admisión                                     | No hay operación aceptada ni intención de despacho válida.                 | Rechazar o volver a admitir una solicitud completa.                                |
+| Tras confirmar admisión, antes de publicar                      | Registro funcional, archivo e intención permanecen juntos.                 | El relay recupera la entrega pendiente.                                            |
+| Tras publicar, antes de registrar reconocimiento                | La intención puede parecer no publicada aunque el broker la haya recibido. | Reintentar publicación; la identidad y el consumidor previenen efectos duplicados. |
+| Tras entregar, antes de confirmar efectos                       | Los cambios de la unidad no confirmada no son visibles como completados.   | Volver a ejecutar desde registros persistentes.                                    |
+| Tras confirmar una unidad, antes de reconocer entrega           | Los efectos y su evidencia ya existen.                                     | Reconocer la repetición sin crear nuevos efectos.                                  |
+| Tras confirmar varias filas y antes de concluir una importación | Las filas resueltas y las restantes son distinguibles.                     | Continuar únicamente las unidades sin resultado confirmado y consolidar el estado. |
+| Fallo técnico no recuperable automáticamente                    | Se conserva el progreso real, la evidencia y la causa técnica apropiada.   | Registrar fallo funcionalmente visible sin eliminar resultados ya confirmados.     |
 
 La recuperación no se basa en contar mensajes enviados ni en interpretar un log técnico como evidencia de éxito académico.
 

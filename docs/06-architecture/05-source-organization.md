@@ -4,14 +4,14 @@ La organización física del backend hace visibles los límites del monolito mod
 
 ## 1. Áreas de responsabilidad
 
-| Área | Propósito estable | Qué no contiene |
-| --- | --- | --- |
-| `src/app/` | Composición de los procesos de exposición e interacción, módulos habilitados y adaptadores correspondientes. | Reglas y casos de uso académicos; restricciones de entrada a un solo protocolo. |
-| `src/core/` | Contratos técnicos transversales puros y tipos base independientes de proveedor. | Entidades o políticas de un módulo funcional concreto. |
-| `src/modules/` | Módulos funcionales, con sus estados, reglas, contratos y adaptadores específicos. | Dependencias internas libres entre capacidades. |
-| `src/platform/` | Soporte técnico común: conexión de datos, mensajería, archivos, seguridad técnica, logging. | Propiedad sobre estudiantes, ofertas o inscripciones. |
-| `src/workers/` | Composición de procesos de trabajo diferido, consumidores y mecanismos técnicos de recepción. | Reglas de los trabajos o casos de uso de los módulos propietarios. |
-| `src/shared/` | Utilidades simples y tipos auxiliares sin negocio propio. | Un lugar alternativo para servicios compartidos que gobiernen el dominio. |
+| Área            | Propósito estable                                                                                            | Qué no contiene                                                                 |
+| --------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| `src/app/`      | Composición de los procesos de exposición e interacción, módulos habilitados y adaptadores correspondientes. | Reglas y casos de uso académicos; restricciones de entrada a un solo protocolo. |
+| `src/core/`     | Contratos técnicos transversales puros y tipos base independientes de proveedor.                             | Entidades o políticas de un módulo funcional concreto.                          |
+| `src/modules/`  | Módulos funcionales, con sus estados, reglas, contratos y adaptadores específicos.                           | Dependencias internas libres entre capacidades.                                 |
+| `src/platform/` | Soporte técnico común: conexión de datos, mensajería, archivos, seguridad técnica, logging.                  | Propiedad sobre estudiantes, ofertas o inscripciones.                           |
+| `src/workers/`  | Composición de procesos de trabajo diferido, consumidores y mecanismos técnicos de recepción.                | Reglas de los trabajos o casos de uso de los módulos propietarios.              |
+| `src/shared/`   | Utilidades simples y tipos auxiliares sin negocio propio.                                                    | Un lugar alternativo para servicios compartidos que gobiernen el dominio.       |
 
 Las áreas `src/app/` y `src/workers/` organizan **la composición de procesos**, no las capas de negocio ni una clasificación exhaustiva de transportes. La API REST se expone desde un proceso interactivo y los trabajos diferidos se consumen en procesos independientes; cada uno construye su propio contenedor NestJS. Todos reutilizan capacidades funcionales por contratos, sin compartir instancias en memoria ni adquirir autoridad académica por el mecanismo de ejecución.
 
@@ -31,12 +31,12 @@ Un módulo con comportamiento significativo separa **cuatro áreas internas**:
 
 El árbol es una **estructura conceptual mínima**, no una orden de crear carpetas vacías o inventariar cada clase. Se mantiene la separación de responsabilidades incluso si una capacidad pequeña requiere pocas piezas físicas.
 
-| Área | Responsabilidad concreta |
-| --- | --- |
-| `domain/` | Entidades con invariantes, value objects, estados, reglas y registros históricos propios. |
-| `application/` | Casos de uso, coordinación, comandos, consultas, contratos y puertos. |
-| `infrastructure/` | Adaptadores concretos, repositorios, queries técnicas y mapeos a persistencia. |
-| `entrypoints/` | Adaptadores por los que llegan invocaciones desde protocolos, procesos y mecanismos externos hacia los casos de uso. |
+| Área              | Responsabilidad concreta                                                                                             |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `domain/`         | Entidades con invariantes, value objects, estados, reglas y registros históricos propios.                            |
+| `application/`    | Casos de uso, coordinación, comandos, consultas, contratos y puertos.                                                |
+| `infrastructure/` | Adaptadores concretos, repositorios, queries técnicas y mapeos a persistencia.                                       |
+| `entrypoints/`    | Adaptadores por los que llegan invocaciones desde protocolos, procesos y mecanismos externos hacia los casos de uso. |
 
 La capa de dominio desconoce los adaptadores. La aplicación declara puertos de salida para persistir o integrar; la infraestructura implementa esos puertos. Las entradas adaptan solicitudes hacia casos de uso en lugar de ejecutar escrituras directamente.
 
@@ -63,12 +63,12 @@ Los contratos públicos internos deben exponer capacidad y resultados estables, 
 
 La clase decorada con `@Module()` declara de forma estática las categorías fundamentales de NestJS:
 
-| Elemento | Responsabilidad |
-| --- | --- |
-| `imports` | Módulos de los que necesita providers exportados. |
-| `controllers` | Controladores admitidos por la composición NestJS del adaptador HTTP. |
-| `providers` | Implementaciones, adaptadores, casos de uso y procesadores que resuelve su contenedor. |
-| `exports` | Contratos o providers destinados expresamente a consumidores externos. |
+| Elemento      | Responsabilidad                                                                        |
+| ------------- | -------------------------------------------------------------------------------------- |
+| `imports`     | Módulos de los que necesita providers exportados.                                      |
+| `controllers` | Controladores admitidos por la composición NestJS del adaptador HTTP.                  |
+| `providers`   | Implementaciones, adaptadores, casos de uso y procesadores que resuelve su contenedor. |
+| `exports`     | Contratos o providers destinados expresamente a consumidores externos.                 |
 
 **Cada módulo compone sus piezas internas y declara sus dependencias directas.** La composición raíz selecciona y reúne los módulos que participan en el proceso; no administra manualmente las dependencias privadas de todos ellos. NestJS resuelve el orden de construcción a partir del grafo, no de la posición visual de los elementos en `imports`.
 

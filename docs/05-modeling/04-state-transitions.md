@@ -6,13 +6,13 @@ Los estados representan situaciones de entidades **distintas**. Una transición 
 
 El perfil estudiantil permite diferenciar la capacidad de solicitar nuevas inscripciones de otras situaciones institucionales. La creación manual o por importación de un estudiante válido establece inicialmente `ACTIVE`.
 
-| Estado | Significado para el sistema de inscripciones | ¿Admite nueva inscripción ordinaria? |
-| --- | --- | --- |
-| `ACTIVE` | Estudiante habilitado para operar académicamente. | Sí, si cumple las demás condiciones. |
-| `INACTIVE` | Perfil no habilitado temporalmente. | No. |
-| `SUSPENDED` | Habilitación suspendida por una decisión administrativa. | No. |
-| `WITHDRAWN` | Estudiante retirado de la institución, distinto de retirar una inscripción de curso. | No. |
-| `GRADUATED` | Situación académica de egreso registrada administrativamente. | No. |
+| Estado      | Significado para el sistema de inscripciones                                         | ¿Admite nueva inscripción ordinaria? |
+| ----------- | ------------------------------------------------------------------------------------ | ------------------------------------ |
+| `ACTIVE`    | Estudiante habilitado para operar académicamente.                                    | Sí, si cumple las demás condiciones. |
+| `INACTIVE`  | Perfil no habilitado temporalmente.                                                  | No.                                  |
+| `SUSPENDED` | Habilitación suspendida por una decisión administrativa.                             | No.                                  |
+| `WITHDRAWN` | Estudiante retirado de la institución, distinto de retirar una inscripción de curso. | No.                                  |
+| `GRADUATED` | Situación académica de egreso registrada administrativamente.                        | No.                                  |
 
 ```mermaid
 stateDiagram-v2
@@ -33,13 +33,13 @@ Una deshabilitación del estudiante **no cambia automáticamente** sus inscripci
 
 ## 2. Periodo académico
 
-| Estado | Significado |
-| --- | --- |
-| `PLANNED` | Periodo preparado, todavía no habilitado para nuevas inscripciones. |
-| `OPEN` | Periodo abierto administrativamente antes del inicio académico; solo habilita operaciones ordinarias sujetas a la ventana mientras no se alcance esa fecha. |
-| `IN_PROGRESS` | Periodo cuyo desarrollo académico ya comenzó tras una transición autorizada; puede admitir operaciones ordinarias si su ventana continúa vigente. |
-| `CLOSED` | Periodo concluido para operaciones ordinarias de inscripción. |
-| `CANCELLED` | Periodo anulado antes del desarrollo académico. No se reactiva ordinariamente. |
+| Estado        | Significado                                                                                                                                                 |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PLANNED`     | Periodo preparado, todavía no habilitado para nuevas inscripciones.                                                                                         |
+| `OPEN`        | Periodo abierto administrativamente antes del inicio académico; solo habilita operaciones ordinarias sujetas a la ventana mientras no se alcance esa fecha. |
+| `IN_PROGRESS` | Periodo cuyo desarrollo académico ya comenzó tras una transición autorizada; puede admitir operaciones ordinarias si su ventana continúa vigente.           |
+| `CLOSED`      | Periodo concluido para operaciones ordinarias de inscripción.                                                                                               |
+| `CANCELLED`   | Periodo anulado antes del desarrollo académico. No se reactiva ordinariamente.                                                                              |
 
 ```mermaid
 stateDiagram-v2
@@ -51,13 +51,13 @@ stateDiagram-v2
     OPEN --> CANCELLED : cancelar antes de iniciar
 ```
 
-| Origen | Evento | Destino | Condiciones determinantes |
-| --- | --- | --- | --- |
-| `PLANNED` | Abrir | `OPEN` | Acción explícita de actor autorizado; estructura y fechas válidas; ventana de inscripción configurada. Si ya se alcanzó el inicio académico, la apertura solo regulariza el estado administrativo y no habilita operaciones ordinarias. |
-| `OPEN` | Iniciar desarrollo | `IN_PROGRESS` | Transición explícita por actor autorizado, una vez alcanzada la fecha de inicio académico; el periodo no fue cancelado. |
-| `IN_PROGRESS` | Cerrar | `CLOSED` | Acción autorizada de finalización del periodo; no modifica inscripciones existentes. |
-| `PLANNED` | Cancelar | `CANCELLED` | No existen inscripciones `ENROLLED` vinculadas. |
-| `OPEN` | Cancelar | `CANCELLED` | No comenzó la fecha académica y no existen inscripciones `ENROLLED` vinculadas. |
+| Origen        | Evento             | Destino       | Condiciones determinantes                                                                                                                                                                                                               |
+| ------------- | ------------------ | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PLANNED`     | Abrir              | `OPEN`        | Acción explícita de actor autorizado; estructura y fechas válidas; ventana de inscripción configurada. Si ya se alcanzó el inicio académico, la apertura solo regulariza el estado administrativo y no habilita operaciones ordinarias. |
+| `OPEN`        | Iniciar desarrollo | `IN_PROGRESS` | Transición explícita por actor autorizado, una vez alcanzada la fecha de inicio académico; el periodo no fue cancelado.                                                                                                                 |
+| `IN_PROGRESS` | Cerrar             | `CLOSED`      | Acción autorizada de finalización del periodo; no modifica inscripciones existentes.                                                                                                                                                    |
+| `PLANNED`     | Cancelar           | `CANCELLED`   | No existen inscripciones `ENROLLED` vinculadas.                                                                                                                                                                                         |
+| `OPEN`        | Cancelar           | `CANCELLED`   | No comenzó la fecha académica y no existen inscripciones `ENROLLED` vinculadas.                                                                                                                                                         |
 
 Cuando un periodo permanece en `PLANNED` después de alcanzar su inicio académico, un actor autorizado puede regularizarlo mediante **dos transiciones explícitas y consecutivas**: `PLANNED → OPEN` y, posteriormente, `OPEN → IN_PROGRESS`. El estado intermedio `OPEN` no habilita nuevas inscripciones, cambios de sección ni reaperturas de ofertas mientras la fecha y el estado sean incompatibles. Ni el transcurso del tiempo ni la primera transición ejecutan automáticamente la segunda. Una vez en `IN_PROGRESS`, cada operación ordinaria continúa sujeta a la ventana de inscripción y a las demás condiciones aplicables.
 
@@ -76,13 +76,13 @@ El estado `OPEN` **no** sustituye la validación de fechas. Si se alcanza el ini
 
 ## 3. Oferta de curso
 
-| Estado | Significado |
-| --- | --- |
-| `DRAFT` | Sección configurada, aún no abierta para inscribir. |
-| `OPEN` | Oferta habilitada administrativamente para evaluar inscripciones. |
-| `CLOSED` | Oferta cerrada para nuevas inscripciones, susceptible de reapertura condicionada. |
-| `FINISHED` | Oferta finalizada operativamente, sin efectos sobre calificaciones o estados de inscripciones. |
-| `CANCELLED` | Oferta anulada sin inscripciones vigentes que conservar. |
+| Estado      | Significado                                                                                    |
+| ----------- | ---------------------------------------------------------------------------------------------- |
+| `DRAFT`     | Sección configurada, aún no abierta para inscribir.                                            |
+| `OPEN`      | Oferta habilitada administrativamente para evaluar inscripciones.                              |
+| `CLOSED`    | Oferta cerrada para nuevas inscripciones, susceptible de reapertura condicionada.              |
+| `FINISHED`  | Oferta finalizada operativamente, sin efectos sobre calificaciones o estados de inscripciones. |
+| `CANCELLED` | Oferta anulada sin inscripciones vigentes que conservar.                                       |
 
 ```mermaid
 stateDiagram-v2
@@ -95,14 +95,14 @@ stateDiagram-v2
     OPEN --> CANCELLED : cancelar sin inscritos vigentes
 ```
 
-| Origen | Evento | Destino | Condiciones determinantes |
-| --- | --- | --- | --- |
-| `DRAFT` | Abrir | `OPEN` | Curso, periodo, capacidad y docente activo válidos; periodo compatible con operar inscripciones. |
-| `OPEN` | Cerrar | `CLOSED` | Actor autorizado; inscripciones existentes conservadas. |
-| `CLOSED` | Reabrir | `OPEN` | Periodo `OPEN` antes del inicio académico o `IN_PROGRESS` desde ese inicio, siempre dentro de la ventana de inscripción; docente habilitado y capacidad consistente. Si `OPEN` quedó atrasado respecto de la fecha, se rechaza la reapertura. |
-| `CLOSED` | Finalizar | `FINISHED` | Periodo concluido; no implica resultado individual de aprobación. |
-| `DRAFT` | Cancelar | `CANCELLED` | Sin inscripciones `ENROLLED`. |
-| `OPEN` | Cancelar | `CANCELLED` | Sin inscripciones `ENROLLED`; se conserva su historia. |
+| Origen   | Evento    | Destino     | Condiciones determinantes                                                                                                                                                                                                                     |
+| -------- | --------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DRAFT`  | Abrir     | `OPEN`      | Curso, periodo, capacidad y docente activo válidos; periodo compatible con operar inscripciones.                                                                                                                                              |
+| `OPEN`   | Cerrar    | `CLOSED`    | Actor autorizado; inscripciones existentes conservadas.                                                                                                                                                                                       |
+| `CLOSED` | Reabrir   | `OPEN`      | Periodo `OPEN` antes del inicio académico o `IN_PROGRESS` desde ese inicio, siempre dentro de la ventana de inscripción; docente habilitado y capacidad consistente. Si `OPEN` quedó atrasado respecto de la fecha, se rechaza la reapertura. |
+| `CLOSED` | Finalizar | `FINISHED`  | Periodo concluido; no implica resultado individual de aprobación.                                                                                                                                                                             |
+| `DRAFT`  | Cancelar  | `CANCELLED` | Sin inscripciones `ENROLLED`.                                                                                                                                                                                                                 |
+| `OPEN`   | Cancelar  | `CANCELLED` | Sin inscripciones `ENROLLED`; se conserva su historia.                                                                                                                                                                                        |
 
 `FINISHED` y `CANCELLED` son terminales. Una oferta en `OPEN` puede estar completamente ocupada: **cupo agotado no es una transición automática a `CLOSED`**. Una oferta abierta dentro de un periodo `CLOSED` o `CANCELLED` no acepta inscripciones, aunque su estado individual no se haya modificado.
 
@@ -112,11 +112,11 @@ La baja de un docente o un curso no debe dejar ofertas abiertas sin referencias 
 
 Esta entidad posee exactamente tres estados:
 
-| Estado | Interpretación | ¿Ocupa cupo? | Nueva inscripción ordinaria al mismo curso y periodo |
-| --- | --- | --- | --- |
-| `ENROLLED` | Inscripción vigente aceptada. | Sí. | No, porque ya existe una inscripción vigente. |
-| `CANCELLED` | Inscripción anulada antes del inicio académico o por rectificación excepcional. | No. | Solo como **nuevo registro**, si todas las condiciones ordinarias se cumplen y no existe bloqueo adicional. |
-| `WITHDRAWN` | Inscripción retirada durante el desarrollo académico. | No. | No si el retiro es auténtico; una rectificación extraordinaria de un error elimina su efecto impeditivo sin borrar el movimiento. |
+| Estado      | Interpretación                                                                  | ¿Ocupa cupo? | Nueva inscripción ordinaria al mismo curso y periodo                                                                              |
+| ----------- | ------------------------------------------------------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `ENROLLED`  | Inscripción vigente aceptada.                                                   | Sí.          | No, porque ya existe una inscripción vigente.                                                                                     |
+| `CANCELLED` | Inscripción anulada antes del inicio académico o por rectificación excepcional. | No.          | Solo como **nuevo registro**, si todas las condiciones ordinarias se cumplen y no existe bloqueo adicional.                       |
+| `WITHDRAWN` | Inscripción retirada durante el desarrollo académico.                           | No.          | No si el retiro es auténtico; una rectificación extraordinaria de un error elimina su efecto impeditivo sin borrar el movimiento. |
 
 ```mermaid
 stateDiagram-v2
@@ -125,11 +125,11 @@ stateDiagram-v2
     ENROLLED --> WITHDRAWN : retiro durante desarrollo
 ```
 
-| Origen | Evento ordinario | Destino | Condiciones | Efectos |
-| --- | --- | --- | --- | --- |
-| Sin registro | Inscribir | `ENROLLED` | Estudiante activo; programa académico asociado al curso; periodo y oferta habilitados; ventana válida; cupo; sin duplicidad ni retiro previo impeditivo. | Nueva inscripción, plaza ocupada y movimiento inicial. |
-| `ENROLLED` | Cancelar | `CANCELLED` | Periodo `OPEN`, antes de la fecha académica de inicio, permiso y motivo. | Plaza liberada, identidad e historial preservados. |
-| `ENROLLED` | Retirar | `WITHDRAWN` | Periodo `IN_PROGRESS`, fecha de desarrollo vigente, permiso y motivo. | Plaza liberada, bloqueo de reinscripción ordinaria e historial preservado. |
+| Origen       | Evento ordinario | Destino     | Condiciones                                                                                                                                              | Efectos                                                                    |
+| ------------ | ---------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Sin registro | Inscribir        | `ENROLLED`  | Estudiante activo; programa académico asociado al curso; periodo y oferta habilitados; ventana válida; cupo; sin duplicidad ni retiro previo impeditivo. | Nueva inscripción, plaza ocupada y movimiento inicial.                     |
+| `ENROLLED`   | Cancelar         | `CANCELLED` | Periodo `OPEN`, antes de la fecha académica de inicio, permiso y motivo.                                                                                 | Plaza liberada, identidad e historial preservados.                         |
+| `ENROLLED`   | Retirar          | `WITHDRAWN` | Periodo `IN_PROGRESS`, fecha de desarrollo vigente, permiso y motivo.                                                                                    | Plaza liberada, bloqueo de reinscripción ordinaria e historial preservado. |
 
 **El cambio de sección no cambia el estado**: `ENROLLED` permanece `ENROLLED`. Modifica únicamente la oferta actual hacia otra sección del mismo curso y periodo, dentro de la ventana y con el estado del periodo coherente con la fecha institucional, y añade un movimiento de traslado. No existe estado de inscripción `PENDING`, `REJECTED` o `FINISHED`.
 
@@ -145,13 +145,13 @@ Si un estado `CANCELLED` o `WITHDRAWN` se registró erróneamente, su rectificac
 
 Un movimiento histórico no tiene un estado de ciclo de vida editable: es un hecho **de solo inserción**. Los hechos posibles que modifican una inscripción son:
 
-| Movimiento | Qué deja registrado |
-| --- | --- |
-| Creación | Inscripción inicial, oferta, programa académico de referencia, responsable y momento. |
-| Cancelación | Estado anterior y nuevo, motivo y responsable. |
-| Retiro | Estado anterior y nuevo, motivo y responsable. |
+| Movimiento        | Qué deja registrado                                                                                        |
+| ----------------- | ---------------------------------------------------------------------------------------------------------- |
+| Creación          | Inscripción inicial, oferta, programa académico de referencia, responsable y momento.                      |
+| Cancelación       | Estado anterior y nuevo, motivo y responsable.                                                             |
+| Retiro            | Estado anterior y nuevo, motivo y responsable.                                                             |
 | Cambio de sección | Oferta anterior y nueva del mismo curso y periodo, motivo y responsable; estado de inscripción sin cambio. |
-| Corrección | Hecho corregido, valores originales y rectificados, justificación y actor administrativo. |
+| Corrección        | Hecho corregido, valores originales y rectificados, justificación y actor administrativo.                  |
 
 La escritura del movimiento y el efecto sobre la inscripción forman **una única operación coherente**. El historial de una inscripción permite reconstruir sus cambios sin reescribir eventos anteriores.
 

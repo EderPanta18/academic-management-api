@@ -10,9 +10,9 @@ Los identificadores `RN` distinguen reglas estables. No representan nombres de f
 
 **RN-002 — Perfiles no intercambiables.** Cada estudiante y docente corresponde a una persona existente; una misma persona puede desempeñar ambos perfiles. La condición de estudiante, docente o persona no concede automáticamente acceso a una cuenta.
 
-**RN-003 — Unidades institucionales diferenciadas.** Cada programa académico y cada departamento académico pertenece a una facultad. Todo docente está adscrito a una facultad y cada estudiante pertenece a un programa académico.
+**RN-003 — Unidades institucionales diferenciadas.** Cada programa académico y cada departamento académico pertenece a una facultad. Todo docente está adscrito a una facultad y cada estudiante pertenece a un programa académico. La facultad dispone de una sigla institucional y un nombre como atributos de identificación operativa; no utiliza un código institucional adicional.
 
-**RN-004 — Propiedad de los cursos.** Cada curso pertenece a un solo departamento académico. Su código es único en la universidad; no se crean cursos equivalentes por programa académico para representar una materia compartida.
+**RN-004 — Propiedad de los cursos.** Cada curso pertenece a un solo departamento académico. Su código es único entre cursos vigentes de la universidad; no se crean cursos equivalentes por programa académico para representar una materia compartida.
 
 **RN-005 — Elegibilidad por asociación.** Un programa académico habilita la inscripción en un curso únicamente durante un episodio vigente de su asociación con él. Los episodios del mismo par no se superponen; una nueva habilitación crea otro episodio sin reescribir el anterior. La elegibilidad no se infiere de la facultad a la que pertenecen el programa y el departamento.
 
@@ -20,11 +20,11 @@ Los identificadores `RN` distinguen reglas estables. No representan nombres de f
 
 **RN-007 — Clasificación homogénea.** Un curso pertenece a una categoría de formación `GENERAL`, `DISCIPLINARY` o `SPECIALIZED`. No se incorporan al mismo catálogo valores que expresen modalidad de dictado o condición de electivo.
 
-**RN-008 — Vigencia sin destrucción histórica.** Deshabilitar una persona, perfil, unidad, curso o asociación impide nuevas relaciones que requieran su vigencia, pero no borra ni reinterpreta inscripciones o actuaciones anteriores.
+**RN-008 — Vigencia sin destrucción histórica.** Dar de baja lógicamente una persona, perfil, unidad o curso, cuando la entidad admita esa operación, impide nuevas relaciones que requieran su vigencia, pero no borra ni reinterpreta inscripciones o actuaciones anteriores. Una desasociación conserva sus episodios históricos. Los valores de negocio reutilizados no modifican el significado de una referencia anterior.
 
 **RN-009 — Cambios estructurales compatibles.** No se permite cerrar un episodio programa–curso si existen inscripciones `ENROLLED` admitidas bajo ese programa y curso durante periodos no cerrados. Tampoco se permite cambiar el programa académico actual de un estudiante si ello dejaría inválidas inscripciones `ENROLLED` de periodos operativos. Los registros históricos permanecen atribuidos al programa académico con el que se aceptaron.
 
-**RN-010 — Recursos referenciados.** No se deshabilita ni sustituye arbitrariamente un recurso necesario para ofertas `OPEN` o inscripciones `ENROLLED` activas. El mantenimiento debe respetar las referencias vigentes y conservar las históricas.
+**RN-010 — Recursos referenciados.** La baja lógica de un recurso padre se rechaza mientras exista algún dependiente vigente cuya relación exija la vigencia del padre; no se ejecutan bajas automáticas en cascada. Los dependientes dados de baja no bloquean por sí solos la operación y conservan sus referencias originales. Las nuevas altas y vinculaciones operativas requieren padres vigentes. Además, no se deshabilita ni sustituye arbitrariamente un recurso necesario para ofertas `OPEN` o inscripciones `ENROLLED` activas. El mantenimiento preserva todas las referencias históricas.
 
 ## 2. Periodos académicos y ofertas
 
@@ -103,6 +103,8 @@ Los identificadores `RN` distinguen reglas estables. No representan nombres de f
 **RN-043 — Autorización no reemplaza integridad.** El acceso a una función depende de los permisos efectivos de la cuenta. La autorización administrativa excepcional permite correcciones delimitadas, pero no elimina restricciones de identidad, unicidad, capacidad o preservación histórica.
 
 ## 7. Invariantes transversales
+
+**RN-044 — Unicidad operativa de registros con baja lógica.** En toda entidad que admita baja lógica, las restricciones de unicidad sobre atributos de negocio, individuales o combinados, se aplican solo entre registros vigentes. Los registros dados de baja no reservan esos valores para nuevas identidades. La facultad exige sigla institucional y nombre únicos entre facultades vigentes; sus siglas y nombres pueden reutilizarse tras la baja. El UUID de cada registro permanece único y no reutilizable, y las referencias históricas siguen apuntando a la identidad original. Las entidades sin baja lógica, las identidades personales y la evidencia inmutable conservan sus restricciones específicas; un estado funcional como `CANCELLED`, `WITHDRAWN` o `INACTIVE` no equivale a una baja lógica.
 
 Las operaciones de inscripción, retiro, cancelación, cambio de sección y rectificación deben preservar conjuntamente:
 

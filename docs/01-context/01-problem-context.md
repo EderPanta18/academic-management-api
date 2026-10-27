@@ -64,14 +64,14 @@ Cuando no se distingue claramente quién está autorizado para realizar cada acc
 
 Los factores descritos afectan diferentes aspectos de la operación:
 
-| Ámbito | Consecuencia |
-| --- | --- |
-| Inscripción estudiantil | Registros duplicados, vinculaciones académicas incorrectas o inscripciones en ofertas no disponibles. |
-| Gestión de secciones | Ocupación inexacta, conflictos de cupos y dificultad para determinar la disponibilidad real. |
-| Administración académica | Mayor tiempo dedicado a comprobaciones manuales, conciliación de registros y corrección de inconsistencias. |
-| Seguimiento de movimientos | Dificultad para explicar cancelaciones, retiros, cambios de sección y correcciones. |
-| Información para supervisión | Diferencias entre reportes y registros operativos, o resultados que no reflejan el estado vigente. |
-| Protección de la información | Riesgo de accesos o modificaciones no autorizados y falta de evidencia sobre acciones relevantes. |
+| Ámbito                       | Consecuencia                                                                                                |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Inscripción estudiantil      | Registros duplicados, vinculaciones académicas incorrectas o inscripciones en ofertas no disponibles.       |
+| Gestión de secciones         | Ocupación inexacta, conflictos de cupos y dificultad para determinar la disponibilidad real.                |
+| Administración académica     | Mayor tiempo dedicado a comprobaciones manuales, conciliación de registros y corrección de inconsistencias. |
+| Seguimiento de movimientos   | Dificultad para explicar cancelaciones, retiros, cambios de sección y correcciones.                         |
+| Información para supervisión | Diferencias entre reportes y registros operativos, o resultados que no reflejan el estado vigente.          |
+| Protección de la información | Riesgo de accesos o modificaciones no autorizados y falta de evidencia sobre acciones relevantes.           |
 
 Estas consecuencias están relacionadas: una inscripción incorrecta puede alterar la ocupación de una oferta, afectar la información presentada a coordinación académica y requerir una corrección cuya justificación debe poder reconstruirse.
 

@@ -4,17 +4,17 @@ La verificación de seguridad comprueba que **cada operación utiliza identidad 
 
 ## 1. Autenticación y sesiones
 
-| Escenario | Criterio verificable |
-| --- | --- |
-| Contraseña correcta o incorrecta | El acceso válido crea una sesión; el rechazo no revela si existe la cuenta, no entrega secretos y no crea sesión utilizable. |
-| Verificación de credenciales | Las contraseñas se validan mediante Argon2id y no se conservan ni exponen como texto plano. |
-| Access token expirado o modificado | El JWT alterado, vencido, de tipo incorrecto o asociado a sesión revocada se rechaza. Su vigencia máxima es de 15 minutos. |
-| Refresh token | La credencial válida renueva bajo la sesión vigente, rota y deja inutilizable la anterior; su vigencia máxima es de siete días. |
-| Renovaciones simultáneas | La misma credencial no produce dos sucesoras válidas; la reutilización confirmada de una credencial consumida revoca la sesión afectada. |
-| Inicio de sesión posterior | La nueva sesión invalida la anterior, incluso ante accesos simultáneos. |
-| Deshabilitación, cierre o cambio de contraseña | La sesión revocada pierde acceso de inmediato sin esperar la caducidad del JWT. |
-| Contraseña temporal | Tras restablecimiento administrativo se impide operar académicamente hasta completar el cambio exigido. |
-| Intentos fallidos | Cinco fallos por identidad en quince minutos activan la limitación temporal; el control no revela la existencia de la cuenta. |
+| Escenario                                      | Criterio verificable                                                                                                                     |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Contraseña correcta o incorrecta               | El acceso válido crea una sesión; el rechazo no revela si existe la cuenta, no entrega secretos y no crea sesión utilizable.             |
+| Verificación de credenciales                   | Las contraseñas se validan mediante Argon2id y no se conservan ni exponen como texto plano.                                              |
+| Access token expirado o modificado             | El JWT alterado, vencido, de tipo incorrecto o asociado a sesión revocada se rechaza. Su vigencia máxima es de 15 minutos.               |
+| Refresh token                                  | La credencial válida renueva bajo la sesión vigente, rota y deja inutilizable la anterior; su vigencia máxima es de siete días.          |
+| Renovaciones simultáneas                       | La misma credencial no produce dos sucesoras válidas; la reutilización confirmada de una credencial consumida revoca la sesión afectada. |
+| Inicio de sesión posterior                     | La nueva sesión invalida la anterior, incluso ante accesos simultáneos.                                                                  |
+| Deshabilitación, cierre o cambio de contraseña | La sesión revocada pierde acceso de inmediato sin esperar la caducidad del JWT.                                                          |
+| Contraseña temporal                            | Tras restablecimiento administrativo se impide operar académicamente hasta completar el cambio exigido.                                  |
+| Intentos fallidos                              | Cinco fallos por identidad en quince minutos activan la limitación temporal; el control no revela la existencia de la cuenta.            |
 
 Estas pruebas contrastan el estado persistido de sesión y el resultado de llamadas posteriores con las credenciales anteriores. No concluyen que hubo revocación por la sola presencia de una cabecera de eliminación de cookies.
 

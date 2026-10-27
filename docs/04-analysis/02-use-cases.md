@@ -6,25 +6,25 @@ Los identificadores `CU` permiten distinguir las interacciones y relacionarlas c
 
 ## 1. Catálogo de casos de uso
 
-| ID | Caso de uso | Actores habilitados | Resultado esperado | Requerimientos |
-| --- | --- | --- | --- | --- |
-| **CU-01** | Acceder y administrar la sesión propia | Todos los actores | Acceso autenticado válido, renovación o cierre de sesión según corresponda. | RF-043–RF-045 |
-| **CU-02** | Administrar cuentas y roles | `ADMIN` | Cuentas, estados y asignaciones autorizadas sin autoelevación de privilegios. | RF-042, RF-046–RF-049 |
-| **CU-03** | Mantener personas y estudiantes | `ADMIN`, `SECRETARY` | Registros identificables, sin duplicidad de identidad ni estudiantes inválidos. | RF-001, RF-003, RF-004, RF-009 |
-| **CU-04** | Mantener estructura y catálogo académico | `ADMIN`, `ACADEMIC_COORDINATOR` | Unidades, cursos, categorías y asociaciones académicas coherentes. | RF-002, RF-006–RF-008 |
-| **CU-05** | Mantener docentes | `ADMIN`, `ACADEMIC_COORDINATOR` | Docentes asociados a personas existentes y a su facultad. | RF-001, RF-005 |
-| **CU-06** | Administrar periodos académicos | `ADMIN`, `ACADEMIC_COORDINATOR` | Periodos y ventanas de inscripción con cambios de situación controlados. | RF-010, RF-011 |
-| **CU-07** | Administrar ofertas de cursos | `ADMIN`, `ACADEMIC_COORDINATOR` | Secciones, docentes y capacidades disponibles conforme a su situación operativa. | RF-012–RF-015 |
-| **CU-08** | Registrar inscripción | `ADMIN`, `SECRETARY` | Inscripción `ENROLLED` o rechazo sin registro parcial. | RF-016–RF-020 |
-| **CU-09** | Cancelar inscripción ordinaria | `ADMIN`, `SECRETARY` | Inscripción `CANCELLED` antes del inicio académico, cupo liberado y movimiento conservado. | RF-021, RF-025–RF-029 |
-| **CU-10** | Retirar estudiante de una inscripción | `ADMIN`, `SECRETARY` | Inscripción `WITHDRAWN` durante el periodo en curso, sin reinscripción ordinaria posterior en el mismo curso y periodo. | RF-022, RF-025, RF-027–RF-029 |
-| **CU-11** | Cambiar sección de una inscripción | `ADMIN`, `SECRETARY` | La misma inscripción vinculada a otra oferta del mismo curso y periodo, sin ocupación inconsistente. | RF-023, RF-025, RF-028, RF-029 |
-| **CU-12** | Corregir inscripción extraordinariamente | `ADMIN` | Corrección justificada y acotada, con integridad e historial conservados. | RF-024, RF-025, RF-028, RF-029 |
-| **CU-13** | Importar estudiantes | `ADMIN`, `SECRETARY` | Carga aceptada para procesamiento diferido, resultados por fila y archivo original conservado. | RF-030–RF-036 |
-| **CU-14** | Consultar registros académicos e inscripciones | `ADMIN`, `SECRETARY`, `ACADEMIC_COORDINATOR` según lectura autorizada | Información académica e historial consultados sin alterarlos. | RF-003, RF-008, RF-014, RF-025, RF-029 |
-| **CU-15** | Consultar reportes operativos | Todos los actores | Reportes predefinidos, filtrados y coherentes, sin modificación de registros. | RF-037–RF-041 |
-| **CU-16** | Consultar auditoría | `ADMIN` | Evidencia administrativa y de seguridad disponible sin alteración de eventos. | RF-052–RF-054 |
-| **CU-17** | Gestionar contraseñas | Usuario autenticado para la propia; `ADMIN` para restablecimientos | Cambio propio o restablecimiento administrativo con revocación y restricciones de acceso pertinentes. | RF-050, RF-051 |
+| ID        | Caso de uso                                    | Actores habilitados                                                   | Resultado esperado                                                                                                      | Requerimientos                         |
+| --------- | ---------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| **CU-01** | Acceder y administrar la sesión propia         | Todos los actores                                                     | Acceso autenticado válido, renovación o cierre de sesión según corresponda.                                             | RF-043–RF-045                          |
+| **CU-02** | Administrar cuentas y roles                    | `ADMIN`                                                               | Cuentas, estados y asignaciones autorizadas sin autoelevación de privilegios.                                           | RF-042, RF-046–RF-049                  |
+| **CU-03** | Mantener personas y estudiantes                | `ADMIN`, `SECRETARY`                                                  | Registros identificables, sin duplicidad de identidad ni estudiantes inválidos.                                         | RF-001, RF-003, RF-004, RF-009         |
+| **CU-04** | Mantener estructura y catálogo académico       | `ADMIN`, `ACADEMIC_COORDINATOR`                                       | Unidades, cursos, categorías y asociaciones académicas coherentes.                                                      | RF-002, RF-006–RF-008                  |
+| **CU-05** | Mantener docentes                              | `ADMIN`, `ACADEMIC_COORDINATOR`                                       | Docentes asociados a personas existentes y a su facultad.                                                               | RF-001, RF-005                         |
+| **CU-06** | Administrar periodos académicos                | `ADMIN`, `ACADEMIC_COORDINATOR`                                       | Periodos y ventanas de inscripción con cambios de situación controlados.                                                | RF-010, RF-011                         |
+| **CU-07** | Administrar ofertas de cursos                  | `ADMIN`, `ACADEMIC_COORDINATOR`                                       | Secciones, docentes y capacidades disponibles conforme a su situación operativa.                                        | RF-012–RF-015                          |
+| **CU-08** | Registrar inscripción                          | `ADMIN`, `SECRETARY`                                                  | Inscripción `ENROLLED` o rechazo sin registro parcial.                                                                  | RF-016–RF-020                          |
+| **CU-09** | Cancelar inscripción ordinaria                 | `ADMIN`, `SECRETARY`                                                  | Inscripción `CANCELLED` antes del inicio académico, cupo liberado y movimiento conservado.                              | RF-021, RF-025–RF-029                  |
+| **CU-10** | Retirar estudiante de una inscripción          | `ADMIN`, `SECRETARY`                                                  | Inscripción `WITHDRAWN` durante el periodo en curso, sin reinscripción ordinaria posterior en el mismo curso y periodo. | RF-022, RF-025, RF-027–RF-029          |
+| **CU-11** | Cambiar sección de una inscripción             | `ADMIN`, `SECRETARY`                                                  | La misma inscripción vinculada a otra oferta del mismo curso y periodo, sin ocupación inconsistente.                    | RF-023, RF-025, RF-028, RF-029         |
+| **CU-12** | Corregir inscripción extraordinariamente       | `ADMIN`                                                               | Corrección justificada y acotada, con integridad e historial conservados.                                               | RF-024, RF-025, RF-028, RF-029         |
+| **CU-13** | Importar estudiantes                           | `ADMIN`, `SECRETARY`                                                  | Carga aceptada para procesamiento diferido, resultados por fila y archivo original conservado.                          | RF-030–RF-036                          |
+| **CU-14** | Consultar registros académicos e inscripciones | `ADMIN`, `SECRETARY`, `ACADEMIC_COORDINATOR` según lectura autorizada | Información académica e historial consultados sin alterarlos.                                                           | RF-003, RF-008, RF-014, RF-025, RF-029 |
+| **CU-15** | Consultar reportes operativos                  | Todos los actores                                                     | Reportes predefinidos, filtrados y coherentes, sin modificación de registros.                                           | RF-037–RF-041                          |
+| **CU-16** | Consultar auditoría                            | `ADMIN`                                                               | Evidencia administrativa y de seguridad disponible sin alteración de eventos.                                           | RF-052–RF-054                          |
+| **CU-17** | Gestionar contraseñas                          | Usuario autenticado para la propia; `ADMIN` para restablecimientos    | Cambio propio o restablecimiento administrativo con revocación y restricciones de acceso pertinentes.                   | RF-050, RF-051                         |
 
 En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones, pero no adquiere la facultad de modificar esos registros. El personal `REPORT_VIEWER` participa en `CU-15` y en las operaciones de su propia sesión o contraseña; su rol no permite acceder directamente a las consultas de entidades de `CU-14`.
 
@@ -64,7 +64,7 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Secuencia funcional.** El actor identifica a la persona, comprueba su situación documental y registra o actualiza el perfil estudiantil dentro de su programa académico. El sistema previene duplicidades, conserva la pertenencia académica y aplica el estado estudiantil permitido.
 
-**Alternativas.** Una identidad repetida, un código de estudiante duplicado, un programa académico inexistente o una modificación incompatible con antecedentes vigentes se rechazan sin afectar otros registros.
+**Alternativas.** Una identidad personal repetida, un código de estudiante duplicado en el conjunto sujeto a unicidad vigente, un programa académico inexistente o no vigente, o una modificación incompatible con antecedentes protegidos se rechazan sin afectar otros registros.
 
 **Resultado.** Persona y estudiante consultables, con identidad y relaciones válidas; las actualizaciones no reinterpretan inscripciones históricas.
 
@@ -74,17 +74,17 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` con permiso para la operación concreta.
 
-**Secuencia funcional.** El actor mantiene facultades, departamentos, programas académicos, categorías, cursos y asociaciones programa–curso. El sistema comprueba las relaciones y la identidad institucional de los cursos antes de confirmar cada modificación.
+**Secuencia funcional.** El actor mantiene facultades identificadas por sigla institucional y nombre, departamentos y programas identificados por sus códigos, categorías, cursos y asociaciones programa–curso. El sistema verifica la unicidad operativa entre registros vigentes, la vigencia de las referencias requeridas y las dependencias que condicionan una baja lógica antes de confirmar cada modificación.
 
-**Alternativas.** Se rechaza el cambio que duplica un curso, produce una relación académica inválida o deja sin sustento inscripciones vigentes. La desasociación de un curso no borra su participación histórica.
+**Alternativas.** Se rechaza la duplicidad entre registros vigentes de un atributo sujeto a unicidad, la relación con un recurso padre no vigente y la baja lógica que deje dependencias vigentes incompatibles. La reutilización de un código, sigla o nombre de un registro dado de baja no recupera su identidad anterior. La desasociación de un curso no borra su participación histórica.
 
-**Resultado.** Catálogo coherente y asociaciones vigentes identificables, sin alteración retroactiva de inscripciones.
+**Resultado.** Catálogo coherente y asociaciones vigentes identificables, con identidades históricas permanentes y sin alteración retroactiva de inscripciones.
 
 ### CU-05 — Mantener docentes
 
 **Objetivo.** Registrar docentes con facultad de adscripción y habilitar su asignación a ofertas.
 
-**Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` autorizado; persona y facultad de adscripción existentes.
+**Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` autorizado; persona existente y facultad de adscripción vigente.
 
 **Secuencia funcional.** El actor identifica a la persona y registra o actualiza su perfil docente y adscripción. El sistema verifica la relación institucional sin imponer que el curso dictado pertenezca a la misma facultad.
 

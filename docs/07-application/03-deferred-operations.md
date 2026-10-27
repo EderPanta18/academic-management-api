@@ -6,14 +6,14 @@ La **importación de estudiantes** es la operación diferida de negocio definida
 
 ## 1. Contrato funcional de una operación diferida
 
-| Elemento | Responsabilidad de aplicación | Límite |
-| --- | --- | --- |
-| **Admisión** | Autorizar la intención y confirmar una constancia recuperable. | La aceptación no certifica que la ejecución haya concluido. |
-| **Identidad funcional** | Asignar un identificador consultable que se conserva durante la ejecución. | No exponer como identificador contractual el identificador interno del trabajo en la cola. |
-| **Ejecución** | Invocar el caso de uso propietario con el contexto necesario. | El ejecutor técnico no sustituye las reglas ni las operaciones de la capacidad propietaria. |
-| **Progreso y resultados** | Representar resultados confirmados, errores y trabajo no concluido. | No inferir éxito por la recepción o reconocimiento de un mensaje. |
-| **Reanudación** | Reconocer efectos ya confirmados y continuar sin duplicarlos. | No depender de memoria de proceso ni de entrega exactamente una vez. |
-| **Consulta** | Devolver estado y evidencia según los permisos aplicables. | No confundir seguimiento funcional con registros técnicos del broker. |
+| Elemento                  | Responsabilidad de aplicación                                              | Límite                                                                                      |
+| ------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| **Admisión**              | Autorizar la intención y confirmar una constancia recuperable.             | La aceptación no certifica que la ejecución haya concluido.                                 |
+| **Identidad funcional**   | Asignar un identificador consultable que se conserva durante la ejecución. | No exponer como identificador contractual el identificador interno del trabajo en la cola.  |
+| **Ejecución**             | Invocar el caso de uso propietario con el contexto necesario.              | El ejecutor técnico no sustituye las reglas ni las operaciones de la capacidad propietaria. |
+| **Progreso y resultados** | Representar resultados confirmados, errores y trabajo no concluido.        | No inferir éxito por la recepción o reconocimiento de un mensaje.                           |
+| **Reanudación**           | Reconocer efectos ya confirmados y continuar sin duplicarlos.              | No depender de memoria de proceso ni de entrega exactamente una vez.                        |
+| **Consulta**              | Devolver estado y evidencia según los permisos aplicables.                 | No confundir seguimiento funcional con registros técnicos del broker.                       |
 
 La aceptación exige una identidad funcional persistente y una **obligación durable de ejecución**. La aplicación expresa ese compromiso; la infraestructura lo cumple mediante persistencia, publicación y recuperación adecuadas. El outbox transaccional se utiliza cuando una intención de publicación debe confirmarse atómicamente junto con un cambio de negocio, como la admisión persistente de una importación; no se impone a encargos independientes que no requieren esa vinculación. El rechazo previo a la confirmación de admisión no genera un trabajo presentado como aceptado.
 
@@ -66,24 +66,24 @@ El adaptador REST comunica **`202 Accepted`** y el identificador de importación
 
 La importación interpreta el archivo conservado respetando las particularidades de CSV y XLSX y aplica reglas comunes de interpretación de campos y validación de estudiantes. Cada fila procesada conserva una referencia inequívoca a su posición en el archivo original, independiente del orden o índice de los registros devueltos por el lector. La identidad de su resultado persistente combina la importación y esa posición, de modo que los reintentos reconocen unidades ya confirmadas incluso si existen filas vacías, omitidas o registros con saltos de línea. La ubicación y las causas de rechazo permanecen asociadas al resultado individual. Un defecto que impide interpretar el archivo afecta a la operación completa; **una fila inválida no impide procesar las demás**.
 
-| Comprobación de una fila | Resultado que debe preservar |
-| --- | --- |
-| Datos y formato | Los atributos exigidos se pueden interpretar sin asignar datos inferidos. |
-| Identidad documental | Se reconoce una persona sin crear duplicados ni aceptar identidades incompatibles. |
-| Programa académico | El código institucional identifica un programa académico existente y vigente. |
-| Perfil estudiantil | El código de estudiante y la identidad no contradicen perfiles ya registrados. |
-| Incorporación | Se confirma como una sola unidad el vínculo permitido y el perfil estudiantil nuevo. |
-| Evidencia | La fila recibe un resultado estable y una observación cuando corresponda. |
+| Comprobación de una fila | Resultado que debe preservar                                                         |
+| ------------------------ | ------------------------------------------------------------------------------------ |
+| Datos y formato          | Los atributos exigidos se pueden interpretar sin asignar datos inferidos.            |
+| Identidad documental     | Se reconoce una persona sin crear duplicados ni aceptar identidades incompatibles.   |
+| Programa académico       | El código institucional identifica un programa académico existente y vigente.        |
+| Perfil estudiantil       | El código de estudiante y la identidad no contradicen perfiles ya registrados.       |
+| Incorporación            | Se confirma como una sola unidad el vínculo permitido y el perfil estudiantil nuevo. |
+| Evidencia                | La fila recibe un resultado estable y una observación cuando corresponda.            |
 
 Una persona que todavía no posee perfil estudiantil puede recibirlo mediante un vínculo inequívoco y válido. Si la persona ya es estudiante, su presencia en otra fila no actualiza automáticamente ese perfil. Una referencia desconocida, identidad incompatible o condición inválida provoca rechazo **solo de la fila afectada**.
 
 El procesamiento distingue de manera explícita estos resultados:
 
-| Resultado | Significado |
-| --- | --- |
-| **Incorporada** | Se creó y confirmó el perfil estudiantil permitido. |
-| **Duplicada** | Ya existe el estudiante y no se alteraron sus datos. |
-| **Rechazada** | La fila examinada no cumple su contrato o una condición funcional. |
+| Resultado        | Significado                                                         |
+| ---------------- | ------------------------------------------------------------------- |
+| **Incorporada**  | Se creó y confirmó el perfil estudiantil permitido.                 |
+| **Duplicada**    | Ya existe el estudiante y no se alteraron sus datos.                |
+| **Rechazada**    | La fila examinada no cumple su contrato o una condición funcional.  |
 | **Sin procesar** | La ejecución todavía no examinó la fila o terminó antes de hacerlo. |
 
 Cada incorporación válida confirma sus efectos indivisiblemente. Una fila fallida no deja persona o estudiante parcialmente incorporados; los éxitos anteriores se conservan. Las cantidades se calculan sobre resultados confirmados y no clasifican como rechazadas las filas que nunca llegaron a examinarse.
@@ -92,26 +92,26 @@ Cada incorporación válida confirma sus efectos indivisiblemente. Una fila fall
 
 La importación conserva uno de estos estados funcionales:
 
-| Estado | Significado |
-| --- | --- |
-| `PENDING` | Admisión confirmada; el procesamiento todavía no comienza. |
-| `PROCESSING` | Hay ejecución activa o recuperable, con resultados por fila que pueden estar ya confirmados. |
-| `COMPLETED` | Todas las filas evaluables tienen resultado definitivo y ninguna fue rechazada. |
-| `COMPLETED_WITH_ERRORS` | Finalizó el recorrido de las filas evaluables, pero existen filas rechazadas. |
-| `FAILED` | Un fallo definitivo impide concluir el encargo; los resultados parciales confirmados se conservan y las filas restantes siguen sin resultado definitivo. |
+| Estado                  | Significado                                                                                                                                              |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PENDING`               | Admisión confirmada; el procesamiento todavía no comienza.                                                                                               |
+| `PROCESSING`            | Hay ejecución activa o recuperable, con resultados por fila que pueden estar ya confirmados.                                                             |
+| `COMPLETED`             | Todas las filas evaluables tienen resultado definitivo y ninguna fue rechazada.                                                                          |
+| `COMPLETED_WITH_ERRORS` | Finalizó el recorrido de las filas evaluables, pero existen filas rechazadas.                                                                            |
+| `FAILED`                | Un fallo definitivo impide concluir el encargo; los resultados parciales confirmados se conservan y las filas restantes siguen sin resultado definitivo. |
 
 `PENDING` pasa a `PROCESSING` cuando comienza la ejecución; `PROCESSING` termina en uno de los tres resultados finales. Una interrupción recuperable no crea una importación nueva ni transforma filas pendientes en rechazadas. Un error que impide interpretar el archivo concluye en `FAILED`; los duplicados identificados sin modificación de datos son resultados definitivos, no fallos.
 
 La **deduplicación de admisiones por archivo** y la **idempotencia del procesamiento** son garantías distintas. La primera evita una segunda importación del mismo contenido por el mismo usuario; la segunda evita que entregas repetidas del encargo ya admitido creen nuevamente estudiantes, alteren perfiles o inflen cantidades.
 
-| Situación | Resultado funcional requerido |
-| --- | --- |
-| Fallo antes de confirmar la admisión | No se informa una importación aceptada. |
-| Interrupción tras admitir, antes de ejecutar | La identidad y obligación de ejecutar permanecen recuperables. |
-| Entrega repetida | Los resultados por fila confirmados se reconocen y no se repiten sus efectos. |
-| Fallo al confirmar una fila | No queda una incorporación parcial de esa fila. |
-| Interrupción después de varias filas | Se conservan los resultados definitivos y se identifican las filas restantes. |
-| Error definitivo de ejecución | Se comunica el fallo y el resultado parcial real, sin declararlo éxito completo. |
+| Situación                                    | Resultado funcional requerido                                                    |
+| -------------------------------------------- | -------------------------------------------------------------------------------- |
+| Fallo antes de confirmar la admisión         | No se informa una importación aceptada.                                          |
+| Interrupción tras admitir, antes de ejecutar | La identidad y obligación de ejecutar permanecen recuperables.                   |
+| Entrega repetida                             | Los resultados por fila confirmados se reconocen y no se repiten sus efectos.    |
+| Fallo al confirmar una fila                  | No queda una incorporación parcial de esa fila.                                  |
+| Interrupción después de varias filas         | Se conservan los resultados definitivos y se identifican las filas restantes.    |
+| Error definitivo de ejecución                | Se comunica el fallo y el resultado parcial real, sin declararlo éxito completo. |
 
 La consulta de una importación por su identificador muestra estado, responsable, archivo de origen, cantidades y observaciones autorizadas. Las observaciones por fila identifican su ubicación y causa sin incluir secretos ni información personal innecesaria.
 

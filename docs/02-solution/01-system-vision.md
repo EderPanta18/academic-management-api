@@ -49,12 +49,12 @@ El seguimiento utiliza la información registrada por el propio sistema. Los rep
 
 El producto está dirigido principalmente al **personal autorizado para operar y supervisar la inscripción académica**:
 
-| Participante | Necesidad atendida |
-| --- | --- |
-| Secretaría académica | Registrar y mantener información estudiantil, ejecutar inscripciones y gestionar movimientos ordinarios permitidos. |
-| Coordinación académica | Organizar la estructura académica, los periodos y las ofertas, y supervisar su desarrollo. |
-| Administración del sistema | Gestionar accesos, políticas de autorización y operaciones excepcionales que requieren mayor responsabilidad. |
-| Personal autorizado de consulta | Obtener reportes operativos sin intervenir en la modificación de los registros académicos. |
+| Participante                    | Necesidad atendida                                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Secretaría académica            | Registrar y mantener información estudiantil, ejecutar inscripciones y gestionar movimientos ordinarios permitidos. |
+| Coordinación académica          | Organizar la estructura académica, los periodos y las ofertas, y supervisar su desarrollo.                          |
+| Administración del sistema      | Gestionar accesos, políticas de autorización y operaciones excepcionales que requieren mayor responsabilidad.       |
+| Personal autorizado de consulta | Obtener reportes operativos sin intervenir en la modificación de los registros académicos.                          |
 
 Los **estudiantes** son destinatarios de la validez de sus inscripciones, pero el sistema no ofrece un portal de autoservicio para que operen directamente sobre ellas. Los **docentes** intervienen como referentes académicos de las ofertas; su registro en el sistema no implica disponer de un portal propio ni de permisos administrativos de inscripción.
 

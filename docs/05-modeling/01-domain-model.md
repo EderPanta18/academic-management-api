@@ -4,12 +4,12 @@ El modelo distingue **identidad**, **estructura académica**, **oferta**, **insc
 
 ## 1. Identidad y perfiles
 
-| Concepto | Significado en el dominio | Relación esencial |
-| --- | --- | --- |
-| **Persona** | Identidad humana común a perfiles académicos y, cuando corresponda, a una cuenta. | Se identifica por un tipo y número de documento; puede participar en varios perfiles sin duplicar sus datos personales. |
-| **Estudiante** | Perfil mediante el cual una persona se incorpora al registro de inscripciones. | Corresponde a una persona y pertenece a un programa académico vigente. |
-| **Docente** | Perfil de una persona habilitada para responsabilizarse de ofertas académicas. | Corresponde a una persona y está adscrito a una facultad. |
-| **Usuario** | Cuenta que permite actuar dentro del sistema con autorizaciones verificables. | Puede estar vinculada a una persona; no concede por sí misma condición de estudiante o docente. |
+| Concepto       | Significado en el dominio                                                         | Relación esencial                                                                                                       |
+| -------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Persona**    | Identidad humana común a perfiles académicos y, cuando corresponda, a una cuenta. | Se identifica por un tipo y número de documento; puede participar en varios perfiles sin duplicar sus datos personales. |
+| **Estudiante** | Perfil mediante el cual una persona se incorpora al registro de inscripciones.    | Corresponde a una persona y pertenece a un programa académico vigente.                                                  |
+| **Docente**    | Perfil de una persona habilitada para responsabilizarse de ofertas académicas.    | Corresponde a una persona y está adscrito a una facultad.                                                               |
+| **Usuario**    | Cuenta que permite actuar dentro del sistema con autorizaciones verificables.     | Puede estar vinculada a una persona; no concede por sí misma condición de estudiante o docente.                         |
 
 Una persona puede poseer perfiles de estudiante y docente simultáneamente: las relaciones representan responsabilidades diferentes. En cambio, cada perfil de estudiante o docente identifica una sola persona y una persona tiene como máximo un perfil de cada tipo. La identificación del personal que opera el sistema se resuelve mediante su cuenta, no mediante la pertenencia a un perfil académico.
 
@@ -19,14 +19,16 @@ Las operaciones realizadas en nombre de un estudiante son **operaciones administ
 
 El ámbito institucional comprende **una única universidad**. No existe una entidad de universidad ni una partición de datos por institución.
 
-| Concepto | Responsabilidad | Relación |
-| --- | --- | --- |
-| **Facultad** | Unidad académica organizativa de primer nivel. | Agrupa departamentos académicos, programas académicos y docentes. |
-| **Departamento académico** | Unidad responsable de la adscripción y mantenimiento académico de cursos. | Pertenece a una facultad y es propietario académico de múltiples cursos. |
-| **Programa académico** (`academic_program`) | Unidad a la que pertenece un estudiante y que determina qué cursos puede inscribir. | Pertenece a una facultad; se vincula a cursos mediante asociaciones explícitas. |
-| **Curso** | Unidad académica identificable en el catálogo institucional, independiente del momento y la sección en que se ofrece. | Pertenece a un departamento y puede corresponder a varios programas académicos. |
-| **Asociación programa–curso** | Episodio de vigencia que habilita a los estudiantes de un programa a inscribirse en ofertas del curso. | Resuelve la relación muchos a muchos, preservando desasociaciones y asociaciones posteriores sin duplicar el curso. |
-| **Categoría de curso** | Clasificación académica de una sola dimensión para organizar el catálogo. | Clasifica un curso, sin sustituir su pertenencia a un departamento. |
+| Concepto                                    | Responsabilidad                                                                                                                 | Relación                                                                                                                                |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **Facultad**                                | Unidad académica organizativa de primer nivel, identificada operativamente por una sigla institucional (`acronym`) y un nombre. | Agrupa departamentos académicos, programas académicos y docentes; conserva una identidad permanente independiente de su sigla y nombre. |
+| **Departamento académico**                  | Unidad responsable de la adscripción y mantenimiento académico de cursos.                                                       | Pertenece a una facultad y es propietario académico de múltiples cursos.                                                                |
+| **Programa académico** (`academic_program`) | Unidad a la que pertenece un estudiante y que determina qué cursos puede inscribir.                                             | Pertenece a una facultad; se vincula a cursos mediante asociaciones explícitas.                                                         |
+| **Curso**                                   | Unidad académica identificable en el catálogo institucional, independiente del momento y la sección en que se ofrece.           | Pertenece a un departamento y puede corresponder a varios programas académicos.                                                         |
+| **Asociación programa–curso**               | Episodio de vigencia que habilita a los estudiantes de un programa a inscribirse en ofertas del curso.                          | Resuelve la relación muchos a muchos, preservando desasociaciones y asociaciones posteriores sin duplicar el curso.                     |
+| **Categoría de curso**                      | Clasificación académica de una sola dimensión para organizar el catálogo.                                                       | Clasifica un curso, sin sustituir su pertenencia a un departamento.                                                                     |
+
+Para los recursos que admiten baja lógica, los identificadores y nombres sujetos a unicidad se reservan únicamente mientras el registro permanece vigente. Su reutilización posterior no crea continuidad ni equivalencia histórica entre registros distintos: las relaciones se conservan por identidad permanente.
 
 El programa académico no es propietario exclusivo del curso. El **departamento académico** mantiene la adscripción del curso, mientras que la asociación programa–curso establece su elegibilidad para estudiantes de distintos programas académicos, incluso cuando pertenezcan a facultades diferentes.
 
@@ -60,12 +62,12 @@ Cada episodio de asociación programa–curso posee un inicio y un final opciona
 
 ## 3. Curso, periodo, oferta e inscripción
 
-| Concepto | Identidad y significado | Diferencia determinante |
-| --- | --- | --- |
-| **Periodo académico** | Intervalo institucional de desarrollo académico, con ventana propia de inscripción y situación operativa. | Su ventana de inscripción no equivale necesariamente a sus fechas de desarrollo académico. |
+| Concepto                                | Identidad y significado                                                                                                          | Diferencia determinante                                                                         |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| **Periodo académico**                   | Intervalo institucional de desarrollo académico, con ventana propia de inscripción y situación operativa.                        | Su ventana de inscripción no equivale necesariamente a sus fechas de desarrollo académico.      |
 | **Oferta de curso** (`course offering`) | Dictado de un curso en un periodo y una sección determinados, con capacidad y asignación docente obligatoria al abrir la oferta. | No constituye un curso nuevo del catálogo ni se vincula exclusivamente a un programa académico. |
-| **Inscripción** (`enrollment`) | Registro de la participación administrativa de un estudiante en una oferta concreta. | No representa solicitud, calificación, asistencia ni aprobación de curso. |
-| **Movimiento de inscripción** | Hecho histórico que explica una creación, cancelación, retiro, traslado de sección o corrección. | No sustituye el estado vigente de la inscripción ni el registro general de auditoría. |
+| **Inscripción** (`enrollment`)          | Registro de la participación administrativa de un estudiante en una oferta concreta.                                             | No representa solicitud, calificación, asistencia ni aprobación de curso.                       |
+| **Movimiento de inscripción**           | Hecho histórico que explica una creación, cancelación, retiro, traslado de sección o corrección.                                 | No sustituye el estado vigente de la inscripción ni el registro general de auditoría.           |
 
 Una misma oferta puede reunir estudiantes de **distintos programas académicos** siempre que cada uno esté asociado al curso. Todos comparten **una única capacidad máxima de esa oferta**; no se crean cupos separados por programa académico.
 
@@ -113,12 +115,12 @@ En particular, `WITHDRAWN` aplicado a una **inscripción** significa retiro de u
 
 La información histórica se separa según qué hecho representa:
 
-| Concepto | Hechos que conserva | Identidad del responsable |
-| --- | --- | --- |
-| **Movimiento de inscripción** | Trayectoria de una inscripción, incluidos cambios de oferta y estado, motivos y rectificaciones. | Usuario que realizó el movimiento. |
-| **Auditoría** | Operaciones administrativas y de seguridad relevantes sobre recursos y autorizaciones. | Actor, operación, momento y resultado conforme a la política de auditoría. |
-| **Importación de estudiantes** | Archivo original admitido, responsable, progreso y resultado de la incorporación por filas. | Usuario que presentó el archivo. |
-| **Sesión** | Acceso autenticado verificable y revocable de un usuario. | Cuenta autenticada. |
+| Concepto                       | Hechos que conserva                                                                              | Identidad del responsable                                                  |
+| ------------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| **Movimiento de inscripción**  | Trayectoria de una inscripción, incluidos cambios de oferta y estado, motivos y rectificaciones. | Usuario que realizó el movimiento.                                         |
+| **Auditoría**                  | Operaciones administrativas y de seguridad relevantes sobre recursos y autorizaciones.           | Actor, operación, momento y resultado conforme a la política de auditoría. |
+| **Importación de estudiantes** | Archivo original admitido, responsable, progreso y resultado de la incorporación por filas.      | Usuario que presentó el archivo.                                           |
+| **Sesión**                     | Acceso autenticado verificable y revocable de un usuario.                                        | Cuenta autenticada.                                                        |
 
 No se considera un movimiento de inscripción el simple acceso a un reporte. No se considera una importación el registro manual de un estudiante. Ninguno de estos conceptos justifica incorporar al dominio calificaciones, pagos, currículos completos o seguimiento de asistencia.
 

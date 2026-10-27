@@ -2,20 +2,20 @@
 
 PostgreSQL constituye la **fuente de verdad transaccional** de los recursos académicos, las identidades administrativas, las inscripciones y su evidencia, las importaciones y las obligaciones de entrega persistentes. Prisma materializa el acceso relacional mediante adaptadores de infraestructura; sus modelos y clientes no constituyen contratos del dominio ni de aplicación.
 
-La base de datos es físicamente compartida por el monolito modular. Compartir almacenamiento permite transacciones entre capacidades, **no acceso indiscriminado a los datos de otros módulos**.
+La base de datos es físicamente compartida por el monolito modular. Compartir almacenamiento permite transacciones entre capacidades, **no acceso indiscriminado a los datos de otros módulos**. Los adaptadores pueden realizar comprobaciones referenciales de solo lectura sobre tablas ajenas cuando resulten necesarias para preservar la integridad de escrituras propias; el módulo propietario mantiene la decisión funcional.
 
 ## 1. Propiedad de los datos y acceso
 
-| Responsabilidad | Criterio de diseño | Límite |
-| --- | --- | --- |
-| **Módulo propietario** | Define el significado, las modificaciones válidas y los contratos para acceder a sus datos. | No cede sus reglas a un repositorio compartido genérico. |
-| **Puerto de persistencia** | Expresa las operaciones de almacenamiento que necesita un caso de uso, con tipos funcionales. | No expone el cliente Prisma, consultas SQL ni transacciones físicas como API de negocio. |
-| **Adaptador de repositorio** | Traduce entidades, condiciones de consulta y cambios válidos a persistencia relacional. | No decide estados académicos ni permisos de actuación. |
-| **Contexto transaccional compartido** | Permite que los participantes de una operación indivisible trabajen dentro de una misma frontera de confirmación. | Ningún participante confirma anticipadamente su propia fracción; no exige un patrón o clase concreta. |
-| **Consulta controlada** | Recupera o consolida datos confirmados conforme a un contrato de lectura autorizado. | La consolidación no habilita escrituras sobre propietarios ajenos. |
-| **Infraestructura compartida** | Gestiona conexiones, ejecución transaccional, adaptadores y recursos técnicos comunes. | No se convierte en módulo funcional ni introduce dependencias desde el dominio. |
+| Responsabilidad                       | Criterio de diseño                                                                                                                                                                                                | Límite                                                                                                |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| **Módulo propietario**                | Define el significado, las modificaciones válidas y los contratos para acceder a sus datos.                                                                                                                       | No cede sus reglas a un repositorio compartido genérico.                                              |
+| **Puerto de persistencia**            | Expresa las operaciones de almacenamiento que necesita un caso de uso, con tipos funcionales.                                                                                                                     | No expone el cliente Prisma, consultas SQL ni transacciones físicas como API de negocio.              |
+| **Adaptador de repositorio**          | Traduce entidades, condiciones de consulta y cambios válidos a persistencia relacional; puede verificar por lectura dependencias persistidas en otras tablas para proteger la integridad de una operación propia. | No decide estados académicos, no concede permisos de actuación ni modifica tablas ajenas.             |
+| **Contexto transaccional compartido** | Permite que los participantes de una operación indivisible trabajen dentro de una misma frontera de confirmación.                                                                                                 | Ningún participante confirma anticipadamente su propia fracción; no exige un patrón o clase concreta. |
+| **Consulta controlada**               | Recupera o consolida datos confirmados conforme a un contrato de lectura autorizado.                                                                                                                              | La consolidación no habilita escrituras sobre propietarios ajenos.                                    |
+| **Infraestructura compartida**        | Gestiona conexiones, ejecución transaccional, adaptadores y recursos técnicos comunes.                                                                                                                            | No se convierte en módulo funcional ni introduce dependencias desde el dominio.                       |
 
-Un módulo no accede al repositorio privado de otro para modificar su información. Cuando necesita comportamiento ajeno, utiliza la capacidad pública del propietario; cuando requiere lecturas consolidadas, utiliza una consulta controlada que conserva la semántica y la autorización del resultado. Las consultas de infraestructura pueden optimizar uniones relacionales sin convertirse en una vía de modificación funcional.
+Un módulo no accede al repositorio privado de otro para modificar su información. Cuando necesita comportamiento ajeno, utiliza la capacidad pública del propietario; cuando requiere lecturas consolidadas, utiliza una consulta controlada que conserva la semántica y la autorización del resultado. Las consultas de infraestructura pueden optimizar uniones relacionales y verificar por existencia o vigencia dependencias ajenas que bloquean una baja lógica; no se convierten en una vía de modificación funcional ni en contratos públicos de datos ajenos.
 
 ```mermaid
 flowchart TB
@@ -34,7 +34,7 @@ La figura distingue dependencias conceptuales; la frontera transaccional compart
 
 ## 2. Representación y conservación
 
-La representación relacional preserva **identidades estables, relaciones explícitas y hechos históricos**. Las claves primarias mantienen la identidad de un recurso aunque cambien sus atributos o deje de estar vigente. Los códigos institucionales y combinaciones con valor de identidad disponen de restricciones propias y no sustituyen las referencias persistentes.
+La representación relacional preserva **identidades estables, relaciones explícitas y hechos históricos**. Las claves primarias mantienen la identidad de un recurso aunque cambien sus atributos o deje de estar vigente. Los códigos institucionales, las siglas de facultad, los nombres sujetos a unicidad y las combinaciones de atributos de negocio disponen de restricciones propias y no sustituyen las referencias persistentes. Cuando la entidad admite baja lógica, la unicidad operativa de esos atributos se limita a sus registros vigentes, sin reservar valores de registros históricos dados de baja.
 
 - Los episodios de asociación programa–curso conservan su vigencia histórica; cerrar un episodio o habilitar otro posterior no altera retroactivamente una inscripción admitida.
 - Las inscripciones conservan el contexto académico de admisión y su identidad a través de cambios de sección; cancelar una inscripción no reutiliza su registro para una nueva admisión.
@@ -42,6 +42,8 @@ La representación relacional preserva **identidades estables, relaciones explí
 - Los movimientos de inscripción y los registros de auditoría preservan evidencia histórica diferenciada. Una rectificación agrega evidencia y no borra el hecho original.
 - Los archivos originales de importación se conservan como contenido binario durable asociado a la importación admitida, junto a los resultados y el contexto de atribución; su existencia no depende del sistema de archivos temporal del proceso HTTP o worker.
 - La deshabilitación de catálogos, perfiles o cuentas no provoca borrados en cascada de evidencia histórica. La vigencia administrativa y la existencia del registro son conceptos distintos.
+
+Los índices únicos parciales materializan en PostgreSQL la unicidad entre registros no eliminados lógicamente, allí donde una tabla con baja lógica posea atributos de negocio sujetos a unicidad, individuales o combinados. No se aplican indiscriminadamente a índices de rendimiento, claves primarias ni a garantías de identidad o evidencia no sujetas a baja lógica.
 
 El esquema físico traduce estas necesidades a claves, referencias, restricciones, índices y representaciones aptas para PostgreSQL. **El modelo físico no reinterpreta las reglas académicas**: las estructuras generadas por Prisma implementan su persistencia sin sustituir los contratos funcionales.
 
@@ -59,7 +61,7 @@ Prisma gobierna la definición relacional y las migraciones versionadas. Toda ev
 
 1. Las modificaciones de estructura se expresan mediante migraciones reproducibles y revisables; no dependen de cambios manuales no registrados en una base de datos.
 2. Una migración que transforma datos debe conservar identidades, asociaciones históricas, estados y evidencia; no utiliza valores predeterminados para ocultar inconsistencias.
-3. Las nuevas restricciones se acompañan de una conversión determinista de los datos previos cuando sea necesaria; no se eliminan filas históricas para hacer que una migración termine con éxito.
+3. Las nuevas restricciones se acompañan de una conversión determinista de los datos previos cuando sea necesaria; no se eliminan filas históricas para hacer que una migración termine con éxito. La adopción de unicidad condicionada por baja lógica conserva datos e identidades anteriores y sustituye las restricciones globales incompatibles por las que protegen exclusivamente el conjunto vigente.
 4. Las modificaciones compatibles mantienen el funcionamiento de los procesos que comparten el almacenamiento durante una transición de versión. Los cambios incompatibles se coordinan entre código, esquema y procesos consumidores.
 5. Las migraciones no sustituyen la validación funcional ni permiten que el ORM se convierta en la fuente normativa de reglas de negocio.
 

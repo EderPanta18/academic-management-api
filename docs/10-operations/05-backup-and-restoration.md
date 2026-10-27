@@ -6,13 +6,13 @@ La recuperación operacional restaura **un conjunto consistente de datos y oblig
 
 Los respaldos cubren el conjunto transaccional necesario para interpretar y continuar las operaciones confirmadas. No se considera suficiente un respaldo aislado de tablas académicas si excluye evidencia, registros de importación, intenciones de despacho o estados de ejecución.
 
-| Información | Garantía de restauración |
-| --- | --- |
-| Estructura y registros académicos | Preservar identidades, asociaciones, vigencia e inscripciones confirmadas. |
-| Movimientos y auditoría | Conservar atribución, razones y secuencias históricas sin sobreescritura. |
-| Identidades, cuentas y sesiones | Recuperar el estado de acceso de forma coherente y aplicar revocación administrativa cuando corresponda. |
-| Importaciones y archivos originales | Mantener juntos admisión, contenido binario, huella, resultados por fila y estado de ejecución. |
-| Outbox y mensajería persistente | Mantener las intenciones confirmadas y el estado técnico suficiente para reconciliar entregas y reintentos. |
+| Información                         | Garantía de restauración                                                                                    |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Estructura y registros académicos   | Preservar identidades, asociaciones, vigencia e inscripciones confirmadas.                                  |
+| Movimientos y auditoría             | Conservar atribución, razones y secuencias históricas sin sobreescritura.                                   |
+| Identidades, cuentas y sesiones     | Recuperar el estado de acceso de forma coherente y aplicar revocación administrativa cuando corresponda.    |
+| Importaciones y archivos originales | Mantener juntos admisión, contenido binario, huella, resultados por fila y estado de ejecución.             |
+| Outbox y mensajería persistente     | Mantener las intenciones confirmadas y el estado técnico suficiente para reconciliar entregas y reintentos. |
 
 Las copias se protegen con controles de acceso, cifrado y custodia adecuados a información personal y secretos persistidos; se aíslan de modificaciones ordinarias del servicio. Su calendario de generación, retención y objetivos temporales responden a una política institucional explícita y a la capacidad de recuperación probada, **sin inventar cifras en esta especificación**.
 

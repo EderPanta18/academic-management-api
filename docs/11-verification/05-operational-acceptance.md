@@ -4,17 +4,17 @@ La aceptación de una versión integra pruebas funcionales, seguridad, integrida
 
 ## 1. Verificaciones de una entrega
 
-| Control | Evidencia de aceptación |
-| --- | --- |
-| Calidad técnica | Compilación reproducible, análisis estático y conjunto automatizado de pruebas correspondientes a las responsabilidades afectadas. |
-| Contratos públicos | Comportamiento de API y OpenAPI coherentes, sin cambios incompatibles inadvertidos de la versión expuesta. |
-| Esquema persistente | Migraciones versionadas aplicables de forma controlada y compatibles con datos y procesos participantes. |
-| Composición de procesos | API y consumidores inician con configuración válida, conectividad necesaria y dependencias satisfechas. |
-| Seguridad del entorno | Las credenciales y configuraciones sensibles no se filtran en artefactos, respuestas ni registros; las cookies aplican su política de entorno. |
-| Servicio funcional | Autenticación autorizada, consulta protegida, operación académica transaccional representativa y admisión de importación con seguimiento recuperable. |
-| Operación diferida | El relay de outbox y PgBoss transportan encargos durables; la repetición de entregas no produce duplicación funcional. |
-| Observabilidad | Se distingue error de acceso, fallo funcional, atraso de trabajo y defecto de infraestructura mediante señales correlacionables, sin ruido ni secretos. |
-| Recuperación | Respaldo, restauración y reconciliación preservan datos confirmados y trabajo admitido. |
+| Control                 | Evidencia de aceptación                                                                                                                                 |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Calidad técnica         | Compilación reproducible, análisis estático y conjunto automatizado de pruebas correspondientes a las responsabilidades afectadas.                      |
+| Contratos públicos      | Comportamiento de API y OpenAPI coherentes, sin cambios incompatibles inadvertidos de la versión expuesta.                                              |
+| Esquema persistente     | Migraciones versionadas aplicables de forma controlada y compatibles con datos y procesos participantes.                                                |
+| Composición de procesos | API y consumidores inician con configuración válida, conectividad necesaria y dependencias satisfechas.                                                 |
+| Seguridad del entorno   | Las credenciales y configuraciones sensibles no se filtran en artefactos, respuestas ni registros; las cookies aplican su política de entorno.          |
+| Servicio funcional      | Autenticación autorizada, consulta protegida, operación académica transaccional representativa y admisión de importación con seguimiento recuperable.   |
+| Operación diferida      | El relay de outbox y PgBoss transportan encargos durables; la repetición de entregas no produce duplicación funcional.                                  |
+| Observabilidad          | Se distingue error de acceso, fallo funcional, atraso de trabajo y defecto de infraestructura mediante señales correlacionables, sin ruido ni secretos. |
+| Recuperación            | Respaldo, restauración y reconciliación preservan datos confirmados y trabajo admitido.                                                                 |
 
 La aceptación comprueba con escenarios representativos que una configuración booleana obligatoria ausente o una entrada inválida impiden iniciar la responsabilidad correspondiente, mientras que una opción omitida con valor predeterminado explícito conserva el comportamiento declarado. Cuando un archivo local y el entorno del proceso proporcionan el mismo parámetro, prevalece el valor explícito del proceso y se valida la configuración efectiva. También se distingue que una caída de PostgreSQL puede invalidar la preparación sin invalidar la vida del proceso, y que la indisponibilidad de PgBoss impide declarar preparado al consumidor, pero no necesariamente a una API capaz de confirmar operaciones y persistir intenciones en outbox. Las comprobaciones de preparación son acotadas y no generan trabajos funcionales artificiales.
 

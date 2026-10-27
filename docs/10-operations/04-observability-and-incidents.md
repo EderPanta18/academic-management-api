@@ -4,14 +4,14 @@ La observabilidad facilita detectar deterioro, localizar causas y demostrar la r
 
 ## 1. Señales de servicio
 
-| Área observada | Señales relevantes | Interpretación operativa |
-| --- | --- | --- |
-| Atención interactiva | Disponibilidad de aceptación, volumen y distribución de fallos, tiempos de respuesta. | Diferenciar rechazos funcionales esperados de fallos técnicos o saturación. |
-| PostgreSQL | Accesibilidad, conexiones, duración de transacciones, conflictos y fallos de confirmación. | Detectar degradación que pueda afectar varias capacidades simultáneamente. |
-| Procesamiento diferido | Encargos pendientes, en ejecución, reintentados, fallidos y antigüedad del trabajo pendiente. | Diferenciar una operación aceptada aún pendiente de una operación fallida. |
-| Despacho recuperable | Intenciones no despachadas, antigüedad y fallos de entrega a PgBoss. | Identificar una interrupción entre confirmación y envío, sin declarar perdida la admisión funcional. |
-| Identidad y acceso | Rechazos reiterados, fallos de renovación y anomalías de revocación. | Detectar problemas de configuración, abuso o falta de vigencia de sesiones sin exponer credenciales. |
-| Recursos de proceso | Consumo de memoria, CPU, conexiones y cierres no controlados. | Relacionar agotamiento de capacidad con degradación real del servicio. |
+| Área observada         | Señales relevantes                                                                            | Interpretación operativa                                                                             |
+| ---------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Atención interactiva   | Disponibilidad de aceptación, volumen y distribución de fallos, tiempos de respuesta.         | Diferenciar rechazos funcionales esperados de fallos técnicos o saturación.                          |
+| PostgreSQL             | Accesibilidad, conexiones, duración de transacciones, conflictos y fallos de confirmación.    | Detectar degradación que pueda afectar varias capacidades simultáneamente.                           |
+| Procesamiento diferido | Encargos pendientes, en ejecución, reintentados, fallidos y antigüedad del trabajo pendiente. | Diferenciar una operación aceptada aún pendiente de una operación fallida.                           |
+| Despacho recuperable   | Intenciones no despachadas, antigüedad y fallos de entrega a PgBoss.                          | Identificar una interrupción entre confirmación y envío, sin declarar perdida la admisión funcional. |
+| Identidad y acceso     | Rechazos reiterados, fallos de renovación y anomalías de revocación.                          | Detectar problemas de configuración, abuso o falta de vigencia de sesiones sin exponer credenciales. |
+| Recursos de proceso    | Consumo de memoria, CPU, conexiones y cierres no controlados.                                 | Relacionar agotamiento de capacidad con degradación real del servicio.                               |
 
 La salud de la API, del procesamiento y del despacho se evalúa **por separado**. Una API accesible no acredita que los trabajos admitidos estén avanzando. Del mismo modo, un worker disponible no prueba que los usuarios puedan autenticarse o consultar inscripciones.
 
@@ -55,14 +55,14 @@ El diagnóstico depende de hechos persistidos y señales verificables. El reinic
 
 ## 4. Respuesta ante incidentes habituales
 
-| Incidente | Contención y recuperación | Comprobación de cierre |
-| --- | --- | --- |
-| PostgreSQL inaccesible | Suspender nuevas confirmaciones que dependen de la base; restablecer conectividad e integridad antes de reabrir admisión. | Transacciones y consultas vuelven a funcionar; no hay éxitos ficticios durante la interrupción. |
-| Despacho detenido | Mantener las intenciones de outbox, restaurar el relay y reanudar entrega con identidad estable. | Disminuye el atraso y ninguna intención confirmada queda descartada. |
-| Consumidor interrumpido | Restablecer composición y PgBoss, recuperar encargos vencidos o pendientes sin duplicar efectos. | El seguimiento refleja incorporaciones ya confirmadas y trabajo restante. |
-| Aumento de conflictos de concurrencia | Revisar contención y reintentos transaccionales acotados; no desactivar control de cupos. | No aparecen sobrecupos ni inscripciones activas duplicadas. |
-| Fallos de identidad o procedencia | Contrastar configuración segura, vigencia de sesiones y origen permitido; no abrir acceso indiscriminado. | Las solicitudes autorizadas funcionan y las no autorizadas siguen rechazadas. |
-| Publicación incompatible | Detener promoción, restaurar componentes compatibles y evaluar migraciones y datos por separado. | La versión en servicio interpreta correctamente estado, mensajes y sesiones vigentes. |
+| Incidente                             | Contención y recuperación                                                                                                 | Comprobación de cierre                                                                          |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| PostgreSQL inaccesible                | Suspender nuevas confirmaciones que dependen de la base; restablecer conectividad e integridad antes de reabrir admisión. | Transacciones y consultas vuelven a funcionar; no hay éxitos ficticios durante la interrupción. |
+| Despacho detenido                     | Mantener las intenciones de outbox, restaurar el relay y reanudar entrega con identidad estable.                          | Disminuye el atraso y ninguna intención confirmada queda descartada.                            |
+| Consumidor interrumpido               | Restablecer composición y PgBoss, recuperar encargos vencidos o pendientes sin duplicar efectos.                          | El seguimiento refleja incorporaciones ya confirmadas y trabajo restante.                       |
+| Aumento de conflictos de concurrencia | Revisar contención y reintentos transaccionales acotados; no desactivar control de cupos.                                 | No aparecen sobrecupos ni inscripciones activas duplicadas.                                     |
+| Fallos de identidad o procedencia     | Contrastar configuración segura, vigencia de sesiones y origen permitido; no abrir acceso indiscriminado.                 | Las solicitudes autorizadas funcionan y las no autorizadas siguen rechazadas.                   |
+| Publicación incompatible              | Detener promoción, restaurar componentes compatibles y evaluar migraciones y datos por separado.                          | La versión en servicio interpreta correctamente estado, mensajes y sesiones vigentes.           |
 
 ## 5. Evidencia y revisión del incidente
 
