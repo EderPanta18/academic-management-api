@@ -101,11 +101,11 @@ sequenceDiagram
         Registro-->>Gestion: Situación vigente
         Gestion->>Periodo: Comprobar momento académico aplicable
         Periodo-->>Gestion: Inicio y situación del periodo
-        alt Cancelación ordinaria antes del inicio
+        alt Cancelación solicitada con periodo OPEN antes del inicio académico
             Gestion->>Registro: Confirmar CANCELLED, liberar cupo y registrar motivo
             Registro-->>Gestion: Cancelación registrada
             Gestion-->>Operador: Confirma cancelación
-        else Retiro durante el periodo en curso
+        else Retiro solicitado con periodo IN_PROGRESS durante el desarrollo académico
             Gestion->>Registro: Confirmar WITHDRAWN, liberar cupo y registrar motivo
             Registro-->>Gestion: Retiro registrado
             Gestion-->>Operador: Confirma retiro

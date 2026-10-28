@@ -4,17 +4,17 @@ La verificación de seguridad comprueba que **cada operación utiliza identidad 
 
 ## 1. Autenticación y sesiones
 
-| Escenario                                      | Criterio verificable                                                                                                                     |
-| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| Contraseña correcta o incorrecta               | El acceso válido crea una sesión; el rechazo no revela si existe la cuenta, no entrega secretos y no crea sesión utilizable.             |
-| Verificación de credenciales                   | Las contraseñas se validan mediante Argon2id y no se conservan ni exponen como texto plano.                                              |
-| Access token expirado o modificado             | El JWT alterado, vencido, de tipo incorrecto o asociado a sesión revocada se rechaza. Su vigencia máxima es de 15 minutos.               |
-| Refresh token                                  | La credencial válida renueva bajo la sesión vigente, rota y deja inutilizable la anterior; su vigencia máxima es de siete días.          |
-| Renovaciones simultáneas                       | La misma credencial no produce dos sucesoras válidas; la reutilización confirmada de una credencial consumida revoca la sesión afectada. |
-| Inicio de sesión posterior                     | La nueva sesión invalida la anterior, incluso ante accesos simultáneos.                                                                  |
-| Deshabilitación, cierre o cambio de contraseña | La sesión revocada pierde acceso de inmediato sin esperar la caducidad del JWT.                                                          |
-| Contraseña temporal                            | Tras restablecimiento administrativo se impide operar académicamente hasta completar el cambio exigido.                                  |
-| Intentos fallidos                              | Cinco fallos por identidad en quince minutos activan la limitación temporal; el control no revela la existencia de la cuenta.            |
+| Escenario                                      | Criterio verificable                                                                                                                                                                       |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Contraseña correcta o incorrecta               | El acceso válido crea una sesión solo si la cuenta está `ACTIVE`; `INACTIVE` y `BLOCKED` no permiten autenticación, renovación ni uso de sesiones, sin revelar la existencia de la cuenta. |
+| Verificación de credenciales                   | Las contraseñas se validan mediante Argon2id y no se conservan ni exponen como texto plano.                                                                                                |
+| Access token expirado o modificado             | El JWT alterado, vencido, de tipo incorrecto o asociado a sesión revocada se rechaza. Su vigencia máxima es de 15 minutos.                                                                 |
+| Refresh token                                  | La credencial válida renueva bajo la sesión vigente, rota y deja inutilizable la anterior; su vigencia máxima es de siete días.                                                            |
+| Renovaciones simultáneas                       | La misma credencial no produce dos sucesoras válidas; la reutilización confirmada de una credencial consumida revoca la sesión afectada.                                                   |
+| Inicio de sesión posterior                     | La nueva sesión invalida la anterior, incluso ante accesos simultáneos.                                                                                                                    |
+| Deshabilitación, cierre o cambio de contraseña | La sesión revocada pierde acceso de inmediato sin esperar la caducidad del JWT.                                                                                                            |
+| Contraseña temporal                            | Tras restablecimiento administrativo se impide operar académicamente hasta completar el cambio exigido.                                                                                    |
+| Intentos fallidos                              | Cinco fallos por identidad en quince minutos activan la limitación temporal; el control no revela la existencia de la cuenta ni cambia automáticamente su estado a `BLOCKED`.              |
 
 Estas pruebas contrastan el estado persistido de sesión y el resultado de llamadas posteriores con las credenciales anteriores. No concluyen que hubo revocación por la sola presencia de una cabecera de eliminación de cookies.
 
@@ -23,10 +23,10 @@ Estas pruebas contrastan el estado persistido de sesión y el resultado de llama
 La matriz de autorización se ejerce con los roles institucionales `ADMIN`, `SECRETARY`, `ACADEMIC_COORDINATOR` y `REPORT_VIEWER`, además de combinaciones válidas de múltiples roles y roles personalizados.
 
 - **Operaciones académicas:** secretaría y administración ejecutan los movimientos que les corresponden; coordinación académica consulta inscripciones, pero no las modifica; el lector de reportes no adquiere acceso nominal por poder consultar indicadores.
-- **Administración sensible:** las correcciones extraordinarias, la gestión de cuentas y autorizaciones, y la consulta transversal de auditoría exigen simultáneamente rol protegido `ADMIN` y permiso específico. Un rol personalizado con permisos ordinarios acumulados no elude esas reservas; se rechaza asignarle permisos institucionalmente reservados.
+- **Administración sensible:** las correcciones extraordinarias de inscripciones y documentos de identidad, la gestión de cuentas y autorizaciones, y la consulta transversal de auditoría exigen simultáneamente rol protegido `ADMIN` y permiso específico. Un rol personalizado con permisos ordinarios acumulados no elude esas reservas; se rechaza asignarle permisos institucionalmente reservados.
 - **Autoelevación:** ninguna cuenta altera sus propias asignaciones, ni directamente ni por modificaciones masivas o indirectas.
 - **Combinación de roles:** los permisos efectivos representan la unión autorizada de capacidades asignadas, sin conferir operaciones ajenas al catálogo o a sus restricciones institucionales.
-- **Revocación dinámica:** retirar un rol o permiso impide el siguiente uso de esa capacidad sin exigir que el usuario cierre sesión; una cuenta deshabilitada queda bloqueada aunque posea varios roles.
+- **Revocación dinámica:** retirar un rol o permiso impide el siguiente uso de esa capacidad sin exigir que el usuario cierre sesión; pasar a `INACTIVE` o `BLOCKED` revoca inmediatamente todas las sesiones y la posterior reactivación no las restablece. Cada transición administrativa exige motivo y autorización, incluso entre `INACTIVE` y `BLOCKED`.
 - **Importaciones y reportes:** `reports.read` permite exclusivamente agregados autorizados; los archivos, estados individuales y observaciones por fila requieren `students.imports.read`.
 - **Ejecución diferida:** el trabajo conserva el actor, alcance e intención autorizada de su admisión. La revocación posterior de cuenta, sesión o rol impide nuevas admisiones, pero no invalida un trabajo durable ya aceptado; el worker no usa una sesión revocada ni amplía el encargo. Las condiciones académicas se validan al confirmar cada efecto.
 

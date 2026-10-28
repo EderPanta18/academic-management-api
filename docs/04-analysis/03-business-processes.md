@@ -64,7 +64,7 @@ flowchart TD
     A([Solicitud sobre inscripción ENROLLED]) --> B{Actor autorizado y motivo presente}
     B -- No --> R[Rechazar sin cambiar la inscripción]
     B -- Sí --> C{Operación solicitada}
-    C -- Cancelar --> D{Antes del inicio efectivo del periodo}
+    C -- Cancelar --> D{Periodo OPEN y antes del inicio académico}
     D -- Sí --> E[Confirmar CANCELLED, liberar cupo y registrar movimiento con motivo como una unidad]
     D -- No --> R
     C -- Retirar --> F{Periodo académico en curso}
@@ -76,7 +76,7 @@ flowchart TD
     I --> J
 ```
 
-**Cancelación.** Corresponde a la anulación ordinaria antes del inicio académico. Si vuelve a permitirse la inscripción, debe crearse un registro nuevo; no se revive el cancelado.
+**Cancelación.** Corresponde a la anulación ordinaria de una inscripción `ENROLLED` con el periodo en `OPEN` y antes del inicio académico. Si vuelve a permitirse la inscripción, debe crearse un registro nuevo; no se revive el cancelado.
 
 **Retiro.** Corresponde a una inscripción vigente durante el periodo en curso. Libera el cupo, pero impide la reinscripción ordinaria del mismo estudiante en ese curso y periodo.
 

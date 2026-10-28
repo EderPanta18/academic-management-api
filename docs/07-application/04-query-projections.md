@@ -57,7 +57,7 @@ Cada familia declara las dimensiones y combinaciones admitidas; la aplicación n
 
 Los reportes de **ofertas e inscripciones exigen un periodo académico explícito**. Su ausencia se rechaza; no se elige automáticamente el periodo más reciente ni se realiza una consulta indiscriminada de toda la historia.
 
-Cuando una consulta distingue vigencia administrativa, utiliza por defecto registros activos y exige un filtro explícito para incluir antecedentes cuando esa modalidad es válida. La consulta histórica no elimina ni reescribe asociaciones pasadas para acomodarlas a la organización vigente.
+Las consultas ordinarias de recursos con baja lógica excluyen los registros eliminados. Las consultas históricas se limitan a las capacidades expresamente definidas, con autorización y filtros propios; no existe un parámetro general que habilite el acceso a registros eliminados de cualquier módulo. La lectura histórica conserva la atribución de hechos y asociaciones a sus identidades originales sin reescribir relaciones pasadas. Los estados funcionales se interpretan según cada recurso y no equivalen a la marca de baja lógica.
 
 En las inscripciones, el estado refleja un movimiento académico específico:
 

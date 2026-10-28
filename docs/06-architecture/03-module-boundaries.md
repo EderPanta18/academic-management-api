@@ -4,22 +4,22 @@ Los módulos se delimitan por **capacidad del negocio, reglas propias y autorida
 
 ## 1. Capacidades y responsables
 
-| Módulo                 | Responsabilidad funcional                                                                   | Frontera de escritura                                                              |
-| ---------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `identity`             | Identidad común de personas y tipos de documento.                                           | Mantiene personas; no crea perfiles ni cuentas por efecto implícito.               |
-| `faculties`            | Facultades y su vigencia institucional.                                                     | No modifica perfiles ni cursos adscritos.                                          |
-| `academic-departments` | Departamentos dependientes de facultades.                                                   | No modifica directamente la adscripción de cursos.                                 |
-| `academic-programs`    | Programas académicos y asociaciones programa–curso.                                         | Gobierna habilitación de cursos por programa académico, no el contenido del curso. |
-| `courses`              | Catálogo de cursos, categorías y adscripción departamental.                                 | No administra ofertas ni inscripciones.                                            |
-| `professors`           | Perfiles docentes y adscripción a una facultad.                                             | No modifica una oferta al cambiar información del docente.                         |
-| `students`             | Perfil estudiantil, programa académico vigente e importaciones administrativas.             | No inscribe al estudiante ni modifica ofertas.                                     |
-| `academic-periods`     | Periodos, ventanas de inscripción y transiciones de periodo.                                | No altera automáticamente los estados de inscripciones.                            |
-| `course-offerings`     | Ofertas, secciones, docente asignado, aforo máximo y ciclo de vida.                         | No crea ni cancela inscripciones.                                                  |
-| `enrollments`          | Inscripción, cancelación, retiro, cambio de sección, corrección e historial de movimientos. | Autoridad sobre el estado de la inscripción y sus movimientos.                     |
-| `users`                | Cuentas, contraseñas, credenciales y sesiones revocables.                                   | No define el catálogo de permisos ni el perfil académico.                          |
-| `authorization`        | Roles, permisos, asignaciones y resolución de autorización efectiva.                        | No administra contraseñas ni sesiones.                                             |
-| `audit`                | Consulta administrativa de evidencia de auditoría transversal.                              | No decide ni revierte operaciones ajenas.                                          |
-| `reports`              | Reportes operativos predefinidos y lecturas combinadas autorizadas.                         | No modifica entidades consultadas.                                                 |
+| Módulo                 | Responsabilidad funcional                                                                   | Frontera de escritura                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `identity`             | Identidad común de personas y tipos de documento.                                           | Garantiza la unicidad e inmutabilidad de la identificación documental, sin crear perfiles ni cuentas por efecto implícito. |
+| `faculties`            | Facultades y su vigencia institucional.                                                     | No modifica perfiles ni cursos adscritos.                                                                                  |
+| `academic-departments` | Departamentos dependientes de facultades.                                                   | No modifica directamente la adscripción de cursos.                                                                         |
+| `academic-programs`    | Programas académicos y asociaciones programa–curso.                                         | Gobierna habilitación de cursos por programa académico, no el contenido del curso.                                         |
+| `courses`              | Catálogo de cursos, categorías y adscripción departamental.                                 | No administra ofertas ni inscripciones.                                                                                    |
+| `professors`           | Perfiles docentes, adscripción y transiciones de habilitación.                              | Comprueba obligaciones docentes a través de contratos; no modifica ofertas automáticamente.                                |
+| `students`             | Perfil estudiantil, programa académico vigente e importaciones administrativas.             | No inscribe al estudiante ni modifica ofertas.                                                                             |
+| `academic-periods`     | Periodos, ventanas de inscripción y transiciones de periodo.                                | No altera automáticamente los estados de inscripciones.                                                                    |
+| `course-offerings`     | Ofertas, secciones, docente asignado, aforo máximo y ciclo de vida.                         | Preserva identidad y restricciones de configuración por estado; no crea ni cancela inscripciones.                          |
+| `enrollments`          | Inscripción, cancelación, retiro, cambio de sección, corrección e historial de movimientos. | Autoridad sobre el estado de la inscripción y sus movimientos.                                                             |
+| `users`                | Cuentas, contraseñas, credenciales y sesiones revocables.                                   | No define el catálogo de permisos ni el perfil académico.                                                                  |
+| `authorization`        | Roles, permisos, asignaciones y resolución de autorización efectiva.                        | No administra contraseñas ni sesiones.                                                                                     |
+| `audit`                | Consulta administrativa de evidencia de auditoría transversal.                              | No decide ni revierte operaciones ajenas.                                                                                  |
+| `reports`              | Reportes operativos predefinidos y lecturas combinadas autorizadas.                         | No modifica entidades consultadas.                                                                                         |
 
 Los tipos de documento permanecen bajo `identity`; las categorías de curso bajo `courses`. La importación de estudiantes permanece bajo `students`, aun cuando se ejecute en otro proceso. Se evita crear módulos de catálogos, procesamiento o reportes genéricos cuando ello no representa una propiedad funcional adicional.
 

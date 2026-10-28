@@ -26,7 +26,7 @@ La información de docentes cubre su participación en la oferta académica; la 
 
 ### 2. Periodos académicos y ofertas de cursos
 
-Se contempla el registro, la consulta, el ajuste autorizado de fechas y la transición de periodos académicos, así como la preparación, la consulta, la configuración y las transiciones de las ofertas de cursos que se organizan dentro de ellos.
+Se contempla el registro y la consulta de periodos académicos, la corrección de nombre, código, fechas y ventanas de inscripción únicamente en `PLANNED` y las transiciones permitidas. Se incluyen también la preparación, consulta, configuración y transiciones de las ofertas de cursos organizadas en esos periodos.
 
 Cada oferta concreta la disponibilidad de un curso para un periodo y una sección, con capacidad definida, situación operativa y asignación docente exigida para su apertura. La administración incluye las acciones necesarias para habilitar, cerrar o cancelar periodos y ofertas, así como la reapertura autorizada de ofertas cuando sus condiciones lo permiten.
 

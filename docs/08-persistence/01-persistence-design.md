@@ -39,7 +39,7 @@ La representación relacional preserva **identidades estables, relaciones explí
 - Los episodios de asociación programa–curso conservan su vigencia histórica; cerrar un episodio o habilitar otro posterior no altera retroactivamente una inscripción admitida.
 - Las inscripciones conservan el contexto académico de admisión y su identidad a través de cambios de sección; cancelar una inscripción no reutiliza su registro para una nueva admisión.
 - La ocupación y los cupos disponibles se **derivan** de las inscripciones `ENROLLED` y la capacidad de la oferta. No se mantiene un segundo saldo persistente de vacantes que pueda divergir.
-- Los movimientos de inscripción y los registros de auditoría preservan evidencia histórica diferenciada. Una rectificación agrega evidencia y no borra el hecho original.
+- Los movimientos de inscripción y los registros de auditoría preservan evidencia histórica diferenciada. El tipo y número de documento de cada persona permanecen inmutables desde el registro y conservan unicidad global aunque exista baja lógica.
 - Los archivos originales de importación se conservan como contenido binario durable asociado a la importación admitida, junto a los resultados y el contexto de atribución; su existencia no depende del sistema de archivos temporal del proceso HTTP o worker.
 - La deshabilitación de catálogos, perfiles o cuentas no provoca borrados en cascada de evidencia histórica. La vigencia administrativa y la existencia del registro son conceptos distintos.
 
@@ -61,7 +61,7 @@ Prisma gobierna la definición relacional y las migraciones versionadas. Toda ev
 
 1. Las modificaciones de estructura se expresan mediante migraciones reproducibles y revisables; no dependen de cambios manuales no registrados en una base de datos.
 2. Una migración que transforma datos debe conservar identidades, asociaciones históricas, estados y evidencia; no utiliza valores predeterminados para ocultar inconsistencias.
-3. Las nuevas restricciones se acompañan de una conversión determinista de los datos previos cuando sea necesaria; no se eliminan filas históricas para hacer que una migración termine con éxito. La adopción de unicidad condicionada por baja lógica conserva datos e identidades anteriores y sustituye las restricciones globales incompatibles por las que protegen exclusivamente el conjunto vigente.
+3. Las nuevas restricciones se acompañan de una conversión determinista de los datos previos cuando sea necesaria; no se eliminan filas históricas para hacer que una migración termine con éxito. La adopción de unicidad condicionada por baja lógica conserva datos e identidades anteriores y sustituye únicamente las restricciones globales de atributos reutilizables por las que protegen el conjunto vigente. La combinación de tipo y número de documento de `Person` mantiene unicidad global, incluso tras una baja lógica, y no se admite su actualización. Las relaciones estructurales uno a uno mantienen unicidad global aun cuando la entidad permita baja lógica.
 4. Las modificaciones compatibles mantienen el funcionamiento de los procesos que comparten el almacenamiento durante una transición de versión. Los cambios incompatibles se coordinan entre código, esquema y procesos consumidores.
 5. Las migraciones no sustituyen la validación funcional ni permiten que el ORM se convierta en la fuente normativa de reglas de negocio.
 

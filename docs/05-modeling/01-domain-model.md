@@ -4,12 +4,12 @@ El modelo distingue **identidad**, **estructura académica**, **oferta**, **insc
 
 ## 1. Identidad y perfiles
 
-| Concepto       | Significado en el dominio                                                         | Relación esencial                                                                                                       |
-| -------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **Persona**    | Identidad humana común a perfiles académicos y, cuando corresponda, a una cuenta. | Se identifica por un tipo y número de documento; puede participar en varios perfiles sin duplicar sus datos personales. |
-| **Estudiante** | Perfil mediante el cual una persona se incorpora al registro de inscripciones.    | Corresponde a una persona y pertenece a un programa académico vigente.                                                  |
-| **Docente**    | Perfil de una persona habilitada para responsabilizarse de ofertas académicas.    | Corresponde a una persona y está adscrito a una facultad.                                                               |
-| **Usuario**    | Cuenta que permite actuar dentro del sistema con autorizaciones verificables.     | Puede estar vinculada a una persona; no concede por sí misma condición de estudiante o docente.                         |
+| Concepto       | Significado en el dominio                                                         | Relación esencial                                                                                                    |
+| -------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **Persona**    | Identidad humana común a perfiles académicos y, cuando corresponda, a una cuenta. | Su tipo y número de documento son inmutables después del registro y únicos globalmente, incluso tras la baja lógica. |
+| **Estudiante** | Perfil mediante el cual una persona se incorpora al registro de inscripciones.    | Corresponde a una persona y pertenece a un programa académico vigente.                                               |
+| **Docente**    | Perfil de una persona habilitada para responsabilizarse de ofertas académicas.    | Corresponde a una persona, está adscrito a una facultad y solo asume nuevas ofertas mientras permanece `ACTIVE`.     |
+| **Usuario**    | Cuenta que permite actuar dentro del sistema con autorizaciones verificables.     | Puede estar vinculada a una persona; no concede por sí misma condición de estudiante o docente.                      |
 
 Una persona puede poseer perfiles de estudiante y docente simultáneamente: las relaciones representan responsabilidades diferentes. En cambio, cada perfil de estudiante o docente identifica una sola persona y una persona tiene como máximo un perfil de cada tipo. La identificación del personal que opera el sistema se resuelve mediante su cuenta, no mediante la pertenencia a un perfil académico.
 
@@ -98,13 +98,15 @@ classDiagram
     Inscripcion "1" --> "1..*" MovimientoInscripcion : conserva
 ```
 
-La asignación docente puede estar pendiente mientras la oferta está en preparación. En una oferta **abierta**, el docente debe estar asignado y habilitado; por tanto, la multiplicidad conceptual del docente en una oferta es opcional durante la preparación y obligatoria durante la apertura.
+La asignación docente puede estar pendiente mientras la oferta está en preparación. En una oferta abierta, el docente debe estar asignado y habilitado. Curso y periodo identifican definitivamente el contexto de la oferta; la sección solo se corrige en `DRAFT`. La capacidad y la asignación docente solo pueden modificarse en `DRAFT`, `OPEN` y `CLOSED`, respetando los compromisos operativos y conservando los antecedentes de los cambios.
 
 ## 4. Estados como propiedades de entidades diferentes
 
 Los estados no forman un catálogo intercambiable entre entidades:
 
 - **Estudiante:** expresa su habilitación académica para nuevas inscripciones. Solo `ACTIVE` es elegible.
+- **Docente:** `ACTIVE` habilita nuevas asignaciones; `INACTIVE` y `ON_LEAVE` suspenden esa habilitación y no eliminan referencias históricas.
+- **Cuenta:** `ACTIVE` habilita acceso autenticado; `INACTIVE` representa deshabilitación administrativa y `BLOCKED` bloqueo de seguridad.
 - **Periodo:** determina su preparación, apertura, desarrollo, cierre o cancelación.
 - **Oferta:** determina si una sección está en preparación, abierta, cerrada, finalizada o cancelada.
 - **Inscripción:** conserva exclusivamente `ENROLLED`, `CANCELLED` o `WITHDRAWN`.

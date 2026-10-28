@@ -56,9 +56,10 @@ La denegación no revela datos protegidos. Un recurso fuera de la visibilidad de
 
 ## 4. Facultades sensibles y separación de funciones
 
-- **Correcciones extraordinarias:** requieren la autorización administrativa específica, un tipo de corrección admitido, justificación y conservación íntegra de los antecedentes. No equivalen a un permiso para editar directamente cualquier atributo de inscripción.
+- **Correcciones extraordinarias:** requieren la autorización administrativa específica, un tipo de corrección admitido, justificación y conservación íntegra de los antecedentes. Las rectificaciones de inscripciones no permiten editar cualquier atributo académico ni cambiar el tipo o número de documento de una persona. Ninguna habilita modificaciones genéricas de registros históricos.
+- **Estados de cuentas:** el cambio entre `ACTIVE`, `INACTIVE` y `BLOCKED` exige autorización administrativa, motivo y revocación inmediata de sesiones cuando la cuenta deja de estar `ACTIVE`. Habilitarla de nuevo no reactiva sesiones.
 - **Roles y permisos:** una cuenta no puede alterar **sus propias asignaciones** mediante ninguna operación administrativa. Una petición indirecta, masiva o coordinada entre recursos sigue sujeta a la misma prohibición.
-- **Contraseñas:** cada persona puede cambiar su propia contraseña autenticada; el restablecimiento de otra cuenta es una facultad administrativa distinta y no concede lectura de su secreto.
+- **Contraseñas:** cada usuario autenticado puede cambiar su propia contraseña; el restablecimiento de otra cuenta es una facultad administrativa distinta y no concede lectura de su secreto.
 - **Auditoría:** la lectura de evidencias exige autorización explícita; no se ofrecen operaciones ordinarias para editar o eliminar eventos.
 - **Consultas y reportes:** `reports.read` permite las consultas institucionales definidas y agregados de importación, pero no seguimiento individual, originales ni errores por fila. `students.imports.read` controla ese detalle de importación sin sustituir otras autorizaciones.
 

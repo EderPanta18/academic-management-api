@@ -4,7 +4,7 @@ La autenticación comprueba la identidad de una **cuenta interna administrada**;
 
 ## 1. Identidad de acceso y credenciales
 
-- El acceso se inicia con **correo electrónico y contraseña** asociados a una cuenta administrada. No existe registro público ni autenticación de estudiantes o docentes por el mero hecho de tener un perfil académico.
+- El acceso se inicia con **correo electrónico y contraseña** asociados a una cuenta administrada. Para identificar la cuenta, el correo se compara sin distinguir mayúsculas, minúsculas o espacios exteriores, de forma coherente con su unicidad entre cuentas vigentes; la contraseña mantiene su comprobación independiente. No existe registro público ni autenticación de estudiantes o docentes por el mero hecho de tener un perfil académico.
 - La contraseña se almacena exclusivamente como un verificador derivado mediante **Argon2id**, con sal aleatoria y parámetros de coste controlados por el servidor. Ni la contraseña ni su verificador se devuelven mediante la API o se registran en logs.
 - La comparación de credenciales utiliza el mecanismo de verificación de Argon2id y presenta un rechazo externo equivalente para cuenta inexistente, contraseña incorrecta o cuenta que no permite el acceso. No revela si un correo está registrado.
 - Los identificadores y credenciales recibidos del cliente son datos no confiables; la identidad utilizada por los casos de uso procede únicamente del resultado de autenticación validado por el servidor.
@@ -36,7 +36,7 @@ La presentación de una credencial de refresh ya consumida, fuera de su sesión,
 
 - **Cerrar sesión:** revoca la sesión y elimina las cookies de acceso y renovación mediante las propiedades correspondientes; borrar cookies sin revocar el estado servidor no constituye un cierre suficiente.
 - **Nuevo inicio de sesión:** revoca la sesión anterior antes de habilitar la nueva.
-- **Deshabilitar una cuenta:** revoca su sesión y bloquea accesos y renovaciones posteriores.
+- **Deshabilitar o bloquear una cuenta:** pasar a `INACTIVE` o `BLOCKED` revoca inmediatamente sus sesiones e impide nuevos accesos y renovaciones; pasar a `ACTIVE` mediante administración autorizada no restaura sesiones antiguas y exige nueva autenticación.
 - **Cambiar la contraseña propia:** exige identidad autenticada, comprueba el secreto vigente y revoca las sesiones emitidas antes del cambio; el usuario vuelve a autenticarse.
 - **Restablecimiento administrativo:** revoca la sesión existente, registra la condición de cambio obligatorio y solo permite las operaciones indispensables para autenticar y establecer una contraseña definitiva.
 - **Retirar permisos o roles:** no conserva autorizaciones antiguas dentro de una sesión vigente; su siguiente uso se decide con los permisos actualizados.
@@ -57,9 +57,11 @@ stateDiagram-v2
 
 El diagrama representa el ciclo de una **sesión concreta**. La creación de una nueva sesión puede revocar la anterior, pero no vuelve a activar la identidad revocada.
 
+Una cuenta `INACTIVE` está deshabilitada por decisión administrativa y una cuenta `BLOCKED` por decisión de seguridad. Los cambios entre `ACTIVE`, `INACTIVE` y `BLOCKED` requieren actor autorizado, motivo y evidencia. Ningún token o sesión anterior recupera su validez cuando la cuenta vuelve a `ACTIVE`.
+
 ## 4. Restricción por intentos inválidos
 
-El acceso aplica una política de **cinco fallos de autenticación por identidad en una ventana de quince minutos**. Tras alcanzar el umbral, los intentos posteriores de esa identidad se rechazan temporalmente hasta concluir la ventana aplicable. El conteo y el rechazo se aplican tanto a cuentas existentes como a identidades no encontradas, sin informar cuál de ellas originó el bloqueo.
+El acceso aplica una política de **cinco fallos de autenticación por identidad en una ventana de quince minutos**. Tras alcanzar el umbral, los intentos posteriores de esa identidad se rechazan temporalmente hasta concluir la ventana aplicable, sin modificar el estado persistente de la cuenta a `BLOCKED`. Los intentos con correos equivalentes por mayúsculas, minúsculas o espacios exteriores comparten el mismo conteo. El conteo y el rechazo se aplican tanto a cuentas existentes como a identidades no encontradas, sin informar cuál de ellas originó el bloqueo.
 
 La limitación se evalúa del lado del servidor y no depende del navegador, de una cookie manipulable o de memoria aislada de un único proceso. No se registran contraseñas ni tokens para diagnosticar fallos. Los sucesos relevantes generan evidencia de seguridad sin convertir cada intento en un mensaje operativo ruidoso.
 

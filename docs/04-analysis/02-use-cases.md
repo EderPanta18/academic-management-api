@@ -12,11 +12,11 @@ Los identificadores `CU` permiten distinguir las interacciones y relacionarlas c
 | **CU-02** | Administrar cuentas y roles                    | `ADMIN`                                                               | Cuentas, estados y asignaciones autorizadas sin autoelevación de privilegios.                                           | RF-042, RF-046–RF-049                  |
 | **CU-03** | Mantener personas y estudiantes                | `ADMIN`, `SECRETARY`                                                  | Registros identificables, sin duplicidad de identidad ni estudiantes inválidos.                                         | RF-001, RF-003, RF-004, RF-009         |
 | **CU-04** | Mantener estructura y catálogo académico       | `ADMIN`, `ACADEMIC_COORDINATOR`                                       | Unidades, cursos, categorías y asociaciones académicas coherentes.                                                      | RF-002, RF-006–RF-008                  |
-| **CU-05** | Mantener docentes                              | `ADMIN`, `ACADEMIC_COORDINATOR`                                       | Docentes asociados a personas existentes y a su facultad.                                                               | RF-001, RF-005                         |
+| **CU-05** | Mantener docentes                              | `ADMIN`, `ACADEMIC_COORDINATOR`                                       | Docentes registrados con vinculaciones válidas y antecedentes históricos conservados.                                   | RF-001, RF-005                         |
 | **CU-06** | Administrar periodos académicos                | `ADMIN`, `ACADEMIC_COORDINATOR`                                       | Periodos y ventanas de inscripción con cambios de situación controlados.                                                | RF-010, RF-011                         |
 | **CU-07** | Administrar ofertas de cursos                  | `ADMIN`, `ACADEMIC_COORDINATOR`                                       | Secciones, docentes y capacidades disponibles conforme a su situación operativa.                                        | RF-012–RF-015                          |
 | **CU-08** | Registrar inscripción                          | `ADMIN`, `SECRETARY`                                                  | Inscripción `ENROLLED` o rechazo sin registro parcial.                                                                  | RF-016–RF-020                          |
-| **CU-09** | Cancelar inscripción ordinaria                 | `ADMIN`, `SECRETARY`                                                  | Inscripción `CANCELLED` antes del inicio académico, cupo liberado y movimiento conservado.                              | RF-021, RF-025–RF-029                  |
+| **CU-09** | Cancelar inscripción ordinaria                 | `ADMIN`, `SECRETARY`                                                  | Inscripción `CANCELLED` con periodo `OPEN` antes del inicio académico, cupo liberado y movimiento conservado.           | RF-021, RF-025–RF-029                  |
 | **CU-10** | Retirar estudiante de una inscripción          | `ADMIN`, `SECRETARY`                                                  | Inscripción `WITHDRAWN` durante el periodo en curso, sin reinscripción ordinaria posterior en el mismo curso y periodo. | RF-022, RF-025, RF-027–RF-029          |
 | **CU-11** | Cambiar sección de una inscripción             | `ADMIN`, `SECRETARY`                                                  | La misma inscripción vinculada a otra oferta del mismo curso y periodo, sin ocupación inconsistente.                    | RF-023, RF-025, RF-028, RF-029         |
 | **CU-12** | Corregir inscripción extraordinariamente       | `ADMIN`                                                               | Corrección justificada y acotada, con integridad e historial conservados.                                               | RF-024, RF-025, RF-028, RF-029         |
@@ -48,23 +48,23 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Precondiciones.** Actor `ADMIN` autorizado y registro de cuenta o rol apropiado para la operación solicitada.
 
-**Secuencia funcional.** El administrador registra, consulta y modifica cuentas y su estado; consulta roles, administra sus asignaciones y registra o modifica roles personalizados mediante permisos existentes. El sistema aplica inmediatamente los cambios que afectan a la vigencia de las sesiones.
+**Secuencia funcional.** El administrador registra, consulta y modifica cuentas; cambia su estado entre `ACTIVE`, `INACTIVE` y `BLOCKED` mediante operaciones autorizadas y justificadas. Consulta roles, administra sus asignaciones y registra o modifica roles personalizados mediante permisos existentes. Deshabilitar o bloquear una cuenta revoca sus sesiones y la habilitación posterior exige autenticación nueva.
 
-**Alternativas.** Se rechaza el registro público, la modificación no autorizada de roles base, la creación arbitraria de permisos y la alteración de las propias asignaciones de roles del administrador.
+**Alternativas.** Se rechaza el registro público, un cambio de estado sin autorización o motivo, la modificación no autorizada de roles base, la creación arbitraria de permisos y la alteración de las propias asignaciones de roles del administrador.
 
 **Resultado.** Cuentas y atribuciones controladas, sin autoelevación de privilegios.
 
-## 3. Preparación académica para inscribir
+## 3. Registros y organización académica
 
 ### CU-03 — Mantener personas y estudiantes
 
 **Objetivo.** Conservar personas y estudiantes identificables, con información suficiente para comprobar su situación académica.
 
-**Precondiciones.** Actor `ADMIN` o `SECRETARY` autorizado; para registrar un estudiante, persona existente y programa académico válido.
+**Precondiciones.** Actor `ADMIN` o `SECRETARY` autorizado; para registrar un estudiante, persona vigente y programa académico vigente.
 
-**Secuencia funcional.** El actor registra o consulta a la persona y actualiza sus datos de identidad cuando corresponde. Registra, consulta o actualiza el perfil estudiantil y solicita las transiciones de estado admitidas. El sistema comprueba las identidades, la pertenencia académica y las restricciones aplicables.
+**Secuencia funcional.** El actor registra o consulta a la persona y actualiza sus datos personales no documentales cuando corresponde. El tipo y número de documento se validan al registrar a la persona y no se modifican después. Registra, consulta o actualiza el perfil estudiantil y solicita las transiciones de estado admitidas. El sistema comprueba las identidades, la pertenencia académica y las restricciones aplicables.
 
-**Alternativas.** Una identidad personal repetida, un código de estudiante duplicado en el conjunto sujeto a unicidad vigente, un programa académico inexistente o no vigente, o una modificación incompatible con antecedentes protegidos se rechazan sin afectar otros registros.
+**Alternativas.** Se rechazan una combinación documental ya registrada, cualquier intento de modificar el tipo o número de documento después del alta, el código de estudiante duplicado entre vigentes, el programa académico inexistente o no vigente y los cambios incompatibles con antecedentes protegidos.
 
 **Resultado.** Persona y estudiante consultables, con identidad y relaciones válidas; las actualizaciones no reinterpretan inscripciones históricas.
 
@@ -84,13 +84,13 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Objetivo.** Registrar docentes con facultad de adscripción y habilitar su asignación a ofertas.
 
-**Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` autorizado; persona existente y facultad de adscripción vigente.
+**Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` autorizado. El registro de un perfil y las nuevas adscripciones requieren una persona vigente y una facultad vigente; la reincorporación a `ACTIVE` requiere perfil y facultad de adscripción vigentes. La consulta autorizada de un perfil docente sin baja lógica no requiere que su facultad de adscripción continúe vigente.
 
-**Secuencia funcional.** El actor identifica a la persona y registra, consulta o actualiza su perfil docente, adscripción y situación operativa dentro de las transiciones admitidas. El sistema verifica la relación institucional sin imponer que el curso dictado pertenezca a la misma facultad.
+**Secuencia funcional.** El actor identifica a la persona y registra, consulta o actualiza su perfil docente y adscripción. Cambia su estado únicamente entre `ACTIVE` e `INACTIVE`, o entre `ACTIVE` y `ON_LEAVE`, bajo autorización y comprobación de compromisos operativos. La asignación a ofertas de otras facultades no altera su adscripción.
 
-**Alternativas.** Se rechazan perfiles duplicados o relaciones inexistentes. La coordinación no adquiere permiso para crear personas mediante este caso de uso.
+**Alternativas.** Se rechazan perfiles duplicados, nuevas adscripciones a facultades no vigentes, reincorporaciones sin facultad vigente, transiciones directas entre `INACTIVE` y `ON_LEAVE` y cambios que dejarían ofertas operativas sin docente habilitado. Las asignaciones no se modifican automáticamente. La coordinación no adquiere permiso para crear personas mediante este caso de uso.
 
-**Resultado.** Perfil docente coherente, disponible para la asignación permitida de ofertas de otras facultades.
+**Resultado.** Perfil docente coherente y consultable, habilitado para asumir ofertas de cualquier facultad únicamente cuando cumple las condiciones de actividad y adscripción.
 
 ### CU-06 — Administrar periodos académicos
 
@@ -98,9 +98,9 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` autorizado; datos y condiciones temporales compatibles con la operación solicitada.
 
-**Secuencia funcional.** El actor registra, consulta o modifica el periodo, sus fechas y su ventana de inscripción, o solicita una transición de estado admitida. El sistema comprueba que la transición y las fechas mantengan el significado de las operaciones ya registradas.
+**Secuencia funcional.** El actor registra y consulta periodos, corrige su nombre, código, fechas académicas o ventana de inscripción únicamente cuando el periodo está en `PLANNED`, o solicita una transición de estado admitida. El sistema comprueba la unicidad aplicable, la coherencia temporal y los compromisos académicos confirmados.
 
-**Alternativas.** Se rechazan fechas incoherentes o transiciones no admitidas. El cierre no modifica automáticamente los estados de las inscripciones.
+**Alternativas.** Se rechazan fechas incoherentes, códigos duplicados entre periodos vigentes, cambios de nombre, código, fechas o ventana fuera de `PLANNED` y transiciones no admitidas. El cierre no modifica automáticamente los estados de las inscripciones.
 
 **Resultado.** Periodo con situación inequívoca y condiciones de admisión de inscripciones consultables.
 
@@ -110,9 +110,9 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` autorizado; curso y periodo válidos; docente válido cuando se asigne y obligatorio para abrir la oferta.
 
-**Secuencia funcional.** El actor registra, consulta o configura una oferta en un periodo, establece sección y capacidad, asigna docente antes de su apertura y solicita las transiciones operativas permitidas. El sistema comprueba que una oferta abierta tenga docente y que los cambios no vulneren inscripciones existentes.
+**Secuencia funcional.** El actor registra una oferta con curso y periodo definitivos, consulta su estado y modifica la sección solo mientras está en `DRAFT`. Puede modificar docente y capacidad en `DRAFT`, `OPEN` o `CLOSED`, bajo las condiciones de habilitación, ocupación y preservación histórica. Solicita por separado las transiciones admitidas; el sistema verifica la consistencia de la oferta y sus inscripciones.
 
-**Alternativas.** Se rechaza abrir sin docente, reducir la capacidad por debajo de la ocupación vigente o ejecutar una transición incompatible con la situación de la oferta. Cerrar o cancelar la oferta no modifica implícitamente inscripciones.
+**Alternativas.** Se rechazan modificaciones de curso o periodo después de crear la oferta, de sección fuera de `DRAFT`, de atributos en `FINISHED` o `CANCELLED`, de docente sin habilitación o de capacidad inferior a la ocupación. También se rechaza abrir sin docente o efectuar transiciones incompatibles. Ninguna transición altera implícitamente las inscripciones.
 
 **Resultado.** Oferta con disponibilidad y ocupación interpretables, sin inconsistencias respecto a las inscripciones que sustenta.
 
@@ -138,13 +138,13 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 ### CU-09 — Cancelar inscripción ordinaria
 
-**Objetivo.** Anular una inscripción vigente antes del inicio efectivo del periodo académico.
+**Objetivo.** Anular una inscripción vigente mientras el periodo permanece en `OPEN`, antes del inicio académico.
 
-**Precondiciones.** Inscripción `ENROLLED`, momento previo al inicio académico, actor autorizado y motivo registrado.
+**Precondiciones.** Inscripción `ENROLLED`, periodo `OPEN` antes del inicio académico, actor autorizado y motivo registrado.
 
-**Secuencia funcional.** El actor identifica la inscripción, expresa el motivo y solicita la cancelación. El sistema valida el momento y la situación, registra `CANCELLED`, libera la plaza y conserva el movimiento correspondiente.
+**Secuencia funcional.** El actor identifica la inscripción, expresa el motivo y solicita la cancelación. El sistema valida el estado `OPEN` del periodo, la fecha de inicio académico y la situación de la inscripción; registra `CANCELLED`, libera la plaza y conserva el movimiento correspondiente.
 
-**Alternativas.** Si el periodo ya comenzó, la operación ordinaria se rechaza: no se sustituye automáticamente por retiro. Una anulación extraordinaria posterior es una corrección administrativa privilegiada, no una ampliación de los permisos ordinarios.
+**Alternativas.** Si el periodo no está en `OPEN` o ya alcanzó el inicio académico, la cancelación ordinaria se rechaza sin transformarse automáticamente en retiro. Una anulación extraordinaria posterior es una corrección administrativa privilegiada, no una ampliación de los permisos ordinarios.
 
 **Resultado.** La inscripción cancelada se mantiene consultable; una nueva inscripción ordinaria requiere crear otro registro y satisfacer todas las condiciones vigentes.
 
@@ -189,6 +189,8 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Resultado.** Situación excepcional rectificada y trazable, sin conceder facultad para alterar libremente datos personales, cursos, periodos o el historial acumulado.
 
+## 5. Importación y consultas académicas
+
 ### CU-13 — Importar estudiantes
 
 **Objetivo.** Incorporar lotes de estudiantes sin suspender la atención interactiva ni sobrescribir estudiantes existentes.
@@ -231,6 +233,8 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Resultado.** Reporte disponible sin modificar registros ni ampliar los permisos de consulta a recursos subyacentes.
 
+## 6. Auditoría y credenciales
+
 ### CU-16 — Consultar auditoría
 
 **Objetivo.** Examinar evidencias relevantes de acciones académicas, administrativas y de seguridad.
@@ -255,7 +259,7 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Resultado.** Credenciales actualizadas y accesos anteriores revocados, sin conceder facultades administrativas adicionales al titular.
 
-## 6. Reglas de lectura del catálogo
+## 7. Reglas de lectura del catálogo
 
 Los casos de uso expresan **resultados observables**. No determinan la cantidad de controladores, servicios o transacciones internas. Cada operación contemplada tiene un propósito funcional y una autorización; no se derivan operaciones adicionales del nombre del caso de uso, del módulo o de su representación persistente. Las condiciones que implican simultaneidad, estados o integridad describen el comportamiento que debe garantizarse, sin imponer un mecanismo técnico particular.
 

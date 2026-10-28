@@ -61,7 +61,7 @@ stateDiagram-v2
 
 Cuando un periodo permanece en `PLANNED` después de alcanzar su inicio académico, un actor autorizado puede regularizarlo mediante **dos transiciones explícitas y consecutivas**: `PLANNED → OPEN` y, posteriormente, `OPEN → IN_PROGRESS`. El estado intermedio `OPEN` no habilita nuevas inscripciones, cambios de sección ni reaperturas de ofertas mientras la fecha y el estado sean incompatibles. Ni el transcurso del tiempo ni la primera transición ejecutan automáticamente la segunda. Una vez en `IN_PROGRESS`, cada operación ordinaria continúa sujeta a la ventana de inscripción y a las demás condiciones aplicables.
 
-`CLOSED` y `CANCELLED` son terminales. El cierre del periodo no exige transformar `ENROLLED` a otro estado y no ejecuta automáticamente cierre o cancelación de ofertas.
+`CLOSED` y `CANCELLED` son terminales. El nombre, el código, las fechas académicas y la ventana de inscripción solo pueden corregirse mientras el periodo permanezca en `PLANNED`. El cambio de estado impide nuevas ediciones ordinarias de esos atributos; las transiciones permitidas siguen siendo operaciones distintas y no alteran retroactivamente las confirmadas. El cierre del periodo no exige transformar `ENROLLED` a otro estado ni ejecuta automáticamente el cierre o la cancelación de ofertas.
 
 ### Momento y ventana de inscripción
 
@@ -104,7 +104,7 @@ stateDiagram-v2
 | `DRAFT`  | Cancelar  | `CANCELLED` | Sin inscripciones `ENROLLED`.                                                                                                                                                                                                                 |
 | `OPEN`   | Cancelar  | `CANCELLED` | Sin inscripciones `ENROLLED`; se conserva su historia.                                                                                                                                                                                        |
 
-`FINISHED` y `CANCELLED` son terminales. Una oferta en `OPEN` puede estar completamente ocupada: **cupo agotado no es una transición automática a `CLOSED`**. Una oferta abierta dentro de un periodo `CLOSED` o `CANCELLED` no acepta inscripciones, aunque su estado individual no se haya modificado.
+`FINISHED` y `CANCELLED` son terminales. Curso y periodo permanecen inmutables desde el registro de la oferta; su sección solo se corrige en `DRAFT`, y docente y capacidad solo se ajustan en `DRAFT`, `OPEN` o `CLOSED`, sujetos a habilitación, ocupación y trazabilidad. Las modificaciones no constituyen transiciones de estado ni cambian inscripciones. Una oferta en `OPEN` puede estar completamente ocupada: **cupo agotado no es una transición automática a `CLOSED`**. Una oferta abierta dentro de un periodo `CLOSED` o `CANCELLED` no acepta inscripciones, aunque su estado individual no se haya modificado.
 
 La baja de un docente o un curso no debe dejar ofertas abiertas sin referencias académicas habilitadas. La reasignación de docente, cuando sea necesaria, debe respetar la existencia y el historial de las ofertas.
 
@@ -155,7 +155,52 @@ Un movimiento histórico no tiene un estado de ciclo de vida editable: es un hec
 
 La escritura del movimiento y el efecto sobre la inscripción forman **una única operación coherente**. El historial de una inscripción permite reconstruir sus cambios sin reescribir eventos anteriores.
 
-## 6. Comprobaciones comunes a las transiciones
+## 6. Docente
+
+Los estados docentes delimitan la habilitación para asumir nuevas asignaciones; no representan la baja lógica del perfil.
+
+| Origen     | Destino    | Condición                                                                                                                       |
+| ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `ACTIVE`   | `INACTIVE` | Cambio autorizado; las obligaciones docentes operativas que requieren un responsable habilitado han sido resueltas previamente. |
+| `INACTIVE` | `ACTIVE`   | Reincorporación autorizada; perfil y facultad de adscripción vigentes.                                                          |
+| `ACTIVE`   | `ON_LEAVE` | Cambio autorizado; las obligaciones docentes operativas que requieren un responsable habilitado han sido resueltas previamente. |
+| `ON_LEAVE` | `ACTIVE`   | Reincorporación autorizada; perfil y facultad de adscripción vigentes.                                                          |
+
+```mermaid
+stateDiagram-v2
+    [*] --> ACTIVE
+    ACTIVE --> INACTIVE: deshabilitar
+    INACTIVE --> ACTIVE: reactivar
+    ACTIVE --> ON_LEAVE: iniciar licencia
+    ON_LEAVE --> ACTIVE: reincorporar
+```
+
+No existen transiciones directas entre `INACTIVE` y `ON_LEAVE`. En esos estados no se aceptan nuevas asignaciones docentes ni la apertura o reapertura de ofertas a su cargo. Una transición no cambia automáticamente la asignación de ninguna oferta; para las ofertas con compromisos docentes protegidos debe resolverse antes la continuidad docente. Los antecedentes y las ofertas concluidas permanecen intactos.
+
+## 7. Cuenta interna
+
+`ACTIVE` permite autenticación y acceso sujeto a permisos; `INACTIVE` expresa deshabilitación administrativa y `BLOCKED`, bloqueo de seguridad.
+
+| Origen     | Destino                | Efecto                                                                                                             |
+| ---------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `ACTIVE`   | `INACTIVE` o `BLOCKED` | Exige autorización y motivo; revoca sesiones e impide nuevos accesos y renovaciones.                               |
+| `INACTIVE` | `ACTIVE` o `BLOCKED`   | Exige autorización y motivo; volver a `ACTIVE` permite una autenticación nueva, sin recuperar sesiones anteriores. |
+| `BLOCKED`  | `ACTIVE` o `INACTIVE`  | Exige autorización y motivo; volver a `ACTIVE` permite una autenticación nueva, sin recuperar sesiones anteriores. |
+
+```mermaid
+stateDiagram-v2
+    [*] --> ACTIVE
+    ACTIVE --> INACTIVE: deshabilitar
+    INACTIVE --> ACTIVE: habilitar
+    ACTIVE --> BLOCKED: bloquear
+    BLOCKED --> ACTIVE: desbloquear
+    INACTIVE --> BLOCKED: bloquear
+    BLOCKED --> INACTIVE: deshabilitar
+```
+
+Todos los cambios se ejecutan por una operación administrativa autorizada con motivo y evidencia. `INACTIVE` y `BLOCKED` no admiten sesiones utilizables; el control temporal por intentos fallidos de autenticación no modifica por sí solo el estado a `BLOCKED`. La transición del estado de una cuenta no modifica los roles ni revierte operaciones académicas previamente confirmadas.
+
+## 8. Comprobaciones comunes a las transiciones
 
 - **Estado de origen válido:** ningún actor puede aplicar una operación ordinaria a un estado incompatible.
 - **Fechas reales:** la fecha institucional, obtenida de un reloj confiable e interpretada en `America/Lima`, gobierna las ventanas; el permiso del usuario no la sustituye.
