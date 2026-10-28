@@ -62,7 +62,7 @@ CREATE TABLE "persons" (
 -- CreateTable
 CREATE TABLE "faculties" (
     "id" UUID NOT NULL,
-    "code" VARCHAR(50) NOT NULL,
+    "acronym" VARCHAR(50) NOT NULL,
     "name" VARCHAR(150) NOT NULL,
     "description" TEXT,
     "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -387,15 +387,6 @@ CREATE TABLE "outbox_messages" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "document_types_code_key" ON "document_types"("code");
-
--- CreateIndex
-CREATE UNIQUE INDEX "document_types_name_key" ON "document_types"("name");
-
--- CreateIndex
-CREATE UNIQUE INDEX "persons_email_key" ON "persons"("email");
-
--- CreateIndex
 CREATE INDEX "persons_documentNumber_idx" ON "persons"("documentNumber");
 
 -- CreateIndex
@@ -405,22 +396,13 @@ CREATE INDEX "persons_deletedAt_idx" ON "persons"("deletedAt");
 CREATE UNIQUE INDEX "persons_documentTypeId_documentNumber_key" ON "persons"("documentTypeId", "documentNumber");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "faculties_code_key" ON "faculties"("code");
-
--- CreateIndex
 CREATE INDEX "faculties_deletedAt_idx" ON "faculties"("deletedAt");
-
--- CreateIndex
-CREATE UNIQUE INDEX "academic_departments_code_key" ON "academic_departments"("code");
 
 -- CreateIndex
 CREATE INDEX "academic_departments_facultyId_idx" ON "academic_departments"("facultyId");
 
 -- CreateIndex
 CREATE INDEX "academic_departments_deletedAt_idx" ON "academic_departments"("deletedAt");
-
--- CreateIndex
-CREATE UNIQUE INDEX "academic_programs_code_key" ON "academic_programs"("code");
 
 -- CreateIndex
 CREATE INDEX "academic_programs_facultyId_idx" ON "academic_programs"("facultyId");
@@ -438,12 +420,6 @@ CREATE INDEX "academic_program_courses_courseId_idx" ON "academic_program_course
 CREATE UNIQUE INDEX "students_personId_key" ON "students"("personId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "students_code_key" ON "students"("code");
-
--- CreateIndex
-CREATE UNIQUE INDEX "students_institutionalEmail_key" ON "students"("institutionalEmail");
-
--- CreateIndex
 CREATE INDEX "students_academicProgramId_idx" ON "students"("academicProgramId");
 
 -- CreateIndex
@@ -456,12 +432,6 @@ CREATE INDEX "students_deletedAt_idx" ON "students"("deletedAt");
 CREATE UNIQUE INDEX "professors_personId_key" ON "professors"("personId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "professors_code_key" ON "professors"("code");
-
--- CreateIndex
-CREATE UNIQUE INDEX "professors_institutionalEmail_key" ON "professors"("institutionalEmail");
-
--- CreateIndex
 CREATE INDEX "professors_facultyId_idx" ON "professors"("facultyId");
 
 -- CreateIndex
@@ -471,12 +441,6 @@ CREATE INDEX "professors_status_idx" ON "professors"("status");
 CREATE INDEX "professors_deletedAt_idx" ON "professors"("deletedAt");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "course_categories_code_key" ON "course_categories"("code");
-
--- CreateIndex
-CREATE UNIQUE INDEX "courses_code_key" ON "courses"("code");
-
--- CreateIndex
 CREATE INDEX "courses_academicDepartmentId_idx" ON "courses"("academicDepartmentId");
 
 -- CreateIndex
@@ -484,9 +448,6 @@ CREATE INDEX "courses_courseCategoryId_idx" ON "courses"("courseCategoryId");
 
 -- CreateIndex
 CREATE INDEX "courses_deletedAt_idx" ON "courses"("deletedAt");
-
--- CreateIndex
-CREATE UNIQUE INDEX "academic_periods_code_key" ON "academic_periods"("code");
 
 -- CreateIndex
 CREATE INDEX "academic_periods_status_idx" ON "academic_periods"("status");
@@ -505,9 +466,6 @@ CREATE INDEX "course_offerings_status_idx" ON "course_offerings"("status");
 
 -- CreateIndex
 CREATE INDEX "course_offerings_deletedAt_idx" ON "course_offerings"("deletedAt");
-
--- CreateIndex
-CREATE UNIQUE INDEX "course_offerings_courseId_academicPeriodId_section_key" ON "course_offerings"("courseId", "academicPeriodId", "section");
 
 -- CreateIndex
 CREATE INDEX "enrollments_studentId_status_idx" ON "enrollments"("studentId", "status");
@@ -534,19 +492,10 @@ CREATE INDEX "enrollment_movements_performedByUserId_idx" ON "enrollment_movemen
 CREATE UNIQUE INDEX "users_personId_key" ON "users"("personId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
-
--- CreateIndex
 CREATE INDEX "users_status_idx" ON "users"("status");
 
 -- CreateIndex
 CREATE INDEX "users_deletedAt_idx" ON "users"("deletedAt");
-
--- CreateIndex
-CREATE UNIQUE INDEX "roles_code_key" ON "roles"("code");
-
--- CreateIndex
-CREATE UNIQUE INDEX "permissions_code_key" ON "permissions"("code");
 
 -- CreateIndex
 CREATE INDEX "user_roles_roleId_idx" ON "user_roles"("roleId");
@@ -689,86 +638,169 @@ ALTER TABLE "student_import_results" ADD CONSTRAINT "student_import_results_stud
 -- AddForeignKey
 ALTER TABLE "student_import_results" ADD CONSTRAINT "student_import_results_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "students"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- SQL COMPLEMENTARIO. Añadir al FINAL del migration.sql generado por
--- `pnpm exec prisma migrate dev --name align_academic_model --create-only`.
--- No ejecutar separado de la migración versionada.
--- Requiere permisos para instalar la extensión btree_gist en PostgreSQL.
+-- Extensiones y restricciones complementarias de la PRIMERA migracion.
+-- Anexar al final del migration.sql inicial generado por Prisma 7.1.
+-- Todas las tablas, enums, FK, claves primarias e indices ordinarios
+-- deben haber sido creados previamente por la parte generada por Prisma.
+-- Exclusivamente para una base vacia; no es una migracion incremental.
 
 CREATE EXTENSION IF NOT EXISTS btree_gist;
 
--- Episodios del mismo programa y curso: [valid_from, valid_until), sin solapamientos.
-ALTER TABLE "academic_program_courses"
-  ADD CONSTRAINT "academic_program_courses_valid_range"
+-- Unicidad de negocio entre vigentes: comparacion sin distinguir mayusculas
+-- ni espacios exteriores. No se eliminan tildes ni espacios internos.
+-- Los nombres de columnas son exactamente los del schema Prisma (camelCase).
+
+CREATE UNIQUE INDEX "persons_active_email_uq"
+  ON "persons" (lower(btrim("email")))
+  WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX "faculties_active_acronym_uq"
+  ON "faculties" (lower(btrim("acronym")))
+  WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX "faculties_active_name_uq"
+  ON "faculties" (lower(btrim("name")))
+  WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX "academic_departments_active_code_uq"
+  ON "academic_departments" (lower(btrim("code")))
+  WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX "academic_programs_active_code_uq"
+  ON "academic_programs" (lower(btrim("code")))
+  WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX "students_active_code_uq"
+  ON "students" (lower(btrim("code")))
+  WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX "students_active_institutional_email_uq"
+  ON "students" (lower(btrim("institutionalEmail")))
+  WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX "professors_active_code_uq"
+  ON "professors" (lower(btrim("code")))
+  WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX "professors_active_institutional_email_uq"
+  ON "professors" (lower(btrim("institutionalEmail")))
+  WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX "course_categories_active_code_uq"
+  ON "course_categories" (lower(btrim("code")))
+  WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX "courses_active_code_uq"
+  ON "courses" (lower(btrim("code")))
+  WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX "academic_periods_active_code_uq"
+  ON "academic_periods" (lower(btrim("code")))
+  WHERE "deletedAt" IS NULL;
+
+-- Clave compuesta de oferta: la seccion se compara como identificador
+-- literal; no se altera su semantica mediante una normalizacion no aprobada.
+CREATE UNIQUE INDEX "course_offerings_active_section_uq"
+  ON "course_offerings" ("courseId", "academicPeriodId", "section")
+  WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX "users_active_email_uq"
+  ON "users" (lower(btrim("email")))
+  WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX "roles_active_code_uq"
+  ON "roles" (lower(btrim("code")))
+  WHERE "deletedAt" IS NULL;
+
+-- Catálogos sin baja lógica: unicidad GLOBAL, pero normalizada.
+-- Prisma 7.1 no representa indices de expresion como @unique.
+CREATE UNIQUE INDEX "document_types_normalized_code_uq"
+  ON "document_types" (lower(btrim("code")));
+CREATE UNIQUE INDEX "document_types_normalized_name_uq"
+  ON "document_types" (lower(btrim("name")));
+CREATE UNIQUE INDEX "permissions_normalized_code_uq"
+  ON "permissions" (lower(btrim("code")));
+
+-- Reglas de integridad no representables en Prisma Schema Language.
+-- La extension debe estar disponible antes de crear la exclusion GiST.
+
+ALTER TABLE "academic_program_courses" ADD CONSTRAINT "academic_program_courses_valid_range"
   CHECK ("validUntil" IS NULL OR "validUntil" > "validFrom");
 
-ALTER TABLE "academic_program_courses"
-  ADD CONSTRAINT "academic_program_courses_no_overlap"
+ALTER TABLE "academic_program_courses" ADD CONSTRAINT "academic_program_courses_no_overlap"
   EXCLUDE USING gist (
-    "academicProgramId" WITH =,
-    "courseId" WITH =,
-    tstzrange("validFrom", "validUntil", '[)') WITH &&
+  "academicProgramId" WITH =,
+  "courseId" WITH =,
+  tstzrange("validFrom", "validUntil", '[)') WITH &&
   );
 
--- Una única sesión activa por usuario; las revocadas y expiradas se conservan.
+ALTER TABLE "academic_periods" ADD CONSTRAINT "academic_periods_valid_dates"
+  CHECK ("startDate" <= "endDate"
+  AND "enrollmentStartDate" <= "enrollmentEndDate"
+  AND "enrollmentEndDate" <= "endDate");
+
+ALTER TABLE "course_offerings" ADD CONSTRAINT "course_offerings_capacity_positive"
+  CHECK ("maxCapacity" > 0);
+
+ALTER TABLE "course_offerings" ADD CONSTRAINT "course_offerings_open_has_professor"
+  CHECK ("status" <> 'OPEN' OR "professorId" IS NOT NULL);
+
+ALTER TABLE "student_import_results" ADD CONSTRAINT "student_import_results_row_positive"
+  CHECK ("rowNumber" > 0);
+
+ALTER TABLE "student_imports" ADD CONSTRAINT "student_imports_total_rows_nonnegative"
+  CHECK ("totalRows" IS NULL OR "totalRows" >= 0);
+
+ALTER TABLE "outbox_messages" ADD CONSTRAINT "outbox_messages_attempts_nonnegative"
+  CHECK ("attemptCount" >= 0);
+
+ALTER TABLE "enrollment_movements" ADD CONSTRAINT "enrollment_movements_reason_required"
+  CHECK ("movementType" = 'CREATED' OR length(btrim(coalesce("reason", ''))) > 0);
+
+-- Una unica sesion ACTIVE por usuario. Las sesiones anteriores se conservan.
 CREATE UNIQUE INDEX "user_sessions_one_active_per_user"
   ON "user_sessions" ("userId")
   WHERE "status" = 'ACTIVE';
 
--- Restricciones sencillas de integridad que Prisma 7.1 no expresa como CHECK.
-ALTER TABLE "academic_periods"
-  ADD CONSTRAINT "academic_periods_valid_dates"
-  CHECK (
-    "startDate" <= "endDate"
-    AND "enrollmentStartDate" <= "enrollmentEndDate"
-    AND "enrollmentEndDate" <= "endDate"
-  );
-
-ALTER TABLE "course_offerings"
-  ADD CONSTRAINT "course_offerings_capacity_positive"
-  CHECK ("maxCapacity" > 0);
-
-ALTER TABLE "course_offerings"
-  ADD CONSTRAINT "course_offerings_open_has_professor"
-  CHECK ("status" <> 'OPEN' OR "professorId" IS NOT NULL);
-
-ALTER TABLE "student_import_results"
-  ADD CONSTRAINT "student_import_results_row_positive"
-  CHECK ("rowNumber" > 0);
-
-ALTER TABLE "student_imports"
-  ADD CONSTRAINT "student_imports_total_rows_nonnegative"
-  CHECK ("totalRows" IS NULL OR "totalRows" >= 0);
-
-ALTER TABLE "outbox_messages"
-  ADD CONSTRAINT "outbox_messages_attempts_nonnegative"
-  CHECK ("attemptCount" >= 0);
-
-ALTER TABLE "enrollment_movements"
-  ADD CONSTRAINT "enrollment_movements_reason_required"
-  CHECK (
-    "movementType" = 'CREATED'
-    OR length(btrim(coalesce("reason", ''))) > 0
-  );
-
--- La evidencia histórica es de solo inserción también frente a actualizaciones
--- SQL directas ordinarias (restringir privilegios de ALTER/DISABLE TRIGGER).
-CREATE OR REPLACE FUNCTION prevent_evidence_mutation()
+-- El tipo y numero de documento se fijan en el alta y son inmutables.
+-- La UNIQUE global creada por Prisma no depende de deletedAt.
+-- El trigger protege esta regla incluso frente a UPDATE SQL ordinarios.
+CREATE FUNCTION prevent_person_document_update()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-  RAISE EXCEPTION 'Historical evidence is append-only: %.%', TG_TABLE_SCHEMA, TG_TABLE_NAME;
+  IF NEW."documentTypeId" IS DISTINCT FROM OLD."documentTypeId"
+    OR NEW."documentNumber" IS DISTINCT FROM OLD."documentNumber" THEN
+    RAISE EXCEPTION 'Document type and number are immutable after person registration';
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER persons_document_immutable
+  BEFORE UPDATE ON "persons"
+  FOR EACH ROW EXECUTE FUNCTION prevent_person_document_update();
+
+-- La evidencia confirmada no puede editarse ni eliminarse por SQL ordinario.
+CREATE FUNCTION prevent_evidence_mutation()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  RAISE EXCEPTION 'Historical evidence is append-only: %.%',
+    TG_TABLE_SCHEMA, TG_TABLE_NAME;
 END;
 $$;
 
 CREATE TRIGGER enrollment_movements_immutable
-BEFORE UPDATE OR DELETE ON "enrollment_movements"
-FOR EACH ROW EXECUTE FUNCTION prevent_evidence_mutation();
+  BEFORE UPDATE OR DELETE ON "enrollment_movements"
+  FOR EACH ROW EXECUTE FUNCTION prevent_evidence_mutation();
 
 CREATE TRIGGER audit_logs_immutable
-BEFORE UPDATE OR DELETE ON "audit_logs"
-FOR EACH ROW EXECUTE FUNCTION prevent_evidence_mutation();
+  BEFORE UPDATE OR DELETE ON "audit_logs"
+  FOR EACH ROW EXECUTE FUNCTION prevent_evidence_mutation();
 
--- Los cupos, la unicidad ENROLLED por estudiante+curso+periodo y la rectificación
--- de retiros son invariantes entre tablas. Deben verificarse dentro de la misma
--- transacción SERIALIZABLE en todos los casos de uso escritores, con reintentos
--- para conflictos de serialización. No existe un UNIQUE parcial suficiente con
--- solo student_id y course_offering_id sin duplicar claves derivables.
+-- Invariantes transversales que permanecen en transacciones SERIALIZABLE
+-- de todos los escritores autorizados, con reintentos de serializacion:
+-- cupos, inscripcion ENROLLED unica por alumno/curso/periodo (entre secciones),
+-- rectificacion de retiros, proteccion de dependencias y bajas logicas,
+-- precondiciones de cambios de estado y atributos de ofertas/periodos,
+-- autorizacion de correcciones academicas, revocacion de sesiones.
+-- Nunca eliminar ni reasignar evidencia historica por cascada.

@@ -83,13 +83,13 @@ enum OutboxStatus {
 
 model DocumentType {
   id          String   @id @default(uuid()) @db.Uuid
-  code        String   @unique @db.VarChar(50)
-  name        String   @unique @db.VarChar(100)
+  code        String   @db.VarChar(50)
+  name        String   @db.VarChar(100)
   description String?  @db.Text
 
   createdAt   DateTime @default(now()) @db.Timestamptz(6)
 
-  persons Person[]
+  persons                      Person[]
 
   @@map("document_types")
 }
@@ -100,7 +100,7 @@ model Person {
   documentNumber String    @db.VarChar(50)
   firstName      String    @db.VarChar(100)
   lastName       String    @db.VarChar(100)
-  email          String?   @unique @db.VarChar(255)
+  email          String?   @db.VarChar(255)
   phone          String?   @db.VarChar(30)
   birthDate      DateTime? @db.Date
 
@@ -109,19 +109,21 @@ model Person {
   deletedAt      DateTime? @db.Timestamptz(6)
 
   documentType DocumentType @relation(fields: [documentTypeId], references: [id], onDelete: Restrict)
-  student      Student?
-  professor    Professor?
-  user         User?
+  student             Student?
+  professor           Professor?
+  user                User?
 
+  // Identidad documental global e inmutable, incluso tras la baja logica.
   @@unique([documentTypeId, documentNumber])
   @@index([documentNumber])
   @@index([deletedAt])
   @@map("persons")
 }
 
+
 model Faculty {
   id          String    @id @default(uuid()) @db.Uuid
-  code        String    @unique @db.VarChar(50)
+  acronym     String    @db.VarChar(50)
   name        String    @db.VarChar(150)
   description String?   @db.Text
 
@@ -140,7 +142,7 @@ model Faculty {
 model AcademicDepartment {
   id          String    @id @default(uuid()) @db.Uuid
   facultyId   String    @db.Uuid
-  code        String    @unique @db.VarChar(50)
+  code        String    @db.VarChar(50)
   name        String    @db.VarChar(150)
   description String?   @db.Text
 
@@ -159,7 +161,7 @@ model AcademicDepartment {
 model AcademicProgram {
   id          String    @id @default(uuid()) @db.Uuid
   facultyId   String    @db.Uuid
-  code        String    @unique @db.VarChar(50)
+  code        String    @db.VarChar(50)
   name        String    @db.VarChar(150)
   description String?   @db.Text
 
@@ -198,8 +200,8 @@ model Student {
   id                 String        @id @default(uuid()) @db.Uuid
   personId           String        @unique @db.Uuid
   academicProgramId  String        @db.Uuid
-  code               String        @unique @db.VarChar(50)
-  institutionalEmail String?       @unique @db.VarChar(255)
+  code               String        @db.VarChar(50)
+  institutionalEmail String?       @db.VarChar(255)
   admissionPeriod    String?       @db.VarChar(50)
   status             StudentStatus @default(ACTIVE)
 
@@ -222,8 +224,8 @@ model Professor {
   id                 String          @id @default(uuid()) @db.Uuid
   personId           String          @unique @db.Uuid
   facultyId          String          @db.Uuid
-  code               String          @unique @db.VarChar(50)
-  institutionalEmail String?         @unique @db.VarChar(255)
+  code               String          @db.VarChar(50)
+  institutionalEmail String?         @db.VarChar(255)
   specialty          String?         @db.VarChar(100)
   status             ProfessorStatus @default(ACTIVE)
 
@@ -243,7 +245,7 @@ model Professor {
 
 model CourseCategory {
   id          String    @id @default(uuid()) @db.Uuid
-  code        String    @unique @db.VarChar(50)
+  code        String    @db.VarChar(50)
   name        String    @db.VarChar(100)
   description String?   @db.Text
 
@@ -260,7 +262,7 @@ model Course {
   id                   String    @id @default(uuid()) @db.Uuid
   academicDepartmentId String    @db.Uuid
   courseCategoryId     String    @db.Uuid
-  code                 String    @unique @db.VarChar(50)
+  code                 String    @db.VarChar(50)
   name                 String    @db.VarChar(150)
   description          String?   @db.Text
   credits              Int
@@ -283,7 +285,7 @@ model Course {
 
 model AcademicPeriod {
   id                  String               @id @default(uuid()) @db.Uuid
-  code                String               @unique @db.VarChar(50)
+  code                String               @db.VarChar(50)
   name                String               @db.VarChar(150)
   startDate           DateTime             @db.Date
   endDate             DateTime             @db.Date
@@ -322,7 +324,6 @@ model CourseOffering {
   previousMovements EnrollmentMovement[] @relation("MovementPreviousOffering")
   newMovements      EnrollmentMovement[] @relation("MovementNewOffering")
 
-  @@unique([courseId, academicPeriodId, section])
   @@index([academicPeriodId])
   @@index([professorId])
   @@index([status])
@@ -386,7 +387,7 @@ model EnrollmentMovement {
 model User {
   id                   String     @id @default(uuid()) @db.Uuid
   personId             String?    @unique @db.Uuid
-  email                String     @unique @db.VarChar(255)
+  email                String     @db.VarChar(255)
   passwordHash         String     @db.Text
   mustChangePassword   Boolean    @default(false)
   status               UserStatus @default(ACTIVE)
@@ -413,7 +414,7 @@ model User {
 
 model Role {
   id          String    @id @default(uuid()) @db.Uuid
-  code        String    @unique @db.VarChar(100)
+  code        String    @db.VarChar(100)
   name        String    @db.VarChar(100)
   description String?   @db.Text
   isSystem    Boolean   @default(false)
@@ -430,7 +431,7 @@ model Role {
 
 model Permission {
   id          String    @id @default(uuid()) @db.Uuid
-  code        String    @unique @db.VarChar(150)
+  code        String    @db.VarChar(150)
   name        String    @db.VarChar(150)
   description String?   @db.Text
   module      String    @db.VarChar(100)
@@ -491,7 +492,7 @@ model UserSession {
 
   user User @relation(fields: [userId], references: [id], onDelete: Restrict)
 
-  // La unicidad condicionada a status=ACTIVE se crea por SQL en la migración.
+  // Solo una sesion ACTIVE por usuario; se garantiza mediante SQL.
   @@index([userId, status])
   @@map("user_sessions")
 }
