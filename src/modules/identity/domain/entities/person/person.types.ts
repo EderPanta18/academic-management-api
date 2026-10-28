@@ -21,3 +21,11 @@ export type CreatePersonProps = {
   phone: string | null;
   birthDate: Date | null;
 };
+
+export type UpdatePersonProps = {
+  firstName?: string;
+  lastName?: string;
+  email?: string | null;
+  phone?: string | null;
+  birthDate?: Date | null;
+};

@@ -1,6 +1,6 @@
 // src/modules/identity/domain/entities/person/person.entity.ts
 
-import type { CreatePersonProps, PersonProps } from './person.types';
+import type { CreatePersonProps, PersonProps, UpdatePersonProps } from './person.types';
 
 export class Person {
   readonly id: string;
@@ -31,5 +31,18 @@ export class Person {
 
   static create(props: CreatePersonProps): Person {
     return new Person(props);
+  }
+
+  update(props: UpdatePersonProps): Person {
+    return new Person({
+      id: this.id,
+      documentTypeId: this.documentTypeId,
+      documentNumber: this.documentNumber,
+      firstName: props.firstName ?? this.firstName,
+      lastName: props.lastName ?? this.lastName,
+      email: props.email !== undefined ? props.email : this.email,
+      phone: props.phone !== undefined ? props.phone : this.phone,
+      birthDate: props.birthDate !== undefined ? props.birthDate : this.birthDate,
+    });
   }
 }
