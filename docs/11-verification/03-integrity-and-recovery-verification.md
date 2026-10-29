@@ -30,6 +30,7 @@ Las operaciones críticas se ejecutan con aislamiento **`SERIALIZABLE`**, gestio
 - **Elegibilidad que cambia:** una modificación autorizada de estado de estudiante, oferta o periodo compite con una inscripción. La transacción confirmada es coherente con el orden serial resultante; no acepta condiciones que quedaron inválidas en su punto de decisión.
 - **Misma importación admitida dos veces:** dos solicitudes del mismo usuario y mismo SHA-256 llegan simultáneamente. Se confirma una identidad funcional de importación, sin dos obligaciones independientes.
 - **Sesión única y rotación:** inicios de sesión o renovaciones simultáneas no dejan dos sesiones activas ni dos credenciales de renovación sucesoras válidas.
+- **Continuidad administrativa:** dos administradores operativos son deshabilitados o pierden asignaciones en operaciones concurrentes; no pueden confirmarse ambos cambios si dejan sin una cuenta `ACTIVE` con rol protegido `ADMIN` y permisos reservados para gestionar cuentas y asignaciones.
 
 La prueba no exige un orden artificial de victoria entre contendientes: exige un conjunto de resultados permitido y **un estado final único y consistente**. Si la ejecución termina por conflicto transitorio, comprueba que el resultado externo no se comunica falsamente como operación confirmada.
 

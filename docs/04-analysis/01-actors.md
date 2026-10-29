@@ -2,7 +2,7 @@
 
 Los actores son personas que interactúan con el sistema mediante una cuenta autorizada para cumplir objetivos operativos. Se identifican por su **responsabilidad frente al proceso de inscripción**, no por una pantalla, un módulo de software ni una entidad almacenada.
 
-Una persona puede reunir varios roles autorizados. En ese caso conserva una única identidad de usuario, y sus operaciones efectivas corresponden a la unión de los permisos que tenga vigentes; los roles no crean cuentas independientes ni restringen por facultad el ámbito de consulta.
+Una persona puede reunir varios roles autorizados sin crear cuentas independientes. Sus permisos efectivos son la unión de los que aportan los roles vigentes; el alcance de consulta y operación depende de las capacidades autorizadas y de sus condiciones funcionales, no de la denominación del rol.
 
 ## 1. Actores humanos
 
@@ -13,7 +13,7 @@ Una persona puede reunir varios roles autorizados. En ese caso conserva una úni
 | **Coordinación académica** (`ACADEMIC_COORDINATOR`) | Preparar la estructura y la disponibilidad académica necesarias para inscribir. | Mantener facultades, departamentos académicos, programas académicos, asociaciones programa–curso, cursos y docentes; consultar categorías de cursos; administrar periodos académicos y ofertas; consultar estudiantes, inscripciones y reportes.                  | No registra ni modifica inscripciones, no administra cuentas ni consulta auditoría. No modifica datos personales sin autorización independiente.                                                                 |
 | **Personal de consulta** (`REPORT_VIEWER`)          | Supervisar la operación mediante reportes institucionales.                      | Consultar únicamente los reportes operativos autorizados.                                                                                                                                                                                                         | No adquiere acceso directo a entidades, historial individual de movimientos, estados de cargas de importación, observaciones por fila, archivos originales ni auditoría por el solo hecho de consultar reportes. |
 
-La administración de cuentas y roles comprende las asignaciones autorizadas, incluso cuando una misma cuenta reúne varias responsabilidades. No se interpreta que `ADMIN` pueda ignorar reglas académicas ni que la coordinación académica pueda inscribir por el solo hecho de administrar ofertas.
+La administración de cuentas y roles comprende las asignaciones autorizadas, incluso cuando una misma cuenta reúne varias responsabilidades o permanece deshabilitada. Mantener roles en cuentas `INACTIVE` o `BLOCKED` no permite que esas cuentas utilicen sus permisos ni reactiva sus sesiones. No se interpreta que `ADMIN` pueda ignorar reglas académicas o permisos efectivos ni que la coordinación académica pueda inscribir por el solo hecho de administrar ofertas.
 
 ## 2. Participantes que no son actores de acceso
 
@@ -61,22 +61,22 @@ flowchart LR
     V --> R
 ```
 
-La coordinación también consulta información de estudiantes e inscripciones para preparar y supervisar la oferta; esa consulta no la habilita a modificar estos registros. Los reportes pueden incluir totales agregados de importaciones; el seguimiento y las observaciones de cada archivo requieren `students.imports.read`, asignado inicialmente a administración y secretaría.
+La coordinación también consulta información de estudiantes e inscripciones para preparar y supervisar la oferta; esa consulta no la habilita a modificar estos registros. Los reportes incluyen totales agregados de importaciones; el seguimiento y las observaciones de cada archivo requieren `students.imports.read`, asignado inicialmente a administración y secretaría.
 
 ## 4. Condiciones transversales de actuación
 
 **Identidad y sesión.** Todo actor accede con credenciales propias y sesión válida. No hay registro público de cuentas. Las acciones se atribuyen a la cuenta autenticada, con independencia de los roles que reúna.
 
-**Autorización por operación.** La presencia de un actor en un proceso no sustituye la validación del permiso concreto. Una misma operación puede ser accesible para varios actores, pero sus límites funcionales siguen siendo los mismos.
+**Autorización por operación.** Toda operación exige los permisos efectivos correspondientes y el cumplimiento de las condiciones funcionales y de seguridad aplicables. La autorización se determina por las capacidades vigentes del actor, con independencia de cómo se distribuyan entre sus roles. Las restricciones adicionales expresamente establecidas para determinadas operaciones también son obligatorias.
 
 **Alcance institucional.** Los permisos aprobados son institucionales: no se presume una segmentación automática por facultad, programa académico o departamento. Los filtros académicos utilizados para trabajar o consultar información no equivalen a restricciones de autorización.
 
-**Separación de funciones.** Preparar un periodo u oferta no concede autoridad para registrar una inscripción. Consultar reportes no concede acceso directo a todos los recursos utilizados para elaborarlos. Consultar auditoría tampoco concede capacidad para modificarla.
+**Separación de funciones.** La autorización para una capacidad no concede por sí sola otras capacidades de consulta o modificación. Cada operación conserva su alcance de acceso y sus condiciones propias, aunque se relacione con los mismos recursos o participe en un mismo proceso.
 
 **Responsabilidad histórica.** Las cancelaciones, retiros, cambios de sección y correcciones quedan vinculados al usuario que ejecuta la operación y al motivo obligatorio. El hecho de registrar una acción administrativa no convierte al estudiante ni al docente afectado en su ejecutor.
 
 ## 5. Límites de interpretación
 
-Un **actor** representa una función externa frente al sistema; un **rol** es una agrupación administrable de permisos. Los cuatro actores reflejan los roles institucionales iniciales, pero los roles personalizados no constituyen automáticamente nuevas funciones externas ni cambian los objetivos de interacción.
+Un **actor** representa una función externa frente al sistema; un **rol** es una agrupación administrable de permisos. Los cuatro actores reflejan la distribución institucional inicial de responsabilidades, no un listado exhaustivo de roles con acceso a cada operación ordinaria. Los roles personalizados no constituyen automáticamente nuevas funciones externas ni cambian los objetivos de interacción. Una cuenta puede reunir varios roles, sin herencia jerárquica entre ellos.
 
 El procesamiento interno puede continuar después de que el actor haya enviado una solicitud de importación, sin que el worker se convierta en un quinto actor de negocio. La interacción humana concluye al aceptar o rechazar la solicitud inicial y se reanuda cuando el usuario consulta el seguimiento.

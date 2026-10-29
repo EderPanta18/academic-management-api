@@ -41,7 +41,7 @@ Los secretos de firma, credenciales de PostgreSQL y demás materiales confidenci
 3. La rotación de material de firma de JWT considera la validación de accesos emitidos y la revocación de sesiones. No se acepta sin más cualquier firma antigua por mantener continuidad de servicio.
 4. La exposición presunta de un secreto se trata como incidente: se restringe el acceso, se sustituye el material afectado, se invalida lo que corresponda y se conserva evidencia diagnóstica no sensible.
 
-La actualización de una configuración de autorización no concede permisos retroactivos ni convierte a una tarea técnica en usuario administrativo.
+La configuración protegida proporciona los datos iniciales de la cuenta administrativa para su provisión controlada; no es un catálogo paralelo de permisos ni sustituye sus asociaciones persistidas. La contraseña inicial se valida y se custodia como secreto, sin utilizar valores de ejemplo en entornos reales. Las contraseñas temporales de restablecimiento se entregan exclusivamente al administrador que ejecuta la operación mediante una respuesta protegida y se comunican al titular por un canal institucional seguro fuera del sistema; no se almacenan en claro ni se ofrecen consultas posteriores para recuperarlas. La repetición de la provisión no restablece credenciales cambiadas ni deshace asignaciones administrativas confirmadas. La actualización de una configuración de autorización no concede permisos retroactivos ni convierte a una tarea técnica en usuario administrativo.
 
 ## 4. Validación de configuración y cambios
 

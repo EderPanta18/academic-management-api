@@ -2,7 +2,7 @@
 
 Los casos de uso describen los resultados que un actor autorizado obtiene al interactuar con el sistema. Cada objetivo funcional agrupa únicamente las operaciones expresamente contempladas y sus condiciones observables. Un nombre como mantener o administrar no implica que todos los recursos admitan creación, consulta, modificación, eliminación y restauración.
 
-Los identificadores `CU` permiten distinguir las interacciones y relacionarlas con los requerimientos funcionales. Una autorización constituye una precondición de acceso; no reemplaza la validación académica, que sigue siendo obligatoria incluso para el administrador.
+Los identificadores `CU` permiten distinguir las interacciones y relacionarlas con los requerimientos funcionales. La autorización es una precondición de acceso y no sustituye las validaciones funcionales, obligatorias para cualquier actor autorizado.
 
 ## 1. Catálogo de casos de uso
 
@@ -26,7 +26,7 @@ Los identificadores `CU` permiten distinguir las interacciones y relacionarlas c
 | **CU-16** | Consultar auditoría                            | `ADMIN`                                                               | Evidencia administrativa y de seguridad disponible sin alteración de eventos.                                           | RF-052–RF-054                          |
 | **CU-17** | Gestionar contraseñas                          | Usuario autenticado para la propia; `ADMIN` para restablecimientos    | Cambio propio o restablecimiento administrativo con revocación y restricciones de acceso pertinentes.                   | RF-050, RF-051                         |
 
-En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones, pero no adquiere la facultad de modificar esos registros. El personal `REPORT_VIEWER` participa en `CU-15` y en las operaciones de su propia sesión o contraseña; su rol no permite acceder directamente a las consultas de entidades de `CU-14`.
+La columna de actores describe la distribución institucional inicial de responsabilidades, no una lista cerrada de roles autorizados para las operaciones ordinarias. Cada operación exige sus permisos efectivos y las condiciones funcionales correspondientes, independientemente de los roles que aporten esos permisos. Cuando se establece una restricción por pertenencia a un rol protegido, esta se comprueba adicionalmente. Las consultas de registros académicos, los reportes y el historial individual mantienen ámbitos de lectura distintos; la autorización de uno no habilita automáticamente los demás.
 
 ## 2. Acceso y cuentas
 
@@ -46,11 +46,11 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Objetivo.** Mantener cuentas internas y sus facultades de acceso.
 
-**Precondiciones.** Actor `ADMIN` autorizado y registro de cuenta o rol apropiado para la operación solicitada.
+**Precondiciones.** Cuenta autenticada perteneciente al rol protegido `ADMIN`, con los permisos efectivos exigidos por la operación. El registro conjunto de una cuenta con roles iniciales requiere autorización tanto para crear cuentas como para asignar roles; los recursos relacionados deben ser válidos.
 
-**Secuencia funcional.** El administrador registra, consulta y modifica cuentas; cambia su estado entre `ACTIVE`, `INACTIVE` y `BLOCKED` mediante operaciones autorizadas y justificadas. Consulta roles, administra sus asignaciones y registra o modifica roles personalizados mediante permisos existentes. Deshabilitar o bloquear una cuenta revoca sus sesiones y la habilitación posterior exige autenticación nueva.
+**Secuencia funcional.** El administrador registra, consulta y modifica cuentas; cuando el registro incluye asignación inicial de roles, ambos efectos se confirman indivisiblemente. Cambia el estado de las cuentas entre `ACTIVE`, `INACTIVE` y `BLOCKED` mediante operaciones autorizadas y justificadas. Consulta roles, catálogo de permisos y asignaciones vigentes, tanto los roles asociados a una cuenta como las cuentas asociadas a un rol, dentro de su autorización de lectura; administra asignaciones también para cuentas deshabilitadas y registra o modifica roles personalizados únicamente con permisos ordinarios reconocidos. La composición de los roles institucionales permanece protegida. Deshabilitar o bloquear una cuenta revoca sus sesiones y la habilitación posterior exige autenticación nueva; administrar sus roles no altera esa situación.
 
-**Alternativas.** Se rechaza el registro público, un cambio de estado sin autorización o motivo, la modificación no autorizada de roles base, la creación arbitraria de permisos y la alteración de las propias asignaciones de roles del administrador.
+**Alternativas.** Se rechaza el registro público, un cambio de estado sin autorización o motivo, la modificación de roles base, la creación arbitraria de permisos, la concesión de permisos reservados a roles personalizados, la alteración de las propias asignaciones y todo cambio de composición de rol que aumente los permisos efectivos del propio administrador y cualquier acción que deje sin una cuenta `ACTIVE` con rol `ADMIN` y permisos reservados de gestión de cuentas y asignaciones. Si falla la creación conjunta de cuenta y asignaciones, no queda ninguna de ellas confirmada parcialmente.
 
 **Resultado.** Cuentas y atribuciones controladas, sin autoelevación de privilegios.
 
@@ -60,11 +60,11 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Objetivo.** Conservar personas y estudiantes identificables, con información suficiente para comprobar su situación académica.
 
-**Precondiciones.** Actor `ADMIN` o `SECRETARY` autorizado; para registrar un estudiante, persona vigente y programa académico vigente.
+**Precondiciones.** Cuenta autenticada con los permisos efectivos de la operación; para registrar un estudiante, persona vigente y programa académico vigente.
 
-**Secuencia funcional.** El actor registra o consulta a la persona y actualiza sus datos personales no documentales cuando corresponde. El tipo y número de documento se validan al registrar a la persona y no se modifican después. Registra, consulta o actualiza el perfil estudiantil y solicita las transiciones de estado admitidas. El sistema comprueba las identidades, la pertenencia académica y las restricciones aplicables.
+**Secuencia funcional.** El actor registra o consulta a la persona y actualiza sus datos personales no documentales cuando corresponde. El registro conjunto de persona y perfil estudiantil exige ambos permisos independientes y confirma ambos efectos en una misma operación; el permiso de importación solo habilita crear la persona indispensable dentro del procesamiento admitido, sin conceder registro manual general. El tipo y número de documento se validan al registrar a la persona y no se modifican después. Registra, consulta o actualiza el perfil estudiantil y solicita las transiciones de estado admitidas. La rectificación de un retiro institucional o egreso registrado por error exige acreditar el estado previo y conservar su corrección con motivo y responsable; no constituye readmisión ni modifica inscripciones. El sistema comprueba las identidades, la pertenencia académica y las restricciones aplicables.
 
-**Alternativas.** Se rechazan una combinación documental ya registrada, cualquier intento de modificar el tipo o número de documento después del alta, el código de estudiante duplicado entre vigentes, el programa académico inexistente o no vigente y los cambios incompatibles con antecedentes protegidos.
+**Alternativas.** Se rechazan una combinación documental ya registrada, cualquier intento de modificar el tipo o número de documento después del alta, el código de estudiante duplicado entre vigentes, el programa académico inexistente o no vigente, las rectificaciones terminales sin antecedente comprobable y los cambios incompatibles con antecedentes protegidos.
 
 **Resultado.** Persona y estudiante consultables, con identidad y relaciones válidas; las actualizaciones no reinterpretan inscripciones históricas.
 
@@ -72,7 +72,7 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Objetivo.** Organizar las unidades académicas, los cursos y las asociaciones que permiten ofrecerlos a los programas académicos.
 
-**Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` con permiso para la operación concreta.
+**Precondiciones.** Cuenta autenticada con el permiso efectivo de la operación concreta.
 
 **Secuencia funcional.** El actor registra, consulta o actualiza facultades, departamentos, programas académicos y cursos, y solicita su baja lógica cuando corresponde. Consulta las categorías institucionales y habilita, consulta o cierra episodios de asociación programa–curso. El sistema comprueba las identidades, la unicidad entre registros vigentes, las referencias necesarias y las dependencias que condicionan cada baja.
 
@@ -84,11 +84,11 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Objetivo.** Registrar docentes con facultad de adscripción y habilitar su asignación a ofertas.
 
-**Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` autorizado. El registro de un perfil y las nuevas adscripciones requieren una persona vigente y una facultad vigente; la reincorporación a `ACTIVE` requiere perfil y facultad de adscripción vigentes. La consulta autorizada de un perfil docente sin baja lógica no requiere que su facultad de adscripción continúe vigente.
+**Precondiciones.** Cuenta autenticada con el permiso efectivo correspondiente. El registro de un perfil y las nuevas adscripciones requieren una persona vigente y una facultad vigente; la reincorporación a `ACTIVE` requiere perfil y facultad de adscripción vigentes. La consulta autorizada de un perfil docente sin baja lógica no requiere que su facultad de adscripción continúe vigente.
 
-**Secuencia funcional.** El actor identifica a la persona y registra, consulta o actualiza su perfil docente y adscripción. Cambia su estado únicamente entre `ACTIVE` e `INACTIVE`, o entre `ACTIVE` y `ON_LEAVE`, bajo autorización y comprobación de compromisos operativos. La asignación a ofertas de otras facultades no altera su adscripción.
+**Secuencia funcional.** El actor identifica a la persona y registra, consulta o actualiza su perfil docente y adscripción. Cuando se registran conjuntamente persona y perfil docente, se exigen los permisos independientes de ambas capacidades y ambos efectos se confirman indivisiblemente. Cambia su estado únicamente entre `ACTIVE` e `INACTIVE`, o entre `ACTIVE` y `ON_LEAVE`, bajo autorización y comprobación de compromisos operativos. La asignación a ofertas de otras facultades no altera su adscripción.
 
-**Alternativas.** Se rechazan perfiles duplicados, nuevas adscripciones a facultades no vigentes, reincorporaciones sin facultad vigente, transiciones directas entre `INACTIVE` y `ON_LEAVE` y cambios que dejarían ofertas operativas sin docente habilitado. Las asignaciones no se modifican automáticamente. La coordinación no adquiere permiso para crear personas mediante este caso de uso.
+**Alternativas.** Se rechazan perfiles duplicados, nuevas adscripciones a facultades no vigentes, reincorporaciones sin facultad vigente, transiciones directas entre `INACTIVE` y `ON_LEAVE` y cambios que dejarían ofertas operativas sin docente habilitado. Las asignaciones no se modifican automáticamente. El permiso para mantener docentes no concede por sí solo el permiso independiente para registrar personas.
 
 **Resultado.** Perfil docente coherente y consultable, habilitado para asumir ofertas de cualquier facultad únicamente cuando cumple las condiciones de actividad y adscripción.
 
@@ -96,7 +96,7 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Objetivo.** Organizar los periodos, sus fechas y las condiciones temporales de inscripción.
 
-**Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` autorizado; datos y condiciones temporales compatibles con la operación solicitada.
+**Precondiciones.** Cuenta autenticada con el permiso efectivo de la operación; datos y condiciones temporales compatibles con la operación solicitada.
 
 **Secuencia funcional.** El actor registra y consulta periodos, corrige su nombre, código, fechas académicas o ventana de inscripción únicamente cuando el periodo está en `PLANNED`, o solicita una transición de estado admitida. El sistema comprueba la unicidad aplicable, la coherencia temporal y los compromisos académicos confirmados.
 
@@ -108,11 +108,11 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Objetivo.** Preparar y mantener secciones de cursos con capacidad y responsable docente.
 
-**Precondiciones.** Actor `ADMIN` o `ACADEMIC_COORDINATOR` autorizado; curso y periodo válidos; docente válido cuando se asigne y obligatorio para abrir la oferta.
+**Precondiciones.** Cuenta autenticada con el permiso efectivo de la operación; curso y periodo válidos; docente válido cuando se asigne y obligatorio para abrir la oferta.
 
 **Secuencia funcional.** El actor registra una oferta con curso y periodo definitivos, consulta su estado y modifica la sección solo mientras está en `DRAFT`. Puede modificar docente y capacidad en `DRAFT`, `OPEN` o `CLOSED`, bajo las condiciones de habilitación, ocupación y preservación histórica. Solicita por separado las transiciones admitidas; el sistema verifica la consistencia de la oferta y sus inscripciones.
 
-**Alternativas.** Se rechazan modificaciones de curso o periodo después de crear la oferta, de sección fuera de `DRAFT`, de atributos en `FINISHED` o `CANCELLED`, de docente sin habilitación o de capacidad inferior a la ocupación. También se rechaza abrir sin docente o efectuar transiciones incompatibles. Ninguna transición altera implícitamente las inscripciones.
+**Alternativas.** Se rechazan modificaciones de curso o periodo después de crear la oferta, de sección fuera de `DRAFT`, de atributos en `FINISHED` o `CANCELLED`, de docente sin habilitación o de capacidad inferior a la ocupación. La apertura inicial y la reapertura se rechazan sin docente `ACTIVE` habilitado, fuera de la ventana de inscripción, con un periodo distinto de `OPEN` antes del inicio académico o `IN_PROGRESS` desde ese inicio, o cuando el periodo `OPEN` ya alcanzó el inicio académico. Ninguna transición altera implícitamente las inscripciones.
 
 **Resultado.** Oferta con disponibilidad y ocupación interpretables, sin inconsistencias respecto a las inscripciones que sustenta.
 
@@ -195,7 +195,7 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Objetivo.** Incorporar lotes de estudiantes sin suspender la atención interactiva ni sobrescribir estudiantes existentes.
 
-**Precondiciones.** Actor `ADMIN` o `SECRETARY` con permiso de importación para la carga; archivo CSV o XLSX recibido, con origen y responsable identificados. La consulta posterior requiere `students.imports.read`.
+**Precondiciones.** Cuenta autenticada con permiso de importación para la carga; archivo CSV o XLSX recibido, con origen y responsable identificados. La consulta posterior requiere `students.imports.read`.
 
 **Secuencia funcional.**
 
@@ -227,7 +227,7 @@ En `CU-14`, coordinación académica puede consultar estudiantes e inscripciones
 
 **Precondiciones.** Actor autenticado con `reports.read` y filtros válidos; periodo explícito cuando el reporte corresponda a ofertas o inscripciones.
 
-**Secuencia funcional.** El actor selecciona el reporte y sus filtros admitidos. El sistema devuelve datos estructurados sobre estudiantes, cursos, ofertas, docentes, inscripciones o indicadores agregados de importaciones.
+**Secuencia funcional.** El actor selecciona el reporte y sus filtros admitidos. El sistema devuelve datos estructurados sobre estudiantes, cursos, ofertas, docentes, inscripciones o indicadores agregados de importaciones. Los indicadores agregados de importaciones forman parte de los reportes predefinidos; el acceso a un archivo individual, sus filas u observaciones requiere la autorización específica de importaciones.
 
 **Alternativas.** Se rechazan filtros no admitidos o ausencia de periodo obligatorio. El permiso `reports.read` no habilita consultar el archivo de una importación, sus observaciones por fila, el seguimiento de una carga individual ni los eventos de auditoría.
 

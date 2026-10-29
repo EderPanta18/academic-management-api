@@ -179,7 +179,7 @@ flowchart TD
     V --> H
 ```
 
-Los reportes distinguen situaciones vigentes e históricas mediante filtros admitidos. Pueden incluir **indicadores agregados de importaciones**, pero no entregan archivos originales, observaciones por fila ni seguimiento detallado de una carga. Los datos presentados no implican facultad para modificar inscripciones, consultar auditoría o administrar usuarios.
+Los reportes distinguen situaciones vigentes e históricas mediante filtros admitidos. Incluyen **indicadores agregados de importaciones**, pero no entregan archivos originales, observaciones por fila ni seguimiento detallado de una carga. Los datos presentados no implican facultad para modificar inscripciones, consultar auditoría o administrar usuarios.
 
 ## 8. Resultados que deben permanecer distinguibles
 

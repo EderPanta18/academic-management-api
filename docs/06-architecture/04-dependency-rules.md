@@ -70,7 +70,7 @@ Las dependencias técnicas se declaran explícitamente cuando aportan capacidade
 
 ## 5. Prevención de ciclos y dependencias indebidas
 
-Se prohíben ciclos entre capacidades funcionales y dependencias que inviertan indebidamente la dirección de las capas. Los mecanismos del framework para resolver referencias circulares no justifican diseñar componentes mutuamente dependientes.
+Se prohíben ciclos entre capacidades funcionales y dependencias que inviertan indebidamente la dirección de las capas. La composición del sistema es el nivel superior y puede depender de los módulos funcionales para enlazar autenticación, autorización y adaptadores; los módulos nunca dependen de esa composición. En particular, `users` puede consumir capacidades públicas de `identity` y `authorization`, e `identity` puede consumir la comprobación pública de `authorization`; `authorization` no importa `users` para administrar asignaciones ni para proteger sus propias entradas. La referencia persistente entre una asignación y una cuenta no introduce por sí sola una dependencia funcional inversa. Los mecanismos del framework para resolver referencias circulares no justifican diseñar componentes mutuamente dependientes.
 
 ```mermaid
 flowchart LR
@@ -80,7 +80,8 @@ flowchart LR
     Provider --> Data[Estado bajo su propiedad]
 ```
 
-Si dos capacidades se requieren mutuamente, se identifica la responsabilidad que coordina el flujo, se divide la colaboración o se define un contrato con propietario claro. No se solucionan ciclos creando un área compartida que acumula decisiones de ambas.
+Cuando dos operaciones de propietarios distintos requieren información recíproca, **esa necesidad en tiempo de ejecución no autoriza importaciones recíprocas de módulos**. Se conserva una dirección acíclica de dependencias de código y de módulos: el consumidor declara un puerto de consulta o comprobación en su propia aplicación, la capacidad propietaria de la información aporta la implementación funcional mediante su superficie pública y la composición superior enlaza ambos extremos sin que el consumidor importe al proveedor en la dirección inversa. La composición no decide la regla académica y ninguna capacidad importa la composición para resolverla. No se solucionan ciclos creando un área compartida que acumula decisiones de ambas.
+Esta regla se aplica, entre otros casos, a la consulta de inscripciones vigentes antes de cambiar un estudiante de programa o cerrar una asociación programa–curso, a la ocupación antes de modificar una oferta y a los compromisos docentes antes de cambiar el estado de un profesor. Esas comprobaciones siguen siendo decisiones del propietario de la modificación y se apoyan en información autorizada de sus propietarios; no justifican que `enrollments` dependa de `students` y `students` dependa simultáneamente de `enrollments` como módulos importados entre sí. Si el contrato no puede enlazarse de manera acíclica, se rediseña la composición de la colaboración antes de implementar el flujo.
 
 Los agregadores de dominio son componentes de composición, no nuevos propietarios. Sus exportaciones son selectivas y no deben habilitar dependencias privilegiadas entre módulos agrupados.
 

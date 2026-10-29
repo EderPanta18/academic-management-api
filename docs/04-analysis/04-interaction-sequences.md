@@ -159,7 +159,8 @@ sequenceDiagram
     actor Operador as Administración o secretaría
     participant Acceso as Control de acceso
     participant Recepcion as Recepción de importaciones
-    participant Archivo as Custodia del archivo original
+    participant Persistencia as Registro, archivo y outbox
+    participant Despacho as Despacho recuperable
     participant Proceso as Procesamiento asíncrono
     participant Estudiantes as Registro de estudiantes
     participant Seguimiento as Estado y observaciones
@@ -173,32 +174,41 @@ sequenceDiagram
         Recepcion->>Recepcion: Validar formato y repetición exacta por usuario
         alt Archivo no admitido o repetido
             Recepcion-->>Operador: Rechaza con causa
-        else Archivo aceptado
-            Recepcion->>Archivo: Conservar archivo original
-            Recepcion->>Seguimiento: Abrir seguimiento de importación
-            Recepcion->>Proceso: Solicitar procesamiento
-            Recepcion-->>Operador: Confirma aceptación e identificador
-            loop Por cada fila del archivo
-                Proceso->>Estudiantes: Validar datos, programa académico y existencia previa
-                alt Fila válida y estudiante nuevo
-                    Estudiantes-->>Proceso: Incorporación independiente confirmada
-                    Proceso->>Seguimiento: Registrar fila incorporada
-                else Estudiante ya existente
-                    Estudiantes-->>Proceso: Duplicado sin modificación
-                    Proceso->>Seguimiento: Registrar fila duplicada
-                else Fila inválida
-                    Estudiantes-->>Proceso: Rechazo de fila sin registro parcial
-                    Proceso->>Seguimiento: Registrar causa del rechazo
+        else Archivo admisible
+            Recepcion->>Persistencia: Confirmar registro, bytes originales e intención de outbox en una transacción
+            alt Admisión no confirmada
+                Persistencia-->>Recepcion: Sin aceptación ni efectos parciales
+                Recepcion-->>Operador: Rechaza admisión
+            else Admisión confirmada
+                Persistencia-->>Recepcion: Identificador estable y obligación durable
+                Recepcion-->>Operador: Confirma aceptación e identificador
+                Despacho->>Persistencia: Recuperar intención confirmada
+                Persistencia-->>Despacho: Encargo pendiente de publicación
+                Despacho->>Proceso: Entregar encargo recuperable
+                loop Por cada fila pendiente del archivo
+                    Proceso->>Proceso: Iniciar unidad de confirmación independiente
+                    Proceso->>Estudiantes: Validar datos, programa académico y existencia previa
+                    alt Fila válida y estudiante nuevo
+                        Estudiantes-->>Proceso: Perfil y, si corresponde, persona preparados sin confirmar
+                        Proceso->>Seguimiento: Incorporar resultado de fila en la misma unidad
+                    else Estudiante ya existente
+                        Estudiantes-->>Proceso: Duplicado sin modificar registros
+                        Proceso->>Seguimiento: Incorporar resultado de duplicado en la misma unidad
+                    else Fila inválida
+                        Estudiantes-->>Proceso: Rechazo sin registros parciales
+                        Proceso->>Seguimiento: Incorporar motivo de rechazo en la misma unidad
+                    end
+                    Proceso->>Proceso: Confirmar conjuntamente efectos y resultado definitivo
                 end
+                Proceso->>Seguimiento: Consolidar estado y cantidades
+                Operador->>Seguimiento: Consulta progreso o resultado
+                Seguimiento-->>Operador: Estado, cantidades y observaciones disponibles
             end
-            Proceso->>Seguimiento: Consolidar estado y cantidades
-            Operador->>Seguimiento: Consulta progreso o resultado
-            Seguimiento-->>Operador: Estado, cantidades y observaciones disponibles
         end
     end
 ```
 
-**Interpretación.** La respuesta de aceptación no declara terminada la carga. Cada fila queda tratada de manera independiente, y una falla global se expresa como resultado no completado; el archivo y los avances ya confirmados conservan su evidencia. El trabajador asíncrono es una responsabilidad interna, no una cuenta con un rol académico adicional.
+**Interpretación.** La aceptación exige confirmar en una sola transacción de PostgreSQL el registro de importación, los bytes originales del archivo y la intención de ejecución en el outbox. Solo después de esa confirmación se comunica la aceptación; el despacho y la entrega al procesamiento ocurren posteriormente y pueden repetirse sin duplicar efectos funcionales. La respuesta de aceptación no declara terminada la carga. Cada fila se confirma independientemente: si corresponde registrar una persona y un perfil estudiantil, ambos registros y el resultado definitivo de la fila pertenecen a la misma unidad; los duplicados y rechazos confirman únicamente su resultado, sin modificar registros académicos. Si la unidad falla, no queda una incorporación sin resultado ni un resultado de incorporación sin sus registros; el tratamiento se reintenta o recupera sin repetir efectos ya confirmados. Una falla global se expresa como resultado no completado y conserva el archivo original y los avances confirmados. El trabajador asíncrono es una responsabilidad interna, no una cuenta con un rol académico adicional.
 
 ## 6. Consulta de reportes
 

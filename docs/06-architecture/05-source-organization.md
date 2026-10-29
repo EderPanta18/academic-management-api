@@ -24,12 +24,10 @@ Un módulo con comportamiento significativo separa **cuatro áreas internas**:
 ├── domain/
 ├── application/
 ├── infrastructure/
-├── entrypoints/
-├── <module>.module.ts
-└── index.ts
+└── entrypoints/
 ```
 
-El árbol es una **estructura conceptual mínima**, no una orden de crear carpetas vacías o inventariar cada clase. Se mantiene la separación de responsabilidades incluso si una capacidad pequeña requiere pocas piezas físicas.
+El árbol es una **estructura conceptual mínima**, no una orden de crear carpetas vacías o inventariar cada clase. La composición declarativa y la exposición de contratos públicos son responsabilidades obligatorias del módulo, sin imponer un nombre de archivo concreto para realizarlas. Se mantiene la separación de responsabilidades incluso si una capacidad pequeña requiere pocas piezas físicas.
 
 | Área              | Responsabilidad concreta                                                                                             |
 | ----------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -57,7 +55,7 @@ La aplicación distingue dos direcciones:
 
 Los contratos públicos internos deben exponer capacidad y resultados estables, no entidades de Prisma ni repositorios internos. Los tipos compartidos puros no necesitan registrarse como providers de NestJS.
 
-`index.ts` constituye una superficie de importación de TypeScript controlada; no reemplaza `exports` en el decorador NestJS. La exportación de un contrato por código y su disponibilidad mediante inyección deben estar alineadas, pero se verifican separadamente.
+La superficie pública de importación de TypeScript se mantiene controlada y no reemplaza los providers expuestos por la composición NestJS. La publicación de un contrato para importación y su disponibilidad para inyección deben estar alineadas, pero se comprueban separadamente, sin depender del nombre físico del archivo que reúne las exportaciones.
 
 ## 5. Composición de un módulo NestJS
 

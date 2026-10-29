@@ -30,7 +30,7 @@ flowchart LR
     R --> S[Adaptador de salida]
 ```
 
-El contexto de actuación identifica a la cuenta autenticada, sus permisos efectivos y los datos de atribución necesarios para la operación. **La identidad del responsable no se obtiene de un campo arbitrario aportado por el cliente.** La aplicación comprueba la autorización correspondiente a la intención solicitada y las restricciones adicionales sobre los recursos involucrados; el adaptador conserva la responsabilidad de autenticar y traducir su propio protocolo.
+El contexto de actuación identifica a la cuenta autenticada, la sesión cuando corresponda y los datos de atribución necesarios. Los permisos efectivos se resuelven en el momento de la decisión mediante la capacidad de autorización y su estado vigente, no a partir de una lista estática aportada por el cliente o conservada en la sesión. **La identidad del responsable no se obtiene de un campo arbitrario aportado por el cliente.** La aplicación comprueba la autorización correspondiente a la intención solicitada y las restricciones adicionales sobre los recursos involucrados; el adaptador conserva la responsabilidad de autenticar y traducir su propio protocolo.
 
 Cada resultado tiene un significado funcional independiente de su representación externa:
 
@@ -52,15 +52,15 @@ La coordinación comprende tres responsabilidades distintas:
 2. **Decisión:** comprobar autorización e invariantes a través de capacidades propietarias, sin confiar en condiciones vistas previamente por la interfaz.
 3. **Confirmación:** exigir que los efectos que constituyen una sola operación queden registrados de manera íntegra o no se informen como realizados.
 
-| Operación concreta                     | Confirmación que exige el caso de uso                                                   |
-| -------------------------------------- | --------------------------------------------------------------------------------------- |
-| Registrar una inscripción              | Inscripción válida, ocupación coherente e historial de creación.                        |
-| Cancelar, retirar o cambiar de sección | Movimiento válido, efecto sobre la plaza y evidencia de actor y motivo exigible.        |
-| Ejecutar corrección extraordinaria     | Modificación delimitada, preservación histórica y evidencia administrativa obligatoria. |
-| Administrar identidades y permisos     | Cambio autorizado y mantenimiento de las restricciones de seguridad y atribución.       |
-| Admitir una operación diferida         | Identidad funcional aceptada y obligación durable de entrega para ejecución.            |
+| Operación concreta                     | Confirmación que exige el caso de uso                                                                                            |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Registrar una inscripción              | Inscripción válida, ocupación coherente e historial de creación.                                                                 |
+| Cancelar, retirar o cambiar de sección | Movimiento válido, efecto sobre la plaza y evidencia de actor y motivo exigible.                                                 |
+| Ejecutar corrección extraordinaria     | Modificación delimitada, preservación histórica y evidencia administrativa obligatoria.                                          |
+| Administrar identidades y permisos     | Cambio autorizado, ausencia de autoelevación directa o indirecta y mantenimiento de las restricciones de seguridad y atribución. |
+| Admitir una operación diferida         | Identidad funcional aceptada y obligación durable de entrega para ejecución.                                                     |
 
-El caso de uso determina **qué resultados deben confirmarse juntos**. Los puertos transaccionales y la persistencia implementan cómo se alcanza esa indivisibilidad; la aplicación no contiene sentencias SQL, reglas de bloqueo ni estructuras de almacenamiento. Si la confirmación falla, no se comunica un éxito parcial como si la operación hubiera concluido.
+Cuando una cuenta se registra con asignaciones iniciales de roles, la creación y las asignaciones se confirman como una sola operación coordinada entre sus propietarios. Para roles personalizados, una modificación de permisos no puede ampliar los permisos efectivos de quien la ejecuta ni incorporar facultades reservadas. El caso de uso determina **qué resultados deben confirmarse juntos**. Los puertos transaccionales y la persistencia implementan cómo se alcanza esa indivisibilidad; la aplicación no contiene sentencias SQL, reglas de bloqueo ni estructuras de almacenamiento. Si la confirmación falla, no se comunica un éxito parcial como si la operación hubiera concluido.
 
 ## 4. Comandos, consultas y efectos derivados
 
