@@ -2,10 +2,6 @@
 
 export const TRANSACTION_MANAGER_TOKEN = Symbol('TRANSACTION_MANAGER');
 
-export abstract class TransactionContext {
-  protected constructor() {}
-}
-
 export type TransactionIsolation = 'READ_COMMITTED' | 'SERIALIZABLE';
 
 export type TransactionOptions = {
@@ -14,8 +10,5 @@ export type TransactionOptions = {
 };
 
 export interface ITransactionManager {
-  run<T>(
-    operation: (tx: TransactionContext) => Promise<T>,
-    options?: TransactionOptions,
-  ): Promise<T>;
+  run<T>(operation: () => Promise<T>, options?: TransactionOptions): Promise<T>;
 }
