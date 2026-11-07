@@ -3,7 +3,7 @@
 import type { SwaggerTag } from '../swagger';
 
 export const HEALTH_ROUTES = {
-  ROOT: '/health',
+  ROOT: 'health',
   READY: 'ready',
 } as const;
 
