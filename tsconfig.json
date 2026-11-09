@@ -32,8 +32,8 @@
             "@modules": ["./src/modules"],
             "@modules/*": ["./src/modules/*"],
 
-            "@identity": ["./src/modules/identity"],
-            "@identity/*": ["./src/modules/identity/*"],
+            "@persons": ["./src/modules/persons"],
+            "@persons/*": ["./src/modules/persons/*"],
 
             "@faculties": ["./src/modules/faculties"],
             "@faculties/*": ["./src/modules/faculties/*"],
@@ -64,6 +64,9 @@
 
             "@users": ["./src/modules/users"],
             "@users/*": ["./src/modules/users/*"],
+
+            "@authentication": ["./src/modules/authentication"],
+            "@authentication/*": ["./src/modules/authentication/*"],
 
             "@authorization": ["./src/modules/authorization"],
             "@authorization/*": ["./src/modules/authorization/*"],
