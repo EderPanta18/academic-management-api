@@ -72,9 +72,9 @@ Los reportes son consultas controladas, no un generador libre de indicadores, co
 
 ### 6. Usuarios, acceso y responsabilidades
 
-El sistema administra cuentas internas de acceso, autenticación, sesiones, roles y permisos. Distingue las responsabilidades de administración, coordinación académica, secretaría y consulta de reportes.
+El sistema administra cuentas internas, autenticación, sesiones, roles y permisos para el acceso de personal autorizado. Distingue responsabilidades de superadministración institucional, administración ordinaria, coordinación académica, secretaría y consulta de reportes.
 
-Comprende el registro, la consulta y la modificación autorizados de cuentas, la administración delimitada de roles y sus asignaciones, la revocación de accesos y la protección de operaciones sensibles. No existe registro público de cuentas; el acceso se habilita mediante administración autorizada.
+Comprende el registro, la consulta y la modificación autorizados de cuentas, la gestión de roles y asignaciones, la autenticación, la revocación de accesos y el control de operaciones sensibles. Las facultades administrativas se delimitan por permisos y por las restricciones de protección de cuentas y asignaciones institucionales. No existe registro público de cuentas ni una facultad general para modificar cualquier cuenta por el solo hecho de poseer un rol administrativo.
 
 La existencia de varios roles para una cuenta y la capacidad de administrar roles personalizados no amplían el alcance académico del producto: constituyen mecanismos para regular las responsabilidades de quienes lo operan.
 

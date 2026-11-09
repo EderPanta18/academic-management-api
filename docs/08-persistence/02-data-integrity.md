@@ -34,18 +34,20 @@ Las restricciones únicas y referenciales expresables directamente se aplican en
 
 ## 3. Identidad y duplicidad de operaciones técnicas
 
-| Dato persistente                 | Unicidad protegida                                                           | Efecto                                                                                              |
-| -------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| Asociación usuario–rol           | Usuario y rol.                                                               | No se asigna dos veces el mismo rol a una cuenta.                                                   |
-| Asociación rol–permiso           | Rol y permiso.                                                               | No se duplica la concesión de un permiso.                                                           |
-| Sesión activa                    | Una por cuenta, aunque existan sesiones históricas revocadas.                | Dos inicios o renovaciones concurrentes no mantienen sesiones activas paralelas.                    |
-| Archivo importado                | Cuenta responsable y SHA-256 de los bytes originales.                        | Dos admisiones simultáneas del mismo archivo por esa cuenta producen una sola importación aceptada. |
-| Unidad confirmada de importación | Importación y posición original de la fila, con resultado persistente único. | Una entrega repetida reconoce la fila resuelta sin aplicar otra vez sus efectos.                    |
-| Entrega durable                  | Identidad estable de intención de publicación.                               | El relay y los consumidores reconocen reentregas del mismo trabajo o evento.                        |
+| Dato persistente                 | Unicidad protegida                                                           | Efecto                                                                                                    |
+| -------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Asociación usuario–rol           | Par usuario–rol único y restricciones de titularidad institucional.          | No se duplican relaciones ni se violan las asignaciones protegidas, incluso ante escrituras concurrentes. |
+| Asociación rol–permiso           | Rol y permiso.                                                               | No se duplica la concesión de un permiso.                                                                 |
+| Sesión activa                    | Una por cuenta, aunque existan sesiones históricas revocadas.                | Dos inicios o renovaciones concurrentes no mantienen sesiones activas paralelas.                          |
+| Archivo importado                | Cuenta responsable y SHA-256 de los bytes originales.                        | Dos admisiones simultáneas del mismo archivo por esa cuenta producen una sola importación aceptada.       |
+| Unidad confirmada de importación | Importación y posición original de la fila, con resultado persistente único. | Una entrega repetida reconoce la fila resuelta sin aplicar otra vez sus efectos.                          |
+| Entrega durable                  | Identidad estable de intención de publicación.                               | El relay y los consumidores reconocen reentregas del mismo trabajo o evento.                              |
 
 La protección mediante claves de identidad se acompaña de decisiones funcionales: **identificar una fila como duplicada no autoriza sobrescribir datos existentes**; identificar un trabajo repetido no significa repetir efectos y registrar una sesión nueva no permite conservar otra sesión activa por accidente.
 
 Los resultados por fila poseen una identidad única y durable, distinta de la identidad del archivo. Las cantidades agregadas se derivan de dichos resultados; cualquier contador materializado debe conciliarse con ellos. La cuenta y el hash se comparan sobre el **contenido binario original** de la importación, sin convertirlo a un formato distinto antes de calcular su identidad. Los errores de colisión con registros preexistentes se traducen en resultados funcionales controlados, no en datos sobrescritos por operaciones de tipo _upsert_ indiscriminadas.
+
+Las asociaciones se validan en dos niveles: su integridad estructural y las restricciones funcionales que determinan quién puede establecerlas o modificarlas. Una clave compuesta evita duplicar una relación, pero no garantiza límites de cardinalidad definidos sobre el conjunto de sus registros ni protege por sí misma estados de otras entidades. Cuando una condición involucra varias tablas, las escrituras autorizadas deben aplicar una garantía persistente y transaccional que se mantenga válida ante concurrencia; no se atribuyen a un índice aislado capacidades que no tiene.
 
 ## 4. Historial, bajas y rectificaciones
 

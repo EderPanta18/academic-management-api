@@ -46,6 +46,8 @@ El módulo que coordina una operación intermodular solicita verificaciones a lo
 
 Las consultas transversales producen lecturas autorizadas; no adquieren por ello autoridad de modificación sobre las fuentes consultadas. Los servicios de soporte compartidos tampoco sustituyen las responsabilidades funcionales.
 
+La separación por capacidades se aplica tanto al registro académico como a los servicios de acceso, consulta y evidencia. Cada módulo mantiene sus responsabilidades y expone únicamente las colaboraciones necesarias. Las dependencias concretas se describen en las fronteras de módulos; el mecanismo de entrada no obliga a las capacidades de negocio a depender entre sí por motivos de transporte.
+
 ## 3. Procesos de ejecución y composición
 
 Un **proceso** es una instancia de ejecución compuesta para atender un conjunto de entradas y responsabilidades. Un **módulo** es una unidad funcional que puede participar en varios procesos. Ambos conceptos permanecen separados.

@@ -4,24 +4,25 @@ Los módulos se delimitan por **capacidad del negocio, reglas propias y autorida
 
 ## 1. Capacidades y responsables
 
-| Módulo                 | Responsabilidad funcional                                                                                | Frontera de escritura                                                                                                                     |
-| ---------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `identity`             | Identidad común de personas y tipos de documento.                                                        | Garantiza la unicidad e inmutabilidad de la identificación documental, sin crear perfiles ni cuentas por efecto implícito.                |
-| `faculties`            | Facultades y su vigencia institucional.                                                                  | No modifica perfiles ni cursos adscritos.                                                                                                 |
-| `academic-departments` | Departamentos dependientes de facultades.                                                                | No modifica directamente la adscripción de cursos.                                                                                        |
-| `academic-programs`    | Programas académicos y asociaciones programa–curso.                                                      | Gobierna habilitación de cursos por programa académico, no el contenido del curso.                                                        |
-| `courses`              | Catálogo de cursos, categorías y adscripción departamental.                                              | No administra ofertas ni inscripciones.                                                                                                   |
-| `professors`           | Perfiles docentes, adscripción y transiciones de habilitación.                                           | Comprueba obligaciones docentes a través de contratos; no modifica ofertas automáticamente.                                               |
-| `students`             | Perfil estudiantil, programa académico vigente e importaciones administrativas.                          | No inscribe al estudiante ni modifica ofertas.                                                                                            |
-| `academic-periods`     | Periodos, ventanas de inscripción y transiciones de periodo.                                             | No altera automáticamente los estados de inscripciones.                                                                                   |
-| `course-offerings`     | Ofertas, secciones, docente asignado, aforo máximo y ciclo de vida.                                      | Preserva identidad y restricciones de configuración por estado; no crea ni cancela inscripciones.                                         |
-| `enrollments`          | Inscripción, cancelación, retiro, cambio de sección, corrección e historial de movimientos.              | Autoridad sobre el estado de la inscripción y sus movimientos.                                                                            |
-| `users`                | Cuentas, contraseñas, credenciales y sesiones revocables.                                                | No define el catálogo de permisos ni el perfil académico.                                                                                 |
-| `authorization`        | Catálogo fijo de permisos, roles institucionales y personalizados, asignaciones y autorización efectiva. | No administra contraseñas, estado de cuentas ni sesiones; resuelve sus relaciones de autorización sin depender funcionalmente de `users`. |
-| `audit`                | Consulta administrativa de evidencia de auditoría transversal.                                           | No decide ni revierte operaciones ajenas.                                                                                                 |
-| `reports`              | Reportes operativos predefinidos y lecturas combinadas autorizadas.                                      | No modifica entidades consultadas.                                                                                                        |
+| Módulo                 | Responsabilidad funcional                                                                   | Frontera de escritura                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `persons`              | Identidad común de personas y tipos de documento.                                           | Garantiza la unicidad e inmutabilidad de la identificación documental, sin crear perfiles ni cuentas por efecto implícito. |
+| `faculties`            | Facultades y su vigencia institucional.                                                     | No modifica perfiles ni cursos adscritos.                                                                                  |
+| `academic-departments` | Departamentos dependientes de facultades.                                                   | No modifica directamente la adscripción de cursos.                                                                         |
+| `academic-programs`    | Programas académicos y asociaciones programa–curso.                                         | Gobierna habilitación de cursos por programa académico, no el contenido del curso.                                         |
+| `courses`              | Catálogo de cursos, categorías y adscripción departamental.                                 | No administra ofertas ni inscripciones.                                                                                    |
+| `professors`           | Perfiles docentes, adscripción y transiciones de habilitación.                              | Comprueba obligaciones docentes a través de contratos; no modifica ofertas automáticamente.                                |
+| `students`             | Perfil estudiantil, programa académico vigente e importaciones administrativas.             | No inscribe al estudiante ni modifica ofertas.                                                                             |
+| `academic-periods`     | Periodos, ventanas de inscripción y transiciones de periodo.                                | No altera automáticamente los estados de inscripciones.                                                                    |
+| `course-offerings`     | Ofertas, secciones, docente asignado, aforo máximo y ciclo de vida.                         | Preserva identidad y restricciones de configuración por estado; no crea ni cancela inscripciones.                          |
+| `enrollments`          | Inscripción, cancelación, retiro, cambio de sección, corrección e historial de movimientos. | Autoridad sobre el estado de la inscripción y sus movimientos.                                                             |
+| `users`                | Cuentas, estados, credenciales y sesiones persistidas.                                      | No define permisos ni administra asignaciones de roles.                                                                    |
+| `authentication`       | Inicio, renovación y cierre de sesión; verificación de credenciales de acceso.              | Consume capacidades de cuentas y sesiones sin modificar directamente sus registros.                                        |
+| `authorization`        | Catálogo de permisos, roles, asignaciones y autorización efectiva.                          | No modifica estados, credenciales ni sesiones de cuentas.                                                                  |
+| `audit`                | Consulta administrativa de evidencia de auditoría transversal.                              | No decide ni revierte operaciones ajenas.                                                                                  |
+| `reports`              | Reportes operativos predefinidos y lecturas combinadas autorizadas.                         | No modifica entidades consultadas.                                                                                         |
 
-La creación administrativa de una cuenta junto con sus roles se coordina desde `users` con la capacidad pública de asignación de `authorization`, dentro de una misma transacción; la asignación individual de roles permanece bajo `authorization` y no requiere importar `users`. Los tipos de documento permanecen bajo `identity`; las categorías de curso bajo `courses`. La importación de estudiantes permanece bajo `students`, aun cuando se ejecute en otro proceso. Se evita crear módulos de catálogos, procesamiento o reportes genéricos cuando ello no representa una propiedad funcional adicional.
+Las operaciones que abarcan varias capacidades se coordinan desde el módulo responsable de la intención y se confirman conjuntamente cuando constituyen un único resultado. Así, una cuenta puede registrarse con asignaciones iniciales sin trasladar la propiedad de roles al módulo de cuentas; una persona puede registrarse con su perfil sin duplicar la identidad; y una inscripción puede comprobar oferta, periodo y estudiante sin modificar sus datos ajenos. Los catálogos, las importaciones y las consultas se mantienen en sus módulos propietarios, sin crear módulos genéricos que diluyan esas fronteras.
 
 ## 2. Organización por dominio
 
@@ -29,12 +30,12 @@ Los módulos son unidades funcionales con composición y superficie pública con
 
 | Afinidad de negocio                | Capacidades relacionadas                                                           |
 | ---------------------------------- | ---------------------------------------------------------------------------------- |
-| Identidad institucional y acceso   | `identity`, `users`, `authorization`.                                              |
+| Identidad institucional y acceso   | `persons`, `users`, `authentication`, `authorization`.                             |
 | Estructura académica               | `faculties`, `academic-departments`, `academic-programs`, `courses`, `professors`. |
 | Operación de inscripciones         | `students`, `academic-periods`, `course-offerings`, `enrollments`.                 |
 | Consulta y evidencia transversales | `reports`, `audit`.                                                                |
 
-La tabla es una **clasificación conceptual**, no la imposición de cuatro carpetas físicas o cuatro nuevos módulos agregadores. El proyecto conserva módulos funcionales identificables; solo incorpora agrupadores cuando exista afinidad inequívoca y simplifiquen la comprensión del conjunto.
+La agrupación por afinidad sirve para presentar responsabilidades relacionadas. No determina la estructura física ni incorpora automáticamente módulos agregadores; cada capacidad mantiene sus contratos y su propiedad funcional.
 
 Son criterios obligatorios para cualquier agrupación:
 
@@ -46,7 +47,7 @@ Son criterios obligatorios para cualquier agrupación:
 
 ## 3. Patrón de colaboración entre capacidades
 
-Cuando un caso de uso necesita información o efectos de otras capacidades, **un módulo coordinador conserva la decisión y escritura que le pertenecen** y solicita a cada proveedor únicamente sus contratos públicos. El módulo proveedor mantiene la autoridad sobre sus invariantes y sobre los datos que gobierna. Para comprobar la mera existencia o vigencia de dependientes que impiden una baja lógica, el adaptador de persistencia del propietario puede efectuar lecturas referenciales directas de tablas ajenas, sin crear una dependencia funcional entre módulos.
+Cuando un caso de uso necesita información o efectos de otras capacidades, **su módulo propietario conserva la decisión y las escrituras que le corresponden** y solicita a cada proveedor únicamente sus contratos públicos. El módulo proveedor mantiene la autoridad sobre sus invariantes y sobre los datos que gobierna. Para comprobar la mera existencia o vigencia de dependientes que impiden una baja lógica, el adaptador de persistencia del propietario puede efectuar lecturas referenciales directas de tablas ajenas, sin crear una dependencia funcional entre módulos.
 
 Cuando un módulo necesita comprobar obligaciones o disponibilidad cuya fuente pertenece a un módulo que ya depende de él, la necesidad se representa como puerto de consulta o comprobación del consumidor, resuelto por la composición superior con una implementación del propietario de los datos. El intercambio de información puede ser recíproco en tiempo de ejecución, pero las dependencias de código y de módulos permanecen acíclicas. El consumidor conserva su decisión, el proveedor la interpretación de sus datos y la composición no incorpora reglas académicas.
 
@@ -87,13 +88,11 @@ El historial funcional pertenece a `enrollments` y la evidencia transversal cons
 
 Una modificación intermodular no autoriza escrituras directas sobre tablas de otro dueño. Se permite la lectura técnica y acotada de relaciones ajenas por adaptadores de persistencia para verificar integridad referencial de una operación propia; la validación funcional y la decisión de escritura permanecen en el módulo propietario. Si se requiere consistencia conjunta, los participantes deben operar en una unidad transaccional protegida sin saltarse sus reglas.
 
-## 5. Identidad, autorizaciones y capacidades transversales
+## 5. Colaboraciones entre capacidades
 
-`users` gobierna cuentas y sesiones. `authorization` gobierna roles y permisos; los casos de uso solicitan comprobaciones autorizadas, no inferencias basadas en nombres de roles repartidas por módulos.
+En las operaciones de acceso, `authentication` consume capacidades públicas de `users` para verificar credenciales y gestionar sesiones; `users` consulta la clasificación de cuentas que ofrece `authorization` antes de efectuar modificaciones sujetas a privilegio. Las asignaciones permanecen bajo la responsabilidad de `authorization`. La creación conjunta de cuentas y asignaciones se confirma como una sola operación, sin escrituras ajenas directas.
 
-La auditoría de mutaciones utiliza un mecanismo transversal de escritura y una capacidad administrativa separada para consultar los eventos. La colaboración transversal no crea una dependencia circular: el módulo funcional declara la evidencia exigible y un mecanismo de composición la registra dentro de la confirmación pertinente.
-
-Los reportes pueden leer información combinada mediante contratos públicos de consulta o proyecciones read-only controladas. Esa posibilidad no concede propiedad sobre la información y no debe utilizarse como atajo para modificarla.
+En la actividad académica, las decisiones de elegibilidad, vigencia, disponibilidad y ocupación se obtienen de las capacidades propietarias sin transferirles el registro de la inscripción. Los reportes combinan lecturas autorizadas sin modificar sus fuentes. La auditoría conserva la evidencia transversal exigida, mientras cada módulo mantiene su historial funcional cuando corresponde. Estas colaboraciones respetan las mismas reglas de encapsulación, autorización y consistencia.
 
 ## 6. Criterio para crear o modificar fronteras
 

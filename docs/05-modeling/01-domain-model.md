@@ -1,6 +1,6 @@
 # Modelo del dominio
 
-El modelo distingue **identidad**, **estructura académica**, **oferta**, **inscripción** y **evidencia operativa**. Estas responsabilidades tienen relaciones explícitas, pero no son equivalentes: una persona no es una cuenta, un curso no es una sección y una inscripción no es un resultado académico.
+El modelo organiza las entidades y relaciones necesarias para la inscripción académica, desde la identificación de las personas y los perfiles hasta la estructura institucional, las ofertas, los registros de inscripción y su evidencia. Los conceptos conservan identidades y estados propios: compartir relaciones no los convierte en la misma entidad ni autoriza transiciones o escrituras implícitas.
 
 ## 1. Identidad y perfiles
 
@@ -100,7 +100,15 @@ classDiagram
 
 La asignación docente puede estar pendiente mientras la oferta está en preparación. En una oferta abierta, el docente debe estar asignado y habilitado. Curso y periodo identifican definitivamente el contexto de la oferta; la sección solo se corrige en `DRAFT`. La capacidad y la asignación docente solo pueden modificarse en `DRAFT`, `OPEN` y `CLOSED`, respetando los compromisos operativos y conservando los antecedentes de los cambios.
 
-## 4. Estados como propiedades de entidades diferentes
+## 4. Cuentas, roles y permisos
+
+La **cuenta** identifica a quien opera el sistema y puede vincularse opcionalmente con una persona. Su estado determina si puede autenticarse; la pertenencia a un perfil académico no crea una cuenta ni concede acceso. La **sesión** representa un acceso autenticado que puede revocarse independientemente de la existencia de la cuenta.
+
+El **rol** agrupa permisos reconocidos y se vincula con cuentas mediante asignaciones explícitas. Una cuenta puede reunir varios roles sin que exista jerarquía o herencia entre ellos; sus permisos efectivos son la unión de los concedidos por sus roles vigentes. Los **roles institucionales** tienen definición protegida y los **roles personalizados** admiten exclusivamente permisos ordinarios del catálogo. La condición reservada de un permiso y el carácter institucional de un rol son propiedades distintas.
+
+La política institucional distingue niveles de administración para proteger las cuentas con facultades privilegiadas. La asignación superior está limitada a una única cuenta habilitada; las operaciones administrativas ordinarias no pueden alterar dicha cuenta ni su asignación. La clasificación administrativa depende de las asignaciones vigentes y se mantiene a efectos de protección incluso cuando una cuenta está deshabilitada. La pertenencia a un rol no sustituye los permisos efectivos ni las condiciones funcionales de cada operación.
+
+## 5. Estados como propiedades de entidades diferentes
 
 Los estados no forman un catálogo intercambiable entre entidades:
 
@@ -113,7 +121,7 @@ Los estados no forman un catálogo intercambiable entre entidades:
 
 En particular, `WITHDRAWN` aplicado a una **inscripción** significa retiro de un curso en un periodo concreto, no retiro global de la universidad. Cerrar un periodo u oferta no cambia automáticamente el estado de las inscripciones vinculadas. `FINISHED` corresponde a una **oferta**, nunca a una inscripción o a un resultado académico.
 
-## 5. Historial funcional, auditoría y procesos auxiliares
+## 6. Historial funcional, auditoría y procesos auxiliares
 
 La información histórica se separa según qué hecho representa:
 
@@ -126,7 +134,7 @@ La información histórica se separa según qué hecho representa:
 
 No se considera un movimiento de inscripción el simple acceso a un reporte. No se considera una importación el registro manual de un estudiante. Ninguno de estos conceptos justifica incorporar al dominio calificaciones, pagos, currículos completos o seguimiento de asistencia.
 
-## 6. Fronteras conceptuales
+## 7. Fronteras conceptuales
 
 - **Persona ≠ usuario:** compartir identidad humana no obliga a disponer de credenciales.
 - **Facultad ≠ departamento ≠ programa académico:** representan adscripción institucional, responsabilidad sobre cursos y pertenencia del estudiante, respectivamente.

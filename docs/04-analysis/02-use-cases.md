@@ -6,27 +6,27 @@ Los identificadores `CU` permiten distinguir las interacciones y relacionarlas c
 
 ## 1. Catálogo de casos de uso
 
-| ID        | Caso de uso                                    | Actores habilitados                                                   | Resultado esperado                                                                                                      | Requerimientos                         |
-| --------- | ---------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
-| **CU-01** | Acceder y administrar la sesión propia         | Todos los actores                                                     | Acceso autenticado válido, renovación o cierre de sesión según corresponda.                                             | RF-043–RF-045                          |
-| **CU-02** | Administrar cuentas y roles                    | `ADMIN`                                                               | Cuentas, estados y asignaciones autorizadas sin autoelevación de privilegios.                                           | RF-042, RF-046–RF-049                  |
-| **CU-03** | Mantener personas y estudiantes                | `ADMIN`, `SECRETARY`                                                  | Registros identificables, sin duplicidad de identidad ni estudiantes inválidos.                                         | RF-001, RF-003, RF-004, RF-009         |
-| **CU-04** | Mantener estructura y catálogo académico       | `ADMIN`, `ACADEMIC_COORDINATOR`                                       | Unidades, cursos, categorías y asociaciones académicas coherentes.                                                      | RF-002, RF-006–RF-008                  |
-| **CU-05** | Mantener docentes                              | `ADMIN`, `ACADEMIC_COORDINATOR`                                       | Docentes registrados con vinculaciones válidas y antecedentes históricos conservados.                                   | RF-001, RF-005                         |
-| **CU-06** | Administrar periodos académicos                | `ADMIN`, `ACADEMIC_COORDINATOR`                                       | Periodos y ventanas de inscripción con cambios de situación controlados.                                                | RF-010, RF-011                         |
-| **CU-07** | Administrar ofertas de cursos                  | `ADMIN`, `ACADEMIC_COORDINATOR`                                       | Secciones, docentes y capacidades disponibles conforme a su situación operativa.                                        | RF-012–RF-015                          |
-| **CU-08** | Registrar inscripción                          | `ADMIN`, `SECRETARY`                                                  | Inscripción `ENROLLED` o rechazo sin registro parcial.                                                                  | RF-016–RF-020                          |
-| **CU-09** | Cancelar inscripción ordinaria                 | `ADMIN`, `SECRETARY`                                                  | Inscripción `CANCELLED` con periodo `OPEN` antes del inicio académico, cupo liberado y movimiento conservado.           | RF-021, RF-025–RF-029                  |
-| **CU-10** | Retirar estudiante de una inscripción          | `ADMIN`, `SECRETARY`                                                  | Inscripción `WITHDRAWN` durante el periodo en curso, sin reinscripción ordinaria posterior en el mismo curso y periodo. | RF-022, RF-025, RF-027–RF-029          |
-| **CU-11** | Cambiar sección de una inscripción             | `ADMIN`, `SECRETARY`                                                  | La misma inscripción vinculada a otra oferta del mismo curso y periodo, sin ocupación inconsistente.                    | RF-023, RF-025, RF-028, RF-029         |
-| **CU-12** | Corregir inscripción extraordinariamente       | `ADMIN`                                                               | Corrección justificada y acotada, con integridad e historial conservados.                                               | RF-024, RF-025, RF-028, RF-029         |
-| **CU-13** | Importar estudiantes                           | `ADMIN`, `SECRETARY`                                                  | Carga aceptada para procesamiento diferido, resultados por fila y archivo original conservado.                          | RF-030–RF-036                          |
-| **CU-14** | Consultar registros académicos e inscripciones | `ADMIN`, `SECRETARY`, `ACADEMIC_COORDINATOR` según lectura autorizada | Información académica e historial consultados sin alterarlos.                                                           | RF-003, RF-008, RF-014, RF-025, RF-029 |
-| **CU-15** | Consultar reportes operativos                  | Todos los actores                                                     | Reportes predefinidos, filtrados y coherentes, sin modificación de registros.                                           | RF-037–RF-041                          |
-| **CU-16** | Consultar auditoría                            | `ADMIN`                                                               | Evidencia administrativa y de seguridad disponible sin alteración de eventos.                                           | RF-052–RF-054                          |
-| **CU-17** | Gestionar contraseñas                          | Usuario autenticado para la propia; `ADMIN` para restablecimientos    | Cambio propio o restablecimiento administrativo con revocación y restricciones de acceso pertinentes.                   | RF-050, RF-051                         |
+La participación indicada describe las funciones institucionales inicialmente previstas; no constituye una lista exclusiva de roles autorizados. Las operaciones ordinarias dependen de permisos efectivos y condiciones funcionales, aunque estos permisos procedan de varios roles o de un rol personalizado. La función de superadministración también puede ejercer las capacidades ordinarias que tenga expresamente concedidas; no es necesario repetirla en cada operación académica. Las operaciones reservadas mantienen además las restricciones de rol y destinatario definidas en la política de acceso.
 
-La columna de actores describe la distribución institucional inicial de responsabilidades, no una lista cerrada de roles autorizados para las operaciones ordinarias. Cada operación exige sus permisos efectivos y las condiciones funcionales correspondientes, independientemente de los roles que aporten esos permisos. Cuando se establece una restricción por pertenencia a un rol protegido, esta se comprueba adicionalmente. Las consultas de registros académicos, los reportes y el historial individual mantienen ámbitos de lectura distintos; la autorización de uno no habilita automáticamente los demás.
+| ID | Caso de uso | Participación institucional inicial | Resultado esperado | Requerimientos |
+| --- | --- | --- | --- | --- |
+| **CU-01** | Acceder y administrar la sesión propia | Todas las cuentas habilitadas | Acceso autenticado, renovación y cierre de sesión conforme a su vigencia. | RF-043–RF-045 |
+| **CU-02** | Administrar cuentas y roles | Administración del sistema y superadministración institucional, según destinatario | Cuentas, estados, roles y asignaciones gestionados sin autoelevación ni alteración del acceso institucional protegido. | RF-042, RF-046–RF-049 |
+| **CU-03** | Mantener personas y estudiantes | Administración y secretaría académica | Identidades y perfiles válidos, sin duplicidades ni cambios documentales prohibidos. | RF-001, RF-003, RF-004, RF-009 |
+| **CU-04** | Mantener estructura y catálogo académico | Administración y coordinación académica | Unidades, cursos y asociaciones académicas coherentes con su vigencia. | RF-002, RF-006–RF-008 |
+| **CU-05** | Mantener docentes | Administración y coordinación académica | Perfiles docentes con adscripción válida y antecedentes conservados. | RF-001, RF-005 |
+| **CU-06** | Administrar periodos académicos | Administración y coordinación académica | Periodos, fechas, ventanas y transiciones controlados. | RF-010, RF-011 |
+| **CU-07** | Administrar ofertas de cursos | Administración y coordinación académica | Ofertas, secciones, docentes y capacidades consistentes con su estado. | RF-012–RF-015 |
+| **CU-08** | Registrar inscripción | Administración y secretaría académica | Inscripción `ENROLLED` confirmada o rechazo sin efectos parciales. | RF-016–RF-020 |
+| **CU-09** | Cancelar inscripción ordinaria | Administración y secretaría académica | Inscripción `CANCELLED`, cupo liberado e historial conservado. | RF-021, RF-025–RF-029 |
+| **CU-10** | Retirar una inscripción | Administración y secretaría académica | Inscripción `WITHDRAWN` y restricciones de reinscripción preservadas. | RF-022, RF-025, RF-027–RF-029 |
+| **CU-11** | Cambiar sección de una inscripción | Administración y secretaría académica | Inscripción conservada y ocupación trasladada sin inconsistencias. | RF-023, RF-025, RF-028, RF-029 |
+| **CU-12** | Corregir inscripción extraordinariamente | Administración con autorización extraordinaria | Rectificación delimitada, justificada y trazable. | RF-024, RF-025, RF-028, RF-029 |
+| **CU-13** | Importar estudiantes | Administración y secretaría académica | Carga aceptada para procesamiento, con resultados por fila y evidencia recuperable. | RF-030–RF-036 |
+| **CU-14** | Consultar registros académicos e inscripciones | Administración, secretaría y coordinación académica, según la lectura | Datos e historial consultados dentro del ámbito de autorización. | RF-003, RF-008, RF-014, RF-025, RF-029 |
+| **CU-15** | Consultar reportes operativos | Todas las funciones con permiso de reportes | Reportes predefinidos coherentes y sin efectos de escritura. | RF-037–RF-041 |
+| **CU-16** | Consultar auditoría | Administración con permiso de auditoría | Evidencia administrativa y de seguridad consultada sin modificarla. | RF-052–RF-054 |
+| **CU-17** | Gestionar contraseñas | Titular de la cuenta para cambio propio; administración autorizada para restablecimiento ajeno | Credenciales actualizadas, sesiones anteriores revocadas y cambio temporal exigido cuando corresponda. | RF-050, RF-051 |
 
 ## 2. Acceso y cuentas
 
@@ -46,11 +46,11 @@ La columna de actores describe la distribución institucional inicial de respons
 
 **Objetivo.** Mantener cuentas internas y sus facultades de acceso.
 
-**Precondiciones.** Cuenta autenticada perteneciente al rol protegido `ADMIN`, con los permisos efectivos exigidos por la operación. El registro conjunto de una cuenta con roles iniciales requiere autorización tanto para crear cuentas como para asignar roles; los recursos relacionados deben ser válidos.
+**Precondiciones.** Actor autenticado con los permisos de la operación y, para facultades reservadas, el rol institucional exigido. La autoridad para gestionar la cuenta destinataria o asignar un rol se comprueba antes de cualquier modificación. Crear una cuenta con roles iniciales requiere ambas autorizaciones.
 
 **Secuencia funcional.** El administrador registra, consulta y modifica cuentas; cuando el registro incluye asignación inicial de roles, ambos efectos se confirman indivisiblemente. Cambia el estado de las cuentas entre `ACTIVE`, `INACTIVE` y `BLOCKED` mediante operaciones autorizadas y justificadas. Consulta roles, catálogo de permisos y asignaciones vigentes, tanto los roles asociados a una cuenta como las cuentas asociadas a un rol, dentro de su autorización de lectura; administra asignaciones también para cuentas deshabilitadas y registra o modifica roles personalizados únicamente con permisos ordinarios reconocidos. La composición de los roles institucionales permanece protegida. Deshabilitar o bloquear una cuenta revoca sus sesiones y la habilitación posterior exige autenticación nueva; administrar sus roles no altera esa situación.
 
-**Alternativas.** Se rechaza el registro público, un cambio de estado sin autorización o motivo, la modificación de roles base, la creación arbitraria de permisos, la concesión de permisos reservados a roles personalizados, la alteración de las propias asignaciones y todo cambio de composición de rol que aumente los permisos efectivos del propio administrador y cualquier acción que deje sin una cuenta `ACTIVE` con rol `ADMIN` y permisos reservados de gestión de cuentas y asignaciones. Si falla la creación conjunta de cuenta y asignaciones, no queda ninguna de ellas confirmada parcialmente.
+**Alternativas.** Se rechazan el registro público, los cambios de estado sin autorización o motivo, la modificación de definiciones o asignaciones protegidas, las concesiones fuera del catálogo y los cambios propios o indirectos que eleven los permisos del actor. Las operaciones sobre cuentas y roles fuera de su autoridad se rechazan; una creación conjunta fallida no confirma resultados parciales.
 
 **Resultado.** Cuentas y atribuciones controladas, sin autoelevación de privilegios.
 
@@ -176,7 +176,7 @@ La columna de actores describe la distribución institucional inicial de respons
 
 **Objetivo.** Rectificar excepcionalmente una inscripción o un movimiento académico que no puede resolverse mediante una operación ordinaria.
 
-**Precondiciones.** Actor `ADMIN` con autorización específica de corrección; inscripción identificada, motivo obligatorio y cambio circunscrito al ámbito de las inscripciones.
+**Precondiciones.** Actor autenticado con el permiso reservado de corrección extraordinaria y pertenencia a un rol administrativo institucional protegido; inscripción identificada, motivo obligatorio y cambio circunscrito al ámbito de las inscripciones.
 
 **Secuencia funcional.**
 
@@ -239,7 +239,7 @@ La columna de actores describe la distribución institucional inicial de respons
 
 **Objetivo.** Examinar evidencias relevantes de acciones académicas, administrativas y de seguridad.
 
-**Precondiciones.** Actor `ADMIN` autenticado con autorización de consulta de auditoría.
+**Precondiciones.** Actor autenticado con el permiso reservado de consulta de auditoría y pertenencia a un rol administrativo institucional protegido.
 
 **Secuencia funcional.** El administrador solicita los eventos pertinentes con filtros autorizados. El sistema entrega información que permita atribuir acciones a responsables y momentos, separada del historial de movimientos de inscripciones.
 
@@ -251,11 +251,11 @@ La columna de actores describe la distribución institucional inicial de respons
 
 **Objetivo.** Cambiar la contraseña propia o restablecer administrativamente la de otra cuenta.
 
-**Precondiciones.** Sesión autorizada para cambio propio o permiso de administración para el restablecimiento; cuenta objetivo identificada.
+**Precondiciones.** Para el cambio propio, sesión válida y acreditación de la contraseña vigente. Para el restablecimiento ajeno, permiso administrativo reservado y autoridad suficiente sobre la cuenta destinataria; en ambos casos, cuenta identificada.
 
-**Secuencia funcional.** El usuario cambia su contraseña mediante la operación personal; administración puede emitir una contraseña temporal para la cuenta objetivo. El sistema revoca las sesiones anteriores y exige que la contraseña temporal sea sustituida antes de permitir operaciones académicas.
+**Secuencia funcional.** Para cambiar la propia contraseña, el titular acredita la vigente y establece otra. En el restablecimiento ajeno, el actor administrativo autorizado genera una contraseña temporal para una cuenta comprendida en su autoridad: la administración ordinaria solo alcanza cuentas no administrativas y la superadministración puede intervenir sobre otras cuentas administrativas, excepto la cuenta superior protegida. Todo cambio o restablecimiento válido revoca las sesiones anteriores. La contraseña temporal se entrega protegida y una sola vez al actor que autorizó el restablecimiento; su titular debe sustituirla antes de acceder a funciones académicas.
 
-**Alternativas.** La cuenta sin autorización para la operación no puede modificar contraseñas ajenas. La posesión de una contraseña temporal no elimina la obligación de cambio inicial.
+**Alternativas.** Se rechaza el cambio propio sin acreditar la contraseña vigente, el restablecimiento sin permiso o fuera del ámbito de administración del actor y cualquier restablecimiento administrativo de la cuenta institucional superior protegida. Una contraseña temporal no habilita operaciones académicas antes de sustituirla.
 
 **Resultado.** Credenciales actualizadas y accesos anteriores revocados, sin conceder facultades administrativas adicionales al titular.
 

@@ -74,6 +74,8 @@ Las clases de módulo son declarativas: no consultan la base, no publican evento
 
 Los puertos de entrada consumidos por otras capacidades se exponen de forma selectiva. Los casos de uso internos, controladores, repositorios y adaptadores no se publican por defecto. Cuando el runtime de workers necesita obtener un processor, su exposición se restringe a la **composición técnica del proceso**, sin convertirlo en contrato funcional para otros módulos.
 
+La composición de la API importa `AuthenticationModule` y registra su Guard de autenticación globalmente (por ejemplo mediante `APP_GUARD`), dejando explícitas las rutas públicas. Los módulos `persons`, `users`, `authorization` y los módulos académicos no importan `AuthenticationModule` para utilizar un Guard. La comprobación del permiso sigue ejecutándose en los casos de uso por la capacidad pública de `authorization`; el Guard aporta un actor válido, no autorización funcional suficiente.
+
 ## 6. Composición de procesos y agrupadores
 
 Cada proceso reúne las capacidades y los servicios técnicos exigidos por sus **responsabilidades de ejecución**, no por una categoría cerrada de protocolo. La composición determina qué entradas habilita, qué contratos de aplicación consume, qué adaptadores de salida necesita y qué recursos administra durante su ciclo de vida.

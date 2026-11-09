@@ -2,6 +2,8 @@
 
 La auditoría es la **evidencia institucional atribuible** de decisiones administrativas, operaciones académicas sensibles y sucesos relevantes de seguridad. Su propósito es reconstruir quién actuó, sobre qué capacidad, cuándo, con qué resultado y con qué motivo cuando corresponde. No sustituye el historial funcional de una inscripción ni los logs operativos utilizados para diagnosticar fallos.
 
+Las modificaciones de cuentas y asignaciones privilegiadas, los intentos de eludir restricciones institucionales y las tentativas de autoelevación generan evidencia de seguridad con actor, destinatario, operación, resultado y motivo cuando corresponda. La evidencia no expone contraseñas, tokens ni credenciales temporales.
+
 ## 1. Tres tipos de información con finalidades distintas
 
 | Información                   | Propósito                                                                                                      | Regla de conservación                                                                     |

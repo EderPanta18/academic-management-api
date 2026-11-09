@@ -1,6 +1,6 @@
 # Diseño de persistencia
 
-PostgreSQL constituye la **fuente de verdad transaccional** de los recursos académicos, las identidades administrativas, las inscripciones y su evidencia, las importaciones y las obligaciones de entrega persistentes. Prisma materializa el acceso relacional mediante adaptadores de infraestructura; sus modelos y clientes no constituyen contratos del dominio ni de aplicación.
+PostgreSQL constituye la **fuente de verdad transaccional** de los recursos académicos, las identidades administrativas, las inscripciones y su evidencia, las importaciones y las obligaciones de entrega persistentes. `users` es propietario funcional de las cuentas y sesiones; `authorization`, de roles, permisos y asignaciones; `authentication` consume capacidades públicas de `users` y no posee tablas adicionales por el solo hecho de emitir y validar tokens. Prisma materializa el acceso relacional mediante adaptadores de infraestructura; sus modelos y clientes no constituyen contratos del dominio ni de aplicación.
 
 La base de datos es físicamente compartida por el monolito modular. Compartir almacenamiento permite transacciones entre capacidades, **no acceso indiscriminado a los datos de otros módulos**. Los adaptadores pueden realizar comprobaciones referenciales de solo lectura sobre tablas ajenas cuando resulten necesarias para preservar la integridad de escrituras propias; el módulo propietario mantiene la decisión funcional.
 

@@ -2,6 +2,8 @@
 
 La autenticación comprueba la identidad de una **cuenta interna administrada**; la sesión representa la continuidad revocable de esa identidad. Una credencial válida no concede por sí sola permiso académico: cada operación protegida requiere además cuenta habilitada, sesión vigente y autorización efectiva.
 
+La autenticación gestiona el inicio, la renovación y el cierre del acceso; las cuentas y sesiones persistidas mantienen su propia autoridad funcional. La validación de la sesión y la autorización por permisos son comprobaciones diferentes. Los mecanismos de autenticación no administran roles ni sustituyen las reglas aplicables a cada operación.
+
 ## 1. Identidad de acceso y credenciales
 
 - El acceso se inicia con **correo electrónico y contraseña** asociados a una cuenta administrada. Para identificar la cuenta, el correo se compara sin distinguir mayúsculas, minúsculas o espacios exteriores, de forma coherente con su unicidad entre cuentas vigentes; la contraseña mantiene su comprobación independiente. No existe registro público ni autenticación de estudiantes o docentes por el mero hecho de tener un perfil académico.

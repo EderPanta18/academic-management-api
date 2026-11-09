@@ -198,7 +198,7 @@ stateDiagram-v2
     BLOCKED --> INACTIVE: deshabilitar
 ```
 
-Todos los cambios se ejecutan por una operación administrativa autorizada con motivo y evidencia. `INACTIVE` y `BLOCKED` no admiten sesiones utilizables; el control temporal por intentos fallidos de autenticación no modifica por sí solo el estado a `BLOCKED`. La transición del estado de una cuenta no modifica los roles ni revierte operaciones académicas previamente confirmadas. No se permite deshabilitar o bloquear la última cuenta `ACTIVE` que conserve el rol protegido `ADMIN` y los permisos reservados de gestión de cuentas y asignaciones definidos en el catálogo.
+Las transiciones requieren autorización, motivo y evidencia. Las cuentas `INACTIVE` o `BLOCKED` no admiten sesiones utilizables; los rechazos temporales por intentos fallidos de autenticación no cambian por sí mismos el estado. Una transición no altera los roles de la cuenta ni revierte operaciones anteriores. Las restricciones de protección institucional y la autoridad del actor delimitan las cuentas sobre las que pueden ejecutarse estas transiciones. El diagrama muestra los cambios de estado disponibles para cuentas que admiten modificación administrativa.
 
 ## 8. Comprobaciones comunes a las transiciones
 

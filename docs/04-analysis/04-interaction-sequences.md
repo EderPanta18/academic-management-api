@@ -242,33 +242,43 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     actor Usuario as Usuario institucional
-    participant Acceso as Gestión de autenticación
-    participant Sesion as Gestión de sesiones
-    participant Permisos as Autorización efectiva
-    participant Funcion as Operación académica
+    participant Entrada as Entrada protegida
+    participant Autenticacion as Autenticación
+    participant Cuentas as Cuentas y sesiones
+    participant Autorizacion as Autorización
+    participant Operacion as Operación funcional
 
-    Usuario->>Acceso: Presenta credenciales
-    Acceso->>Acceso: Comprobar identidad, contraseña y estado
-    alt Credenciales o cuenta no válidas
-        Acceso-->>Usuario: Rechaza acceso
-    else Identidad válida
-        Acceso->>Sesion: Revocar sesión anterior y crear nueva sesión
-        Sesion-->>Acceso: Sesión vigente
-        Acceso-->>Usuario: Confirma acceso autenticado
-        Usuario->>Permisos: Solicita una operación protegida
-        Permisos->>Sesion: Verificar vigencia de usuario y sesión
-        Sesion-->>Permisos: Estado de sesión
-        Permisos->>Permisos: Resolver roles y permisos vigentes
-        alt Sesión inválida o permiso insuficiente
-            Permisos-->>Usuario: Deniega operación
-        else Acceso efectivo
-            Permisos->>Funcion: Tramitar operación requerida
-            Funcion-->>Usuario: Resultado funcional
+    Usuario->>Autenticacion: Presenta credenciales
+    Autenticacion->>Cuentas: Verifica cuenta y credenciales
+    alt Credenciales inválidas o cuenta deshabilitada
+        Cuentas-->>Autenticacion: Rechazo
+        Autenticacion-->>Usuario: Deniega el acceso
+    else Cuenta habilitada
+        Autenticacion->>Cuentas: Confirma una sesión vigente y revoca la anterior
+        Cuentas-->>Autenticacion: Identidad y sesión
+        Autenticacion-->>Usuario: Entrega acceso autenticado
+        Usuario->>Entrada: Solicita operación protegida
+        Entrada->>Autenticacion: Comprueba token de acceso
+        Autenticacion->>Cuentas: Comprueba cuenta habilitada y sesión vigente
+        alt Autenticación o sesión no válida
+            Autenticacion-->>Entrada: Acceso no autenticado
+            Entrada-->>Usuario: Rechaza la solicitud
+        else Identidad y sesión válidas
+            Autenticacion-->>Entrada: Identidad del actor autenticado
+            Entrada->>Operacion: Invoca operación con actor confiable
+            Operacion->>Autorizacion: Comprueba permiso y restricciones de acceso
+            alt Autorización o condiciones incumplidas
+                Autorizacion-->>Operacion: Rechazo de autorización
+                Operacion-->>Usuario: Deniega o rechaza sin efectos
+            else Acceso autorizado
+                Autorizacion-->>Operacion: Permiso vigente
+                Operacion-->>Usuario: Resultado funcional
+            end
         end
     end
 ```
 
-**Interpretación.** La identidad autenticada y la autorización de cada operación son comprobaciones diferentes. Tener sesión no concede acceso a todas las capacidades, y una sesión revocada no mantiene los permisos que tuvo anteriormente. La gestión concreta de credenciales de sesión y sus protecciones técnicas no altera estos resultados funcionales.
+**Interpretación.** La autenticación verifica identidad, estado de cuenta y sesión mediante las capacidades públicas de cuentas. La autorización resuelve las facultades vigentes del actor sin administrar sesiones. Los casos de uso preservan sus comprobaciones propias, aunque la entrada HTTP ya haya autenticado al solicitante. La sesión y los permisos se evalúan al usar la capacidad; conservar una credencial no evita la revocación ni un permiso retirado.
 
 ## 8. Principios de lectura de las secuencias
 

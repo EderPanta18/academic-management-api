@@ -200,10 +200,12 @@ erDiagram
     ROLES {
         uuid id PK
         string code UK
+        boolean isSystem
     }
     PERMISSIONS {
         uuid id PK
         string code UK
+        boolean isReserved
     }
     USER_ROLES {
         uuid user_id FK
@@ -233,14 +235,16 @@ erDiagram
     }
 ```
 
-| Entidad o asociación     | Integridad relevante                                                                                                                                                                     |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `user_roles`             | Una relación usuario–rol aparece una sola vez; cada cuenta puede recibir varios roles, incluso cuando está `INACTIVE` o `BLOCKED`. Las asignaciones no habilitan por sí solas la cuenta. |
-| `role_permissions`       | Una relación rol–permiso aparece una sola vez; los permisos provienen de un catálogo fijo. Los permisos reservados pertenecen solo a la definición protegida de `ADMIN`.                 |
-| `user_sessions`          | Pueden existir sesiones históricas revocadas, pero como máximo una permanece activa por usuario.                                                                                         |
-| `student_imports`        | Conserva los bytes originales, su huella SHA-256 y el usuario responsable; **usuario + hash** identifica de forma única una admisión.                                                    |
-| `student_import_results` | Cada fila resuelta tiene identidad **importación + posición de fila**, resultado y observaciones; una misma fila no produce resultados definitivos duplicados.                           |
-| `audit_logs`             | Guarda evidencia de operaciones sensibles sin operaciones ordinarias de edición o eliminación.                                                                                           |
+| Entidad o asociación     | Integridad relevante                                                                                                                                                                                 |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `user_roles`             | Cada par usuario–rol es único. Una cuenta puede tener varios roles; la asignación institucional de titular único se mantiene exclusiva y no es modificable mediante las operaciones administrativas. |
+| `role_permissions`       | Cada par rol–permiso es único. Las asignaciones respetan el catálogo establecido y las restricciones propias de los roles institucionales y personalizados.                                          |
+| `user_sessions`          | Pueden existir sesiones históricas revocadas, pero como máximo una permanece activa por usuario.                                                                                                     |
+| `student_imports`        | Conserva los bytes originales, su huella SHA-256 y el usuario responsable; **usuario + hash** identifica de forma única una admisión.                                                                |
+| `student_import_results` | Cada fila resuelta tiene identidad **importación + posición de fila**, resultado y observaciones; una misma fila no produce resultados definitivos duplicados.                                       |
+| `audit_logs`             | Guarda evidencia de operaciones sensibles sin operaciones ordinarias de edición o eliminación.                                                                                                       |
+
+Las restricciones de cardinalidad impiden que una asociación duplicada se confirme. Las reglas de autorización y de asignación institucional se aplican además de la unicidad de cada par: una asociación válida por sus claves no es necesariamente una operación autorizada. La persistencia y las decisiones transaccionales de las capacidades propietarias deben preservar tanto las restricciones estructurales como las condiciones funcionales.
 
 Los resultados por fila se conservan en una relación técnica propia de la importación, **no como nuevas entidades académicas**. Las filas admitidas pueden concluir como incorporadas, duplicadas o rechazadas; las todavía no procesadas carecen de resultado definitivo. Las cantidades agregadas se derivan de las unidades confirmadas y no constituyen otra fuente independiente de verdad. Una fila válida incorpora solo los registros permitidos, sin sobrescribir estudiantes existentes; una fila rechazada no altera el catálogo académico.
 

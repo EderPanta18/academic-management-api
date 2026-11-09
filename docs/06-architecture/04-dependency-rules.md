@@ -70,7 +70,17 @@ Las dependencias técnicas se declaran explícitamente cuando aportan capacidade
 
 ## 5. Prevención de ciclos y dependencias indebidas
 
-Se prohíben ciclos entre capacidades funcionales y dependencias que inviertan indebidamente la dirección de las capas. La composición del sistema es el nivel superior y puede depender de los módulos funcionales para enlazar autenticación, autorización y adaptadores; los módulos nunca dependen de esa composición. En particular, `users` puede consumir capacidades públicas de `identity` y `authorization`, e `identity` puede consumir la comprobación pública de `authorization`; `authorization` no importa `users` para administrar asignaciones ni para proteger sus propias entradas. La referencia persistente entre una asignación y una cuenta no introduce por sí sola una dependencia funcional inversa. Los mecanismos del framework para resolver referencias circulares no justifican diseñar componentes mutuamente dependientes.
+Se prohíben ciclos entre capacidades funcionales y dependencias que inviertan indebidamente la dirección de las capas. La composición del sistema enlaza capacidades y adaptadores, pero ningún módulo funcional depende de ella. Las dependencias entre las capacidades de acceso se orientan de `authentication` hacia `users`, de `users` hacia `persons` y `authorization`, y de `persons` hacia `authorization`; no existen imports inversos. La protección HTTP se registra en la composición de entrada sin que los módulos de negocio importen mecanismos de autenticación para proteger sus rutas. Las relaciones de clave foránea entre datos de diferentes propietarios no constituyen imports entre módulos. Las referencias circulares del framework no son un mecanismo admitido para el diseño funcional.
+
+```mermaid
+flowchart LR
+    AUTHN[authentication] --> USERS[users]
+    USERS --> PERSONS[persons]
+    USERS --> AUTHZ[authorization]
+    PERSONS --> AUTHZ
+```
+
+El grafo representa dependencias directas entre las cuatro capacidades de identidad y acceso. Las capacidades académicas consumen autorización por sus contratos públicos, sin depender de autenticación para registrar sus controladores. La instalación de la protección HTTP corresponde a la composición del proceso.
 
 ```mermaid
 flowchart LR
@@ -84,6 +94,8 @@ Cuando dos operaciones de propietarios distintos requieren información recípro
 Esta regla se aplica, entre otros casos, a la consulta de inscripciones vigentes antes de cambiar un estudiante de programa o cerrar una asociación programa–curso, a la ocupación antes de modificar una oferta y a los compromisos docentes antes de cambiar el estado de un profesor. Esas comprobaciones siguen siendo decisiones del propietario de la modificación y se apoyan en información autorizada de sus propietarios; no justifican que `enrollments` dependa de `students` y `students` dependa simultáneamente de `enrollments` como módulos importados entre sí. Si el contrato no puede enlazarse de manera acíclica, se rediseña la composición de la colaboración antes de implementar el flujo.
 
 Los agregadores de dominio son componentes de composición, no nuevos propietarios. Sus exportaciones son selectivas y no deben habilitar dependencias privilegiadas entre módulos agrupados.
+
+Cuando una operación sobre cuentas necesita conocer los roles protegidos de su destinatario, `users` consume una consulta pública de `authorization` sin acceder directamente a sus relaciones persistentes. La administración de asignaciones corresponde a `authorization`, mientras que el cambio de estado de las cuentas corresponde a `users`. Ambas capacidades preservan sus restricciones mediante contratos públicos y sin dependencias inversas.
 
 ## 6. Colaboración transaccional
 
