@@ -435,7 +435,7 @@ model Permission {
   name        String    @db.VarChar(150)
   description String?   @db.Text
   module      String    @db.VarChar(100)
-  isSystem    Boolean   @default(true)
+  isReserved  Boolean   @default(false)
 
   createdAt   DateTime  @default(now()) @db.Timestamptz(6)
   updatedAt   DateTime  @updatedAt @db.Timestamptz(6)
