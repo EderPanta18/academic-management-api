@@ -35,10 +35,6 @@ export class Role {
     });
   }
 
-  isCustom(): boolean {
-    return !this.isSystem;
-  }
-
   update(props: UpdateRoleProps): Role {
     if (this.isSystem) throw new ProtectedRoleException();
 
@@ -47,5 +43,9 @@ export class Role {
       name: props.name ?? this.name,
       description: props.description === undefined ? this.description : props.description,
     });
+  }
+
+  isCustom(): boolean {
+    return !this.isSystem;
   }
 }

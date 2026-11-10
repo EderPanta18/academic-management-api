@@ -3,5 +3,5 @@
 import { AuthorizationException } from './authorization.exception';
 
 export abstract class RoleException extends AuthorizationException {
-  override readonly entity = 'role';
+  readonly entity: string = 'role';
 }
