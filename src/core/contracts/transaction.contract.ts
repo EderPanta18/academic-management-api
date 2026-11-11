@@ -11,4 +11,9 @@ export type TransactionOptions = {
 
 export interface ITransactionManager {
   run<T>(operation: () => Promise<T>, options?: TransactionOptions): Promise<T>;
+
+  /**
+   * Indica si existe una transacción activa en el contexto actual.
+   */
+  isActive(): boolean;
 }

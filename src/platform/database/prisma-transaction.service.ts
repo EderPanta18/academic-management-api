@@ -12,7 +12,7 @@ export class PrismaTransactionService implements ITransactionManager {
   constructor(private readonly txHost: TransactionHost<TransactionalAdapterPrisma>) {}
 
   async run<T>(operation: () => Promise<T>, options: TransactionOptions = {}): Promise<T> {
-    if (this.txHost.isTransactionActive())
+    if (this.isActive())
       throw new SystemException(
         'No se permite iniciar una transacción dentro de otra transacción activa.',
       );
@@ -41,5 +41,9 @@ export class PrismaTransactionService implements ITransactionManager {
         if (!retryable || attempt >= retries) throw error;
       }
     }
+  }
+
+  isActive(): boolean {
+    return this.txHost.isTransactionActive();
   }
 }
