@@ -8,7 +8,7 @@ export const INSTITUTIONAL_ROLES = {
   REPORT_VIEWER: 'REPORT_VIEWER',
 } as const;
 
-export const ADMINISTRATIVE_ROLES: Set<string> = new Set([
+export const ADMINISTRATIVE_ROLES: ReadonlySet<string> = new Set([
   INSTITUTIONAL_ROLES.SUPER_ADMIN,
   INSTITUTIONAL_ROLES.ADMIN,
 ]);

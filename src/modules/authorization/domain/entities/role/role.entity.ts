@@ -1,6 +1,5 @@
-// src/modules/authorization/domain/entities/role/role.entity.ts
-
-import { ProtectedRoleException } from './role.exceptions';
+import { INSTITUTIONAL_ROLES } from '@authorization/domain/constants';
+import { ProtectedRoleException, ReservedRoleCodeException } from './role.exceptions';
 import type { CreateRoleProps, RoleProps, UpdateRoleProps } from './role.types';
 
 const DEFAULTS = {
@@ -29,6 +28,10 @@ export class Role {
   }
 
   static create(props: CreateRoleProps): Role {
+    const isReserved = Object.values(INSTITUTIONAL_ROLES).some((code) => code === props.code);
+
+    if (isReserved) throw new ReservedRoleCodeException(props.code);
+
     return new Role({
       ...props,
       isSystem: DEFAULTS.isSystem,
