@@ -10,17 +10,14 @@ export type RoleGrant = {
 
 export interface IRoleGrantRepository {
   /**
-   * Persiste la concesión de un rol a una cuenta.
+   * Concede un rol a una cuenta.
+   * Devuelve false si la asignación ya existe.
    */
-  grant(grant: RoleGrant): Promise<void>;
+  grant(grant: RoleGrant): Promise<boolean>;
 
   /**
-   * Revoca la concesión de un rol.
+   * Revoca un rol asignado a una cuenta.
+   * Devuelve false si la asignación no existe.
    */
-  revoke(userId: string, roleId: string): Promise<void>;
-
-  /**
-   * Comprueba si un rol está asignado a una cuenta.
-   */
-  isAssigned(userId: string, roleId: string): Promise<boolean>;
+  revoke(userId: string, roleId: string): Promise<boolean>;
 }

@@ -102,10 +102,9 @@ export class RoleGranterService implements IRoleGranter {
           ...context,
         });
 
-        if (!(await this.roleGrantRepository.isAssigned(userId, roleId)))
-          throw new RoleNotAssignedException(userId, roleId);
+        const revoked = await this.roleGrantRepository.revoke(userId, roleId);
 
-        await this.roleGrantRepository.revoke(userId, roleId);
+        if (!revoked) throw new RoleNotAssignedException(userId, roleId);
 
         await this.recordGrant({
           actorUserId,
@@ -148,14 +147,13 @@ export class RoleGranterService implements IRoleGranter {
       ...context,
     });
 
-    if (await this.roleGrantRepository.isAssigned(userId, roleId))
-      throw new RoleAlreadyAssignedException(userId, roleId);
-
-    await this.roleGrantRepository.grant({
+    const granted = await this.roleGrantRepository.grant({
       userId,
       roleId,
       assignedByUserId: actorUserId,
     });
+
+    if (!granted) throw new RoleAlreadyAssignedException(userId, roleId);
 
     await this.recordGrant({
       actorUserId,
