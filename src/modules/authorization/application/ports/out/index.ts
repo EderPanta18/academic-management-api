@@ -1,3 +1,5 @@
+// src/modules/authorization/application/ports/out/index.ts
+
 export * from './authorization-state.port';
 export * from './permission-query.port';
 export * from './permission-repository.port';

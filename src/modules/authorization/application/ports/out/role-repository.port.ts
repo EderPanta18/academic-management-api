@@ -1,3 +1,5 @@
+// src/modules/authorization/application/ports/out/role-repository.port.ts
+
 import type { Role } from '@authorization/domain/entities';
 
 export const ROLE_REPOSITORY_TOKEN = Symbol('ROLE_REPOSITORY');

@@ -1,4 +1,4 @@
-// application/exceptions/role-security.exceptions.ts
+// src/modules/authorization/application/exceptions/role-security.exceptions.ts
 
 import { RoleException } from '@authorization/domain/exceptions';
 

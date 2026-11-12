@@ -1,3 +1,5 @@
+// src/modules/authorization/application/ports/in/role-granter.port.ts
+
 export const ROLE_GRANTER_TOKEN = Symbol('ROLE_GRANTER');
 
 export type InitialRoleGrant = {

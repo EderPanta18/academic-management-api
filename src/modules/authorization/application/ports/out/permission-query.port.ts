@@ -1,8 +1,15 @@
-import type { ListPermissionsQuery } from '@authorization/application/queries';
+// src/modules/authorization/application/ports/out/permission-query.port.ts
+
 import type { PermissionReadModel } from '@authorization/application/read-models';
 import type { PaginationVO } from '@core/pagination';
 
 export const PERMISSION_QUERY_TOKEN = Symbol('PERMISSION_QUERY');
+
+export type PermissionQueryFilters = {
+  module?: string;
+  isReserved?: boolean;
+  search?: string;
+};
 
 export interface IPermissionQuery {
   /**
@@ -10,6 +17,6 @@ export interface IPermissionQuery {
    */
   findAll(
     pagination: PaginationVO,
-    filters?: ListPermissionsQuery,
+    filters?: PermissionQueryFilters,
   ): Promise<[PermissionReadModel[], number]>;
 }

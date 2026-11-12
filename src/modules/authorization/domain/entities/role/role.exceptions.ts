@@ -1,3 +1,5 @@
+// src/modules/authorization/domain/entities/role/role.exceptions.ts
+
 import { RoleException } from '@authorization/domain/exceptions';
 
 export class ProtectedRoleException extends RoleException {

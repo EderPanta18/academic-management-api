@@ -1,3 +1,5 @@
+// src/modules/authorization/domain/entities/role/role.entity.ts
+
 import { INSTITUTIONAL_ROLES } from '@authorization/domain/constants';
 import { ProtectedRoleException, ReservedRoleCodeException } from './role.exceptions';
 import type { CreateRoleProps, RoleProps, UpdateRoleProps } from './role.types';

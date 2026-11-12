@@ -1,3 +1,5 @@
+// src/modules/authorization/application/ports/in/account-role-inspector.port.ts
+
 export const ACCOUNT_ROLE_INSPECTOR_TOKEN = Symbol('ACCOUNT_ROLE_INSPECTOR');
 
 export type AccountRoleClassification = 'SUPER_ADMIN' | 'ADMIN' | 'ORDINARY';

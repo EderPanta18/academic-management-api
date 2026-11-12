@@ -1,3 +1,5 @@
+// src/modules/authorization/application/use-cases/list-roles.use-case.ts
+
 import type { PaginationVO } from '@core/pagination';
 import { Inject, Injectable } from '@nestjs/common';
 import { AUTHORIZER_TOKEN, type IAuthorizer, type IRoleQuery, ROLE_QUERY_TOKEN } from '../ports';
@@ -21,6 +23,9 @@ export class ListRolesUseCase {
   ): Promise<[RoleReadModel[], number]> {
     await this.authorizer.assertAuthorized(actorUserId, ['roles.read']);
 
-    return this.roleQuery.findAll(pagination, filters);
+    return this.roleQuery.findAll(pagination, {
+      isSystem: filters?.isSystem,
+      search: filters?.search,
+    });
   }
 }

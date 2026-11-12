@@ -1,3 +1,5 @@
+// src/modules/authorization/application/services/role-granter.service.ts
+
 import { RolePolicy } from '@authorization/domain/policies';
 import {
   AUDIT_WRITER_TOKEN,

@@ -1,3 +1,5 @@
+// src/modules/authorization/application/use-cases/get-role.use-case.ts
+
 import { Inject, Injectable } from '@nestjs/common';
 import { RoleNotFoundException } from '../exceptions';
 import { AUTHORIZER_TOKEN, type IAuthorizer, type IRoleQuery, ROLE_QUERY_TOKEN } from '../ports';

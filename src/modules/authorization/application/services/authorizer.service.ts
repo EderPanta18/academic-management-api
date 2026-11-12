@@ -1,3 +1,5 @@
+// src/modules/authorization/application/services/authorizer.service.ts
+
 import { PermissionPolicy } from '@authorization/domain/policies';
 import { ForbiddenException } from '@core/exceptions';
 import { Inject, Injectable } from '@nestjs/common';

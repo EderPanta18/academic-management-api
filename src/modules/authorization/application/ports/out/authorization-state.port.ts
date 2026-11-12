@@ -1,3 +1,5 @@
+// src/modules/authorization/application/ports/out/authorization-state.port.ts
+
 import type { Permission } from '@authorization/domain/models';
 
 export const AUTHORIZATION_STATE_TOKEN = Symbol('AUTHORIZATION_STATE');

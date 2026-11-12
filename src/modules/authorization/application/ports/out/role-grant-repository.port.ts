@@ -1,3 +1,5 @@
+// src/modules/authorization/application/ports/out/role-grant-repository.port.ts
+
 export const ROLE_GRANT_REPOSITORY_TOKEN = Symbol('ROLE_GRANT_REPOSITORY');
 
 export type RoleGrant = {

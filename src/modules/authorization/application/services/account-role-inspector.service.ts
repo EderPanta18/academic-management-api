@@ -1,3 +1,5 @@
+// src/modules/authorization/application/services/account-role-inspector.service.ts
+
 import { INSTITUTIONAL_ROLES } from '@authorization/domain/constants';
 import { Inject, Injectable } from '@nestjs/common';
 import {

@@ -1,4 +1,5 @@
-import type { ListRolesQuery } from '@authorization/application/queries';
+// src/modules/authorization/application/ports/out/role-query.port.ts
+
 import type {
   RoleDetailReadModel,
   RoleReadModel,
@@ -7,6 +8,11 @@ import type {
 import type { PaginationVO } from '@core/pagination';
 
 export const ROLE_QUERY_TOKEN = Symbol('ROLE_QUERY');
+
+export type RoleQueryFilters = {
+  isSystem?: boolean;
+  search?: string;
+};
 
 export interface IRoleQuery {
   /**
@@ -17,7 +23,7 @@ export interface IRoleQuery {
   /**
    * Consulta roles con filtros y paginación.
    */
-  findAll(pagination: PaginationVO, filters?: ListRolesQuery): Promise<[RoleReadModel[], number]>;
+  findAll(pagination: PaginationVO, filters?: RoleQueryFilters): Promise<[RoleReadModel[], number]>;
 
   /**
    * Consulta las cuentas vinculadas a un rol.

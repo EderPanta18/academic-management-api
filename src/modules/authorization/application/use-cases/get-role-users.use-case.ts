@@ -1,3 +1,5 @@
+// src/modules/authorization/application/use-cases/get-role-users.use-case.ts
+
 import type { PaginationVO } from '@core/pagination';
 import { Inject, Injectable } from '@nestjs/common';
 import { RoleNotFoundException } from '../exceptions';

@@ -1,3 +1,5 @@
+// src/modules/authorization/application/use-cases/update-role.use-case.ts
+
 import { PermissionPolicy, RolePolicy } from '@authorization/domain/policies';
 import {
   AUDIT_WRITER_TOKEN,

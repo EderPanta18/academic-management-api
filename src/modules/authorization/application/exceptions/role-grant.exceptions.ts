@@ -1,3 +1,5 @@
+// src/modules/authorization/application/exceptions/role-grant.exceptions.ts
+
 import { AuthorizationException } from '@authorization/domain/exceptions';
 
 export class RoleAlreadyAssignedException extends AuthorizationException {

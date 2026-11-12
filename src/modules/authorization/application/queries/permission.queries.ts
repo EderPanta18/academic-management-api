@@ -1,6 +1,7 @@
 // src/modules/authorization/application/queries/permission.queries.ts
 
 export type ListPermissionsQuery = {
-  search?: string;
+  module?: string;
   isReserved?: boolean;
+  search?: string;
 };

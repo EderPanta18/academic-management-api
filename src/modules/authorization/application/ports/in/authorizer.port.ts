@@ -1,3 +1,5 @@
+// src/modules/authorization/application/ports/in/authorizer.port.ts
+
 export const AUTHORIZER_TOKEN = Symbol('AUTHORIZER');
 
 export interface IAuthorizer {

@@ -1,3 +1,5 @@
+// src/modules/authorization/application/exceptions/role-relation.exceptions.ts
+
 import { RoleException } from '@authorization/domain/exceptions';
 
 export class RolePermissionNotFoundException extends RoleException {
