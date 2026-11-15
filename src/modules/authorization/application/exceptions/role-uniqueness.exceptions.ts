@@ -3,7 +3,7 @@
 import { RoleException } from '@authorization/domain/exceptions';
 
 export class RoleCodeAlreadyExistsException extends RoleException {
-  readonly reason = 'CONFLICT' as const;
+  readonly reason = 'CONFLICT';
   readonly errorCode = 'AUTHZ_ROLE_CODE_ALREADY_EXISTS';
 
   constructor(code: string) {

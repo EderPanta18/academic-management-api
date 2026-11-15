@@ -3,7 +3,7 @@
 import { AuthorizationException } from '@authorization/domain/exceptions';
 
 export class RoleAlreadyAssignedException extends AuthorizationException {
-  readonly reason = 'CONFLICT' as const;
+  readonly reason = 'CONFLICT';
   readonly errorCode = 'AUTHZ_ROLE_ALREADY_ASSIGNED';
 
   constructor(userId: string, roleId: string) {
@@ -12,7 +12,7 @@ export class RoleAlreadyAssignedException extends AuthorizationException {
 }
 
 export class RoleNotAssignedException extends AuthorizationException {
-  readonly reason = 'NOT_FOUND' as const;
+  readonly reason = 'NOT_FOUND';
   readonly errorCode = 'AUTHZ_ROLE_NOT_ASSIGNED';
 
   constructor(userId: string, roleId: string) {
@@ -21,7 +21,7 @@ export class RoleNotAssignedException extends AuthorizationException {
 }
 
 export class RoleGrantChangeNotAllowedException extends AuthorizationException {
-  readonly reason = 'CONFLICT' as const;
+  readonly reason = 'CONFLICT';
   readonly errorCode = 'AUTHZ_ROLE_GRANT_CHANGE_NOT_ALLOWED';
 
   constructor(userId: string, roleCode: string) {

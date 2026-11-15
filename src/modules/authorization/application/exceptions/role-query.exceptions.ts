@@ -3,7 +3,7 @@
 import { RoleException } from '@authorization/domain/exceptions';
 
 export class RoleNotFoundException extends RoleException {
-  readonly reason = 'NOT_FOUND' as const;
+  readonly reason = 'NOT_FOUND';
   readonly errorCode = 'AUTHZ_ROLE_NOT_FOUND';
 
   constructor(id: string) {

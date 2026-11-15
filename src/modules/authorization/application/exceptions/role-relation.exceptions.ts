@@ -3,7 +3,7 @@
 import { RoleException } from '@authorization/domain/exceptions';
 
 export class RolePermissionNotFoundException extends RoleException {
-  readonly reason = 'NOT_FOUND' as const;
+  readonly reason = 'NOT_FOUND';
   readonly errorCode = 'AUTHZ_ROLE_PERMISSION_NOT_FOUND';
 
   constructor(permissionIds: string[]) {
@@ -14,7 +14,7 @@ export class RolePermissionNotFoundException extends RoleException {
 }
 
 export class RolePermissionNotAssignableException extends RoleException {
-  readonly reason = 'CONFLICT' as const;
+  readonly reason = 'CONFLICT';
   readonly errorCode = 'AUTHZ_ROLE_PERMISSION_NOT_ASSIGNABLE';
 
   constructor(permissionIds: string[]) {

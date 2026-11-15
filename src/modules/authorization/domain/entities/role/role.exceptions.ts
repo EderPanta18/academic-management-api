@@ -3,7 +3,7 @@
 import { RoleException } from '@authorization/domain/exceptions';
 
 export class ProtectedRoleException extends RoleException {
-  readonly reason = 'CONFLICT' as const;
+  readonly reason = 'CONFLICT';
   readonly errorCode = 'AUTHZ_ROLE_PROTECTED';
 
   constructor() {
@@ -12,7 +12,7 @@ export class ProtectedRoleException extends RoleException {
 }
 
 export class ReservedRoleCodeException extends RoleException {
-  readonly reason = 'CONFLICT' as const;
+  readonly reason = 'CONFLICT';
   readonly errorCode = 'AUTHZ_ROLE_CODE_RESERVED';
 
   constructor(code: string) {

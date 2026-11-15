@@ -3,7 +3,7 @@
 import { RoleException } from '@authorization/domain/exceptions';
 
 export class RoleSelfEscalationException extends RoleException {
-  readonly reason = 'CONFLICT' as const;
+  readonly reason = 'CONFLICT';
   readonly errorCode = 'AUTHZ_ROLE_SELF_ESCALATION';
 
   constructor(id: string) {
