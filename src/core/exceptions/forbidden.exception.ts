@@ -3,7 +3,7 @@
 import { AppException } from './app.exception';
 
 export abstract class ForbiddenException extends AppException {
-  readonly kind = 'FORBIDDEN' as const;
+  readonly kind = 'FORBIDDEN';
 
   protected constructor(message: string, cause?: unknown) {
     super(message, cause);

@@ -8,7 +8,7 @@ export type FieldError = {
 };
 
 export class ValidationException extends AppException {
-  readonly kind = 'VALIDATION' as const;
+  readonly kind = 'VALIDATION';
   readonly errorCode = 'VAL_001';
   readonly fieldErrors: FieldError[];
 

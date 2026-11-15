@@ -3,7 +3,7 @@
 import { AppException } from './app.exception';
 
 export abstract class ConflictException extends AppException {
-  readonly kind = 'CONFLICT' as const;
+  readonly kind = 'CONFLICT';
 
   protected constructor(message: string, cause?: unknown) {
     super(message, cause);

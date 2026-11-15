@@ -23,7 +23,7 @@ import { AppException } from './app.exception';
 export type DomainErrorReason = 'VALIDATION' | 'CONFLICT' | 'NOT_FOUND';
 
 export abstract class DomainException extends AppException {
-  readonly kind = 'DOMAIN' as const;
+  readonly kind = 'DOMAIN';
 
   abstract readonly domain: string;
   abstract readonly reason: DomainErrorReason;
