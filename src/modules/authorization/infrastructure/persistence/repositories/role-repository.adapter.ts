@@ -85,6 +85,21 @@ export class RoleRepositoryAdapter implements IRoleRepository {
     return raw ? RoleRepositoryMapper.toDomain(raw) : null;
   }
 
+  async findManyByIds(ids: string[]): Promise<Role[]> {
+    if (ids.length === 0) return [];
+
+    const db = this.txHost.isTransactionActive() ? this.txHost.tx : this.prisma;
+
+    const raw = await db.role.findMany({
+      where: {
+        id: { in: ids },
+        deletedAt: null,
+      },
+    });
+
+    return raw.map(RoleRepositoryMapper.toDomain);
+  }
+
   async existsByCode(code: string): Promise<boolean> {
     const db = this.txHost.isTransactionActive() ? this.txHost.tx : this.prisma;
 
