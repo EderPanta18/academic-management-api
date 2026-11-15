@@ -9,16 +9,6 @@ export type InitialRoleGrant = {
 
 export interface IRoleGranter {
   /**
-   * Concede un rol a una cuenta existente.
-   */
-  grantRole(actorUserId: string, userId: string, roleId: string): Promise<void>;
-
-  /**
-   * Revoca un rol concedido a una cuenta.
-   */
-  revokeRole(actorUserId: string, userId: string, roleId: string): Promise<void>;
-
-  /**
    * Concede los roles iniciales durante la creación de una cuenta.
    */
   grantInitialRoles(actorUserId: string, grant: InitialRoleGrant): Promise<void>;

@@ -12,7 +12,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   RoleAlreadyAssignedException,
   RoleGrantChangeNotAllowedException,
-  RoleNotAssignedException,
   RoleNotFoundException,
 } from '../exceptions';
 import {
@@ -27,27 +26,6 @@ import {
   ROLE_GRANT_REPOSITORY_TOKEN,
   ROLE_REPOSITORY_TOKEN,
 } from '../ports';
-
-type RoleContext = {
-  actorRoleCodes: string[];
-  targetRoleCodes: string[];
-};
-
-type RoleChangeContext = RoleContext & {
-  actorUserId: string;
-  targetUserId: string;
-  roleCode: string;
-};
-
-type RoleGrantRequest = {
-  actorUserId: string;
-  userId: string;
-  roleId: string;
-};
-
-type RoleGrantAudit = RoleGrantRequest & {
-  action: 'grant' | 'revoke';
-};
 
 @Injectable()
 export class RoleGranterService implements IRoleGranter {
@@ -71,54 +49,8 @@ export class RoleGranterService implements IRoleGranter {
     private readonly roleGrantRepository: IRoleGrantRepository,
   ) {}
 
-  async grantRole(actorUserId: string, userId: string, roleId: string): Promise<void> {
-    await this.transactionManager.run(
-      async () => {
-        await this.authorizer.assertAuthorized(actorUserId, ['role-grants.grant']);
-
-        const context = await this.getRoleContext(actorUserId, userId);
-
-        await this.grant({ actorUserId, userId, roleId }, context);
-      },
-      { isolation: 'SERIALIZABLE', retries: 2 },
-    );
-  }
-
-  async revokeRole(actorUserId: string, userId: string, roleId: string): Promise<void> {
-    await this.transactionManager.run(
-      async () => {
-        await this.authorizer.assertAuthorized(actorUserId, ['role-grants.revoke']);
-
-        const role = await this.roleRepository.find(roleId);
-
-        if (!role) throw new RoleNotFoundException(roleId);
-
-        const context = await this.getRoleContext(actorUserId, userId);
-
-        this.assertChangeAllowed({
-          actorUserId,
-          targetUserId: userId,
-          roleCode: role.code,
-          ...context,
-        });
-
-        const revoked = await this.roleGrantRepository.revoke(userId, roleId);
-
-        if (!revoked) throw new RoleNotAssignedException(userId, roleId);
-
-        await this.recordGrant({
-          actorUserId,
-          userId,
-          roleId,
-          action: 'revoke',
-        });
-      },
-      { isolation: 'SERIALIZABLE', retries: 2 },
-    );
-  }
-
-  async grantInitialRoles(actorUserId: string, initialGrant: InitialRoleGrant): Promise<void> {
-    const { userId, roleIds } = initialGrant;
+  async grantInitialRoles(actorUserId: string, grant: InitialRoleGrant): Promise<void> {
+    const { userId, roleIds } = grant;
 
     if (roleIds.length === 0) return;
 
@@ -127,72 +59,66 @@ export class RoleGranterService implements IRoleGranter {
 
     await this.authorizer.assertAuthorized(actorUserId, ['role-grants.grant']);
 
-    const context = await this.getRoleContext(actorUserId, userId);
+    const uniqueRoleIds = [...new Set(roleIds)];
 
-    for (const roleId of new Set(roleIds))
-      await this.grant({ actorUserId, userId, roleId }, context);
+    await this.assertInitialGrantsAllowed(actorUserId, userId, uniqueRoleIds);
+
+    for (const roleId of uniqueRoleIds) {
+      const granted = await this.roleGrantRepository.grant({
+        userId,
+        roleId,
+        assignedByUserId: actorUserId,
+      });
+
+      if (!granted) throw new RoleAlreadyAssignedException(userId, roleId);
+
+      await this.auditWriter.append({
+        actorUserId,
+        action: 'authorization.role-grant.grant',
+        module: 'authorization',
+        resourceType: 'RoleGrant',
+        outcome: 'CONFIRMED',
+        metadata: {
+          userId,
+          roleId,
+        },
+      });
+    }
   }
 
-  private async grant(request: RoleGrantRequest, context: RoleContext): Promise<void> {
-    const { actorUserId, userId, roleId } = request;
-
-    const role = await this.roleRepository.find(roleId);
-
-    if (!role) throw new RoleNotFoundException(roleId);
-
-    this.assertChangeAllowed({
-      actorUserId,
-      targetUserId: userId,
-      roleCode: role.code,
-      ...context,
-    });
-
-    const granted = await this.roleGrantRepository.grant({
-      userId,
-      roleId,
-      assignedByUserId: actorUserId,
-    });
-
-    if (!granted) throw new RoleAlreadyAssignedException(userId, roleId);
-
-    await this.recordGrant({
-      actorUserId,
-      userId,
-      roleId,
-      action: 'grant',
-    });
-
-    context.targetRoleCodes.push(role.code);
-  }
-
-  private async getRoleContext(actorUserId: string, userId: string): Promise<RoleContext> {
-    const [actorRoles, targetRoles] = await Promise.all([
+  private async assertInitialGrantsAllowed(
+    actorUserId: string,
+    userId: string,
+    roleIds: string[],
+  ): Promise<void> {
+    const [actorRoles, targetRoles, roles] = await Promise.all([
       this.authorizationState.getAssignedRoles(actorUserId),
       this.authorizationState.getAssignedRoles(userId),
+      this.roleRepository.findManyByIds(roleIds),
     ]);
 
-    return {
-      actorRoleCodes: actorRoles.map((role) => role.roleCode),
-      targetRoleCodes: targetRoles.map((role) => role.roleCode),
-    };
-  }
+    const rolesById = new Map(roles.map((role) => [role.id, role]));
 
-  private assertChangeAllowed(context: RoleChangeContext): void {
-    if (!RolePolicy.canChangeAssignment(context))
-      throw new RoleGrantChangeNotAllowedException(context.targetUserId, context.roleCode);
-  }
+    const actorRoleCodes = actorRoles.map((role) => role.roleCode);
+    const targetRoleCodes = targetRoles.map((role) => role.roleCode);
 
-  private async recordGrant(audit: RoleGrantAudit): Promise<void> {
-    await this.auditWriter.append({
-      actorUserId: audit.actorUserId,
-      action: `authorization.role-grant.${audit.action}`,
-      module: 'authorization',
-      resourceType: 'RoleGrant',
-      outcome: 'CONFIRMED',
-      metadata: {
-        userId: audit.userId,
-        roleId: audit.roleId,
-      },
-    });
+    for (const roleId of roleIds) {
+      const role = rolesById.get(roleId);
+
+      if (!role) throw new RoleNotFoundException(roleId);
+
+      if (
+        !RolePolicy.canChangeAssignment({
+          actorUserId,
+          targetUserId: userId,
+          roleCode: role.code,
+          actorRoleCodes,
+          targetRoleCodes,
+        })
+      )
+        throw new RoleGrantChangeNotAllowedException(userId, role.code);
+
+      targetRoleCodes.push(role.code);
+    }
   }
 }

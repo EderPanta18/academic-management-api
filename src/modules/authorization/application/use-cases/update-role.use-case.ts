@@ -1,5 +1,6 @@
 // src/modules/authorization/application/use-cases/update-role.use-case.ts
 
+import { Role } from '@authorization/domain/entities';
 import { PermissionPolicy, RolePolicy } from '@authorization/domain/policies';
 import {
   AUDIT_WRITER_TOKEN,
@@ -48,14 +49,14 @@ export class UpdateRoleUseCase {
     private readonly permissionRepository: IPermissionRepository,
   ) {}
 
-  async execute(actorUserId: string, command: UpdateRoleCommand): Promise<void> {
-    await this.transactionManager.run(
+  async execute(actorUserId: string, roleId: string, command: UpdateRoleCommand): Promise<Role> {
+    return this.transactionManager.run(
       async () => {
         await this.authorizer.assertAuthorized(actorUserId, ['roles.update']);
 
-        const role = await this.roleRepository.find(command.roleId);
+        const role = await this.roleRepository.find(roleId);
 
-        if (!role) throw new RoleNotFoundException(command.roleId);
+        if (!role) throw new RoleNotFoundException(roleId);
 
         const updatedRole = role.update({
           name: command.name,
@@ -88,9 +89,7 @@ export class UpdateRoleUseCase {
             assignedRoles.map((assignedRole) => assignedRole.permissions),
           );
 
-          const actorHasRole = assignedRoles.some(
-            (assignedRole) => assignedRole.roleId === command.roleId,
-          );
+          const actorHasRole = assignedRoles.some((assignedRole) => assignedRole.roleId === roleId);
 
           const proposedCodes = permissions.map((permission) => permission.code);
 
@@ -101,7 +100,7 @@ export class UpdateRoleUseCase {
               proposedCodes,
             )
           )
-            throw new RoleSelfEscalationException(command.roleId);
+            throw new RoleSelfEscalationException(roleId);
         }
 
         await this.roleRepository.update(updatedRole, permissionIds);
@@ -110,10 +109,12 @@ export class UpdateRoleUseCase {
           actorUserId,
           action: 'authorization.role.update',
           resourceType: 'Role',
-          resourceId: command.roleId,
+          resourceId: roleId,
           module: 'authorization',
           outcome: 'CONFIRMED',
         });
+
+        return updatedRole;
       },
       { isolation: 'SERIALIZABLE', retries: 2 },
     );

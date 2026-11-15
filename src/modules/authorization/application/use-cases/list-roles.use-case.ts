@@ -19,13 +19,13 @@ export class ListRolesUseCase {
   async execute(
     actorUserId: string,
     pagination: PaginationVO,
-    filters?: ListRolesQuery,
+    query: ListRolesQuery = {},
   ): Promise<[RoleReadModel[], number]> {
     await this.authorizer.assertAuthorized(actorUserId, ['roles.read']);
 
     return this.roleQuery.findAll(pagination, {
-      isSystem: filters?.isSystem,
-      search: filters?.search,
+      isSystem: query?.isSystem,
+      search: query?.search,
     });
   }
 }

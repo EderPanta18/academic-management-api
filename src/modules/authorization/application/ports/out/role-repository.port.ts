@@ -25,6 +25,12 @@ export interface IRoleRepository {
   find(id: string): Promise<Role | null>;
 
   /**
+   * Recupera roles vigentes por sus identificadores.
+   * Omite los identificadores inexistentes.
+   */
+  findManyByIds(ids: string[]): Promise<Role[]>;
+
+  /**
    * Comprueba la existencia de un código de rol.
    */
   existsByCode(code: string): Promise<boolean>;

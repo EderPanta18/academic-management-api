@@ -8,7 +8,6 @@ export type CreateRoleCommand = {
 };
 
 export type UpdateRoleCommand = {
-  roleId: string;
   name?: string;
   description?: string | null;
   permissionIds?: string[];

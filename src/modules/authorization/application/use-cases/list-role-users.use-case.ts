@@ -1,4 +1,4 @@
-// src/modules/authorization/application/use-cases/get-role-users.use-case.ts
+// src/modules/authorization/application/use-cases/list-role-users.use-case.ts
 
 import type { PaginationVO } from '@core/pagination';
 import { Inject, Injectable } from '@nestjs/common';
@@ -7,7 +7,7 @@ import { AUTHORIZER_TOKEN, type IAuthorizer, type IRoleQuery, ROLE_QUERY_TOKEN }
 import type { RoleUserReadModel } from '../read-models';
 
 @Injectable()
-export class GetRoleUsersUseCase {
+export class ListRoleUsersUseCase {
   constructor(
     @Inject(AUTHORIZER_TOKEN)
     private readonly authorizer: IAuthorizer,

@@ -24,14 +24,14 @@ export class ListPermissionsUseCase {
   async execute(
     actorUserId: string,
     pagination: PaginationVO,
-    filters?: ListPermissionsQuery,
+    query: ListPermissionsQuery = {},
   ): Promise<[PermissionReadModel[], number]> {
     await this.authorizer.assertAuthorized(actorUserId, ['permissions.read']);
 
     return this.permissionQuery.findAll(pagination, {
-      module: filters?.module,
-      isReserved: filters?.isReserved,
-      search: filters?.search,
+      module: query?.module,
+      isReserved: query?.isReserved,
+      search: query?.search,
     });
   }
 }
