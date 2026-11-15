@@ -1,7 +1,6 @@
 // src/modules/authorization/entrypoints/http/controllers/permission.controller.ts
 
 import { ListPermissionsUseCase } from '@authorization/application/use-cases';
-import { type PaginatedResult, PaginationVO } from '@core/pagination';
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import type { SwaggerTag } from '@platform/http';
@@ -29,20 +28,11 @@ export class PermissionController {
   async list(
     @CurrentUserId() actorUserId: string,
     @Query() queryDto: ListPermissionsQueryDto,
-  ): Promise<PaginatedResult<PermissionReadModelResponseDto>> {
-    const pagination = PaginationVO.create({
-      page: queryDto.page,
-      limit: queryDto.limit,
-    });
-
+  ): Promise<PermissionReadModelResponseDto[]> {
     const query = PermissionRequestMapper.toListQuery(queryDto);
 
-    const [items, totalItems] = await this.listPermissionsUseCase.execute(
-      actorUserId,
-      pagination,
-      query,
-    );
+    const items = await this.listPermissionsUseCase.execute(actorUserId, query);
 
-    return PermissionResponseMapper.toPaginatedResponse(items, pagination, totalItems);
+    return PermissionResponseMapper.toListResponse(items);
   }
 }

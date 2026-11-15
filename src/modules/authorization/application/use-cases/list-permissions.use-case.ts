@@ -1,6 +1,5 @@
 // src/modules/authorization/application/use-cases/list-permissions.use-case.ts
 
-import type { PaginationVO } from '@core/pagination';
 import { Inject, Injectable } from '@nestjs/common';
 import {
   AUTHORIZER_TOKEN,
@@ -23,12 +22,11 @@ export class ListPermissionsUseCase {
 
   async execute(
     actorUserId: string,
-    pagination: PaginationVO,
     query: ListPermissionsQuery = {},
-  ): Promise<[PermissionReadModel[], number]> {
+  ): Promise<PermissionReadModel[]> {
     await this.authorizer.assertAuthorized(actorUserId, ['permissions.read']);
 
-    return this.permissionQuery.findAll(pagination, {
+    return this.permissionQuery.findAll({
       module: query?.module,
       isReserved: query?.isReserved,
       search: query?.search,
