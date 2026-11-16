@@ -2,7 +2,7 @@
 
 La autenticación comprueba la identidad de una **cuenta interna administrada**; la sesión representa la continuidad revocable de esa identidad. Una credencial válida no concede por sí sola permiso académico: cada operación protegida requiere además cuenta habilitada, sesión vigente y autorización efectiva.
 
-La autenticación gestiona el inicio, la renovación y el cierre del acceso; las cuentas y sesiones persistidas mantienen su propia autoridad funcional. La validación de la sesión y la autorización por permisos son comprobaciones diferentes. Los mecanismos de autenticación no administran roles ni sustituyen las reglas aplicables a cada operación.
+`users` administra las cuentas, sus estados y credenciales. `authentication` verifica el acceso y gobierna el ciclo de vida de las sesiones persistidas; `authorization` administra roles, permisos y asignaciones. La validación de cuenta y sesión y la autorización por permisos son comprobaciones distintas, todas exigibles cuando corresponda. La autenticación no concede ni modifica permisos.
 
 ## 1. Identidad de acceso y credenciales
 
@@ -14,7 +14,7 @@ La autenticación gestiona el inicio, la renovación y el cierre del acceso; las
 
 ## 2. Sesión única y credenciales de acceso
 
-Cada cuenta mantiene **como máximo una sesión activa**. Esta exclusividad y la rotación de la credencial de renovación son garantías obligatorias que no pueden desactivarse mediante configuración. La sesión se conserva como estado revocable controlado por `users`, separado de los permisos que administra `authorization`.
+Cada cuenta mantiene **como máximo una sesión activa**. Esta exclusividad y la rotación de la credencial de renovación son garantías obligatorias que no pueden desactivarse mediante configuración. `authentication` conserva y administra la sesión como estado persistido revocable, separado de la cuenta y de sus permisos.
 
 | Elemento                       | Decisión de seguridad                                                                                   | Garantía                                                                                           |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
@@ -26,7 +26,7 @@ Cada cuenta mantiene **como máximo una sesión activa**. Esta exclusividad y la
 
 Las duraciones de las credenciales son configurables, pero deben ser **positivas, inequívocas y no superar los máximos de quince minutos para el acceso y siete días para la renovación**. Los valores inválidos impiden iniciar el servicio; no se sustituyen silenciosamente.
 
-El **inicio de sesión** invalida atómicamente cualquier sesión activa anterior de la misma cuenta antes de habilitar la nueva. Una carrera entre dos inicios de sesión no deja dos sesiones utilizables. La emisión de credenciales solo se considera satisfactoria cuando su sesión está confirmada.
+El **inicio de sesión** obtiene de `users` la comprobación de credenciales y habilitación de la cuenta mediante un contrato restringido. Antes de habilitar la nueva sesión, `authentication` revalida la cuenta e invalida atómicamente cualquier sesión activa anterior. Una carrera entre dos inicios de sesión no deja dos sesiones utilizables. La emisión de credenciales solo se considera satisfactoria cuando la sesión está confirmada.
 
 En cada solicitud protegida se comprueban la autenticidad, tipo, integridad y expiración del access token, la correspondencia con la sesión activa, la vigencia de esa sesión y la habilitación de la cuenta. El servidor no confía en un rol incluido en el JWT como permiso definitivo: los permisos efectivos se resuelven desde el estado autorizado vigente.
 
@@ -44,6 +44,8 @@ La presentación de una credencial de refresh ya consumida, fuera de su sesión,
 - **Retirar permisos o roles:** no conserva autorizaciones antiguas dentro de una sesión vigente; su siguiente uso se decide con los permisos actualizados.
 
 La caducidad natural de un JWT no reemplaza la revocación inmediata: incluso un token criptográficamente válido se rechaza si su sesión o su cuenta dejaron de estar habilitadas.
+
+Las revocaciones derivadas de cambios administrativos de estado y de contraseña se coordinan desde `users` mediante una capacidad de `authentication`, que conserva la autoridad para modificar sesiones. La modificación de la cuenta, la invalidación de acceso y la auditoría exigida constituyen una sola confirmación transaccional; ninguna se considera realizada por separado. Una cuenta reactivada requiere un nuevo inicio de sesión y no recupera sesiones anteriores. El vencimiento temporal de una sesión se comprueba aunque todavía no se haya reflejado como `EXPIRED` en el almacenamiento.
 
 ```mermaid
 stateDiagram-v2

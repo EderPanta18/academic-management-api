@@ -1,6 +1,6 @@
 # Diseño de persistencia
 
-PostgreSQL constituye la **fuente de verdad transaccional** de los recursos académicos, las identidades administrativas, las inscripciones y su evidencia, las importaciones y las obligaciones de entrega persistentes. `users` es propietario funcional de las cuentas y sesiones; `authorization`, de roles, permisos y asignaciones; `authentication` consume capacidades públicas de `users` y no posee tablas adicionales por el solo hecho de emitir y validar tokens. Prisma materializa el acceso relacional mediante adaptadores de infraestructura; sus modelos y clientes no constituyen contratos del dominio ni de aplicación.
+PostgreSQL constituye la **fuente de verdad transaccional** de los recursos académicos, las identidades administrativas, las inscripciones y su evidencia, las importaciones y las obligaciones de entrega persistentes. `users` es propietario funcional de las cuentas y sus credenciales; `authentication`, del estado persistido de las sesiones y su ciclo de vida; `authorization`, de roles, permisos y asignaciones. La autenticación consulta cuentas por contratos públicos, sin administrar sus registros. Prisma materializa el acceso relacional mediante adaptadores de infraestructura; sus modelos y clientes no constituyen contratos del dominio ni de aplicación.
 
 La base de datos es físicamente compartida por el monolito modular. Compartir almacenamiento permite transacciones entre capacidades, **no acceso indiscriminado a los datos de otros módulos**. Los adaptadores pueden realizar comprobaciones referenciales de solo lectura sobre tablas ajenas cuando resulten necesarias para preservar la integridad de escrituras propias; el módulo propietario mantiene la decisión funcional.
 
@@ -16,6 +16,8 @@ La base de datos es físicamente compartida por el monolito modular. Compartir a
 | **Infraestructura compartida**        | Gestiona conexiones, ejecución transaccional, adaptadores y recursos técnicos comunes.                                                                                                                            | No se convierte en módulo funcional ni introduce dependencias desde el dominio.                       |
 
 Un módulo no accede al repositorio privado de otro para modificar su información. Cuando necesita comportamiento ajeno, utiliza la capacidad pública del propietario; cuando requiere lecturas consolidadas, utiliza una consulta controlada que conserva la semántica y la autorización del resultado. Las consultas de infraestructura pueden optimizar uniones relacionales y verificar por existencia o vigencia dependencias ajenas que bloquean una baja lógica; no se convierten en una vía de modificación funcional ni en contratos públicos de datos ajenos.
+
+Las cuentas se almacenan bajo la responsabilidad de `users` y las sesiones bajo la de `authentication`. La referencia de cada sesión a su cuenta preserva la relación y la integridad referencial, sin trasladar la propiedad de ninguno de los dos estados. Los cambios de cuenta o contraseña que exigen revocación de acceso se confirman en un contexto transaccional común y cada módulo escribe únicamente los registros que administra.
 
 ```mermaid
 flowchart TB
@@ -44,6 +46,8 @@ La representación relacional preserva **identidades estables, relaciones explí
 - La deshabilitación de catálogos, perfiles o cuentas no provoca borrados en cascada de evidencia histórica. La vigencia administrativa y la existencia del registro son conceptos distintos.
 
 Los índices únicos parciales materializan en PostgreSQL la unicidad entre registros no eliminados lógicamente, allí donde una tabla con baja lógica posea atributos de negocio sujetos a unicidad, individuales o combinados. No sustituyen los índices de rendimiento, las claves primarias, las restricciones estructurales de cardinalidad ni las garantías de identidad y evidencia históricas.
+
+Para las sesiones, una restricción parcial garantiza que cada cuenta tenga como máximo una sesión en estado `ACTIVE`, aunque conserve sesiones históricas. `authentication` administra los estados `ACTIVE`, `REVOKED` y `EXPIRED`, la rotación de credenciales y la sustitución de sesiones. El vencimiento temporal no modifica por sí mismo el estado almacenado: las operaciones que necesitan una sesión activa comprueban tanto el estado como su vigencia y resuelven previamente los registros vencidos cuando corresponda.
 
 El esquema físico traduce estas necesidades a claves, referencias, restricciones, índices y representaciones aptas para PostgreSQL. **El modelo físico no reinterpreta las reglas académicas**: las estructuras generadas por Prisma implementan su persistencia sin sustituir los contratos funcionales.
 

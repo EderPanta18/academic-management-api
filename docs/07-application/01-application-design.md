@@ -50,15 +50,20 @@ La coordinación comprende tres responsabilidades distintas:
 2. **Decisión:** comprobar autorización e invariantes a través de capacidades propietarias, sin confiar en condiciones vistas previamente por la interfaz.
 3. **Confirmación:** exigir que los efectos que constituyen una sola operación queden registrados de manera íntegra o no se informen como realizados.
 
-| Operación concreta                     | Confirmación que exige el caso de uso                                                                             |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Registrar una inscripción              | Inscripción válida, ocupación coherente e historial de creación.                                                  |
-| Cancelar, retirar o cambiar de sección | Movimiento válido, efecto sobre la plaza y evidencia de actor y motivo exigible.                                  |
-| Ejecutar corrección extraordinaria     | Modificación delimitada, preservación histórica y evidencia administrativa obligatoria.                           |
-| Administrar cuentas y autorizaciones   | Cambio de estado o asignación autorizado, sin autoelevación y con las restricciones del destinatario preservadas. |
-| Admitir una operación diferida         | Identidad funcional aceptada y obligación durable de entrega para ejecución.                                      |
+| Operación concreta                       | Confirmación que exige el caso de uso                                                                  |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Registrar una inscripción                | Inscripción válida, ocupación coherente e historial de creación.                                       |
+| Cancelar, retirar o cambiar de sección   | Movimiento válido, efecto sobre la plaza y evidencia de actor y motivo exigible.                       |
+| Ejecutar corrección extraordinaria       | Modificación delimitada, preservación histórica y evidencia administrativa obligatoria.                |
+| Registrar una cuenta con roles iniciales | Cuenta, asignaciones admitidas y evidencia confirmadas como una sola operación.                        |
+| Modificar el estado de una cuenta        | Transición autorizada, motivo y protección institucional; revocación simultánea al abandonar `ACTIVE`. |
+| Cambiar o restablecer contraseñas        | Credenciales y condición de cambio obligatorio coherentes; sesiones anteriores invalidadas.            |
+| Administrar roles y asignaciones         | Cambios autorizados sin autoelevación y con las restricciones del destinatario preservadas.            |
+| Admitir una operación diferida           | Identidad funcional aceptada y obligación durable de entrega para ejecución.                           |
 
-Las operaciones coordinadas conservan la autoridad de cada capacidad involucrada. El registro conjunto de una cuenta y sus asignaciones iniciales, por ejemplo, confirma ambos efectos sin que un módulo escriba directamente los registros del otro; las restricciones de autorización se aplican antes de confirmar. Cuando una operación académica exige un movimiento histórico, la modificación, ese movimiento y la auditoría obligatoria se confirman conjuntamente. El caso de uso determina **qué resultados deben confirmarse juntos**; la persistencia implementa la indivisibilidad mediante los contratos transaccionales, sin exponer consultas SQL ni bloqueos a la aplicación. Si falla la confirmación, no se comunica éxito parcial.
+Las operaciones coordinadas conservan la autoridad de cada capacidad involucrada. El registro conjunto de una cuenta y sus asignaciones iniciales confirma ambos efectos sin que un módulo escriba directamente los datos del otro. Cuando se deshabilita o bloquea una cuenta, `users` coordina la transición con la revocación de sus sesiones por `authentication`. El mismo criterio se aplica al cambio de contraseña propia y al restablecimiento administrativo. La revocación, los cambios de cuenta y la auditoría exigida deben quedar confirmados conjuntamente; si falla alguno, la operación completa se revierte. La reactivación de una cuenta no restablece sesiones anteriores.
+
+`authentication` conserva la decisión y la escritura de las sesiones y `users` la de las cuentas. La colaboración se expresa mediante un contrato de aplicación enlazado por la composición del sistema, sin acceder a repositorios ajenos ni establecer dependencias circulares. También en las operaciones académicas, la modificación, su historial funcional y la auditoría obligatoria se confirman conjuntamente. El caso de uso determina **qué resultados deben confirmarse juntos**; la persistencia asegura su indivisibilidad sin exponer consultas SQL ni bloqueos a la aplicación. Si falla la confirmación, no se comunica éxito parcial.
 
 ## 4. Comandos, consultas y efectos derivados
 

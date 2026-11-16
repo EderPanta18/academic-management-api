@@ -17,7 +17,7 @@ El diagrama señala dependencias de código permitidas. En ejecución, la aplica
 
 | Área               | Puede depender de                                                                                                                                                                  | No puede depender de                                                                                                                   |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `domain`           | Conceptos propios y abstracciones puras necesarias.                                                                                                                                | NestJS, Prisma, HTTP, cola, sesiones o adaptadores.                                                                                    |
+| `domain`           | Conceptos propios y abstracciones puras necesarias.                                                                                                                                | NestJS, Prisma, HTTP, colas o adaptadores externos.                                                                                    |
 | `application`      | Dominio propio, puertos de salida, contratos públicos de capacidades proveedoras.                                                                                                  | Controladores, DTOs de transporte, repositorios concretos y framework como fuente de reglas.                                           |
 | `infrastructure`   | Contratos que implementa y herramientas de persistencia o integración; puede leer relaciones persistidas de otras capacidades para comprobaciones técnicas acotadas de integridad. | Controladores ajenos, escrituras directas sobre datos de otro propietario y reglas funcionales cuya propiedad pertenece a otro módulo. |
 | `entrypoints`      | Capacidades de entrada de aplicación y validaciones del mecanismo respectivo.                                                                                                      | Escrituras directas del negocio por medio de repositorios concretos.                                                                   |
@@ -97,6 +97,8 @@ Los agregadores de dominio son componentes de composición, no nuevos propietari
 
 Cuando una operación sobre cuentas necesita conocer los roles protegidos de su destinatario, `users` consume una consulta pública de `authorization` sin acceder directamente a sus relaciones persistentes. La administración de asignaciones corresponde a `authorization`, mientras que el cambio de estado de las cuentas corresponde a `users`. Ambas capacidades preservan sus restricciones mediante contratos públicos y sin dependencias inversas.
 
+La administración de sesiones persistidas pertenece a `authentication`. Las operaciones de `users` que deben invalidarlas expresan esa necesidad mediante un contrato de revocación requerido por su aplicación. La implementación del contrato corresponde a `authentication` y se enlaza mediante la composición superior, sin introducir una dependencia de módulo en sentido inverso. La composición debe asegurar que la revocación participe en la misma unidad transaccional del cambio de cuenta o contraseña y de su auditoría; no se admite confirmación separada ni sustitución de esta obligación por un evento diferido.
+
 ## 6. Colaboración transaccional
 
 El caso de uso coordinador define la unidad que debe confirmarse junta. La infraestructura suministra un **contexto transaccional** accesible por contratos adecuados sin exponer Prisma al dominio. Las capacidades involucradas participan sin ejecutar commits independientes que permitan resultados parciales.
@@ -104,7 +106,7 @@ El caso de uso coordinador define la unidad que debe confirmarse junta. La infra
 - La comprobación definitiva de aforo y unicidad pertenece a la misma unidad de consistencia que el cambio de inscripción.
 - El movimiento histórico y la auditoría obligatoria acompañan la modificación que documentan.
 - Los contratos de consulta usados para decisiones susceptibles de carrera deben revalidarse o protegerse en la transacción.
-- El acceso compartido a PostgreSQL no habilita modificaciones directas sobre datos privados de otra capacidad.
+- El acceso compartido a PostgreSQL no habilita modificaciones directas sobre datos privados de otra capacidad. La revocación de sesiones necesaria para confirmar un cambio de cuenta se ejecuta por su propietario dentro de la misma unidad transaccional.
 - La consulta referencial entre tablas para autorizar una baja lógica debe mantenerse válida hasta la confirmación; también las altas de dependientes deben impedir referencias operativas a un padre ya dado de baja.
 - Un evento o job no puede confirmar retroactivamente una operación que ya se declaró exitosa.
 

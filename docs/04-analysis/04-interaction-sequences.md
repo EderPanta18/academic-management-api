@@ -243,24 +243,24 @@ sequenceDiagram
 sequenceDiagram
     actor Usuario as Usuario institucional
     participant Entrada as Entrada protegida
-    participant Autenticacion as Autenticación
-    participant Cuentas as Cuentas y sesiones
+    participant Autenticacion as Autenticación y sesiones
+    participant Cuentas as Cuentas
     participant Autorizacion as Autorización
     participant Operacion as Operación funcional
 
     Usuario->>Autenticacion: Presenta credenciales
-    Autenticacion->>Cuentas: Verifica cuenta y credenciales
+    Autenticacion->>Cuentas: Solicita comprobación de cuenta y contraseña
+    Cuentas-->>Autenticacion: Resultado de comprobación restringido
     alt Credenciales inválidas o cuenta deshabilitada
-        Cuentas-->>Autenticacion: Rechazo
         Autenticacion-->>Usuario: Deniega el acceso
     else Cuenta habilitada
-        Autenticacion->>Cuentas: Confirma una sesión vigente y revoca la anterior
-        Cuentas-->>Autenticacion: Identidad y sesión
-        Autenticacion-->>Usuario: Entrega acceso autenticado
+        Autenticacion->>Autenticacion: Revalida la cuenta y sustituye la sesión activa de forma atómica
+        Autenticacion-->>Usuario: Entrega acceso tras confirmar la sesión
         Usuario->>Entrada: Solicita operación protegida
-        Entrada->>Autenticacion: Comprueba token de acceso
-        Autenticacion->>Cuentas: Comprueba cuenta habilitada y sesión vigente
-        alt Autenticación o sesión no válida
+        Entrada->>Autenticacion: Comprueba token y sesión vigente
+        Autenticacion->>Cuentas: Comprueba cuenta habilitada
+        Cuentas-->>Autenticacion: Vigencia de la cuenta
+        alt Autenticación, cuenta o sesión inválida
             Autenticacion-->>Entrada: Acceso no autenticado
             Entrada-->>Usuario: Rechaza la solicitud
         else Identidad y sesión válidas
@@ -278,7 +278,9 @@ sequenceDiagram
     end
 ```
 
-**Interpretación.** La autenticación verifica identidad, estado de cuenta y sesión mediante las capacidades públicas de cuentas. La autorización resuelve las facultades vigentes del actor sin administrar sesiones. Los casos de uso preservan sus comprobaciones propias, aunque la entrada HTTP ya haya autenticado al solicitante. La sesión y los permisos se evalúan al usar la capacidad; conservar una credencial no evita la revocación ni un permiso retirado.
+**Interpretación.** La comprobación de la cuenta y sus credenciales se obtiene de `users` mediante una capacidad restringida, sin trasladar la propiedad del verificador de contraseña. `authentication` administra las sesiones persistidas y confirma la sustitución de una sesión activa antes de entregar las nuevas credenciales. La autorización resuelve los permisos vigentes sin administrar sesiones. Conservar un token no evita el efecto de una revocación, una cuenta deshabilitada o un permiso retirado.
+
+Las operaciones administrativas que deshabilitan o bloquean cuentas, así como los cambios y restablecimientos de contraseña, se coordinan desde `users` con la revocación realizada por `authentication`. El estado de la cuenta, la revocación y la evidencia obligatoria forman un solo resultado transaccional. La colaboración no concede a `users` facultad de escritura directa sobre las sesiones.
 
 ## 8. Principios de lectura de las secuencias
 
