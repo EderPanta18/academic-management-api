@@ -1,3 +1,5 @@
+// src/modules/persons/application/read-models/person.read-models.ts
+
 export type PersonReadModel = {
   id: string;
   documentTypeCode: string;

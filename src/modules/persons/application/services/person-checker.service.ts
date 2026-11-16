@@ -1,3 +1,5 @@
+// src/modules/persons/application/services/person-checker.service.ts
+
 import { Inject, Injectable } from '@nestjs/common';
 import { type IPersonChecker, type IPersonRepository, PERSON_REPOSITORY_TOKEN } from '../ports';
 

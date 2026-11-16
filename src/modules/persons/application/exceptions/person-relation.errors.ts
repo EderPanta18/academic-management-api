@@ -1,4 +1,4 @@
-// src/modules/identity/application/exceptions/person-relation.errors.ts
+// src/modules/persons/application/exceptions/person-relation.errors.ts
 
 import { PersonException } from '@persons/domain/exceptions';
 

@@ -1,4 +1,4 @@
-// src/modules/identity/application/exceptions/person-uniqueness.errors.ts
+// src/modules/persons/application/exceptions/person-uniqueness.errors.ts
 
 import { PersonException } from '@persons/domain/exceptions';
 

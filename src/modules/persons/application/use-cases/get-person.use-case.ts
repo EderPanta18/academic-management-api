@@ -1,3 +1,5 @@
+// src/modules/persons/application/use-cases/get-person.use-case.ts
+
 import { AUTHORIZER_TOKEN, type IAuthorizer } from '@authorization';
 import { Inject, Injectable } from '@nestjs/common';
 import { PersonNotFoundException } from '../exceptions';

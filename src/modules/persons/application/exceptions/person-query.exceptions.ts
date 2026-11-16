@@ -1,3 +1,5 @@
+// src/modules/persons/application/exceptions/person-query.exceptions.ts
+
 import { PersonException } from '@persons/domain/exceptions';
 
 export class PersonNotFoundException extends PersonException {

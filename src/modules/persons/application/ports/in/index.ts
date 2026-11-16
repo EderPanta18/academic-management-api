@@ -1,4 +1,4 @@
-// src/modules/identity/application/ports/in/index.ts
+// src/modules/persons/application/ports/in/index.ts
 
 export * from './document-type-finder.port';
 export * from './person-checker.port';

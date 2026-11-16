@@ -1,3 +1,5 @@
+// src/modules/persons/application/commands/person.commands.ts
+
 export type CreatePersonCommand = {
   documentTypeId: string;
   documentNumber: string;

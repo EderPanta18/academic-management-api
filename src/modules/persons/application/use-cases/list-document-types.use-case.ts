@@ -1,3 +1,5 @@
+// src/modules/persons/application/use-cases/list-document-types.use-case.ts
+
 import { AUTHORIZER_TOKEN, type IAuthorizer } from '@authorization';
 import { Inject, Injectable } from '@nestjs/common';
 import { DOCUMENT_TYPE_QUERY_TOKEN, type IDocumentTypeQuery } from '../ports/out';

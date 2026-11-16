@@ -1,3 +1,5 @@
+// src/modules/persons/application/use-cases/list-persons.use-case.ts
+
 import { AUTHORIZER_TOKEN, type IAuthorizer } from '@authorization';
 import { type PaginationVO } from '@core/pagination';
 import { Inject, Injectable } from '@nestjs/common';

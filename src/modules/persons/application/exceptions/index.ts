@@ -1,4 +1,4 @@
-// src/modules/identity/application/exceptions/index.ts
+// src/modules/persons/application/exceptions/index.ts
 
 export * from './person-query.exceptions';
 export * from './person-relation.errors';

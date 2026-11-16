@@ -1,3 +1,5 @@
+// src/modules/persons/application/ports/out/person-repository.port.ts
+
 import type { Person } from '@persons/domain/entities';
 
 export const PERSON_REPOSITORY_TOKEN = Symbol('PERSON_REPOSITORY');

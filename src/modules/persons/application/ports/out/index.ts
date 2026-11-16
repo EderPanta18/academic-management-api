@@ -1,4 +1,4 @@
-// src/modules/identity/application/ports/out/index.ts
+// src/modules/persons/application/ports/out/index.ts
 
 export * from './document-type-query.port';
 export * from './document-type-respository.port';

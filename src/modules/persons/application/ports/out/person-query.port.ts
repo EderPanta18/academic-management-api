@@ -1,3 +1,5 @@
+// src/modules/persons/application/ports/out/person-query.port.ts
+
 import type { PaginationVO } from '@core/pagination';
 import type { PersonReadModel } from '@persons/application/read-models';
 
