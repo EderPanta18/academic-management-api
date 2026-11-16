@@ -2,6 +2,7 @@
 
 export type PersonReadModel = {
   id: string;
+  documentTypeId: string;
   documentTypeCode: string;
   documentTypeName: string;
   documentNumber: string;

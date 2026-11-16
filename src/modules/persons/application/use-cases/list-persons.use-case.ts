@@ -20,10 +20,13 @@ export class ListPersonsUseCase {
   async execute(
     actorUserId: string,
     pagination: PaginationVO,
-    filters: ListPersonsQuery = {},
+    query: ListPersonsQuery = {},
   ): Promise<[PersonReadModel[], number]> {
     await this.authorizer.assertAuthorized(actorUserId, ['persons.read']);
 
-    return this.personQuery.findAll(pagination, filters);
+    return this.personQuery.findAll(pagination, {
+      documentTypeId: query.documentTypeId,
+      search: query.search,
+    });
   }
 }

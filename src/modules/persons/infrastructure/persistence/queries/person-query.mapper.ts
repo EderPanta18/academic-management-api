@@ -13,6 +13,7 @@ export class PersonQueryMapper {
   static toReadModel(raw: PersonReadRaw): PersonReadModel {
     return {
       id: raw.id,
+      documentTypeId: raw.documentTypeId,
       documentTypeCode: raw.documentType.code,
       documentTypeName: raw.documentType.name,
       documentNumber: raw.documentNumber,
