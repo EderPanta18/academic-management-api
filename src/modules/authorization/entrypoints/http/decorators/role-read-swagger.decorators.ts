@@ -2,6 +2,7 @@
 
 import { applyDecorators } from '@nestjs/common';
 import {
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -31,6 +32,9 @@ export function ApiListRoles(): MethodDecorator {
       description: 'Búsqueda por código o nombre del rol.',
     }),
     ApiPaginatedResult(RoleReadModelResponseDto),
+    ApiForbiddenResponse({
+      description: 'El usuario no está autorizado para consultar roles.',
+    }),
   );
 }
 
@@ -49,6 +53,9 @@ export function ApiGetRole(): MethodDecorator {
     ApiNotFoundResponse({
       description: 'Rol no encontrado.',
     }),
+    ApiForbiddenResponse({
+      description: 'El usuario no está autorizado para consultar roles.',
+    }),
   );
 }
 
@@ -63,6 +70,9 @@ export function ApiListRoleUsers(): MethodDecorator {
     ApiPaginatedResult(RoleUserReadModelResponseDto),
     ApiNotFoundResponse({
       description: 'Rol no encontrado.',
+    }),
+    ApiForbiddenResponse({
+      description: 'El usuario no está autorizado para consultar los usuarios asignados a un rol.',
     }),
   );
 }

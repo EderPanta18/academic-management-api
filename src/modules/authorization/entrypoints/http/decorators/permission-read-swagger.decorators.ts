@@ -1,9 +1,7 @@
 // src/modules/authorization/entrypoints/http/decorators/permission-read-swagger.decorators.ts
 
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiQuery } from '@nestjs/swagger';
-import { ApiPaginatedResult } from '@shared/decorators';
-import { PermissionReadModelResponseDto } from '../dtos';
+import { ApiForbiddenResponse, ApiOperation, ApiQuery } from '@nestjs/swagger';
 
 export function ApiListPermissions(): MethodDecorator {
   return applyDecorators(
@@ -26,6 +24,8 @@ export function ApiListPermissions(): MethodDecorator {
       type: String,
       description: 'Búsqueda por código o nombre del permiso.',
     }),
-    ApiPaginatedResult(PermissionReadModelResponseDto),
+    ApiForbiddenResponse({
+      description: 'El usuario no está autorizado para consultar permisos.',
+    }),
   );
 }
