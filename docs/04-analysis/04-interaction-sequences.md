@@ -282,7 +282,13 @@ sequenceDiagram
 
 Las operaciones administrativas que deshabilitan o bloquean cuentas, así como los cambios y restablecimientos de contraseña, se coordinan desde `users` con la revocación realizada por `authentication`. El estado de la cuenta, la revocación y la evidencia obligatoria forman un solo resultado transaccional. La colaboración no concede a `users` facultad de escritura directa sobre las sesiones.
 
-## 8. Principios de lectura de las secuencias
+## 8. Registro y vinculación de cuentas
+
+El registro de una cuenta admite una vinculación personal opcional. Cuando se proporciona una persona existente, se comprueban su vigencia y la ausencia de otra cuenta asociada. Cuando se solicita crear también la persona, `users` coordina el alta con `persons`, que conserva la validación y el registro de su identidad. Las asignaciones iniciales de roles, si se solicitan, se realizan por `authorization`. Cada capacidad aplica sus permisos y la protección institucional correspondiente. La creación conjunta, las asignaciones iniciales y su evidencia forman una única confirmación, sin altas parciales.
+
+La vinculación posterior parte de una cuenta existente que aún no tiene persona asociada y de una persona vigente y libre de vinculación. El actor requiere `users.person.link` y autoridad sobre la cuenta destinataria. Se confirma la asociación con su auditoría sin modificar el correo de acceso, las credenciales, los roles, el estado administrativo ni las sesiones. Una vinculación previa no se reasigna ni se retira; cualquier conflicto de cardinalidad, vigencia o autorización impide confirmar la operación.
+
+## 9. Principios de lectura de las secuencias
 
 - **El rechazo no es una transición de negocio.** Una acción denegada no cambia el estado de una inscripción ni registra un movimiento funcional como si hubiera ocurrido.
 - **La operación crítica se confirma como una unidad.** Registro, cambio de sección, cancelación, retiro y corrección preservan sus efectos e historia de manera coherente; la descomposición interna no forma parte de esta representación funcional.

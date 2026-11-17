@@ -102,7 +102,7 @@ La asignación docente puede estar pendiente mientras la oferta está en prepara
 
 ## 4. Cuentas, roles y permisos
 
-La **cuenta** identifica a quien opera el sistema y puede vincularse opcionalmente con una persona. Su estado determina si puede autenticarse; la pertenencia a un perfil académico no crea una cuenta ni concede acceso. La **sesión** representa un acceso autenticado que puede revocarse independientemente de la existencia de la cuenta.
+La **cuenta** identifica a quien opera el sistema mediante un identificador permanente y un correo de acceso establecido durante el registro. Puede crearse sin persona, asociarse a una persona existente o registrarse conjuntamente con una persona nueva. Si se registra sin asociación, puede vincularse posteriormente a una persona existente y vigente; una vez establecida, la vinculación no se reasigna ni se retira mediante operaciones ordinarias. El correo de acceso no se modifica después del registro. Su estado determina si puede autenticarse; la pertenencia a un perfil académico no crea una cuenta ni concede acceso. La **sesión** representa un acceso autenticado que puede revocarse independientemente de la existencia de la cuenta.
 
 El **rol** agrupa permisos reconocidos y se vincula con cuentas mediante asignaciones explícitas. Una cuenta puede reunir varios roles sin que exista jerarquía o herencia entre ellos; sus permisos efectivos son la unión de los concedidos por sus roles vigentes. Los **roles institucionales** tienen definición protegida y los **roles personalizados** admiten exclusivamente permisos ordinarios del catálogo. La condición reservada de un permiso y el carácter institucional de un rol son propiedades distintas.
 
