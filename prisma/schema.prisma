@@ -391,7 +391,6 @@ model User {
   passwordHash         String     @db.Text
   mustChangePassword   Boolean    @default(false)
   status               UserStatus @default(ACTIVE)
-  lastLoginAt          DateTime?  @db.Timestamptz(6)
 
   createdAt            DateTime   @default(now()) @db.Timestamptz(6)
   updatedAt            DateTime   @updatedAt @db.Timestamptz(6)
