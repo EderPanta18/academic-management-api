@@ -179,26 +179,28 @@ No existen transiciones directas entre `INACTIVE` y `ON_LEAVE`. En esos estados 
 
 ## 7. Cuenta interna
 
-`ACTIVE` permite autenticación y acceso sujeto a permisos; `INACTIVE` expresa deshabilitación administrativa y `BLOCKED`, bloqueo de seguridad.
+`ACTIVE` habilita la autenticación y el acceso sujeto a permisos; `INACTIVE` expresa deshabilitación administrativa y `BLOCKED` identifica un bloqueo de seguridad pendiente de resolución. Las operaciones de desactivar, reactivar, bloquear y resolver un bloqueo tienen estados de origen, condiciones y efectos propios.
 
-| Origen     | Destino                | Efecto                                                                                                             |
-| ---------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `ACTIVE`   | `INACTIVE` o `BLOCKED` | Exige autorización y motivo; revoca sesiones e impide nuevos accesos y renovaciones.                               |
-| `INACTIVE` | `ACTIVE` o `BLOCKED`   | Exige autorización y motivo; volver a `ACTIVE` permite una autenticación nueva, sin recuperar sesiones anteriores. |
-| `BLOCKED`  | `ACTIVE` o `INACTIVE`  | Exige autorización y motivo; volver a `ACTIVE` permite una autenticación nueva, sin recuperar sesiones anteriores. |
+| Acción           | Origen                | Destino    | Condiciones y efectos                                                                                                                                                                         |
+| ---------------- | --------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Desactivar       | `ACTIVE`              | `INACTIVE` | Autoridad administrativa, motivo, evidencia y revocación de sesiones.                                                                                                                         |
+| Reactivar        | `INACTIVE`            | `ACTIVE`   | Autoridad, motivo y evidencia; exige autenticación nueva y no restituye sesiones.                                                                                                             |
+| Bloquear         | `ACTIVE` o `INACTIVE` | `BLOCKED`  | Autoridad, motivo de seguridad y evidencia; revoca sesiones utilizables.                                                                                                                      |
+| Resolver bloqueo | `BLOCKED`             | `INACTIVE` | Autoridad específica de resolución y restablecimiento, evidencia de resolución, nueva contraseña temporal, cambio obligatorio de contraseña, revocación de sesiones y auditoría indivisibles. |
 
 ```mermaid
 stateDiagram-v2
     [*] --> ACTIVE
-    ACTIVE --> INACTIVE: deshabilitar
-    INACTIVE --> ACTIVE: habilitar
-    ACTIVE --> BLOCKED: bloquear
-    BLOCKED --> ACTIVE: desbloquear
-    INACTIVE --> BLOCKED: bloquear
-    BLOCKED --> INACTIVE: deshabilitar
+    ACTIVE --> INACTIVE: Desactivar
+    INACTIVE --> ACTIVE: Reactivar
+    ACTIVE --> BLOCKED: Bloquear
+    INACTIVE --> BLOCKED: Bloquear
+    BLOCKED --> INACTIVE: Resolver bloqueo
 ```
 
-Las transiciones requieren autorización, motivo y evidencia. Las cuentas `INACTIVE` o `BLOCKED` no admiten sesiones utilizables; los rechazos temporales por intentos fallidos de autenticación no cambian por sí mismos el estado. Una transición no altera los roles de la cuenta ni revierte operaciones anteriores. Las restricciones de protección institucional y la autoridad del actor delimitan las cuentas sobre las que pueden ejecutarse estas transiciones. El diagrama muestra los cambios de estado disponibles para cuentas que admiten modificación administrativa.
+No existe la transición directa `BLOCKED → ACTIVE`: después de resolver un incidente, una reactivación independiente habilita la autenticación. Tampoco se permite salir de `BLOCKED` mediante una transición ordinaria que evite el restablecimiento de credenciales. Una cuenta `INACTIVE` o `BLOCKED` no admite sesiones utilizables; el rechazo temporal por intentos fallidos en `authentication` no cambia el estado persistido de `User`.
+
+Toda acción administrativa exige autorización sobre la cuenta destinataria, motivo y evidencia. La resolución exige además las facultades reservadas de resolver bloqueos y restablecer contraseñas; ninguna acción puede alterar la cuenta protegida `SUPER_ADMIN`. Las asignaciones de rol no cambian por la transición. La revocación, el cambio de cuenta y la auditoría exigida se confirman conjuntamente bajo concurrencia; un fallo no deja efectos parciales.
 
 ## 8. Comprobaciones comunes a las transiciones
 

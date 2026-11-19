@@ -288,10 +288,40 @@ El registro de una cuenta admite una vinculación personal opcional. Cuando se p
 
 La vinculación posterior parte de una cuenta existente que aún no tiene persona asociada y de una persona vigente y libre de vinculación. El actor requiere `users.person.link` y autoridad sobre la cuenta destinataria. Se confirma la asociación con su auditoría sin modificar el correo de acceso, las credenciales, los roles, el estado administrativo ni las sesiones. Una vinculación previa no se reasigna ni se retira; cualquier conflicto de cardinalidad, vigencia o autorización impide confirmar la operación.
 
-## 9. Principios de lectura de las secuencias
+## 9. Resolución del bloqueo de una cuenta
+
+```mermaid
+sequenceDiagram
+    actor Administrador as Actor autorizado
+    participant Cuentas as users
+    participant Autorizacion as authorization
+    participant Sesiones as authentication
+    participant Evidencia as Auditoría
+
+    Administrador->>Cuentas: Solicita resolver bloqueo con motivo y evidencia
+    Cuentas->>Autorizacion: Exige users.block.resolve y users.password.reset
+    Autorizacion-->>Cuentas: Autoridad y protección institucional verificadas
+    Cuentas->>Cuentas: Comprueba BLOCKED y prepara contraseña temporal con hash
+    Cuentas->>Cuentas: Cambia a INACTIVE y exige cambio de contraseña
+    Cuentas->>Sesiones: Revoca sesiones remanentes en transacción común
+    Cuentas->>Evidencia: Registra resolución y restablecimiento sin secretos
+    alt Alguna comprobación o escritura falla
+        Cuentas-->>Administrador: Rechazo sin confirmación parcial
+    else Confirmación íntegra
+        Cuentas-->>Administrador: Contraseña temporal, entrega única protegida
+        Note over Cuentas: Permanece INACTIVE hasta reactivación separada
+    end
+```
+
+**Interpretación.** La resolución del incidente y la reactivación administrativa son operaciones distintas. No existe transición ordinaria directa `BLOCKED → ACTIVE`; la contraseña temporal no habilita acceso mientras la cuenta permanezca `INACTIVE`. La entrega del secreto ocurre únicamente tras la confirmación, sin guardarlo en logs o registros de auditoría. La revocación y la modificación de credenciales participan en la misma unidad transaccional bajo los límites públicos entre capacidades.
+
+## 10. Principios de lectura de las secuencias
 
 - **El rechazo no es una transición de negocio.** Una acción denegada no cambia el estado de una inscripción ni registra un movimiento funcional como si hubiera ocurrido.
 - **La operación crítica se confirma como una unidad.** Registro, cambio de sección, cancelación, retiro y corrección preservan sus efectos e historia de manera coherente; la descomposición interna no forma parte de esta representación funcional.
 - **El actor solicita; el sistema comprueba.** La selección de una oferta o de un movimiento no garantiza su aceptación, aunque el actor disponga del permiso general.
 - **La importación separa aceptación y ejecución.** El seguimiento refleja resultados parciales y finales sin ocultar filas rechazadas o duplicadas.
 - **La consulta no altera.** Reportes y auditoría son capacidades de lectura con permisos propios y resultados diferenciados.
+
+
+

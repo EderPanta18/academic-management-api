@@ -20,7 +20,7 @@ La configuración efectiva incorpora las variables proporcionadas por el entorno
 
 La zona horaria institucional es una decisión compartida entre API, workers y consultas; se aplica de manera uniforme al interpretar el inicio y cierre de días calendario, independientemente del huso horario del servidor o de PostgreSQL. La sincronización del reloj es una condición operativa para aplicar ventanas y caducidades.
 
-Los identificadores físicos exactos de variables se definen en la configuración ejecutable y su validación; no se mantiene un segundo listado normativo que pueda divergir. Cada configuración tiene propietario técnico, tipo esperado y tratamiento definido al faltar.
+Los identificadores físicos exactos de variables se definen en la configuración ejecutable y su validación; no se mantiene un segundo listado normativo que pueda divergir. La sesión única por cuenta y la rotación de refresh tokens son obligatorias: una variable que permita desactivarlas es incompatible con el contrato de seguridad. La configuración efectiva debe impedir el arranque si esas garantías quedan deshabilitadas; no basta con usar `true` como valor por defecto cuando se acepta explícitamente `false`. Cada configuración tiene propietario técnico, tipo esperado y tratamiento definido al faltar.
 
 ## 2. Separación de entornos
 

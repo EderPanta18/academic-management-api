@@ -59,6 +59,8 @@ Los reportes de **ofertas e inscripciones exigen un periodo académico explícit
 
 Las consultas ordinarias de recursos con baja lógica excluyen los registros eliminados. Las consultas históricas se limitan a las capacidades expresamente definidas, con autorización y filtros propios; no existe un parámetro general que habilite el acceso a registros eliminados de cualquier módulo. La lectura histórica conserva la atribución de hechos y asociaciones a sus identidades originales sin reescribir relaciones pasadas. Los estados funcionales se interpretan según cada recurso y no equivalen a la marca de baja lógica.
 
+La consulta administrativa de cuentas, sujeta a `users.read`, presenta la **fecha del último inicio de sesión registrado**. Corresponde al instante de creación más reciente entre las sesiones conservadas de la cuenta, incluidas las activas, revocadas y expiradas. Si no existe ninguna sesión conservada, la fecha es `null`. La renovación de una sesión conserva su instante de creación y no constituye un nuevo inicio de sesión. La proyección devuelve esta fecha junto con los datos autorizados de la cuenta, sin exponer credenciales, verificadores ni registros individuales de sesión. El alcance temporal de la consulta corresponde al historial conservado.
+
 En las inscripciones, el estado refleja un movimiento académico específico:
 
 - `ENROLLED` representa una inscripción que conserva plaza.

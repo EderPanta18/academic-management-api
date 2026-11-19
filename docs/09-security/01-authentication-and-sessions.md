@@ -26,7 +26,7 @@ Cada cuenta mantiene **como máximo una sesión activa**. Esta exclusividad y la
 
 Las duraciones de las credenciales son configurables, pero deben ser **positivas, inequívocas y no superar los máximos de quince minutos para el acceso y siete días para la renovación**. Los valores inválidos impiden iniciar el servicio; no se sustituyen silenciosamente.
 
-El **inicio de sesión** obtiene de `users` la comprobación de credenciales y habilitación de la cuenta mediante un contrato restringido. Antes de habilitar la nueva sesión, `authentication` revalida la cuenta e invalida atómicamente cualquier sesión activa anterior. Una carrera entre dos inicios de sesión no deja dos sesiones utilizables. La emisión de credenciales solo se considera satisfactoria cuando la sesión está confirmada.
+El **inicio de sesión** obtiene de `users` la comprobación de credenciales y habilitación de la cuenta mediante un contrato restringido. La comprobación definitiva de credenciales y la confirmación de `UserSession` se coordinan frente a cambios concurrentes de contraseña y bloqueo; revalidar solo el estado `ACTIVE` no comprueba que el secreto verificado siga vigente. Antes de habilitar la nueva sesión, `authentication` revalida la cuenta e invalida atómicamente cualquier sesión activa anterior. Una carrera entre dos inicios de sesión no deja dos sesiones utilizables. La emisión de credenciales solo se considera satisfactoria cuando la sesión está confirmada.
 
 En cada solicitud protegida se comprueban la autenticidad, tipo, integridad y expiración del access token, la correspondencia con la sesión activa, la vigencia de esa sesión y la habilitación de la cuenta. El servidor no confía en un rol incluido en el JWT como permiso definitivo: los permisos efectivos se resuelven desde el estado autorizado vigente.
 
@@ -34,11 +34,12 @@ En cada solicitud protegida se comprueban la autenticidad, tipo, integridad y ex
 
 La renovación comprueba la credencial de refresh, su asociación con la sesión activa, la vigencia de la cuenta y las restricciones del flujo. Una renovación válida sustituye la credencial anterior y actualiza su verificador como **una operación atómica**; dos renovaciones simultáneas con la misma credencial no producen dos sucesoras aceptadas.
 
-La presentación de una credencial de refresh ya consumida, fuera de su sesión, revocada o inválida se rechaza. **La reutilización comprobada de una credencial anteriormente válida** invalida la sesión afectada, para evitar que un token sustraído mantenga acceso mediante rotaciones sucesivas. La ausencia de una sesión reconocible no permite revocar o inspeccionar sesiones ajenas arbitrariamente.
+La presentación de una credencial de refresh ya consumida, fuera de su sesión, revocada o inválida se rechaza. El reconocimiento de una credencial **anteriormente válida y ya consumida** requiere evidencia verificable de su rotación; no se infiere solo porque el token difiera del hash vigente. La implementación conserva el material de comprobación necesario sin persistir credenciales en claro y evita que una credencial desconocida provoque revocaciones de sesiones ajenas. **La reutilización comprobada de una credencial anteriormente válida** invalida la sesión afectada, para evitar que un token sustraído mantenga acceso mediante rotaciones sucesivas. La ausencia de una sesión reconocible no permite revocar o inspeccionar sesiones ajenas arbitrariamente.
 
 - **Cerrar sesión:** revoca la sesión y elimina las cookies de acceso y renovación mediante las propiedades correspondientes; borrar cookies sin revocar el estado servidor no constituye un cierre suficiente.
 - **Nuevo inicio de sesión:** revoca la sesión anterior antes de habilitar la nueva.
-- **Deshabilitar o bloquear una cuenta:** pasar a `INACTIVE` o `BLOCKED` revoca inmediatamente sus sesiones e impide nuevos accesos y renovaciones; pasar a `ACTIVE` mediante administración autorizada no restaura sesiones antiguas y exige nueva autenticación.
+- **Desactivar o bloquear una cuenta:** `ACTIVE → INACTIVE` y `ACTIVE → BLOCKED` revocan inmediatamente sus sesiones e impiden nuevos accesos y renovaciones; el bloqueo de una cuenta ya `INACTIVE` conserva la prohibición de acceso.
+- **Resolver un bloqueo de seguridad:** únicamente `BLOCKED → INACTIVE`, con acreditación de la resolución, generación de contraseña temporal, cambio obligatorio de contraseña y revocación de sesiones en una confirmación. No concede acceso inmediatamente ni admite paso directo a `ACTIVE`. La reactivación desde `INACTIVE` es otra operación y no recupera sesiones antiguas.
 - **Cambiar la contraseña propia:** exige identidad autenticada, comprueba el secreto vigente y revoca las sesiones emitidas antes del cambio; el usuario vuelve a autenticarse.
 - **Restablecimiento administrativo:** revoca la sesión existente, registra la condición de cambio obligatorio y solo permite las operaciones indispensables para autenticar y establecer una contraseña definitiva.
 - **Retirar permisos o roles:** no conserva autorizaciones antiguas dentro de una sesión vigente; su siguiente uso se decide con los permisos actualizados.
@@ -59,9 +60,9 @@ stateDiagram-v2
     Expirada --> SinSesion: Nueva autenticación requerida
 ```
 
-El diagrama representa el ciclo de una **sesión concreta**. La creación de una nueva sesión puede revocar la anterior, pero no vuelve a activar la identidad revocada.
+El diagrama representa el ciclo de una **sesión concreta**. Cada inicio de sesión confirmado crea una sesión con su instante de inicio. La renovación conserva ese instante y registra el uso posterior cuando corresponde. Un nuevo inicio de sesión sustituye la sesión activa anterior y registra una nueva sesión. La consulta administrativa presenta la fecha de creación más reciente entre las sesiones conservadas de la cuenta. Las sesiones revocadas permanecen revocadas.
 
-Una cuenta `INACTIVE` está deshabilitada por decisión administrativa y una cuenta `BLOCKED` por decisión de seguridad. Los cambios entre `ACTIVE`, `INACTIVE` y `BLOCKED` requieren actor autorizado, motivo y evidencia. Ningún token o sesión anterior recupera su validez cuando la cuenta vuelve a `ACTIVE`.
+Una cuenta `INACTIVE` está deshabilitada por decisión administrativa y una cuenta `BLOCKED` requiere resolver explícitamente un bloqueo de seguridad antes de poder reactivarse. La resolución exige autorización de seguridad y restablecimiento administrativo de contraseña, motivo y evidencia; no habilita el acceso. Ningún token o sesión anterior recupera su validez cuando la cuenta vuelve a `ACTIVE`.
 
 ## 4. Restricción por intentos inválidos
 
