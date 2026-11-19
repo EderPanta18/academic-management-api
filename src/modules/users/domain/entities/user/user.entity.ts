@@ -2,8 +2,10 @@
 
 import { UserStatus } from './user.enums';
 import {
+  InvalidUserStatusTransitionException,
   UserAlreadyInStatusException,
   UserAlreadyLinkedToPersonException,
+  UserNotBlockedException,
 } from './user.exceptions';
 import type { CreateUserProps, UserProps } from './user.types';
 
@@ -52,12 +54,50 @@ export class User {
     });
   }
 
-  changeStatus(status: UserStatus): User {
-    if (this.status === status) throw new UserAlreadyInStatusException(this.id, status);
+  deactivate(): User {
+    if (this.isInactive()) throw new UserAlreadyInStatusException(this.id, UserStatus.INACTIVE);
+
+    if (!this.isActive())
+      throw new InvalidUserStatusTransitionException(this.status, UserStatus.INACTIVE);
 
     return new User({
       ...this,
-      status,
+      status: UserStatus.INACTIVE,
+    });
+  }
+
+  reactivate(): User {
+    if (this.isActive()) throw new UserAlreadyInStatusException(this.id, UserStatus.ACTIVE);
+
+    if (!this.isInactive())
+      throw new InvalidUserStatusTransitionException(this.status, UserStatus.ACTIVE);
+
+    return new User({
+      ...this,
+      status: UserStatus.ACTIVE,
+    });
+  }
+
+  block(): User {
+    if (this.isBlocked()) throw new UserAlreadyInStatusException(this.id, UserStatus.BLOCKED);
+
+    if (!this.isActive() && !this.isInactive())
+      throw new InvalidUserStatusTransitionException(this.status, UserStatus.BLOCKED);
+
+    return new User({
+      ...this,
+      status: UserStatus.BLOCKED,
+    });
+  }
+
+  resolveBlock(passwordHash: string): User {
+    if (!this.isBlocked()) throw new UserNotBlockedException(this.id);
+
+    return new User({
+      ...this,
+      status: UserStatus.INACTIVE,
+      passwordHash,
+      mustChangePassword: true,
     });
   }
 
